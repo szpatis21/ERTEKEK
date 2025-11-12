@@ -1,0 +1,241 @@
+{
+  "SABLONOK": [
+    {
+      "szoveg": "Kiválóan teljesített",
+      "ertek": 10,
+      "valasz_ag": "igen",
+      "szoveges": false
+    },
+    {
+      "szoveg": "Jól teljesített",
+      "ertek": 7,
+      "valasz_ag": "igen",
+      "szoveges": false
+    },
+    {
+      "szoveg": "Megfelelően teljesített",
+      "ertek": 5,
+      "valasz_ag": "igen",
+      "szoveges": false
+    },
+    {
+      "szoveg": "Egyéb megjegyzés",
+      "ertek": 0,
+      "valasz_ag": "igen",
+      "szoveges": true
+    },
+    {
+      "szoveg": "Fejlesztésre szorul",
+      "ertek": 2,
+      "valasz_ag": "nem",
+      "szoveges": false
+    },
+    {
+      "szoveg": "Egyéb megjegyzés",
+      "ertek": 0,
+      "valasz_ag": "nem",
+      "szoveges": true
+    }
+  ],
+  "optionSets": {
+    "1": [
+      {
+        "value": "",
+        "text": "Válasszon egy témakört",
+        "disabled": true,
+        "selected": true
+      },
+      {
+        "value": "Általános jellemzők",
+        "text": "Általános jellemzők",
+        "leiras": "Alapadatok, szociális és egyedi jellemzők",
+        "szin": "rgb(0, 0, 0)",
+        "chart": "rgba(255, 193, 7, 0.5)"
+      },
+      {
+        "value": "Kommunikáció és beszéd",
+        "text": "Kommunikáció és beszéd",
+        "leiras": "Kommunikációs készségek és képességek",
+        "szin": "rgb(255, 17, 0)",
+        "chart": "rgb(255, 17, 0, 0.5)"
+      },
+      {
+        "value": "Reggeli és búcsúkör",
+        "text": "Reggeli és búcsúkör",
+        "leiras": "Kötött foglalkozás alatti viselkedés, képességek.",
+        "szin": "rgb(156, 39, 176)",
+        "chart": "rgb(156, 39, 176, 0.5)"
+      },
+      {
+        "value": "Szűkebb-tágabb környezet",
+        "text": "Szűkebb-tágabb környezet",
+        "leiras": "Közvetlen és tágabb környezet felfedezése",
+        "szin": "rgb(233, 30, 99)",
+        "chart": "rgb(233, 30, 99, 0.5)"
+      },
+      {
+        "value": "Játék és szórakozás",
+        "text": "Játék és szórakozás",
+        "leiras": "Kötetlen tevényenység alatti viselkedés",
+        "szin": "rgb(92, 0, 255)",
+        "chart": "rgb(92, 0, 255, 0.5)"
+      },
+      {
+        "value": "Mozgásnevelés",
+        "text": "Mozgásnevelés",
+        "leiras": "Mozgásfejlesztési tevékenységek és gyakorlat.",
+        "szin": "rgb(33, 150, 243)",
+        "chart": "rgb(33, 150, 243, 0.5)"
+      },
+      {
+        "value": "Önkiszolgálásra nevelés",
+        "text": "Önkiszolgálásra nevelés",
+        "leiras": "Önkiszolgálási képességek",
+        "szin": "rgb(24, 157, 0)",
+        "chart": "#189d00"
+      },
+      {
+        "value": "Új Főkategória",
+        "text": "Új Főkategória",
+        "leiras": "Új Főkategória leírása",
+        "szin": "#ff8000",
+        "chart": "#ff8000"
+      },
+      {
+        "value": "Sajt",
+        "text": "Sajt",
+        "leiras": "Új Főkategória leírása",
+        "szin": "linear-gradient(0deg, rgba(255, 128, 0, 0.48) 0%, #ff8000 100%)",
+        "chart": "#ff8000"
+      }
+    ],
+    "2": [
+      {
+        "value": "",
+        "text": "Válasszon egy témakört",
+        "disabled": true,
+        "selected": true
+      },
+      {
+        "value": "Állampolgári ismeretek",
+        "text": "Állampolgári ismeretek",
+        "leiras": "Állampolgári alapismeretek",
+        "szin": "rgb(255, 193, 7)",
+        "chart": "rgba(255, 193, 7, 0.5)"
+      },
+      {
+        "value": "Etika",
+        "text": "Etika",
+        "leiras": "Etika mint tantágy",
+        "szin": "rgb(233, 30, 99)",
+        "chart": "rgba(0, 76, 255, 0.5)"
+      },
+      {
+        "value": "Hon és népismeret",
+        "text": "Hon és népismeret",
+        "leiras": "",
+        "szin": "rgb(156, 39, 176)",
+        "chart": "rgb(156, 39, 176, 0.5)"
+      },
+      {
+        "value": "Magyar nyelv és irodalom",
+        "text": "Magyar nyelv és irodalom",
+        "leiras": "Magyar nyelvi készségek fejlettségének, olvasási készségek valamint az egyszerű szövegek megértésének vizsgálata",
+        "szin": "rgb(255, 0, 0)",
+        "chart": "#e91e63"
+      },
+      {
+        "value": "Matematika",
+        "text": "Matematika",
+        "leiras": "",
+        "szin": "rgb(92, 0, 255)",
+        "chart": "rgb(92, 0, 255, 0.5)"
+      },
+      {
+        "value": "Természettudomány és környezetismeret",
+        "text": "Természettudomány és környezetismeret",
+        "leiras": "",
+        "szin": "rgb(33, 150, 243)",
+        "chart": "rgb(33, 150, 243, 0.5)"
+      },
+      {
+        "value": "Történelem",
+        "text": "Történelem",
+        "leiras": "",
+        "szin": "rgb(156, 39, 176)",
+        "chart": "rgb(24, 157, 0, 0.5)"
+      },
+      {
+        "value": "Szociális Képességek",
+        "text": "Szociális Képességek",
+        "leiras": "Magatartás és Szorgalom",
+        "szin": "#ff8000",
+        "chart": "rgba(255, 128, 0, 0.5)"
+      }
+    ],
+    "3": [
+      {
+        "value": "",
+        "text": "Válasszon egy témakört",
+        "disabled": true,
+        "selected": true
+      },
+      {
+        "value": "Szociális Képességek",
+        "text": "Szociális Képességek",
+        "leiras": "Magatartás és Szorgalom",
+        "szin": "#ff8000",
+        "chart": "rgba(255, 128, 0, 0.5)"
+      },
+      {
+        "value": "Állampolgári ismeretek",
+        "text": "Állampolgári ismeretek",
+        "leiras": "",
+        "szin": "rgb(255, 193, 7)",
+        "chart": "rgba(255, 193, 7, 0.5)"
+      },
+      {
+        "value": "Életvitel",
+        "text": "Életvitel",
+        "leiras": "",
+        "szin": "rgb(255, 17, 0)",
+        "chart": "rgb(255, 17, 0, 0.5)"
+      },
+      {
+        "value": "Környezetismeret",
+        "text": "Környezetismeret",
+        "leiras": "Évszakok, időjárás, alapvető növény- és állatfajok felismerését, mindennapi környezeti helyzetekben való tájékozódás.",
+        "szin": "rgb(156, 39, 176)",
+        "chart": "#9c27b0"
+      },
+      {
+        "value": "Olvasás-írás",
+        "text": "Olvasás-írás",
+        "leiras": "Mindennapi élethez szükséges alapjelek, szavak és rövid mondatok felismerése",
+        "szin": "rgb(233, 30, 99)",
+        "chart": "#e91e63"
+      },
+      {
+        "value": "Számolás-mérés",
+        "text": "Számolás-mérés",
+        "leiras": "",
+        "szin": "rgb(92, 0, 255)",
+        "chart": "rgb(92, 0, 255, 0.5)"
+      },
+      {
+        "value": "Kommunikáció és beszéd",
+        "text": "Kommunikáció és beszéd",
+        "leiras": "Készségek és képességek, kommunikáció személyekkel, családtagokkal, csoport társakkal.",
+        "szin": "rgb(33, 150, 243)",
+        "chart": "rgb(33, 150, 243, 0.5)"
+      },
+      {
+        "value": "Önkiszolgálásra nevelés",
+        "text": "Önkiszolgálásra nevelés",
+        "leiras": "Ez a kategória az önkiszolgálási képességek fejlesztésére koncentrál.",
+        "szin": "rgb(24, 157, 0)",
+        "chart": "rgb(24, 157, 0, 0.5)"
+      }
+    ]
+  }
+}

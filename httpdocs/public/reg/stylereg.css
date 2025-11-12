@@ -1,0 +1,565 @@
+ #log label {display: flex; font-size: small;     justify-content: center;}
+a:link, a:visited {color: white;}
+#log{    flex-direction: column;display: none;     align-items: center;}
+#llog{ font-family: "Montserrat Subrayada"; height: 35px; width: 95%;}
+#whbutt{margin-top: 3px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: small;}
+    #log button {transition: all 0.5s;}
+    #log button:hover{
+        background-color: #ff7c00; color: white; transform: scale(1.05);
+    }
+    #regi {background-color: white;}
+.opening {display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(2, 50%);
+    justify-items: center;
+    margin: 45px 40px;
+}
+.inputs input {
+    font-family: 'Times New Roman', Times, serif; 
+    border: 1px solid gold ;border-radius: 5px; padding: 5px;}
+button {cursor: pointer; width: fit-content; margin: auto; background-color: white; border: 1px solid gold; border-radius: 5px; padding: 5px; font-family: 'Times New Roman', Times, serif; font-weight: 500;} 
+.belso {width: 100%;
+    display: flex;
+    background-color: white;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    border-radius: 30px;
+    font-family: "Montserrat Subrayada";
+    transform: rotate(45deg);
+    transition: all 0.3s;
+    border: rgba(0, 0, 0, 0.174) 3px solid;
+}
+.gold{color: gold;}
+
+.belso2 {cursor: pointer;}
+.opening p {font-size: medium; cursor: pointer; text-align: center;}
+.opening .kulso:hover{box-shadow: 0px 0px 2px 2px gold;
+transition: all 0.7s;}
+
+.kulso{    
+    padding: 25px;
+    display: flex;
+    width: 35vh;
+    top: 0
+    ;
+    position: sticky;
+    height: 35vh;
+    align-items: center;
+    justify-content: center;
+    border: rgba(255, 217, 0, 0.567) 2px solid;
+    border-radius: 30px;
+}
+
+#ceg, #magan{ display: none; flex-direction: column;}
+#regi{    display: none;
+    flex-direction: column;
+    height: fit-content;
+    width: 90%;
+    border: 1px solid gold;
+    border-radius: 10px;
+    box-shadow: rgb(210 179 3 / 47%) 4px 4px 5px 1px;    
+    font-size: large;
+    text-align: center;
+    padding: 10px;
+   }
+   .choos label{    font-family: "Montserrat Subrayada";
+    font-size: 75%; width: 100%;}
+   #regMagan, #regCeg, #megerosit, #megsem {
+    transition: all 0.3s;
+    font-family: "Montserrat Subrayada";
+    width: 200px;
+    height: 45px;
+    box-shadow: inset orange 0px 0px 3px }
+
+    #megsem { box-shadow: inset crimson 0px 0px 3px }
+
+    #regMagan:hover, #regCeg:hover, #megerosit:hover, #megsem:hover{
+        transform: scale(1.05);
+        background-color: #FF5722;
+        color: white;
+
+    } 
+#choicelabel{display: flex; flex-direction: column;}
+#choicelabel div{display: flex;}
+#ceg{flex-direction: column;}
+legend {font-style: italic;margin: 10px;
+     text-align: center;    color: #ff7c00; text-align: left;}
+.allabel{margin: 25px 0px; display: flex;     flex-direction: column;
+}
+.allabel div{display: flex; flex-direction: column; justify-content: space-between;align-items: flex-start;}
+.allabel input {margin-left: 5px;}
+.allabel label {
+    background: white;
+    color: #131313;
+    text-indent: 0px;
+    margin-top: -15px;
+    padding: 3px 13px 0px 0px;
+    border-top: #ffd100 2px solid;
+    border-top-right-radius: 7px;
+}
+.szoveg{font-size: 180%; cursor: pointer;
+    transform: rotate(-45deg);
+    transition:all 0.3s;
+}
+#ihoi, #vihoi, #x12hoi, #szamlaChoice1, #szamlaChoice2, #alszamla input{
+    width: max-content !important;
+    box-shadow: none !important;}
+
+    #afsz,#afsz2, #afsz3, #afsz4, #afsz5, #afsz6{
+        width: 20px !important;
+        height: 20px;
+        margin: 10px;
+        box-shadow: none !important;
+        accent-color: orangered;
+
+    }
+#alszamla, #alszamla2, #szamla2{    display: flex;
+    justify-content: space-around;
+    align-items: center;
+   }
+#szamla2{flex-direction: column;margin-top: 5px;} 
+ #regi0{    border: rgba(0, 0, 0, 0.174) 3px solid;
+    color: black;}
+ [type=radio]{accent-color: rgb(231 108 0 / 9)}
+    #szamla{display: none; flex-direction: column;}
+     #szamla span, #szamla2 span {
+            font-size: 80%;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+            color: black;
+    }
+    #szamla .editbut, #szamla2 .editbut{ font-size: 14px;
+        display: flex;
+        width: 200px;
+        padding: 0px 5px;
+        flex-direction: row;
+        height: 30px;
+        color: white;
+        background: linear-gradient(0deg, rgba(255, 119, 0, 0.911) 0%, #ffb100 100%);
+        border-radius: 8px;
+        align-content: center;
+        align-items: center;
+        text-transform: uppercase;
+        margin: 10px 0px;}
+        #szamla2 .editbut{width: 220px;}
+
+    #kotelezo{display: flex;
+        text-align: center;
+    flex-direction: column;
+    justify-content: space-around;}
+    #magan input, #ceg input{
+        border-radius: 6px;
+        border: 1px solid rgb(255 153 0 / 82%);
+        width: 90%;
+    padding: 10px;
+    color: rgba(255, 119, 0, 0.911);
+    font-family: system-ui;
+    font-weight: 500;
+    font-weight: 500;
+    box-shadow: 3px 2px 2px 0px #00000045;}
+    #regind, #regind2{margin: auto; display: flex; flex-direction: column;} 
+    #regind .editbut:hover{color: white;background-color: #ff7c00;}
+    .afszp{font-size: medium;
+        display: flex;
+        display: grid;
+        grid-template-columns: 10% 90%; 
+        align-items: center;
+        text-align: left;
+       
+        margin: 10px;}
+    #regcode{margin: 10px;display: none; font-style: italic;flex-direction: column;}
+    #errorlog,  .errorlog2{width: 50%; text-align: center; margin: auto; font-style: italic; font-size: small;}
+    .errorlog2 {text-align: left;margin: 10px;}
+    .err{
+        font-style: normal;
+        align-items: center;
+        font-size: small;   
+        max-width: 290px;
+        color: red;
+    }
+    .kijelolt{     background: linear-gradient(0deg, #ff5722 0%, #f44336e3 100%);;color: white !important; }
+
+    .borderr{border-color: red !important;box-shadow: red 0px 0px 2px 0px;}
+    .borderr2{border: 2px solid #ff000075;border-radius: 8px;}
+    #regifin{    
+        flex-direction: column;
+        font-size: medium;
+        height: fit-content;
+        margin: auto;
+        display: none;
+        width: fit-content;
+        text-align: center;
+        height: 10vh !important;
+        color: #000000;
+        justify-content: flex-start;
+    
+    }
+    #kalkulacioEredmeny{width: 100%; height: 20px;    font-weight: 800; text-align: center;
+        color: red;}
+    #regifin p,#segedlet p, #segedlet2 p{font-family: "Montserrat Subrayada", sans-serif;}
+    #regifin span,#segedlet span, #segedlet2 span{color: #ff7c00; font-style: italic;}
+    .serr{font-family: 'Times New Roman', Times, serif !important;
+        margin: auto;
+        text-align: center;}
+    .al-alap {  display: grid;   
+        grid-template-columns: repeat(auto-fit, minmax(45vh, 2fr));   
+        justify-items: center;
+        position: relative;
+        height: 100%;
+        justify-content: center;}
+    #segedlet, #segedlet2{height: fit-content; display: none !important;  width: 90%;
+        border: 1px solid gold;
+        border-radius: 10px;
+        position: sticky; top: 0;
+        box-shadow: rgb(210 179 3 / 47%) 4px 4px 5px 1px;   
+        flex-direction: column;} 
+    .csomagok,.csomagok0{flex-direction: column;}
+    .csomagI {
+        width: 60vh;
+        margin-bottom: 10px;
+        display: flex;
+        flex-direction: column;
+        background: linear-gradient(0deg, #ffb100 0%, rgba(255, 119, 0, 0.911) 100%);
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+        font-size: large;
+        box-shadow: 1px 2px 5px 1px black;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    }
+    .cscim{text-align: center;
+        font-size: x-large;
+        font-family: "Montserrat Subrayada", sans-serif;
+        margin: 5px 0px;
+        border-bottom: 5px solid white;}
+    .csalcim{
+    text-align: center;
+    font-size: medium;
+    font-style: italic;
+    }
+    .kinekcim{
+    margin: 10px 0px;
+    text-align: center;
+    font-size: medium;
+    font-family: "Montserrat Subrayada", sans-serif;
+    border-bottom: 3px solid white;
+    }
+    .kinek ul{    color: #ffffff;
+        border-radius: 2px;
+        font-size: medium;
+        font-family: 'Times New Roman', Times, serif;
+        box-shadow: 0px 0px 4px 2px #ffffff;
+        font-style: italic;
+        padding: 10px 15px;
+    }
+        .kinek li{margin: 10px;}
+        .ar{font-family: "Montserrat Subrayada", sans-serif;text-align: center;}
+        .csomagI{ margin: 15px 0px;}
+
+
+.fade {opacity: 0; transition: all 0.5s ease-in-out; transform: translateY(100%);}
+.fade-in {opacity: 1;transform: translateY(0);}
+.fade2 {opacity: 0;transition: all 0.5s ease-in;}
+.fade-in2 {opacity: 1;}
+
+.ellenorzes{
+    margin: 20px auto;
+    transition: all 0.3s;
+    background-color: #ffffff;
+    width: 90%;
+border: none;
+    box-shadow: 0px 0px 5px 2px #FF9800;
+    border-radius: 15px;
+    padding: 15px;}
+
+.ellenorzes .allabel label {margin-top: 0px; border-top: none;}
+.ellenorzes legend {margin: 0px;}
+#megerosit{display: flex;
+    justify-content: space-around;
+    align-items: center;}
+.ellalbel{
+    grid-template-columns: repeat(2, 50%);
+    display: grid;}
+
+    #fo{width: 400px !important; margin: auto !important;}
+
+
+    @media (max-width: 950px) {
+        .choos label {margin: auto};
+        #alszamla, #szamla2, #alszamla2 {margin: 10px;}
+        .kulso{width: 30vh;height: 30vh;}
+        .szoveg{font-size: medium;}
+        .szoveg input{border: #ff7c00 solid 1px;}
+           #llog{justify-content: center;
+    align-items: center;}
+       #log{justify-content: center;
+    align-items: center;}
+    .opening{    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;}
+    #log label{    display: flex;
+    font-family: auto;
+    font-size: xx-small;
+    justify-content: center;
+    align-content: center;
+    align-items: center;}
+    #men{ position:relative !important;
+  left: 50% !important; 
+  top: 30px !important;
+  transform: translate(-50%, -50%);}
+    }
+ #fo{width: 250px !important; margin: auto !important;}
+
+
+        #llog, #whbutt {font-size: 60%; width: fit-content;height: fit-content;}
+        #whbutt{font-size: 40%; margin-top: 0px;}
+        .opening {column-gap: 15px;grid-template-rows: repeat(2, 50%);}
+        .inputs input{width: 100px; margin: 4px; padding: 5px;}
+        #regi{font-size: medium;}
+        .choos div{display: flex;     align-items: center;}
+        .ellalbel{
+            grid-template-columns: repeat(1, 100%);}
+            #ceginput{width: 60%; margin: auto;}
+            .allabel div {
+                margin: auto;
+                width: 100%;}
+                legend{    text-align: center;
+    border-bottom: 5px solid #ff650087;
+    margin: 10px 0px;}
+                .labels {grid-template-columns:100%}
+.al-alap{    grid-template-columns: repeat(auto-fit, minmax(65vh, 2fr));}
+#alszamla, #alszamla2, #szamla2 {flex-direction: column};
+    #log{justify-content: center;
+    align-items: center;}
+    body {align-items:flex-start  !important;}
+    /* Animáció a fade-out (elhalványulás) hatáshoz */
+@keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  /* Az animációt a teljes oldalra alkalmazzuk */
+  body.fade-out {
+    animation: fadeOut 1s forwards;
+  }
+  /* Példa egy forgásra (spin) */
+@keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  body.fade-out {
+    animation: spin 5s forwards;
+  }
+  .labels{    display: grid;
+    grid-template-columns: 70% 30%;
+    margin: 25px;
+    align-items: start;
+    justify-items: center;
+    justify-content: end;}
+    .labels div {width: 100%;}
+    .ellenorzes h4 {font-family: "Montserrat Subrayada";color: #ff7c00; text-align: center; }
+ 
+    #egybe {width: 96%;
+        display: grid;
+        grid-template-columns: 30% 65%;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: -25px;
+        height: 75px;
+    }
+    @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        50% { transform: translateX(5px); }
+        75% { transform: translateX(-5px); }
+        100% { transform: translateX(0); }
+    }
+
+    /* Animáció osztály */
+    .shake {
+        animation: shake 0.3s;
+    }
+  #szakmaiceg input,#szakmaiuser input{cursor:pointer; width: 12px !important; box-shadow: none;}
+  #szakmaiceg, #szakmaiuser {width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;}
+    #szakmaiceg div, #szakmaiuser div{    width: 60%;
+    display: flex;
+    justify-content: space-between;
+        border-bottom: 2px solid #ff7c008f;
+    margin-bottom: 5px;
+    padding-bottom: 5px;}
+    men {position: sticky; top: 0
+        ;}
+        
+
+.sidebar-nav .nav-list {
+flex-direction: row; font-size: small;
+width: fit-content !important;
+}
+.sidebar {
+    display: flex;  border: none;
+    width: 100% ;
+    border-top-right-radius: 0px;
+ border-bottom-right-radius: 0px;
+height: 60px} 
+   #navmenu {width: 100%;} 
+    .sidebar-nav{
+    width: 100%;
+    display: flex;
+    font-size: medium;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+.sidebar .sidebar-header{margin-bottom: 0px !important; padding: 0px !important; display: none;}
+.sidebar.collapsed .sidebar-nav .primary-nav{margin: 0px !important;}
+.sidebar-nav .nav-list{margin: 0px !important; transform: translateY(0px) !important;}
+.sidebar-nav .nav-item {height: fit-content};
+.sidebar.collapsed .sidebar-nav .primary-nav {transform: translateY(0px) !important;}
+.sidebar-nav .secondary-nav{
+     background: rgba(0, 0, 0, 0); 
+}
+.main{width: 100% !important;}
+main{width: 100% !important;}
+
+/* Pseudo-element a háttérhez */
+.elso{    background: #ffffff40;
+    padding: 20px;
+    border-radius: 18px;
+    backdrop-filter: blur(2px);}
+.lehetosegek{display: flex;
+    margin-top: 25px;
+    flex-direction: column;}
+ body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    height: 100vh;
+    background-image: url('media/dragon-scales.svg');
+   background-repeat: no-repeat;
+    z-index: -1;
+    will-change: transform;
+} 
+    html,body{height:100%}
+    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
+        color: #111; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}
+
+    /* SVG háttér (helyezd a dragon-scales.svg-t a gyökérbe vagy módosítsd az elérési utat) */
+    body::before{
+      content:""; position:fixed; inset:0; z-index:-2;
+ background-image: url('media/dragon-scales.svg');      background-repeat:repeat; background-size: 480px auto; opacity:.08;
+      filter:contrast(120%);
+    
+    }
+            .hero-bg{position:fixed; inset:0 -20vw auto -20vw; height:70vh; z-index:-1;    transition: all 0.3s;  background-image: url('media/dragon-scales.svg'); }    
+
+
+.sidebar-nav .nav-list {
+flex-direction: row; font-size: small;
+width: fit-content !important;
+}
+.sidebar {
+    display: flex;  border: none;
+    width: 100% ;
+    border-top-right-radius: 0px;
+ border-bottom-right-radius: 0px;
+height: 60px} 
+   #navmenu {width: 100%;} 
+    .sidebar-nav{
+    width: 100%;
+    display: flex;
+    font-size: medium;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+.sidebar .sidebar-header{margin-bottom: 0px !important; padding: 0px !important; display: none;}
+.sidebar.collapsed .sidebar-nav .primary-nav{margin: 0px !important;}
+.sidebar-nav .nav-list{margin: 0px !important; transform: translateY(0px) !important;}
+.sidebar-nav .nav-item {height: fit-content};
+.sidebar.collapsed .sidebar-nav .primary-nav {transform: translateY(0px) !important;}
+.sidebar-nav .secondary-nav{
+     background: rgba(0, 0, 0, 0); 
+}
+.main{width: 100% !important;}
+main{width: 100% !important;}
+.nav{width: 100%;}
+#men{display: flex; width: 100%;}
+            @media (max-width: 920px){
+.inputs{    display: flex
+;
+    margin: auto;
+    align-items: center;
+    justify-content: center;}
+      .hero .grid{display: flex; flex-direction: column-reverse; text-align: center;}
+      .infostrip .items{grid-template-columns:1fr}
+      .features .grid{grid-template-columns:1fr}
+      .steps .grid{grid-template-columns:1fr}
+      .ts-grid{grid-template-columns:1fr 1fr}
+      .cta-footer .cta-card{flex-direction:column; text-align:center}
+      #logokulso{width:220px;height:220px}
+      #logobelso{width:200px;height:200px;font-size:180%}
+      .sidebar{flex-direction: column; position: absolute;height: calc(99vh); width: 100%; background: linear-gradient(45deg, #411a00, transparent) }
+      .sidebar .sidebar-header{display: flex; margin-bottom: 30px !important; margin-top: 30px;}
+      .sider .collapsed{position: relative; }
+      #fnev, #pass {width: 70%; height: 30px;}
+      #temakor, #szerepkor {
+    font-size: x-small}
+    .lehetosegek {
+
+    margin-top: 5px;}
+    .csomagok{display: none !important;}
+      .sidebar-nav .nav-list {
+                width: 90% !important;
+     
+        align-items: flex-start;
+    flex-direction: column;}
+    .sidebar-nav{
+        flex-direction: column;
+        margin-bottom: 50px;
+}
+.regi{margin: auto;}
+.sidebar.collapsed .sidebar-nav .nav-tooltip {display: none !important;}
+.sidebar.collapsed .sidebar-nav .nav-link{transform: translateX(-150%);}
+
+  .sidebar.collapsed .sidebar-nav .nav-tooltip {
+    display: block; height: calc(99vh);
+  }
+  .sidebar .mobillogo{position: relative;
+    
+    width: 100%;
+    height: fit-content;
+ 
+    justify-content: center;
+    align-items: center;}
+ 
+ .hero-bg{height: 100vh;      }
+.sidebar.collapsed { height: calc(10vh);
+ background: transparent;}
+.sidebar-nav .nav-link {
+color: #ffffff;
+font-size: large;
+     
+    }
+
+    }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Értékek</title>
+  <link rel="stylesheet" href="/admin/teszt/teszt.css">
+  <link rel="stylesheet" href="both/both.css">
+  <link rel="stylesheet" href="/admin/upload/upload.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+
+
+</head>
+<body>
+
+<nav>
+  <div id="navmenu">
+      <div class="logo">Értékelö modul</div>
+
+      <div class="menu">
+          <div><a href="../dashboard.html">Vissza</a></div>
+          <div> GYIK</div>
+          <div id="ertekelesek">Értékelés nézet</div>
+          <div id="navment">Értékelés mentése PDF-be</div>
+        <div>
+            <div>
+                <form action="/logout" method="POST">
+                    <button type="submit">Kijelentkezés</button>
+                </form>
+            </div>
+         </div>
+  </div>
+</nav>
+
+
+<div id="main-container">
+
+    <div id="container">  
+      <div id="fo_kategoriak" class="category-container" class="tooltip"></div>
+      <div id="al_kategoriak" class="subcategory-container hidden"></div>
+      <div id="alt_temak" class="subtopic-container hidden"></div>
+      <div id="kerdesek" class="question-container hidden"></div>
+    </div>
+
+    <div id="diagramm" style="display: none;">
+        <canvas id="pontszamDiagram" width="400" height="400"></canvas>
+    </div>
+
+   <div id="keszulo" >
+        <div id="ertekelesek-container" >
+            <div class="szalag">
+            <div style="text-align: center; font-style: italic;">Az értékelési nyomtatvány jelenleg üres. Kezdje el a témakörök szerinti kitöltést, hogy a lap feltöltődjön tartalommal</div>
+            </div>
+        </div>
+   </div>
+   
+</div>
+
+<div id="loading-overlay" style="display: none;">
+    <div id="kont">
+        <div id="logokulso">
+        </div>
+        <div id="logobelso">
+            <div class="gold">FRISSÍTÉS</div>
+        </div>
+    </div>
+</div>
+
+  
+  <script type="module" src="/admin/teszt/tesztAlap.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+</body>
+</html>

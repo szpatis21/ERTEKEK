@@ -1,0 +1,633 @@
+body {
+  display: flex;
+      flex-direction: row;
+      align-items: center;
+      height: auto;
+      justify-content: space-between;
+      position: relative;
+      margin: 0;
+    }
+.main{width: 100%;}
+/* Pseudo-element a háttérhez */
+.lehetosegek{display: flex;
+    flex-direction: column;}
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-image: url('media/dragon-scales.svg');
+/*     background-size: cover;
+ */    background-repeat: no-repeat;
+    z-index: -1;
+    will-change: transform; /* Segít a külön rétegben renderelésben */
+}
+.logo{font-weight: 700;
+    display: flex
+;
+    font-family: system-ui;
+    font-size: larger;
+    font-style: italic;
+    color: rgb(255 255 255);
+    color: white;
+    text-align: center;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#navmenu {
+    font-family: "Montserrat Subrayada", sans-serif;    color: rgb(255 255 255);
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 95%;
+    font-weight: bolder;    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 95%;
+}
+
+.menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.menu div {
+    position: relative; /* Szükséges a ::after pozicionálásához */
+    margin: 10px 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+/* Az alsó csík alapállapotban rejtett */
+.menu div::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: currentColor; /* Az elem színével egyező csík */
+    transition: width 0.3s ease;
+}
+
+/* Hover állapot: a csík végigfut balról jobbra */
+.menu div:hover::after {
+    width: 100%;
+}
+
+/* Linkek alapstílusa (ha nem inline alkalmaznád) */
+.menu div a {
+    text-decoration: none;
+    color: inherit;
+}
+.montserrat-subrayada-regular {
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+  }
+  .mas{
+    display: flex; 
+    justify-content: space-evenly;
+    margin-top: 3vh;
+    font-family: "Montserrat Subrayada", sans-serif;
+    color:white; 
+text-shadow: 0px 0px 3px #ffffffec;
+    font-size: smaller;  
+  font-weight: normal;}
+  .mas div{backdrop-filter: blur(2px);
+    height: fit-content;
+    border: 1px solid #ffffff69;
+    padding: 0px 10px;
+    border-radius: 11px;
+    cursor: auto;
+  background: #ff7001c2}
+  .mas:hover #egyik {
+    /* ...a bal oldali div jobbra mozdul 2 pixelt. */
+    transform: translateX(-25px);
+    background-color: white;
+    color: #ff6500;
+}
+.mas:hover #masik {
+    /* ...a jobb oldali div balra mozdul 2 pixelt. */
+    transform: translateX(25px);
+    background-color: white;
+        color: #ff6500;
+
+}
+
+#egyik, #masik {transition: all 1s;}
+  .montserrat-subrayada-bold {
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  .sidebar {
+    /* position: fixed; */
+    width: 270px;
+
+    background: #55380057;
+    height: calc(99vh);
+    transition: all 0.4s ease;
+  }
+  
+  .sidebar.collapsed {
+    width: 85px;
+  }
+  
+  .sidebar .sidebar-header {
+       display: flex;
+    position: relative;
+    padding: 10px 21px;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+  
+  .sidebar-header .header-logo img {
+    width: 46px;
+    height: 46px;
+    display: block;
+    object-fit: contain;
+    border-radius: 50%;
+  }
+  .blur{backdrop-filter: blur(20px);    background: #00000059; z-index: 1 !important; }
+  .color{color: orange;}
+  .sidebar-header .toggler {
+    height: 35px;
+    width: 35px;
+    color: #ff8800;
+    border: none;
+    cursor: pointer;
+    display: flex
+;
+    background: #ffffff;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: 0.4s ease;
+    box-shadow: 0px 0px 0px 4px #0e1424
+  }
+  
+  .sidebar-header .sidebar-toggler {
+   
+  }
+  
+  .sidebar-header .menu-toggler {
+    display: none;
+  }
+  
+  .sidebar.collapsed .sidebar-header .toggler {
+    transform: translate(0px, 10px);
+  }
+  
+  .sidebar-header .toggler:hover {
+    background: #ffb700;
+    color: whitesmoke;
+  }
+  
+  .sidebar-header .toggler span {
+    font-size: 1.75rem;
+    transition: 0.4s ease;
+  }
+  .mobillogo{display: none;justify-content: center;
+    align-items: center;
+    bottom: 0%;
+    position: relative;}
+  .sidebar.collapsed .sidebar-header .toggler span {
+    transform: rotate(180deg);
+  }
+  
+  .sidebar-nav .nav-list {
+    list-style: none;
+    display: flex;
+    gap: 4px;
+    padding: 0 15px;
+    flex-direction: column;
+    transform: translateY(15px);
+    transition: 0.4s ease;
+  }
+  
+  .sidebar.collapsed .sidebar-nav .primary-nav {
+    transform: translateY(10px);
+  }
+  
+  .sidebar-nav .nav-link {
+    color: #fff;
+    display: flex;
+    gap: 12px;
+    white-space: nowrap;
+    border-radius: 8px;
+    padding: 5px 5px;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.4s ease;
+  }
+  .nav-icon {
+    font-size: 34px !important; /* Ikon mérete */
+    cursor: pointer;
+  }
+  .sidebar.collapsed .sidebar-nav .nav-link {
+    border-radius: 12px;
+    
+  }
+  
+  .sidebar .sidebar-nav .nav-link .nav-label {
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .sidebar.collapsed .sidebar-nav .nav-link .nav-label {
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .sidebar-nav .nav-link:hover {
+    color: #151A2D;
+    background: #fff;
+  }
+
+  
+  .sidebar-nav .nav-item {
+    position: relative;
+    z-index: 10;
+  }
+
+  .sidebar-nav .nav-tooltip {
+    position: absolute;
+    top: -10px;
+    opacity: 0;
+    color: #151A2D;
+    display: none;
+    pointer-events: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    white-space: nowrap;
+    background: #fff;
+    left: calc(100% + 25px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+    transition: 0s;
+  }
+  
+  .sidebar.collapsed .sidebar-nav .nav-tooltip {
+    display: block;
+  }
+  
+  .sidebar-nav .nav-item:hover .nav-tooltip {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(50%);
+    transition: all 0.4s ease;
+  }
+  
+/* .sidebar-nav .secondary-nav {
+background: rgba(0, 0, 0, 0.21)}   */
+  /* Responsive media query code for small screens */
+
+  #adatvedelmiModal {
+    display: none; /* Kezdetben rejtve van */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80%;
+    max-width: 800px;
+    max-height: 90%;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+/* Háttér (overlay) a modal mögött */
+/* Háttér (overlay) az összes modal mögött */
+#modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+#modalOverlay.open {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* Bezáró gomb stílusa */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+ul {
+    padding-left: 20px;
+}      .modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    z-index: 1000;
+
+    /* Egyedi stílusok, amiket felülírhatsz */
+    width: 90%;
+    max-width: 100%; /* Általános méret, felülírható */
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    border-radius: 8px;
+
+    /* Animáció */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
+}
+
+.modal.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(0%, 0%) scale(1);
+  width: 100%;
+}
+
+
+
+
+
+
+
+
+h1, h2 {
+    color: #333;
+}
+
+ul {
+    padding-left: 20px;
+}
+
+.kerdes-container{display: flex;
+      flex-wrap: wrap;}
+      .custom-tooltip {
+        position: absolute;
+        border: 2px solid white;
+        padding: 5px 10px;
+        border-radius: 6px;
+        background: #000000bd;
+        color: white;
+        z-index: 1000;
+        font-family: auto;
+        white-space: nowrap;
+        
+        /* Kezdő állapot: teljesen átlátszó és kicsit lejjebb */
+        opacity: 0;
+        transform: translate(-50%, 10px);
+        
+        /* Animáció beúszáshoz */
+        animation: fadeInUp 0.3s ease-out forwards;
+    }
+    
+    /* Kiúszó effektus */
+    .custom-tooltip.fade-out {
+        animation: fadeOutDown 0.3s ease-in forwards;
+    }
+    
+    /* Beúszás animáció (fade-in + felfelé mozgás) */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translate(-50%, 10px);
+        }
+        to {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+    }
+    
+    /* Kiúszás animáció (fade-out + lefelé mozgás) */
+    @keyframes fadeOutDown {
+        from {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+        to {
+            opacity: 0;
+            transform: translate(-50%, 10px);
+        }
+    }
+    #temakor, #szerepkor{    height: 25px;
+        height: 25px;
+    border-color: #ffaa00;
+    cursor: pointer;
+    color: #ffaa00;
+    font-family: Arial, Helvetica, sans-serif;
+    border-radius: 6px;
+    margin-bottom: 5px;}
+    #temakor{ 
+    font-weight: bold;}
+
+    .modal h1{    color: #ff6500;
+    text-align: center;}
+          @media (max-width: 900px){
+    #promobar{margin-top: 30%;}
+    #prmoszoveg{display: none;}
+    #logokulso{
+        width: 210px;
+        height: 210px;
+    }
+             body{
+    flex-direction: column;}
+    #main-container{
+        flex-wrap: wrap;
+    }
+    #maincont{display: flex; flex-wrap: wrap; flex-direction: column}
+    #maininf{width: 100%; display: flex; flex-direction: column;
+    
+    }
+    #mainart{width: 100%;}
+    #keszulo {  
+        margin: auto;
+        width: fit-content !important;
+        margin-top: 10%;;}
+        .ikontarto{position: absolute;}
+    #container{width: 100%;}
+      .hero .grid{display: flex; flex-direction: column-reverse; text-align: center;}
+      .infostrip .items{grid-template-columns:1fr}
+      .features .grid{grid-template-columns:1fr}
+      .steps .grid{grid-template-columns:1fr}
+      .ts-grid{grid-template-columns:1fr 1fr}
+      .cta-footer .cta-card{flex-direction:column; text-align:center}
+      #logokulso{width:180px;height:180px}
+      #logobelso{width:160px;height:160px;font-size:180%}
+      .sidebar{flex-direction: column; position: absolute;height: calc(99vh); background: linear-gradient(45deg, #411a00, transparent) }
+      .sidebar .sidebar-header{display: flex; margin-bottom: 30px !important; margin-top: 30px;}
+      .sider .collapsed{position: relative; }
+         .sidebar.collapsed .nav-item { display: none;
+  
+  }
+  
+      .sidebar-nav .nav-list {
+                width: 100% !important;
+     
+        align-items: flex-start;
+    flex-direction: column;}
+    .sidebar-nav{
+        flex-direction: column;
+        margin-bottom: 50px;
+}
+.sidebar.collapsed .sidebar-nav .nav-tooltip {display: none !important;}
+.sidebar.collapsed .sidebar-nav .nav-link{transform: translateX(-150%);}
+
+  .sidebar.collapsed .sidebar-nav .nav-tooltip {
+    display: block; height: calc(99vh);
+  }
+  .sidebar .mobillogo{position: relative;
+    
+    width: 100%;
+    height: fit-content;
+ 
+    justify-content: center;
+    align-items: center;}
+ 
+ .hero-bg{height: 100vh;      }
+.sidebar.collapsed { height: calc(10vh);
+ background: transparent;}
+.sidebar-nav .nav-link {
+color: #ffffff;
+font-size: large;
+     
+    }
+
+    }
+        .hero-bg{position:fixed; inset:0 -20vw auto -20vw; height:70vh; z-index:-1;    transition: all 0.3s;  background-image: url('media/dragon-scales.svg'); }    
+ /*  @media (max-width: 1024px) { 
+    #logobelso{
+        width: 200px;
+        height: 200px;
+        font-size: 230%;
+    }
+    .info{margin-top: 50px;
+    text-align: center;}
+    #kont{height: fit-content;}
+   
+    .nav-icon {
+      font-size: 24px !important;
+    }
+   
+    .kulso-border{    
+        top: 10%;
+        z-index: 1000;
+        left: 25%;
+        background: #ff6500;
+    }
+    .sidebar {
+      height: 56px;
+      
+      overflow-y: hidden;
+      scrollbar-width: none;
+      border: none;
+      background-color: transparent;
+      
+      max-height: calc(100vh - 26px);
+    }
+  
+    .sidebar.menu-active {
+      overflow-y: auto;
+    }
+  
+    .sidebar .sidebar-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-radius: 16px;
+      background:#2d151587;;
+      background: #ff6500e3;
+      padding: 8px 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  
+    .sidebar-header .header-logo img {
+      width: 40px;
+      height: 40px;
+    }
+  
+    .sidebar-header .sidebar-toggler,
+    .sidebar-nav .nav-item:hover .nav-tooltip {
+      display: none;
+    }
+    
+    .sidebar-header .menu-toggler {
+      display: flex;
+      height: 30px;
+      width: 30px;
+
+    }
+  
+    .sidebar-header .menu-toggler span {
+      font-size: 1.3rem;
+    }
+  
+    .sidebar .sidebar-nav .nav-list {
+        margin: auto;
+        border-radius: 20px;
+        background-color:   #030200cf  }
+  
+    .sidebar-nav .nav-link {
+      gap: 10px;
+      padding: 10px;
+      font-size: 0.94rem;
+    }
+  
+    .sidebar-nav .nav-link .nav-icon {
+      font-size: 1.37rem;
+    }
+  
+    .sidebar-nav .secondary-nav {
+      position: relative;
+      bottom: 0;
+      margin: 40px 0 30px;
+      margin-top: 0px;
+    }
+    .nav-list .secondary-nav{
+      margin-top: 0px !important;
+    }
+
+
+    #men{    position: sticky;
+        top: 0;
+        z-index: 500;
+        display: flex
+    ;
+        border-radius: 22px;
+        align-content: center;
+        align-items: center;
+        justify-content: center;
+    margin: auto;}
+    
+
+  } */

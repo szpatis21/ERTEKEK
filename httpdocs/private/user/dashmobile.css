@@ -1,0 +1,184 @@
+  @media (max-width: 1024px) {
+      .layout {
+    grid-template-columns: 1fr;
+     grid-template-areas:
+    "c"
+    "a"
+    "b";
+    margin: 1vh;
+    gap: 1vh;
+  }
+  .savos{height: fit-content; padding: 0px;}
+  .savdiv{height: fit-content;}
+.search-bar{padding: 0px; width: 95% !important;}
+    #men{margin: auto;}
+    .meglevok{width: 18vh; height: 18vh;     font-size: 80%;
+      font-family: auto;}
+    .savdiv{width: 18vh; height: 4vh;}
+    .sharing .inek {height: 50%;
+      width: 100%;flex-direction: column;     justify-content: space-around !important;}
+      #kuldendo {        width: 90%;
+        height: fit-content;
+        padding: 4px;
+        margin: auto;
+        border-radius: 7px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+        gap: 5px;
+        }
+        .main{width: 100%;}
+#keszulo{        margin-top: -5% !important;}
+        #kuldendo span {font-size: 70%; color: #ff7207; font-style: italic;}
+        .oldDiv, .newDiv{ min-height:25px;  display: flex; font-size: x-small !important; padding: 2px !important; margin: 0px !important;
+              flex: 5 1 !important; max-width: 95px; align-items: center;}
+        #uj4{width: 100%;}
+    
+        .sharing {
+          flex-wrap: wrap;}
+          #add, #add2 {
+          font-size: small !important;}
+          #mail{font-size: 65%;padding: 0px;}
+          #nevet{ padding: 10px 5px 0px 5px;   margin: 0px 5px 0px 0px;}
+          .sharing .inek div{margin: 0px;}
+    .info{display: none !important}
+    .mobi{
+ 
+    width: 90% !important;
+    justify-content: center !important;}
+    #nevet select{ width: 100%; font-size: small;}
+    #nevet, #legordulo2 {justify-content: space-between;}
+    .logo{font-size: small;}
+    #felbukkano,#felbukkano2,#felbukkano3,#felbukkano4{        width: 98%;
+
+        margin: 0%;}
+    #go button {height: 40px; margin: auto};
+    .meglevok{width: 15vh;
+      height: 15vh;}
+      #msg{
+        right: 0%;
+        bottom: 0%;
+        height: 15%;
+        display: flex;
+        justify-content: center;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        
+        align-content: space-between;      align-content: flex-start;
+        border: none;
+        border-radius: 12px;}
+        #msg label{font-size: x-small !important; height: 10px;  padding: 5px;  font-family: 'Times New Roman', Times, serif;           width: 120px;}
+        #msg div{flex-direction:row}
+        .sharing .gyikvalasz p {    font-size: small;
+    margin: 5px;
+    width: 90%;
+}
+.inner-div{
+justify-content: space-evenly !important}
+#inner-share-select2{width: 100%; font-size: small;}
+        #msg input {
+          height: 15px;
+          width: 15px;
+      }#msgtxt {        width: 275px !important;
+        height: 70px !important; font-size: small; }
+#hiddenmsg{height: fit-content;
+  text-align: center;
+  font-size: x-small;
+  width: 140px;
+  font-family: 'Times New Roman', Times, serif;
+  border-radius: 7px;
+  height: 10px;
+  padding: 5px;
+  font-weight: normal !important;
+;}
+      #ujinek2 .inek div{margin: 5px;}
+      #go2 button{width: 75%;
+        height: 40px;}
+        .ex, .ex2{    margin: 0px !important;
+          font-size: xx-small !important;
+          border: none !important;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 5px !important;
+          padding: 2px;
+          position: absolute !important;
+          top: -5px;
+          height: 5px !important;
+          right: -5px;
+          color: #ffffff !important;
+          background: #004e00 !important;
+          font-weight: bolder !important;
+          font-family: arial !important;
+          border-radius: 50px !important;}
+          .ex2 {          background: #ff6a00 !important;
+          }
+          .fo{font-size: small !important;}
+#felbukkano5{ 
+  flex-direction: column;
+}
+.szemegy {
+    width: 100%;
+    margin-top: 10%;
+}
+#maininf {
+    width: 100% !important;
+    margin-top: 0px !important;
+        background: white !important;
+}
+.kozep{height: fit-content !important;}
+.kozepc{height: fit-content !important;
+        padding: 2% 0%;}
+        .kozepc div{justify-content: center;}
+    .sidebar .sidebar-header{margin-top: 0px;}
+    .picik{flex-direction: column;}
+.gomb{width: 120px; height:5vh;margin: auto;}
+.sidebar{position: fixed;} 
+.udv {
+    display: flex
+;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    height: 100%;
+    justify-content: flex-end;}
+.munka{flex-direction: column;}
+.olvaso{width: 100%; height: 85%;justify-content: space-evenly; }
+.felso{flex-direction: row-reverse; padding-bottom: 20px;
+ height: 15% !important;
+align-items: center; width: 96%;
+}
+#lapozo{margin-top: 50px;}
+search-bar{width: 100%;}
+.logo{margin: 10px; font-size: small; font-weight: normal;}
+.modules{height: 14vh; width: 14vh; gap: 5px; }
+.modulebutt .material-symbols-rounded {font-size: 80%;}
+#lapok{width: 100%; margin-top: -3vh;}
+.sta,.grap, .gyik{ font-size: small;}
+
+.meglevok .cheking {width: 15px;
+    height: 15px;}
+    input[type="checkbox"]:checked::after {
+        top: 1px;
+    width: 3px;}
+    .outer-div{height: 100%;}
+
+
+.sta{    text-align: center;
+}
+      #pergo-container{  font-size: small;
+}
+#extremeBox{flex-direction: column !important; gap:0px}
+#szumm-chart-container div{display: flex; gap: 16px;align-items: stretch;}
+#magyarazat{flex-direction: column !important;}
+.savos{     
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:12px;  
+  grid-template-areas: "a a a"
+   "b c d";
+}
+#ertekek0{ grid-area: a;}
+#ujert0{ grid-area: c;}
+#accunt0{grid-area: b;}
+#hozzaj0{grid-area: d;}
+}

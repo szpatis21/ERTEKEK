@@ -1,0 +1,1334 @@
+#felbukkano, #felbukkano2, #felbukkano3, #felbukkano4{
+  display: none;
+  transition: all 0.5s;
+  opacity: 0;
+  border-radius: 12px;
+  position: absolute;
+  opacity: 1;
+  scale: 1;
+  background: white;      width: 100%;
+  height: 100%;
+  margin: auto;
+  border: 6px solid #553800;
+  justify-content: center;
+  align-items: center;
+}
+.inek .gyikcim {font-size: medium;    color: #ff9707;
+}
+.aktiv-tartalom h3{color: #ff9707;}
+#ujinek .gyikvalasz, #ujinek .gyikcontent{margin: 0px; padding: 0px;}
+#tartalom{box-shadow: #000000c4 0px 0px 20px 13px;}
+.infocard h3{text-align: left;}
+#tartalom, #tartalom2, #tartalom3,#tartalom4,#tartalomAnal{    
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  align-content: center;
+  }
+#uj,#uj2,#uj4{   
+  display: flex;
+  min-height: 110px;
+  height: fit-content;
+  padding: 5px;
+  justify-content: center;
+  align-items: flex-start;
+  flex-direction: column;
+  width: 90%;
+  height: 80%;
+  font-family: arial;
+  font-weight: bold;
+  justify-content: space-around;
+  color: black;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;}
+  #ujcim{transition: all 0.3s;
+    text-align: center;
+    margin: auto;
+    font-size: large;}
+      #ujcim:hover{scale: 1.1;}
+       #ujinek2,#ujinek3, #ujinek4  { 
+        display: none ;
+          scale: 0.4;
+          width: 100%;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          transition: all 0.5s;
+      }
+      .inek{
+          display: flex;
+          flex-direction: column;
+          position: relative;
+          z-index: 20;
+          width: 100%;     
+          background: white;
+    border-radius: 12px;
+    padding: 3vh;
+      }
+      .inek label{    font-weight: normal;
+    font-family: system-ui;}
+      .inek input, .aktivp input{     
+         height: 30px;
+    width: 60%;
+    border: 0px transparent solid;
+    border: 1px solid orange;
+    border-radius: 7px;
+    font-family: system-ui;}
+      .inek input::placeholder {color: darkgray; font-size: 11px; font-family:'Times New Roman', Times, serif;}
+      .inek div{
+          margin: 15px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: relative;
+      }
+#eddigiek, #eddigieStatic{
+  height: 80%;
+  width: 95%;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  align-items: flex-end;
+  flex-direction: column-reverse;
+  flex-wrap: wrap;     
+  border: 2px solid orange;
+  border-radius: 15px;}
+      #legordulo{margin: auto; height: 5%;} 
+      select{
+          width: 200px;
+          background:whitesmoke;
+          color: white;
+          font-family: 'Times New Roman', Times, serif;
+          height: fit-content;
+          font-size: medium;
+          text-align: center;
+          border-radius: 5px;
+          color: black;
+      }
+      #kitneve .savdiv {display: none;}
+      .outer-div {
+          width: 100%;
+          padding-bottom: 4px;
+          height: 100%;
+          overflow: hidden;
+        }
+/*         .main{width: 50%; margin-right: 1%;}
+ */        .olvaso{
+          width: 100%;     
+          display: flex;
+          height: 100%;
+          justify-content: space-between;
+          flex-direction: column;};
+        .inek label{    
+          background-color: white;
+          padding: 6px;
+          border-radius: 7px;
+          margin: 4px;
+          font-size: small;
+          color: black;
+          text-align: center;}
+        .inner-div, .inner-div2 {
+        position: relative;
+        display: flex;
+        width: 99%;
+        height: 99%;
+        overflow-y: scroll;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-start;
+        align-content: flex-start;
+        flex-direction: row;
+        }
+      .olvaso .inner-div {margin: auto; background: linear-gradient(293deg, #ff630180 0%, #ff9102 100% 100%);}
+      .meglevok{    
+        
+        display: flex;
+            margin: 8px;
+            width: 20vh;
+            height: 20vh;
+            position: relative;
+            flex-wrap: wrap;
+            font-size: small;
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: normal !important;
+            color: black;
+            text-align: center;
+            border-radius: 12px;
+            background-color: #ffffff;
+            cursor: pointer;
+            transition: all 0.3s;
+            align-items: center;
+            align-content: center;
+            flex-direction: column;
+            justify-content: center;
+        }
+.meglevok strong {    color: #454545;}
+.meglevok:hover{color:#ff7b00}
+.savdiv{    
+  white-space: normal;  
+      position: absolute;
+      z-index: 0;
+      right: 0;
+      top: 0;
+      width: 20vh;
+      border-radius: 10px;
+      border-bottom-left-radius: 0px;
+      border-bottom-right-radius: 0px;
+      justify-content: space-evenly;
+      align-items: center;
+      align-content: center;
+      flex-wrap: nowrap;
+      flex-direction: row;
+      height: 5vh;
+    font-size: smaller;
+    text-align: center;
+    color: #ffffff;
+    text-shadow: #ffffff73 0px 0px 3px;
+    font-family: system-ui;
+}
+
+.edit,.deleted,.share,.mail,.print,.picture_as_pdf{cursor: pointer;}
+.deleted:hover, .edit:hover,.share:hover,.mail:hover,.print:hover,.picture_as_pdf:hover{ transition: all 0.2s;color: #5f210e;}
+#go label {font-family: auto;
+    font-weight: normal;
+    font-size: small;
+    text-align: justify;
+    width: 80%;
+}
+.kijelentem{display: flex;  
+  flex-direction: row-reverse; 
+  justify-content: space-evenly;
+   align-items: center;
+   padding: 10px;    
+   border-bottom: #ff000087 5px solid;
+    border-radius: 15px;     
+    background: white; z-index: 20;
+    margin: 3vh 0vh;
+  margin-bottom: 0vh;}
+.tart{display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;}
+.inner-div::-webkit-scrollbar { width: 12px; }
+.inner-div::-webkit-scrollbar-track { background: rgb(255, 255, 255);border-radius: 6px;}
+.inner-div::-webkit-scrollbar-thumb {
+    background: #ff6500;
+    border-radius: 6px;
+    transition: all 0.3s;
+    cursor: pointer;
+    margin-top: 10px;
+    border: 2px solid #ffffff;
+}
+#kilep, #kilep2, #kilep3, #kilep4{    
+  box-shadow: white 0px 0px 0px 2px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 10px;
+  color: #ff001a;
+  font-size: large;
+  font-family: cursive;
+  background-color: whitesmoke;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;}
+ #kilep:hover{scale: 1.1;}
+ .gobut6{width: fit-content;
+    font-size: small;
+    background: #ff9707;
+    border-radius: 10px;
+    color: white;
+    font-weight: bold;
+        width: 15% !important;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    text-align: center;
+    font-family: system-ui;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s;
+    cursor: pointer;}
+.gobut6:hover{color: #ff9707; background-color: white; border: 1px solid grey;}
+
+  #go button, #go2 button, #go4 button, .gobut5{    
+    box-shadow: #ffbd16 0px 0px 11px 10px;
+    align-content: center;
+    background: #f1f1f1;
+    position: relative;
+    border-radius: 6px;
+    aspect-ratio: 1 / 1;
+    color: #4b5563;
+    font-size: medium;
+    width: 15vh;
+    cursor: pointer;
+    font-family: "Montserrat Subrayada", sans-serif;
+    transition: all 0.3s;
+    font-weight: bolder;
+    margin: 0px auto 0px auto;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+  }
+  #export-pdf{display: none; align-content: center;flex-wrap: wrap}
+  .gobut5{margin: 10px 0px;font-size: x-small;width: fit-content;}
+  #go button:hover, #go2 button:hover,#go4 button:hover, .gobut5:hover{
+      scale: 1.06;
+      color: white;
+      background-color: #ff9707;
+      box-shadow: whitesmoke 0px 0px 0px 2px;
+  }
+  #go, #go2, #go4{display: flex;width: 100%; justify-content: center;}
+      #fo_kategoriak {
+          margin: 0%;
+          height: 90vh;
+          display: flex;
+          justify-content: center;
+          flex-wrap: wrap;
+          align-items: center;
+          align-content: center;
+        }
+      body{margin: auto;}
+      nav{width: 100%;}
+      a:visited{color: white;}
+        nav button{    
+          border: none;
+          color: rgb(0, 0, 0);
+          background: transparent;
+          font-family: "Montserrat Subrayada", sans-serif;
+          font-size: medium;
+          cursor:pointer;
+      }
+      nav button:hover{color:orangered}
+      .savos{    display: flex;
+        background-position: center;
+    background-image: url(/media/dragon-scales.svg);
+    grid-area: c;
+    gap: 3vh;
+    padding: 3vh 0vh;
+    border: 0vh solid black;
+    height: 87vh;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;}
+    .layout {
+        display: grid;
+  height: 94vh;
+  gap: 5vh;
+  margin:1vh 3vh 3vh 3vh;
+    grid-template-columns:  0.1fr 1fr 1fr;   /* vagy 2fr 2fr 1fr ugyanazt adja */
+    grid-template-areas: "c a b";
+
+  }
+
+      .cim {
+        font-family: "Montserrat Subrayada", sans-serif;
+        font-size: small !important;
+        display: flex;
+        transition: all 0.3s ;        backdrop-filter: blur(2px);
+        align-items: center;
+        margin: 0px 5px;
+        position: relative;
+        background: transparent;
+    width: 100%;
+    height: 100% !important;
+    border-radius: 11px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    padding: 1vh;
+    font-size: medium;
+    border:1px solid white;
+    align-items: center;
+    margin: 0px 0px !important;
+    justify-content: center;
+      }
+        .leiras {    
+          display: flex;
+          font-family: auto;
+          font-weight: 600;
+          margin: auto;
+          font-size: small !important;
+          background-color: #000000a6;    height: 35%;
+          width: 100%;
+          border-bottom-left-radius: 11px !important;
+          border-bottom-right-radius: 11px !important;
+          margin-block-start: auto;
+          justify-content: center;
+          align-items: center;
+        }
+       
+        .fo3:hover{transform: scale(1.02); box-shadow: 0px 0px 10px 2px #00000052;}
+     
+      .category-container .fo.megjelenik {opacity: 1; transform: translateY(0);}
+      #mailerr{color: darkgreen;
+        font-weight: 100;
+        font-family: auto;
+        font-size: smaller;
+        position: absolute;    
+        margin: auto;}
+       #add, #add2{font-family: auto;
+        background: #ff6500;
+        text-align: center;
+        width: 85% !important;
+        font-weight: 100;
+        padding: 1px;
+        font-size: medium !important;
+        color: white;
+        margin: 2px !important;
+        transition: all 0.3s;
+        border: 2px solid white;
+        border-radius: 7px;
+        text-align: center !important;
+        display: flex;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 2px 2px 3px 1px #2121217d;}
+        #add:hover, #add2:hover{ background-color: white; color: black;}
+        #nevet{display: flex;
+              align-content: center;
+              justify-content: center;
+              align-items: center;
+              flex-direction: row;}
+      #ujinek4, #ujinek4 form {display: flex; height: 100%; SCALE: 1;flex-direction: column;}
+      #gobut4{width: 110px;height: 45px !important;}
+.ex, .ex2{    
+  cursor: pointer !important;
+  margin: 0px !important;
+  font-size: xx-small;
+  border: none !important;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10px !important;
+  padding: 2px;
+  position: absolute !important;
+  top: 0px;
+  right: 0px;
+  color: #ff9707 !important;
+  background: transparent !important;
+  font-weight: bolder !important;
+  font-family: arial !important;
+  transition: all 0.3s;}
+.ex2{  color: whitesmoke !important;}
+.ex:hover, .ex2:hover{ scale: 1.5;}
+      .sharing{display: flex;height: 90%; flex-direction: column;}
+            .sharing .gyikcontent, .sharing .gyikvalasz{margin: 0px; padding: 0px;}
+            .sharing .gyikcim{    
+              padding: 5%;
+              font-family: "Montserrat Subrayada", sans-serif;
+              font-size: larger;
+              margin: 10PX;
+              font-weight: bolder;
+              padding-bottom: 0px;
+              margin-bottom: 0px !important;
+              }
+      .sharing .inek {
+        width: 100%; 
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content:space-around; 
+      align-items: center;}
+          .sharing p{margin: 0px;}
+          .megoszto_dob{    
+    background: #ffa5001a;
+    border: 1px solid orange;
+    border-radius: 12px;
+    margin: 0px 5px;
+    height: 100px;
+    flex-direction: column !important;
+    margin: 0px 5px !important;
+    flex-wrap: wrap;
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+    text-align: center;
+    width: 50%;} 
+      .megoszto_dob input{height: 25%;margin: auto;width: 90%;}
+      #kuldendo {
+        width: 100%;    
+        background: whitesmoke;
+        cursor: auto !important;
+        border: 2px #004e00 double;
+        display: flex;
+        align-content: flex-start;
+        flex-wrap: wrap;
+        }
+        #kuldendo span {
+          margin: auto;
+          width: 100%;
+          text-align: center;
+          color: black;
+          font-family: auto;}
+        #kuldendo div, .oldDiv{
+          position: relative;        
+          text-align: center;    
+          color: white;
+          font-size: smaller;
+          background: darkgreen;
+          font-family: auto;
+          font-weight: normal;
+          border: 1px solid #ff7300;
+          border-radius: 5px;
+          width: fit-content;
+          height: fit-content;
+          flex:1 1 auto;
+          padding: 5px;
+          margin: 5px;
+          margin-right: 10px;
+          cursor: auto; }
+      #go4{height: 10%;}
+      .oldDiv{ background-color: #ff98001a !important; color: #000000 !important; font-weight: bolder !important;}
+      .info{    
+        font-family: auto;
+        color: black;
+        font-weight: normal;
+        font-size: small;
+        display: block !important;
+        background: white;
+        padding: 5px;
+        margin: 0px !important;
+        text-align: center;
+        margin-top: -3px;
+      }
+      .infocard{margin: 1vh; cursor: pointer; transition: all 0.3s;}
+      .infocard:hover{color:orangered; transform: translateX(10px);}
+     .lapok .info-strip{    display: flex;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-evenly;}
+.toast {
+  position: fixed;
+  bottom: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #000000d1;
+  color: white;
+  font-family: "Montserrat Subrayada", sans-serif;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: smaller;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+  z-index: 1000;
+}
+.toast.show { opacity: 1;}
+.toast.hidden { display: none;}
+#msg{  
+    margin: 10px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    border: 2px solid white;
+    border-radius: 12px;
+    align-items: center;
+    text-align: center;
+    align-content: flex-end;}
+      #msg input{height: 20px; width: 20px;}
+      #msg div{margin: 0px;display: flex;align-items: center;width: 50%;}
+      #msg label{ font-family: 'Times New Roman', Times, serif; font-weight: normal;}
+      #hiddenmsg{
+        border: 2px white solid;
+        padding: 5px;
+        border-radius: 10px;
+        font-size: smaller;
+        color: rgb(255, 81, 0);
+        background-color: whitesmoke;
+        justify-content: center;
+        font-family: auto;
+        height: 10px;
+      display: none; transition: all 0.3s;}
+      #hiddenmsg:hover{ background-color: orange; color: whitesmoke;}
+      #msgtxt{  
+        width: 100%;
+        height: 100px;
+        display: flex;
+        font-family: 'Times New Roman', Times, serif;
+        border: 2px solid rgb(0, 100, 0);
+        border-radius: 7px;
+        margin: 0px 5px;}
+.pdfiksz,#mainart{display: none !important;}
+.diag{height:40%; margin: auto;width: 100%;}
+#szumm-radar{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-content: center;
+    justify-content: center;
+    align-items: center;}
+#szumm summary { cursor: pointer; font-weight: 600; }
+.szumm{
+    background: white;
+    padding: 10px;
+    text-align: center;
+    font-style: italic;
+    font-size: medium;
+    border-radius: 12px;
+    height:50%;}
+  .szumm li {font-size: small;}
+  #szumm-chart-container{height: fit-content;margin: auto;width: 100%;}
+    #szumm-nagy-fa{    
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    font-style:italic;
+    justify-content: center;
+    align-items: center;}
+    .szumm-korok{    
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: center;}
+#szumm-fa{width: 100%;}
+.help {
+  visibility: hidden;
+  opacity: 0;
+  width: max-content;
+  max-width: 200px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  text-align: center;
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 14px;
+  border-radius: 6px;
+  padding: 6px 10px;
+  position: absolute;
+  z-index: 100;
+  bottom: 125%; 
+  left: 50%;
+  transform: translateX(-50%);
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.help::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
+}
+.modulebutt:hover .help {visibility: visible;opacity: 1;}
+  .modulebutt {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  cursor: pointer;
+}
+#go .material-symbols-rounded,#gobut2 .material-symbols-rounded , #gobut4 .material-symbols-rounded,.gobut5 .material-symbols-rounded {    position: absolute;
+    color: #ff66001a;
+    top: 50%;
+    font-size: xxx-large;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+  .modulebutt .material-symbols-rounded{font-size: 24px; z-index: 50;} 
+    .modules{
+    display:none;
+    height: 19vh;
+    width: 19vh;
+    grid-template-areas:
+        "i1 i1 i1"
+        "i2 i3 i4"
+        "i5 i6 i7";
+    gap: 8px;
+    box-shadow: 0px 0px 12px 2px grey;
+    opacity: 0;
+    padding: 10px;
+    color: whitesmoke;
+    border: 2px solid whitesmoke;
+    border-radius: 12px;
+    background: linear-gradient(45deg, #ff6500e8 0%, #ff9800b5 100%);
+    backdrop-filter: blur(1px);
+    transition: all 0.7s;}
+.modulebutt:nth-child(1) { grid-area: i1; }
+.modulebutt:nth-child(2) { grid-area: i2; }
+.modulebutt:nth-child(3) { grid-area: i3; }
+.modulebutt:nth-child(4) { grid-area: i4; }
+.modulebutt:nth-child(5) { grid-area: i5; }
+.modulebutt:nth-child(6) { grid-area: i6; }
+.modulebutt:nth-child(7) { grid-area: i7; }
+.fo_edit{
+    padding: 2px;
+    border-radius: 10px;
+    color: #000000;
+    width: 71px;
+    background-color: white;
+    transition: all 0.3S;
+}
+.fo_edit:hover{width: 100%; color: black; background-color: white;box-shadow: 0px 0px 6px 3px rgb(255, 128, 0);}
+
+.alap {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  height: fit-content;
+}
+#kitneve input{display: none;}
+body::before { background: linear-gradient(293deg, rgb(255, 52, 0) 0%, rgb(255, 171, 2) 100%, rgb(255, 171, 2) 100%)}
+.munka {
+width: 100%; 
+background:left;
+background-image: url('/media/dragon-scales.svg');
+height: 87vh;
+display: flex;
+padding: 0%;
+border-radius: 12px;  
+justify-content:space-around
+}
+
+.helpdesk {width: 19%; background-color: #000000c9;}
+.udv{    
+  display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: auto;
+    height: 100%;
+    justify-content: space-around;
+}
+.felso{display: flex;
+    width: 100%;
+    height: fit-content;
+    border-radius: 12px; 
+    background: #ffffffde;
+    margin:  0% auto;
+    }
+.search-bar {
+  display: flex;
+    align-items: center;
+    padding: 4px;
+    width: 55% !important;
+    background-color: white;
+    border: 2px solid #ff6500;
+    border-radius: 10px;
+    box-shadow: white 0px 0px 8px 1px;
+}
+.search-icon {color: #ff7207;font-weight: bold;font-size: x-large;}
+.search-input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  font-style: italic;
+  font-size: smaller;
+  font-family: 'Times New Roman', Times, serif;
+  background: transparent;
+}
+.logo{
+    display: flex;
+    font-family: auto;
+    font-size: medium !important;
+    font-style: italic;
+    color: #ff6500;
+    font-weight: bold;
+    font-family: system-ui;
+}
+.gomb{display: flex; width: 90%; aspect-ratio: 1/1;    box-shadow: 0px 0px 5px 1px #ffeede; border-radius: 11px; }
+.meglevok .cheking , .cheking2{
+     position: absolute;
+     display: none;
+    top: 1px;
+    right: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: whitesmoke;
+}
+.cheking2{display: flex;}
+input[type="checkbox"] {
+border-radius: 4px;
+border: 1px solid #ff6500;
+appearance: none;
+cursor: pointer;
+box-shadow: inset 2px 2px 1px -1px orange;
+width: 20px;
+height: 20px;
+position: relative;
+}
+
+input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+input[type="checkbox"]:checked::after {
+  display: block;
+  right: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid rgb(255, 0, 0);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.olvaso .gyikcim{    
+   text-shadow: 0px 0px 5px #f3f3f3;
+    color: #606060db;
+   text-align: center;
+    border-radius: 5px;
+    margin-top: none;
+    margin: 3px auto;
+    padding: 0px;
+    width: 95%;
+    border-top: none;}
+#lapozo{    
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    background: #ff9707;
+    color: white;
+    font-size: small;
+    padding: 0px 3px;
+    align-items: center;
+    height: 6%;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    align-content: flex-start;
+}
+.csopi{   
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;}
+    .fejlec2{    
+    width: 60%;
+    font-size: small;
+    padding: 5px;
+    background: #ffefde;
+    margin: 1% 0%;
+    font-family: system-ui;
+    border-radius: 7px;
+        box-shadow: #5353537d 6px 3px 4px 0px;
+
+    color: grey;
+    font-weight: bold;
+   }
+.doboztart{display: flex; flex-wrap: wrap;}
+.kozep{
+  background: #ffeede; 
+  width: 100%; 
+  margin: 0px auto;  
+  border-radius: 9px; 
+  display: flex; 
+  font-size: small;}
+.kozepb{display: flex;align-items: center;flex-direction: row-reverse}
+ .kozepc{   
+   color: grey;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    font-weight: bold;
+    width: 100%;
+    margin-right:3vh;
+    font-family: system-ui;
+    align-content: center;
+    justify-content: space-around;
+    align-items: center;
+    height: 20%;
+    position: sticky;
+  }
+  .kozepc select:hover {color: orange;}
+  .kozepc select {    
+    width: 150px;
+    font-weight: bold;
+    color: orange;
+    transition: all 0.3s;
+    border: 1px solid #ff970700;
+    cursor: pointer;
+    font-family: system-ui;
+    font-size: small;
+    background: #fff0de;}
+    #swics{display: none; width: 35% !important;}
+  .kozepc div{margin: 0px 3%;
+    width: 100%;
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: flex-end;}
+    .kozepc span {color: orange; text-align: center;}
+    .grap, .sta, .gyik{
+    border-top: 2px solid #ffffffb8;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    display: flex;
+    font-family: 'Times New Roman', Times, serif;
+    cursor: pointer;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    text-shadow: 0px 0px 5px #ffece0;
+    font-size: 104%;
+ }
+ .aktiv{
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    color: black;
+    background-color: white;
+    transition: all 0.3s;
+ }
+ tbody{background-color: white;}
+ .olvaso .inner-div{width: 100%;height: 100%;border-radius: 12px;}
+ #lapok{display: flex;
+  background-image:  url(/media/dragon-scales.svg);;
+  position:relative;
+    flex-wrap: wrap;
+    flex-direction: row; height: 87vh;}
+    #fulek{height: 82vh; width: 100%;}
+    #osszesitett, #gyik{
+    display: none;
+    height: 90%;
+    background: rgba(255, 255, 255, 0);
+    font-family: auto;
+    flex-direction: row;
+    border-bottom-left-radius: 13px;
+    text-align: center;}
+.ikontarto{display: none !important;}
+#gyik{flex-direction: column; display: flex;justify-content: space-around;border-bottom-left-radius: 13px; height: 100%; gap: 4vh;}
+    .lvl0, .lvl1  {    
+      font-family: auto;
+      text-transform: uppercase;
+      font-weight: bold;
+ background: #f1f1f1;
+    color: #2d1515;
+      padding: 15px;}
+.lvl1 { text-transform: none; background: whitesmoke; padding: 10px;}
+/* ===== lvl0 (főtémakör) vastag keret ===== */
+.summary-matrix tr.group td:first-child  { border-left:  3px solid #333; font-size: medium !important; }
+.summary-matrix tr.group td:last-child   { border-right: 3px solid #333; font-size: medium !important; }
+.summary-matrix tr.group-start td        { border-top:   3px solid #333; font-size: medium !important; }
+.summary-matrix tr.group-end   td        { border-bottom:3px solid #333; font-size: medium !important; }
+/* ===== lvl1 (alkategória) vékonyabb keret ===== */
+.summary-matrix tr.subgroup td:first-child  { border-left:  2px solid #666; font-size: medium !important; }
+.summary-matrix tr.subgroup td:last-child   { border-right: 2px solid #666; font-size: medium !important; }
+.summary-matrix tr.subgroup-start td        { border-top:   2px solid #666; font-size: medium !important; }
+.summary-matrix tr.subgroup-end   td        { border-bottom:2px solid #666; font-size: medium !important; }
+.pct{margin:10px; color: orange;}
+.legend-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.8rem;
+  margin-top: 0.5rem;
+}
+.legend-badge {
+  display: flex;
+  align-items: center;
+  font-size: small;
+  font-family: 'Times New Roman', Times, serif;  background: #f1f1f1;
+  border-radius: 1rem;
+  padding: 5px;
+}
+  #felbukkano2 .gyikcim, #felbukkano3 .gyikcim, #felbukkano4 .gyikcim {text-align: center; margin: auto;}
+.szummcim{  display: none;
+    font-weight: bold;
+    margin: 15px;
+    justify-content: center;
+    text-decoration: underline;}
+.legend-badge .swatch { width: 12px;height: 12px;border-radius: 50%;}
+#radarLegend{position: relative;top: 0;}
+  .vizsgalt-tag {
+  display: inline-block;
+  background: #4c9add;
+  color: #fff;
+  padding: 4px 8px;
+  margin: 2px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+}
+#szummRadarChart{background-color: white;}
+.vizualBlokk{background-color: white;}
+#hirek, #gykerdesek{
+  display: flex;
+    width: 100%;
+    height: 60%;
+    margin: 0px 0px 0px 0px;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 15px;;
+    flex-direction: column;}
+     #hirek {border-top-left-radius:0px;border-top-right-radius: 0px; height: 40%;}
+    .gyikcim{
+      padding: 2%; 
+      font-family: "Montserrat Subrayada", sans-serif;     
+      font-size: larger;
+      margin: 10PX; 
+      font-weight: bolder;
+      text-decoration: underline; 
+      color: grey;
+}
+#gykerdesek .gyikcontent{padding: 10px; border-top: 1px solid #80808054; width: 100%;}
+.gyikkerdes{margin-bottom: 10px; color:rgb(0, 0, 0);
+font-family: Arial, Helvetica, sans-serif; font-weight: bold; text-transform:math-auto; }
+.gyikvalasz{color: #4b5563;font-style: normal;font-family: system-ui;}
+#hirek .gyikcontent, .inek .gyikvalasz {
+  padding: 10px 0px;  
+  font-weight: normal;   
+  font-style: italic; 
+  font-family: 'Times New Roman', Times, serif; 
+}
+.inek .gyikvalasz {text-align: center;}
+#pergo-container { width: 100%;height: 150px;overflow: hidden;position: relative;}
+.pergo-item {
+    font-style: italic;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    font-size: small;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    padding: 10px;
+    box-sizing: border-box;
+    font-family: 'Times New Roman', Times, serif;
+}
+.gyikcontent .material-symbols-rounded,  .inek .gyikvalasz .material-symbols-rounded {
+    font-size: 1.1em; 
+    vertical-align: middle;
+    display: inline-block;
+    margin: 0 4px;
+    color:orangered
+}
+.pergo-item.enter {color: rgb(38, 38, 38);opacity: 1;transform: translateX(0);border-top: 1px solid #80808054;}
+.pergo-item.exit {opacity: 0;border-top: black 1px solid;transform: translateX(-100%);}
+#radarFlexRow{width: 100%;}
+#radarFlexRow .legend-item {gap: 0.4rem 0rem;}
+  .holvagyok{      
+    text-shadow: 0px 0px 6px #ffffff99;
+    font-size: small !important;
+    font-style: normal !important;
+    width: 95%;
+    border-radius: 6px;
+    padding: 4px;    
+    color: #666 !important;
+    font-family: system-ui !important;
+    text-align: center;
+    font-weight: normal;}
+    .gyujto{
+      display: flex; 
+      width: 100%;
+      background-color: white;  
+      flex-direction: column-reverse;
+       justify-content: space-evenly;
+        align-content: flex-end;
+         align-items: center}
+        #osszesitett input{
+           text-align: center;
+    font-size: 22px;
+    width: 90%;
+    padding: 5px;
+    display: flex
+;
+    background: #ff470017;
+    box-shadow: 0px 0px 4px 1px #eea87b;
+    border: 1px solid orange;
+    border-radius: 10px;
+    color: orange;}
+  #pieLegend .legend-item{
+    color: white;
+    margin: 0px 5px;
+    padding: 2px 6px;
+    width: fit-content;
+    border-radius: 15px;
+    display: none;}
+     #osszesitett{width: 100%; height: 81vh; background-color: white;}
+     .switch {
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 20px;
+}
+
+/* Az alapértelmezett checkbox elrejtése */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* A kapcsoló háttere (a "csúszka") */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc; /* Szürke, ha ki van kapcsolva */
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px; /* Lekerekítés */
+}
+
+/* A kapcsoló gombja (a pöcök) */
+.slider:before {
+     position: absolute;
+    content: "";
+    height: 19px;
+    width: 19px;
+    left: 5px;
+    bottom: 1px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%; /* Teljesen kerek */
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* A kinézet, amikor a checkbox be van pipálva (bekapcsolt állapot) */
+input:checked + .slider {
+  background-color: #f39c12; /* Szép narancssárga szín */
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #f39c12;
+}
+
+/* A gomb elmozdulása, amikor be van kapcsolva */
+input:checked + .slider:before {
+  -webkit-transform: translateX(15px);
+  -ms-transform: translateX(15px);
+  transform: translateX(15px);
+}
+.folyamat{display: none;}
+#barLegend{    
+  display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    flex-direction: column;
+    justify-content: space-evenly;
+       font-size: smalle;
+    margin: 10px;
+    font-family: system-ui;}
+  #toggleBtn { 
+    display: none;
+    position: absolute;
+    bottom: 0%;
+    right: 0%;    font-size: small;
+    cursor: pointer;
+    background: transparent;
+    font-family: auto;
+    border: orange 2px solid;
+    border-radius: 6px;
+    box-shadow: #00000096 1px 1px 0px 1px;}
+.diagdobbutt{
+    cursor: pointer;
+    background: #ff7207;
+    color: white;
+    border-radius: 10px;
+    width: fit-content;
+    margin: auto;
+    padding: 7px;
+    margin-top: 12px;
+    box-shadow: 2px 2px 1px 2px #00000099;}
+#radarFlexRow .legend-bar{    gap: 0.4rem 0rem;}
+  #extremeBox{    
+    margin: auto;
+    width: fit-content;
+    padding: 5px;
+    font-size: small;
+    margin-top: 10px;
+  
+}
+#pieLegend.legend-bar {
+display: none;
+}
+.best{
+    font-family: system-ui;
+    font-size: small;}
+.worst{font-family: system-ui;
+    font-size: small;}
+
+.chart-legend.inline{
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  font-size: .9rem;
+}
+.chart-legend .legend-item{ display:inline-flex; }
+.chart-legend .swatch{
+  display:inline-block; 
+  width:.8rem; 
+  height:.8rem;
+  margin-right:.35rem;
+  border-radius:2px;
+  vertical-align:middle;
+}
+.chart-legend .sep{ opacity:.6; margin:0 .5rem; }
+.chart-legend strong{ font-weight:normal; }
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+#chart-container{border-radius: 0px !important;}
+#maininf{ width: 100% !important; height: 100%; display: none;}
+#keszulo {border-top-left-radius: 0px !important;}
+#keszulo .ikontarto{display: none;}
+#chart-container{height: 100% !important; border-radius: 0px;}
+
+    .leiras{border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px; font-size: small !important;}
+    .fo3{    
+  cursor: pointer; border-radius: 11px;
+  transition: all 0.3s;
+          display: flex;
+          flex-wrap: wrap;
+          align-content: space-between;
+          align-items: center;
+          justify-content: center;
+          font-weight: 900;
+          color: white;
+          text-align: center;
+          border: 1px solid white;
+          }
+              h1{text-shadow: 0px 0px  white;;}
+
+/* A gombok és az aktív állapot stílusa */
+/* A gombok stílusa változatlan */
+.gomb .cim {
+    cursor: pointer;
+    padding: 10px;
+    border-left: 5px solid transparent;
+    background: #ffeede;
+    transition: background-color 0.3s ease, border-left 0.3s ease;
+    color: black;}
+
+.gomb .cim:hover {    border-left: 5px solid whitesmoke;
+
+    background-color: #ff770000;
+    color: whitesmoke;
+}
+
+.gomb .cim.dobaktiv {
+    font-weight: bold;
+    color: white;
+     border-left: 5px solid whitesmoke;
+    background-color: #e7f1ff00;
+}
+
+.layout > article:not(.savos) {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-in-out, visibility 0s linear 0.3s;
+
+    pointer-events: none;
+}
+
+.layout > article.main {
+  background-position: left;
+    background-image: url(/media/dragon-scales.svg);
+    grid-area: a;
+}
+
+.layout > article.lapok {
+    grid-area: b;
+    background: white;
+    border-radius: 12px;
+    padding: 3vh;
+    font-size: smaller;
+}
+
+
+/* Az az osztály, ami láthatóvá teszi a tartalmat */
+.layout > article.aktiv-tartalom {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: auto;
+}
+.elso{position: relative;  overflow: hidden; backdrop-filter: blur(0px) !important;}
+.elso p{    width: fit-content;
+    background: #ffffff91;
+    padding: 3vh;
+    color: #000000;
+    border-radius: 13px;}
+    .grid .infocard{cursor:pointer;}
+    .grid .infocard:hover {color: orangered;}
+    .lapok .infocard{    box-shadow: 0 4px 16px rgb(2 6 23 / 16%);
+}
+.aktivp{
+
+
+}
+.aktivp div{      display: flex;
+    width: 100%;
+    align-content: space-around;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;}
+    .bezaras {    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 3vh;
+    color: red;
+    font-size: x-large;
+    font-weight: bold;
+    cursor: pointer;}
+    .aktivp input{margin: 3px;}
+.info-panel.aktivp {
+    transform: translateX(0);
+    opacity: 1;
+}
+.jelszo-wrapper {
+    position: relative; /* Ez a szülő elem a pozicionáláshoz */
+    display: flex;
+    align-items: center;
+}
+
+.jelszo-wrapper input {
+    width: 100%; /* Az input töltse ki a rendelkezésre álló helyet */
+    padding-right: 40px; /* Hagyjunk helyet az ikonnak az inputon belül */
+}
+
+.toggle-jelszo {
+    position: absolute; /* Az ikont abszolút pozicionáljuk a wrapperhez képest */
+    right: 10px; /* Jobb oldali távolság */
+    cursor: pointer; /* Változzon a kurzor, jelezve a kattinthatóságot */
+    color: #5f6368; /* Szolid szín az ikonnak */
+    user-select: none; /* Ne lehessen kijelölni az ikont, mint szöveget */
+}
+
+.toggle-jelszo:hover {
+    color: #202124; /* Sötétebb szín, ha fölé visszük az egeret */
+}
+.info-panel { 
+    width: 100%;
+  height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f1f1f1;
+    border-radius: 13px;
+    display: flex;
+    flex-direction: row-reverse;
+    flex-wrap: wrap;
+    align-content: stretch;
+    justify-content: center;
+  transform: translateX(10%);
+    opacity: 0;
+    transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  
+  }

@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Autentikációs hiba</title>
+                        <link rel="stylesheet" href="../both/both.css">
+
+                <link rel="stylesheet"  href="/reg/stylereg.css">
+
+
+<link rel="stylesheet" href="/private/main/main.css">
+
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    <style> 
+    .berorr{ 
+        
+    color: whitesmoke;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: larger;
+    text-align: center;
+    backdrop-filter: brightness(0.5);
+    backdrop-filter: blur(3px);
+    padding: 10px;
+    border-radius: 12px;
+    background-color: #00000061;
+} 
+     ul{ font-size: medium; font-family: Arial, Helvetica, sans-serif;font-weight: 900;
+    width: fit-content;
+    margin: auto;
+    margin-top: 20px;} 
+   </style>
+
+</head>
+
+<body>
+       <input type="hidden" id="menu-type" value="public">
+
+<div class="hero-bg" aria-hidden="true"></div>
+  <header class="nav">
+    <men id="men"></men>
+ </header>
+    <article style="width: 100%;">
+        
+    <div class="berorr">
+        Olyan oldalhoz kíván hozzáférni amihez nincs jogosultsága!
+        <ul>
+            <li>Ha nincs fiókja, regisztráljon</li> 
+            <li>Ha van, csak jelentkezzen be</li>
+
+        </ul>
+       
+
+    </div>
+    <article class="opening" >
+        
+                <div>
+                    <div class="kulso felt">
+                               <div class="belso" id="login">
+                                <div class="szoveg">
+                                    <span id="bejbutt"><span class="gold">B</span>ejelentkezek</span>
+                                    <div id="log">
+                                        <div class="inputs">
+                                            <input type="text" id="fnev" name="fnev" required placeholder="Felhasználónév" autocomplete="username">
+                                        </div>
+                                        <div class="inputs">
+                                            <input type="password" id="pass" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
+                                        </div>
+                                         <div class="lehetosegek">
+                            <select name="temakor" id="temakor" required>
+                                <option value="" disabled selected>Kérem válasszon témakört</option>
+                                <option value="1">Fejlesztő-nevelő oktatás</option>
+                                <option value="2">Tanulásban akadályozottak</option>
+                                <option value="3">Értelmileg akadályoztatottak</option>
+                            </select>
+                            <select name="szerepkor" id="szerepkor" required>
+                                <option value="3">Értékelő</option>
+                                <option value="2">Elemző</option>
+                                <option value="1">Adminisztrátor</option>
+                            </select>
+                        </div>
+                                                        <div id="error-message" style="color: whitesmoke; font-family: 'Times New Roman', Times, serif; font-size: x-small; text-align: center;"></div>
+
+                                        <button id="llog">Bejelentkezek</button>
+                                   
+                                        <button id="whbutt">Mi is a jelszavam...?</button>
+                                    </div>
+                                </div>
+                                
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="kulso" >
+                        <div id="regi0"  class="belso belso2">
+                            <div class="szoveg szoveg2"><span class="gold">R</span>egisztrálok</div>
+                        </div>
+                    </div>
+                </div>
+    </article>
+
+    <section class="alap">
+        <div class="al-alap">
+            <article class="kulso" id="regi">
+                
+                    <div class="choos">
+                        <legend>Válassza ki a regisztráció formáját:</legend>
+                        <div>
+                            <input type="radio" id="contactChoice1" name="contact" value="felh" />
+                            <label for="contactChoice1">Felhasználói regisztráció</label>
+
+                            <input type="radio" id="contactChoice2" name="contact" value="ceg" />
+                            <label for="contactChoice2">Intézményi regisztráció</label>
+                        </div>
+                    </div>
+                <form id="userRegi">
+                    <div id="magan">
+                        <legend>Alapadatok</legend>
+                        <div id="labels">
+                            <div class="allabel">
+                                <div>
+                                    <label for="user">Felhasználónév:</label>
+                                    <input type="text" id="user"  required>
+                                </div>
+                                <div class="err" id="felerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="password">Jelszó:</label>
+                                    <input type="password" id="password" placeholder="min 8 karakter, kisbetű, nagybetű, szám" required autocomplete="new-password">
+                                </div>
+                                <div class="err" id="passerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="pass2">Jelszó megerősítése:</label>
+                                    <input type="password" id="pass2" required>
+                                </div>
+                                <div class="err" id="passerr2"></div>
+                            </div>
+                            <legend>Kapcsolattartó adatok</legend>
+
+                            <div class="allabel">
+                                <div>
+                                    <label for="vez">Név:</label>
+                                    <input type="text" id="vez" required>
+                                </div>
+                                <div class="err" id="vezerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="mail">E-mail cím:</label>
+                                    <input type="email" id="mail" required>
+                                </div>
+                                <div class="err" id="mailerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="tel">Telefonszám:</label>
+                                    <input type="tel" id="tel" >
+                                </div>
+                                <div class="err" id="telerr"></div>
+                            </div>
+
+                            
+
+
+                        </div>
+                        <div id="kotelezo">
+                            <div>
+                                <legend>Finanszírozás</legend>
+                                <div id="choicelabel">
+                                    <div>
+                                        <input type="radio" id="szamlaChoice2" name="szamlaz" value="yesszamla" required/>
+                                        <label for="szamlaChoice2">Nem rendelkezem előfizetéssel</label>    
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="szamlaChoice1" name="szamlaz" value="noszamla" required/>
+                                        <label for="szamlaChoice1">Intézményi előfizetésem van, csak fiókot szeretnék.</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="regcode">
+                                <label for="regmail" >Adja meg az intézménynek küldött levélben szereplő kódot:</label>
+                                <input type="text" id="regmail">
+                                <div class="err" id="ragmailerr"></div>
+                            </div>
+
+                            <div id="szamla">   
+                                <div id="alszamla">    
+                                    <div >
+                                        <legend>Számlázási időszak</legend>
+                                    </div>
+                                    <div>
+                                        <div class="editbut"><input  type="radio" id="1ho" value="1" name="elofiz"> <label for="1ho">Havi<span> - x0000 forint/1 hó</span> </label></div>
+                                        <div class="editbut"><input  type="radio" id="6ho" value="6" name="elofiz"> <label for="6ho">Fél éves<span> - x0000 forint/6 hó</span></label></div>
+                                        <div class="editbut"><input  type="radio" id="12ho" value="12" name="elofiz"> <label for="12ho">Éves<span> - x0000 forint/12 hó</span></label></div>
+                                    </div>
+                                </div>  
+                                <div class="err" id="szamerr"></div>
+                            </div>  
+
+                            <div id="regind">
+                                <button class="editbut" id="regMagan">Regisztrálok</button>
+                                <div class="err" id="eredmenyelem"></div>
+                            </div>  
+                        </div>         
+                    </div>  
+                    
+                </form>
+                <form id="cegesRegi" >
+                    <div id="ceg"> 
+                        <legend>Intézményi/cég adatok:</legend>
+                        <div id="labels">
+                            <div class="allabel">
+                                <div>
+                                    <label for="int">Intézmény/cég neve:</label>
+                                    <input type="text" id="int" required>
+                                </div>
+                                <div class="err" id="interr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="mailCeg">Intézmény/cég e-mail címe:</label>
+                                    <input type="email" id="mailCeg"  required>
+                                </div>
+                                <div class="err" id="malilcegerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="telCeg">Intézmény/cég telefonszáma:</label>
+                                    <input type="tel" id="telCeg" required placeholder="+36001234567 /+06001234567 "> 
+                                </div>
+                                <div class="err" id="telcegerr"></div>
+                            </div>
+                        </div>
+                        <legend>Számlázási adatok</legend>
+                        <div id="labels">
+                            <div class="allabel">
+                                <div>
+                                    <label for="orsz2">Ország:</label>
+                                    <input type="text" id="orsz2" required>
+                                </div>
+                                <div class="err" id="orrErr2"></div>
+
+                            </div>  
+                        <div id="egybe">
+                            <div class="allabel">
+                                <div>
+                                    <label for="irsz2">Irányítószám:</label>
+                                    <input type="number" id="irsz2" required>
+                                </div>
+                                <div class="err" id="irszErr2"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="szekhely">Település:</label>
+                                    <input type="text" id="szekhely" required>
+                                </div>
+                                <div class="err" id="Err"></div>
+                            </div>
+                        </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="cim">Utca, házszám:</label>
+                                    <input type="text" id="cim" required>
+                                </div>
+                                <div class="err" id="cimerr"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="adosz">Adószám:</label>
+                                    <input type="text" id="adosz" placeholder=" 12345678-9-10" required>
+                                </div>
+                                <div class="err" id="aderr"></div>
+                            </div>
+                        </div>
+                        <legend>Kapcsolattartó adatai:</legend>
+
+                        <div id="labels">
+                            <div class="allabel">
+                                <div>
+                                    <label for="vez2">Kapcsolattartó:</label>
+                                    <input type="text" id="vez2" required>
+                                </div>
+                                <div class="err" id="vez2err"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="mail2">E-mail cím:</label>
+                                    <input type="email" id="mail2" required>
+                                </div>
+                                <div class="err" id="mailceg2err"></div>
+                            </div>
+                            <div class="allabel">
+                                <div>
+                                    <label for="tel2">Telefonszám:</label>
+                                    <input type="tel" id="tel2">
+                                </div>
+                                <div class="err" id="telceg2err"></div>
+                            </div>
+                        </div>
+                        <div id="kotelezo">
+                            <legend>Finanszírozás</legend>
+
+                            <div id="szamla2"> 
+                                <div id="alszamla2">
+                                    <legend>Számlázási időszak</legend>
+                                    <div>
+                                        <div class="editbut"><input type="radio" id="ihoi" value="1" name="elofizI" required> <label for="1ho">Havi<span> - x0000 forint/1 hó/fő</span> </label></div>
+                                        <div class="editbut"><input type="radio" id="vihoi" value="6" name="elofizI" required> <label for="6ho">Fél éves<span> - x0000 forint/6 hó/fő</span></label></div>
+                                        <div class="editbut"><input type="radio" id="x12hoi" value="12" name="elofizI" required> <label for="12ho">Éves<span> - x0000 forint/12 hó/fő</span></label></div>
+                                    </div>
+                                
+                                </div>
+                                <div class="allabel">
+                                    <div>
+                                        <label for="fo">Felhasználók száma:</label>
+                                        <input type="text" id="fo" placeholder="Hány fő használja majd a programot?" required>
+                                    </div>
+                                    
+                                    <div class="err" id="foerr"></div>
+                                </div>
+                                <div class="err" id="szam2err"></div>
+                            </div>
+
+                            <div id="regind2">
+                                <button class="editbut" id="regCeg">Regisztrálok</button>
+                                <p id="kalkulacioEredmeny" class="errorlog2"></p> 
+
+                            </div>
+                        </div>
+                        
+                </form>
+
+            </article>
+
+            <article class="kulso" id="segedlet"> 
+                <div>
+                    <div class="csomagok0">
+                        <div class="csomagI" id="csomagi0">
+                            <div class="cscim">Hóközi csomag</div>
+                            <div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
+                                        <li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
+                                        <li>Kislétszámú csoportok értékelésére illetve jellemzésére</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta</div>
+                        </div>
+                        <div class="csomagI" id="csomagii0">
+                            <div class="cscim">Fél éves csomag</div>
+                            <div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Arany középút kedvezménnyel</li>
+                                        <li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
+                                        <li>Több feflhasználóval könnyebb</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta</div>
+                        </div>
+                        <div class="csomagI" id="csomagiii0">
+                            <div class="cscim">Éves csomag</div>
+                            <div class="csalcim">Ajánjuk nagy létszámú csoportoknak, ahol heti vagy havi szintű az adminisztráció</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
+                                        <li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
+                                        <li>Akiknek fontos az egész éves rendelkezésre állás</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta</div>
+                        </div>
+                    </div>
+                </div>
+
+               <!--  <div>
+                    <p style="text-align: center;"><span>S</span>egédlet</p>
+
+                    <div>
+                        <p style="font-size: 70%;">Felhasználónév:</p>
+                        Próbáljon könnyen megjegyezhető felhasználónevet választani, hiszen a későbbiekben ezzel fog tudni belépni az értékelő felületre.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Jelszó:</p>
+                        Jelszavának tartalmaznia kell legalább egy nagybetűt és számot, továbbá nem lehet kevesebb, mint 8 karakter.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Telefonszám:</p>
+                        Telefonszámát nem kötelező megadni, de ajánlott a későbbi esetleges kapcsolattartás végett.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Finanszírozás:</p>
+                        Amennyiben intézményként/cégként történt már előfizetett regisztráció, a csomag mértékétől függően hozhat létre fiókot. Akár saját részre vagy beosztottaknak/kollegáknak.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Fizetés:</p>
+                        Kiválaszott előfizetését jelenleg banki átutalással tudja rendezni. A megadott e-mail címre elküdjük az előlegszámát a pontos összeggel, számlaszámunkat és egyéb kifizetési utasításokat.
+                        Amennyiben bankukhoz 5 napon belül megérkezik a megbeszélt összeg, fiókja aktívvá és értékelésre készre válik. 
+                    </div>
+                </div> -->
+            </article>
+            
+            <article class="kulso" id="segedlet2"> 
+                <div>
+                    <div class="csomagok">
+                        <div class="csomagI" id="csomagi">
+                            <div class="cscim">Hóközi csomag</div>
+                            <div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
+                                        <li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
+                                        <li>Kislétszámú csoportok értékeésére illetve jellemzésére</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta, személyenként</div>
+                        </div>
+                        <div class="csomagI" id="csomagii">
+                            <div class="cscim">Fél éves csomag</div>
+                            <div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Arany középút kedvezménnyel</li>
+                                        <li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
+                                        <li>Több feflhasználóval könnyebb</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta, személyenként</div>
+                        </div>
+                        <div class="csomagI" id="csomagiii">
+                            <div class="cscim">Éves csomag</div>
+                            <div class="csalcim">Ajánjuk nagy létszámű intézményeknek, ahol heti vagy havi szintű az adminisztráció</div>
+                                <div class="kinek">
+                                    <div class="kinekcim">Kiknek ajánjuk?</div>
+                                    <ul>
+                                        <li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
+                                        <li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
+                                        <li>Akiknek fontos az egész éves rendelkezésre állás</li>
+                                    </ul>
+                                </div>
+                            <div class="ar">x0000 Forint havonta, személyenként</div>
+                        </div>
+                    </div>
+                </div>
+               <!--  <div>
+                    <p style="text-align: center;"><span>S</span>egédlet</p>
+
+                    <div>
+                        <p style="font-size: 70%;">Adószám:</p>
+                        Az adószám formája a következő: 19031628-1-02
+                        (Tehát 8 szám, kötőjel, 1 szám, kötöjel, 2 szám)
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Értesítési e-malil cím:</p>
+                        Ide fogjuk küldeni a regisztrációs kódot. Ezzel a kóddal fog tudni további felhasználókat (csomagtól függően) a "Felhasználó regisztráció" menüpont alatt.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Telefonszám:</p>
+                        Telefonszámát nem kötelező megadni, de ajánlott a későbbi esetleges kapcsolattartás végett.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Finanszírozás:</p>
+                        Válasszzon vállalkozásának/cégének/intézményének megfelelő csomagot. Veggye figyelembe, hány fő szeretné használni a programot.
+                    </div>
+                    <div>
+                        <p style="font-size: 70%;">Fizetés:</p>
+                        Kiválaszott előfizetését jelenleg banki átutalással tudja rendezni. A megadott e-mail címre elküdjük az előlegszámát a pontos összeggel, számlaszámunkat és egyéb kifizetési utasításokat.
+                        Amennyiben bankukhoz 5 napon belül megérkezik a megbeszélt összeg, fiókja aktívvá és értékelésre készre válik. 
+                    </div>
+
+                </div> -->
+            </article>
+        </div>
+    </section>
+
+    <article class="kulso" id="regifin">
+        <div>
+                <p><span>R</span>egisztrációja sikeres volt!</p>
+                A további tudnivalókat <span>(fiók hitelesítés, fizetési információk)</span> elküldtük a megadott e-mail címére. <br><br>
+                Amennyiben intézményként/cégként regisztrált, feltétlenül mentse el a benne szereplő regisztrációs kódot, mivel ezzel a kóddal tudnak kollegái/alklmazottai regisztrálni.
+                Bármilyen kérdés esetén keressen minket bizalommal az <a href="" style="color: #ff7c00;">info@ertekek.com</a> címen.
+               <p> <span style="color: black; font-size: 80%;"> <span style="color: #ff7c00;">K</span>öszönjük a bizalmát!</span></p>
+        </div>
+    </article>
+    <div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+</article>
+    <script type="module" src="/reg/regifo.js"></script>
+    <script src="../both/both.js"></script>
+    <script src="../both/policy.js"></script>
+
+
+
+
+</body>
+</html>

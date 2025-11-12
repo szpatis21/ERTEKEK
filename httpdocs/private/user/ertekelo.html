@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Értékek</title>
+      
+      <link rel="stylesheet" href="/private/main/main.css">
+
+      <link rel="stylesheet" href="../both/both.css">
+                <link rel="stylesheet" href="/public/stylei.css">
+    <link rel="stylesheet" href="dashmobile.css">
+
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+    
+    <style>body{ align-items: flex-start; flex-direction: column;}
+   
+     .savos{    display: flex;
+        background-position: center;
+    background-image: url(/media/dragon-scales.svg);
+    grid-area: c;
+    position: sticky;
+    top: 0;
+    gap: 3vh;
+    padding: 3vh 0vh;
+    border: 0vh solid black;
+    height: 87vh;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;}
+    .gomb .cimer {
+    cursor: pointer;
+    padding: 10px;
+    border-left: 3px solid transparent;
+    transition: background-color 0.3s ease, border-left 0.3s ease;
+}
+
+.gomb .cimer:hover {
+    background-color: #ff8c00 !important;
+    color: white !important;
+}
+    .cimer {
+        color:darkslategray !important;
+        font-family: "Montserrat Subrayada", sans-serif;
+        font-size: small !important;
+        display: flex;
+        transition: all 0.3s ;        backdrop-filter: blur(2px);
+        align-items: center;
+        margin: 0px 5px;
+        background-color: whitesmoke !important;
+        position: relative;
+        background: transparent;
+    width: 100%;
+    height: 100% !important;
+    border-radius: 11px;
+    cursor: pointer;
+    text-align: center;
+    color: white;
+    padding: 1vh;
+    font-size: medium;
+    border:1px solid white;
+    align-items: center;
+    margin: 0px 0px !important;
+    justify-content: center;
+      }
+
+
+    .layout {
+        display: grid;
+  gap: 5vh;
+  margin:1vh 3vh 3vh 3vh;
+    grid-template-columns:  0.1fr 1fr 1fr;   /* vagy 2fr 2fr 1fr ugyanazt adja */
+    grid-template-areas: "c a b";
+
+  }
+  .gomb{display: flex; width: 90%; aspect-ratio: 1/1;    box-shadow: 0px 0px 5px 1px #ffeede; border-radius: 11px; }
+
+  
+#fokategoriaChart {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    transition: all 1s;
+}
+.leiras{font-size: small;}
+.alal{height: 35px;}
+.diag{display: flex;}
+  @media (max-width: 1024px) {
+      .layout {display: grid !important;
+    grid-template-columns: 1fr;
+     grid-template-areas:
+    "c"
+    "a"
+    "b";
+    margin: 1vh;
+    gap: 1vh;
+    height: 100vh;
+
+  }
+      .sidebar-nav .nav-link  {font-size: medium;}
+#logokulso{    width: 130px !important;
+    height: 130px !important;
+    border-radius: 15px;}
+    #logobelso{    width: 110px !important;
+    height: 110px !important;
+    border-radius: 15px;
+font-size: 80% !important;}
+.savos{        background: linear-gradient(293deg, #ff3400b5 0%, #ffab02a1 100% 100%);       
+    position: sticky;
+        height: fit-content;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        grid-template-areas:
+        "a a"
+        "b d";
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(2px);
+}#ujert0{display: none;} 
+.ite{display: none;}
+.leiras {font-size: smaller !important; font-weight: normal !important;}
+.cim {font-size: medium !important; }
+
+}
+    </style>
+</head >
+<body>
+
+    <div id="user" style="display: none;"></div> <input type="hidden" id="menu-type" value="view">
+    <div class="hero-bg" aria-hidden="true"></div>
+  <header class="nav">
+    <men id="men"></men>
+</header>
+<div id="maincont"  class="layout">
+              <article class="savos" style="grid-area: c;">
+        <div class="gomb" id="ertekek0">
+            <div class="cimer dobaktiv mentesGomb" id="ertekek"> Mentés</div>
+        </div>     
+        <div class="gomb" id="ujert0">
+            <div class="cimer ertekelesek" id="ujert">Nézet</div>
+        </div>                    
+        <div class="gomb navnyom" id="accunt0">
+            <div class="cimer" id="accunt">Nyomtatás</div>
+        </div>       
+        <div class="gomb" id="hozzaj0">                                
+            <div class="cimer" id="hozzaj"><a href="dashboard.html">Kezelö Panel</a></div>
+        </div>   
+    </article>  
+    <div id="main" style="grid-area: a;">
+            <article id="mainart">
+                <div id="main-container">
+                    <div id="container">
+                      <div class="ite">   
+    <div>
+                      <div class="logo" style="    display: flex;
+    font-family: auto;
+    font-size: medium !important;
+    font-style: italic;
+    color: #ff6500;
+    font-weight: bold;
+    font-family: system-ui;"> Kedves° <div class="sajtnev" id="sajatnev"> </div>! Üdv az értékelő modulban! </div>
+                        <div class="holvagyok" ></div></div>
+
+                      <div id="seh" class="utolso"></div>
+
+                      <div style="display: none;" id="ertekelesneve"></div>
+                     </div>
+
+                      <div id="fo_kategoriak" class="category-container" class="tooltip"></div>
+                      <div id="al_kategoriak" class="subcategory-container hidden"></div>
+                      <div id="alt_temak" class="subtopic-container hidden"></div>
+                      <div id="kerdesek" class="question-container hidden"></div>
+                    </div>
+                </div>
+
+             
+            </article></div>
+           <div id="lapok">
+            <article id="maininf" style=" grid-area: b;">
+                <div class="diag" style=" position: relative;">
+                    <div id="chart-container">
+                         <canvas id="fokategoriaChart"></canvas>
+                    </div>
+                    <div id="alkategoriaChartContainer">
+                        <canvas id="alkategoriaChart"></canvas>
+                    </div>
+                     <div id="altTemaChartContainer">
+                        <canvas id="altTemaChart"></canvas>
+                    </div>
+                </div>
+                <div id="keszulo" >
+                    <div id="ertekelesek-container" >
+                        <div class="szalag">
+                            <div style="text-align: center; font-style: italic;">
+                              Az értékelési nyomtatvány jelenleg üres. Kezdje el a témakörök szerinti kitöltést, hogy a lap feltöltődjön tartalommal
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </article></div>
+             <div id="loading-overlay" style="display: none;">
+                    <div id="kont">
+                        <div id="logokulso">
+                        </div>
+                        <div id="logobelso">
+                            <div class="gold">ÉRTÉKEK</div>
+                        </div>
+                    </div>
+                </div>
+</div>
+       
+
+  <script type="module" src="/private/main/main_alap.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="../both/both.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+  <script src="../both/fonts/vfs_fonts.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", () => {
+  if (window.innerWidth > 500) {
+    sidebar.classList.remove("collapsed");
+  }
+});</script>
+
+</body>
+</html>

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiókom – ÉRTÉKEK</title>
+  <meta name="description" content="Felhasználói fiók – profil, biztonság, modulok és értesítések kezelése." />
+  <link rel="stylesheet" href="../both/both.css">
+  <link rel="stylesheet" href="stylei.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <header class="nav">
+    <input type="hidden" id="menu-type" value="private">
+    <men id="men"></men>
+  </header>
+
+  <main>
+    <!-- HERO / FEJLÉC -->
+    <section class="hero container">
+      <div class="grid">
+        <div class="elso">
+          <h1 class="reveal">Szalai Péter</h1>
+          <p class="reveal">Tanulásban akadályozottak szakmai anyaga</p>
+          <p class="reveal">Kerek Világ Általános Iskola</p>
+          <p>Licensz: 2022.05.24 - 2026. 05.24.</p>
+        </div>
+
+        <!-- Profil kártya -->
+        <div class="mock reveal">
+          <div class="infocard" style="position:relative">
+            <div style="display:flex; gap:16px; align-items:center">
+              <div style="width:72px; height:72px; border-radius:14px; background:#fff; border:1px solid #eef; display:flex; align-items:center; justify-content:center; font-weight:700;">
+                <span class="gold" style="font-family:'Montserrat Subrayada',sans-serif">É</span>
+              </div>
+              <div style="flex:1">
+                <h3 style="margin:.2rem 0 0">Peti</h3>
+                <p style="margin:.2rem 0 0; color:#4b5563">informatikus • kezdő webfejlesztő</p>
+                <small style="color:#6b7280">E-mail: peti@example.com</small>
+              </div>
+              <a class="btn" href="#profil">Profil szerkesztése</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GYORS INFÓK SÁV -->
+    <section class="infostrip">
+      <div class="container items reveal">
+        <div class="infocard">
+          <h3>Státusz</h3>
+          <p>Aktív • utolsó belépés: 2025-10-04 21:12</p>
+        </div>
+        <div class="infocard">
+          <h3>Szerepkör</h3>
+          <p>Értékelő, Elemző</p>
+        </div>
+        <div class="infocard">
+          <h3>Modulok</h3>
+          <p>Fejlesztő-nevelő; Tanulásban akadályozottak; Értelmileg akadályozottak</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SZEKCIÓK -->
+    <section id="profil" class="features container">
+      <h2 class="reveal" style="font-family:'Montserrat Subrayada',sans-serif;">Beállítások</h2>
+
+      <div class="grid">
+        <!-- Profiladatok -->
+        <article class="feature reveal">
+          <h4>Profil</h4>
+          <p>Alapadatok frissítése.</p>
+          <form class="inputs" action="#" method="post" style="margin-top:8px">
+            <label>Megjelenített név</label>
+            <input id="megjelenitett_nev" name="megjelenitett_nev" type="text" placeholder="Megjelenített név" value="Peti">
+
+            <label>E-mail cím</label>
+            <input id="email" name="email" type="email" placeholder="E-mail cím" value="peti@example.com">
+
+            <div style="margin-top:10px">
+              <button class="btn" type="submit">Mentés</button>
+              <button class="btn btn--ghost" type="reset">Mégse</button>
+            </div>
+          </form>
+        </article>
+
+        <!-- Biztonság -->
+        <article class="feature reveal">
+          <h4>Biztonság</h4>
+          <p>Jelszó, 2FA, aktív munkamenetek.</p>
+          <form class="inputs" action="#" method="post" style="margin-top:8px">
+            <label>Jelszó (új)</label>
+            <input id="uj_jelszo" name="uj_jelszo" type="password" placeholder="Új jelszó">
+
+            <label>Jelszó megerősítése</label>
+            <input id="uj_jelszo2" name="uj_jelszo2" type="password" placeholder="Jelszó megerősítése">
+
+            <div style="display:flex; align-items:center; gap:8px; margin:8px 0">
+              <input class="check" id="ketlepcsos" name="ketlepcsos" type="checkbox">
+              <label for="ketlepcsos">Kétlépcsős azonosítás engedélyezése</label>
+            </div>
+
+            <div style="margin-top:10px">
+              <button class="btn" type="submit">Biztonsági beállítások mentése</button>
+            </div>
+          </form>
+        </article>
+
+        <!-- Modulok és jogosultságok -->
+        <article class="feature reveal">
+          <h4>Modulok és jogosultságok</h4>
+          <p>Hozzáférések és szerepkörök.</p>
+          <div class="inputs" style="margin-top:8px">
+            <label>Témakör</label>
+            <select id="temakor" name="temakor">
+              <option value="1">Fejlesztő-nevelő oktatás</option>
+              <option value="2">Tanulásban akadályozottak</option>
+              <option value="3">Értelmileg akadályozottak</option>
+            </select>
+
+            <label>Szerepkör</label>
+            <select id="szerepkor" name="szerepkor">
+              <option value="3">Értékelő</option>
+              <option value="2">Elemző</option>
+              <option value="1">Adminisztrátor</option>
+            </select>
+          </div>
+          <div style="margin-top:10px">
+            <button class="btn" type="button">Jogosultság mentése</button>
+          </div>
+        </article>
+
+        <!-- Értesítések -->
+        <article class="feature reveal">
+          <h4>Értesítések</h4>
+          <p>E-mail és rendszerüzenetek.</p>
+          <div class="inputs" style="margin-top:8px">
+            <div style="display:flex; align-items:center; gap:8px">
+              <input class="check" id="ertesites_email" type="checkbox" checked>
+              <label for="ertesites_email">E-mail értesítések</label>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px">
+              <input class="check" id="ertesites_rendszer" type="checkbox" checked>
+              <label for="ertesites_rendszer">Rendszerüzenetek</label>
+            </div>
+          </div>
+        </article>
+
+        <!-- Adatvédelem -->
+        <article class="feature reveal">
+          <h4>Adatvédelem</h4>
+          <p>Adat-hozzáférés, export, törlés kérelmezése.</p>
+          <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap">
+            <a class="btn" href="#adatletoltes">Adatok letöltése (JSON)</a>
+            <a class="btn btn--ghost" href="#adatkezeles">Adatkezelési tájékoztató</a>
+          </div>
+        </article>
+
+        <!-- Számlázás (opcionális) -->
+        <article class="feature reveal">
+          <h4>Számlázás</h4>
+          <p>Csomag, számlázási adatok, bizonylatok.</p>
+          <div class="inputs" style="margin-top:8px">
+            <label>Csomag</label>
+            <select id="csomag">
+              <option>Alap</option>
+              <option>Pro</option>
+              <option>Intézményi</option>
+            </select>
+            <label>Számlázási név</label>
+            <input id="szamlanev" type="text" placeholder="Számlázási név">
+            <label>Adószám</label>
+            <input id="adoszam" type="text" placeholder="Adószám">
+            <div style="margin-top:10px">
+              <button class="btn" type="button">Számlázás mentése</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- CTA LÁBLÉC -->
+    <section class="cta-footer">
+      <div class="container">
+        <div class="cta-card reveal">
+          <div>
+            <h3 style="margin:.2rem 0 .4rem">Profil beállítások frissítve?</h3>
+            <p style="margin:0;color:#c7d2fe">A módosítások a következő belépéskor is érvényesek.</p>
+          </div>
+          <a class="btn" href="/">Vissza a kezdőlapra</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <small>© ÉRTÉKEK – Felhasználói fiók</small>
+  </footer>
+
+  <script>
+    // reveal-on-scroll
+    const io = new IntersectionObserver((entries)=>{
+      for(const e of entries){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      }
+    }, {threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    // Mobil sidebar összehúzás landing logika szerint
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.innerWidth < 1024 && typeof sidebar !== 'undefined') {
+        sidebar.classList.add("collapsed");
+      }
+    });
+  </script>
+  <script src="../both/both.js"></script>
+  <script src="../both/policy.js"></script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+
+
+{
+  
+  "roles": ["admin", "moderator", "user", "guest"],
+  
+    "user":{
+      "news": [
+        "Jelmagyarázatokért tekintse meg a Gyakran Ismételt Kérdések fület",
+        "Újra működik az új értékelés indítása.",
+        "Megújult formában a megosztás, címszerkesztés és új értékelés",
+        "Megújult a felület! Kattintson egy értékelésre, hogy lássa az új összevont kezelő gombokat!",
+        "A kereső mező karbantartás alatt, dolgozunk a mihamarabbi megoldáson",
+        "Bizonytalan? Ne aggódjon! Én is!",
+        "A munka gyorsabban megy, ha több ember végzi. Ossza meg értékeléseit kollegáival!",
+        "A PDF értékelésekből másolhat kijelöléssel akár Word-be is!",
+        "Szilvi! Elkenődött a sminked!"
+      ],
+      "faq": [
+        {
+          "question": "Hogyan tudok értékeléseket létrehozni?",
+          "answer": "Kattintson az \"Értékelés megkezdése\" gombra, a keresősáv mellett."
+        },
+        {
+          "question": "Hogyan tudok meglévő értékeléseket megnézni?",
+          "answer": "Válassza ki a kívánt értékelést, majd kattintson rá egyszer. A jobb oldalon megnyílik maga az értékelés."
+        },
+        {
+          "question": "Hogyan tudok meglévő értékeléseket szerkeszteni?",
+          "answer": "Válassza ki a kívánt értékelést, majd kattintson rá egyszer. Az értékelés nevén megjelenő narancssárga négyzetben válassza a <span class=\"material-symbols-rounded\">edit</span> ikont, és kattintson rá."
+        },
+        {
+          "question": "Hogyan dolgozhatnak mások is az általam készített értékeléseken?",
+          "answer": "A kiválasztott értékelésre való kattintás után válassza a <span class=\"material-symbols-rounded\">share</span> gombot. A felugró ablakban adjon meg e-mail címet, vagy válasszon a listából. \"Hozzáad\", majd \"Megoszt\"."
+        },
+        {
+          "question": "Ha a megosztott értékelést törlöm <span class=\"material-symbols-rounded\">delete</span>, az általam megosztott félnek megmarad?",
+          "answer": "Nem. Ha egyszer egy értékelés törlésre kerül, többet senki nem fogja tudni megnyitni vagy szerkeszteni, az adminok sem."
+        },
+        {
+          "question": "Az értékelésem az előző időszakhoz képest nem változott, csináljak egy újat?",
+          "answer": "Nem feltétlen szükséges (hacsak a vezető máshogy nem dönt). Elég átnevezni az értékelést, ha csak az időszak számít és a tartalom nem. Kattintson a <span class=\"material-symbols-rounded\">page_header</span> gombra és írja át az adott időszakokhoz tartozó információkat."
+        },
+        {
+          "question": "Ha átnevezem az értékelésem, az eredeti példány és annak tartalma elveszik?",
+          "answer": "Nem. A <span class=\"material-symbols-rounded\">page_header</span> gombbal csak a címadatokat módosítja, nem az értékelés tartalmát. Ettől nem vész el, csak más időintervallum, cím, esetleg név jelenik meg a nyomtatott/mentett dokumentum fejlécében."
+        }
+      ]
+    },
+      "admin":{
+      "news": [
+        "Jelmagyarázatokért tekintse meg a Gyakran Ismételt Kérdések fület",
+        "Megújúlt feltöltő felület!",
+        "Egyszerűsített törlés!",
+        "Szerkeztésnél a hozzáadás már nem teszi be véletleszerűen a főkérdést az alkérdések közé",
+        "A kereső mező karbantartás alatt, dolgozunk a mihamarabbi megoldáson",
+        "Bizonytalan? Ne aggódjon! Én is!",
+        "Kövesse nyomon a feltöltéseit! A jobb oldali diagramm és szöveges adatok segítenek, hogy lássa feltöltésének eredményét!",
+        "Kattintson a felhasználóra hogy megtudja adatait!"
+      ],
+      "faq": [
+        {
+          "question": "Hogyan tudok értékeléseket létrehozni?",
+          "answer": "Kattintson az \"Értékelés megkezdése\" gombra, a keresősáv mellett."
+        },
+        {
+          "question": "Hogyan tudok meglévő értékeléseket megnézni?",
+          "answer": "Válassza ki a kívánt értékelést, majd kattintson rá egyszer. A jobb oldalon megnyílik maga az értékelés."
+        },
+        {
+          "question": "Hogyan tudok meglévő értékeléseket szerkeszteni?",
+          "answer": "Válassza ki a kívánt értékelést, majd kattintson rá egyszer. Az értékelés nevén megjelenő narancssárga négyzetben válassza a <span class=\"material-symbols-rounded\">edit</span> ikont, és kattintson rá."
+        },
+        {
+          "question": "Hogyan dolgozhatnak mások is az általam készített értékeléseken?",
+          "answer": "A kiválasztott értékelésre való kattintás után válassza a <span class=\"material-symbols-rounded\">share</span> gombot. A felugró ablakban adjon meg e-mail címet, vagy válasszon a listából. \"Hozzáad\", majd \"Megoszt\"."
+        },
+        {
+          "question": "Ha a megosztott értékelést törlöm <span class=\"material-symbols-rounded\">delete</span>, az általam megosztott félnek megmarad?",
+          "answer": "Nem. Ha egyszer egy értékelés törlésre kerül, többet senki nem fogja tudni megnyitni vagy szerkeszteni, az adminok sem."
+        },
+        {
+          "question": "Az értékelésem az előző időszakhoz képest nem változott, csináljak egy újat?",
+          "answer": "Nem feltétlen szükséges (hacsak a vezető máshogy nem dönt). Elég átnevezni az értékelést, ha csak az időszak számít és a tartalom nem. Kattintson a <span class=\"material-symbols-rounded\">page_header</span> gombra és írja át az adott időszakokhoz tartozó információkat."
+        },
+        {
+          "question": "Ha átnevezem az értékelésem, az eredeti példány és annak tartalma elveszik?",
+          "answer": "Nem. A <span class=\"material-symbols-rounded\">page_header</span> gombbal csak a címadatokat módosítja, nem az értékelés tartalmát. Ettől nem vész el, csak más időintervallum, cím, esetleg név jelenik meg a nyomtatott/mentett dokumentum fejlécében."
+        }
+      ]
+    }
+}

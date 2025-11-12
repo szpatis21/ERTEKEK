@@ -1,0 +1,483 @@
+
+#fo_kategoriak {
+    margin: 0%;
+    height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+  }
+  #maininf{    background: white;
+    height: 90vh !important;
+    border-radius: 15px;
+    flex-wrap: wrap !important;
+    align-content: flex-start !important;
+    flex-direction: row !important;}
+  #kitneve input{display: none;}
+body{margin: auto; }
+/* body::before{ background-image: url("../../../both/media/dragon-sclales2.svg") !important;}
+ */
+nav{width: 100%;}
+a:visited{color: white;}
+.opcbox{order: 1px solid gray;
+    border-radius: 3px;
+    font-size: small;
+    font-family: auto;
+    text-align: center;
+    margin: 5px;
+    box-shadow: #6a2b016b 0px 0px 1px 1px;}
+    .opcbox p {    background: #ff6500;
+    color: white;
+    margin: 0px;
+    font-size: 110%;
+    cursor: pointer;}
+    .opcbox span {font-style: italic;}
+  nav button{    border: none;
+    color: rgb(0, 0, 0);
+    background: transparent;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: medium;
+    cursor:pointer;
+}
+.cim {
+  font-family: "Montserrat Subrayada", sans-serif;
+font-size: 85%;
+  display: flex;
+  z-index: 1;
+  height: 65%;
+  align-items: center;
+  margin: 0px 5px;
+}
+
+  .fo, .fo-mini{    
+    transition: all 0.3s;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: space-between;
+    align-items: center;
+    justify-content: center;
+    margin: 35px;
+    padding: 0px;
+    height: 250px;
+    width: 250px;
+    border: none;
+    border-radius: 30px;
+    font-size: 160%;
+    font-weight: 900;
+    color: white;
+    text-align: center;
+    box-shadow: 0px 0px 2px 2px #f3f3f3c2;    
+    transform:transform 2s ;
+  }
+  .agak-lista, .ag-sor{flex-direction: column !important;}
+  .agak-lista {
+        margin-top: 0px !important;
+    align-content: flex-start !important;
+    justify-content: flex-end !important;}
+    .agak-container.inner-div{margin: 0px !important;}
+  .agcim{    color: #ff6500 !important;
+    font-size: larger;
+    text-decoration: underline;
+    margin-bottom: 0px !important;
+    font-weight: bold;}
+  .cim-text{font-family: Arial, Helvetica, sans-serif !important; font-size: 105%;}
+  .fo-mini{margin: 5px; font-size: 50%;   position: relative;  height: 135px;
+    width: 135px; cursor: pointer; font-family: Arial, Helvetica, sans-serif !important;}
+    .fo-mini .cim{    font-size: 90%;}
+    .fo-mini .leiras {border-bottom-right-radius: 30px;border-bottom-left-radius: 30px;}
+  .fo:hover{
+    transform: scale(1.02); 
+    box-shadow: 0px 0px 10px 2px #00000052;
+  }
+    .fo:nth-child(1) {background: linear-gradient(45deg, #9b27b098 0%, #ff0057 100%);}
+   .fo:nth-child(2) {background: linear-gradient(45deg, #0022ff9f 50%, #3ca8ff 100%)}
+  .fo:nth-child(3) { background: linear-gradient(45deg, #91ff00a4 0%, #005411 100%)}
+  .fo:nth-child(4) {background: linear-gradient(45deg, #ff0095b5 0%, #ff0000 100%);}
+  .fo:nth-child(5) {background: linear-gradient(45deg, #ff0000ac 0%, #ff7207 100%)};
+
+  .category-container .fo {
+    opacity: 0; /* Kezdetben láthatatlan */
+    transform: translateY(20px); /* Kis eltolás lefelé */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Áttűnés és eltolás */
+}
+.mas{height: 20vh; margin: 3vh 0vh; justify-content: space-between !important;}
+.mas button{font-size: larger !important;}
+.category-container .fo.megjelenik {
+    opacity: 1; /* Teljesen látható */
+    transform: translateY(0); /* Eredeti helyén */
+}
+#jelenlegi .leiras{font-size: 120% !important;}
+.infobox{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    padding: 10px;
+    font-family: auto;
+    border-radius: 13px;
+   }
+   .infocard p { font-size: smaller;}
+   h4 .cim:hover{background-color: transparent; color: rgb(255, 255, 255);}
+   .fo-mini .cim:hover{background-color: transparent; color: rgb(255, 255, 255); scale: 1.1; backdrop-filter: blur(0px);}
+    .infobox .gyikcim{font-size: small; color:#ff6500 !important;
+          border-bottom: 5px solid #ffb700cf !important;}
+          .infobox li {list-style-type: auto;
+    border: 2px solid orange;
+    border-radius: 15px;
+    padding: 5px;
+    text-align: center;
+    box-shadow: 0px 0px 1px 1px #ffa5005c;
+  margin: 5px;}
+  .dob{display: flex;
+    background: whitesmoke;
+    border: 1px solid #3f3f3f;
+    border-radius: 8px;
+    padding: 5px;
+    flex-direction: column;
+    width: 30vh;
+    margin: auto;
+    align-items: center;
+    margin: 8px 8px;
+  }
+  .dobal{    width: 100%;
+    display: flex;
+    position: relative;
+        justify-content: center;
+    align-items: center;
+    flex-direction: row;}
+  .vez{    text-align: center; 
+    font-weight: bold;
+    font-size: small;
+    color: #ff6500;}
+    .nev{width: 100%;}
+    .eler{position: relative; background-color: rgba(245, 245, 245, 0.41); font-size: small; z-index: 20; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}
+    #user-sectiont{font-weight: bold;
+    text-align: center;
+ font-family:"Montserrat Subrayada", sans-serif;
+}
+.role{ width: fit-content; position:absolute; bottom: 0; right: 0;
+   }
+   .role span{font-size: 200%;}
+.modalinfo{    width: 100vh !important;
+    height: 50vh;}
+    .modal .outer-div {
+    height: 100% !important;
+}
+   .eva{color: #ff6500; text-shadow:  0px 0px 10px orange;}
+   .adm{color: #ff0000; text-shadow:  0px 0px 10px orange;}
+   .pen{  color: #ff0000c7;
+    text-shadow: 0px 0px 20px #ff0000bf;}
+    .ana{ color: #ff005cc7;
+    text-shadow: 0px 0px 20px #ff0081bf;}
+   h4 span.adm, h4 span.eva, h4 span.pen, h4 span.ana{ 
+    font-size: xx-large; 
+    }
+    .role-section h4 {font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}
+   
+   
+    .kitoltes-db{    margin-top: 5px; font-size: smaller;
+    color: #ff6500;}
+    .role-radio{border-top: 4px solid #ff650085;
+    padding: 1px;
+        display: flex;
+    flex-direction: column;
+    font-size: smaller;
+    margin-top: 6px;}
+   #module-users-list{display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    justify-content: center;
+    align-items: center;}
+    .role-list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+#joglecsuk {
+  overflow: hidden;          /* ne lógjon ki a tartalom */
+  transition: max-height .4s ease;   /* csúszós animáció */
+  max-height: 9999px;        /* kezdetben nyitva (elég nagy szám) */
+}
+
+#joglecsuk.closed {
+  max-height: 0;             /* összecsukott állapot */
+}
+/* látvány */
+.panel { border: 1px solid #ccc; border-radius: 4px; }
+.panel-header {
+  padding:.5rem .75rem;
+  cursor:pointer;                /* egér jelzi, hogy kattintható */
+  user-select:none;
+  font-weight:600;
+}
+.panel-body {                    /* ez fog csúszni */
+  overflow:hidden;
+  transition:max-height .35s ease;
+  max-height:9999px;             /* nyitva */
+}
+.panel.closed .panel-body { max-height:0; }
+.panel.closed .panel-header::after { content:"▲"; }  /* ikon vált */
+.panel-header::after { content:"▼"; float:right; }
+.szinek b {font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; color: orange; font-size: small;}
+#lapozo{background: #00000000 !important;}
+.gomb{flex-wrap: wrap;    justify-content: center;}
+.gombok{
+    border-radius: 12px;
+    display: flex;
+    width: 50%;
+    align-content: center;
+    flex-direction: column;}
+.gombok p {color: rgb(0, 0, 0); font-size: small; font-family: 'Times New Roman', Times, serif; font-style: italic;}
+#ujak .fo-mini{
+background: linear-gradient(0deg,rgba(255, 128, 0, 0.48) 0%, rgba(255, 128, 0, 1) 100%);
+}
+span i {text-align: center; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: normal;
+    font-size: smaller;}
+#ujak h4, #jelenlegi h4 {font-size: 115%;  text-align: center;     font-family: "Montserrat Subrayada", sans-serif;
+ margin-bottom: 0px}
+#ujakbelso{display: flex;
+  justify-content: space-evenly;
+    align-content: stretch;
+    flex-wrap: wrap;
+    cursor: auto;
+}
+
+.belsobelso{    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
+    flex-direction: column;
+    font-size: small;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: normal !important;
+}
+#ujak .szin-preview{background-color: orange; height: 50px; width: 50px;    display: flex; border-radius: 50px;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;}
+#jelenlegi, #ujak {font-family:'Times New Roman', Times, serif; font-size: small; text-align: center}
+#newcim{    font-weight: bolder;
+    height: 80%;
+    width: 80%;
+    align-content:center; overflow:auto;
+    margin: auto;
+    background: transparent;
+    border: none;
+    color: white;
+  text-align: center;}
+  #uj{width: 100% !important;}
+  .param{cursor: auto; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}
+  #ujak{    border-bottom: 5px solid orange;
+    margin: 0px 5px;
+    width: 100%;
+    border-radius: 13px;
+    background-color: white;
+    padding-bottom: 10px;}
+    #confirmNew{width: 80%; font-family: "Montserrat Subrayada", sans-serif;    margin-top: 20px;
+        box-shadow: 0px 0px 10PX 1PX ORANGE;}
+        #confirmNew:hover{
+          background-color: orangered; color: whitesmoke;
+        }
+.diag{    padding: 3vh; }
+#newleiras{ resize:vertical; text-align: center;align-content:center; overflow:auto,}
+
+   @media (max-width: 1024px) {
+    .felso{justify-content: center !important;}
+    .modalcim{margin: 0px;     justify-content: space-evenly;
+}
+#fm_szin_preview, #fm_szin_preview_new { font-size: small !important;height: 20px !important; margin: 0px !important;}
+    .modalcim input{font-size: medium !important;}
+    .modalcim .material-symbols-rounded {
+    font-size: x-large !important;}
+.main{width: 100% !important; margin-bottom: 5%;}
+    .modalblock.outer-div { height: 20vh !important; font-size: small !important;}
+    .modal-content button {
+  
+    width: 90px !important;
+    font-size: x-small !important;
+    }
+.modal{left: -17px !important; width: 100% !important;}
+#lapok {
+    width: 100% !important;
+   }  
+   .figyel{display: none;}
+  .modalinfo{    flex-direction: column;}
+  .modalblock{width: 100% !important;}
+  .olvaso .gyikcim {
+  font-size: smaller;
+  }
+  .modal-content{height: 100% !important;}
+  .modalblock.outer-div{height:25vh !important;}
+.vez{font-size: smaller;}
+.eler{font-size: small;}
+.role-radio{font-size: small;}
+.role span {
+    font-size: 150%;}
+    .kitoltes-db {
+    
+    font-size: small;
+}
+.module-users-list h4 {margin: 5px;}
+.cim{font-size: small !important;}
+.fo{width: 17vh !important;
+    height: 17vh !important;}
+#fm_chart_preview, #nf_chart_preview{ 
+  
+    width: 40px !important;
+    height: 40px !important;}
+    .agcim{margin: 0px !important;}
+.leiras {
+    font-weight: normal !important;
+    font-size: x-small  !important;}
+  .udv{display: none !important;}
+  #maininf{height: fit-content !important;}
+  }
+  #maininf{height: 100% !important;border-top-left-radius: 0% !important;}
+
+   .modal {
+  position: fixed;
+  margin-top: 0px;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.74);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+      height: 100vh;
+}
+.chart{    display: flex
+;
+    flex-direction: column !important;}
+.modalinfo{display: flex; width: 100%;margin-top: 15px;}
+.modalblock{width: 50%;    
+    border-radius: 10px;}
+    .szinek    {display: flex
+;    align-items: center !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important; }
+.modalblock div{display: flex;margin: 10px;
+    flex-wrap: wrap;
+        font-family: system-ui;
+    font-size: 100%;
+    justify-content: center;
+    flex-direction: row;}
+.modal.active{display: flex;    background: rgba(0, 0, 0, 0.74);
+ height: 100vh;margin-top: 0px;
+
+}
+.sta:hover, .grap:hover, .gyik:hover{color:rgb(0, 0, 0); background-color: rgba(255, 255, 255, 0.252);}
+.sta,.grap,.gyik{transition: all 0.3s;}
+.gyik.aktiv, .sta.aktiv,.grap.aktiv{ background-color: white; color: black; cursor: default;}
+
+#ujakbelso .fo-mini{box-shadow: 0px 0px 5px 1px rgb(180, 66, 0);}
+#ujakbelso .fo-mini:hover{box-shadow: 0px 0px 10px 5px rgb(0, 0, 0);}
+#jelenlegi .fo-mini:hover{color: #423200;}
+
+
+#fm_chart_preview, #fm_chart_preview_new{    background: rgb(255, 17, 0);
+    width: 70px;
+    height: 70px;
+    color: #ffffff9e;
+    border-radius: 150px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    box-shadow: 0px 0px 5px 1px black;}
+    .modal-buttons{display: flex
+;
+    justify-content: space-evenly;
+    align-items: center;}
+.modal-buttons .material-symbols-rounded{
+    font-size: xx-large;
+        cursor: pointer !important;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px 5px orangered;
+    color: #ff6500;
+    cursor: pointer;
+  transition: all 0.3s;}
+    .modal-buttons .material-symbols-rounded:hover{
+      color: white;
+      background-color: red;
+    }
+#fm_szin{cursor: pointer;}
+#fm_szin_preview, #fm_szin_preview_new{
+   cursor:default;
+    width: 100%;
+    display: flex;
+    font-size:large;
+    color: white;
+    font-family:  Arial, sans-serif;
+    font-weight: bold;
+    height: 50px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    justify-content: center;
+    align-items: center;}
+#fm_leiras,#fm_cim {
+  width:100%;padding:8px;border:1px solid #ff9707;border-radius:6px; font-family: 'Times New Roman', Times, serif;
+}
+.modal.hidden {
+  display: none;
+}
+.modalblock p { color: #ffffff;
+    font-weight: bold;
+    background: #ff8b07f3;
+    margin: 0px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+
+}
+.modal-content {
+     background: white;
+    padding: 5px !important;
+    border-radius: .5rem;
+    text-align: center;
+    width: fit-content !important;
+    font-family: auto;
+    border-left: 14px solid #ff6500;
+}
+.modalcim{display: flex
+;
+margin: 10px;
+    align-items: center;
+    justify-content: space-between;
+    align-content: center;
+    flex-wrap: wrap;
+    flex-direction: row;}
+    .figyel {color: #2c2c2c;
+    font-size: small;
+    font-family: system-ui;}
+    .modalcim input {border: none; font-family: 'Times New Roman', Times, serif; font-weight: bold; font-size: x-large; cursor:auto;}
+.role-radio input {cursor: pointer;}
+.modal-buttons button {
+    margin: 0.5rem;
+    font-family: auto;
+    border: orange 2px solid;
+    border-radius: 5px;
+    padding: 5px;
+    width: 100px;
+    box-shadow: 0px 0px 5px gold;
+ transition: all 0.3s;
+}
+.modal-buttons button:hover{color: white; background-color: orangered; cursor: pointer;}
+.minigyik{color: #ff6500;
+    margin-top: 10px;
+    font-weight: bold;}
+
+    .cim .edit-button {    color: #5d402d3d;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: -1;}
+    .cim .edit-button .material-symbols-rounded {font-size: 100px;}

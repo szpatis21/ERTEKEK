@@ -1,0 +1,321 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adminisztrációs modul</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="../both/both.css">
+    <link rel="stylesheet" href="/private/user/dashboardU.css">
+    <link rel="stylesheet" href="/private/main/main.css">
+    <link rel="stylesheet" href="/public/stylei.css">
+        <link rel="stylesheet" href="../user/dashmobile.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+<style>
+  @media (max-width: 1024px) {
+    .felso{justify-content: center !important;padding-bottom: 0px !important;}}
+    .modal-content button{    border: 1px solid #ff9707;}
+    h1{text-shadow: 0px 0px 13px white;;}
+.modal-content p {
+    font-size: small;
+    font-family: system-ui;}
+    .modal{        visibility: visible;
+    opacity: 1;
+    left: 50%;
+    box-shadow: 0px 0px 50px 50px #ff6500d1;
+    top: 50%;
+    margin: 0%;
+    backdrop-filter: blur(1px);
+    background: #23232382 !important;
+    width: 100%;
+    height: 100% !important;}
+      .leiras {    
+    display: flex;
+    font-family: auto;
+    color: white;
+    font-weight: 600;
+    margin: auto;
+    font-size: 60%;
+    background-color: #000000a6;    height: 35%;
+    width: 100%;
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
+    margin-block-start: auto;
+    justify-content: center;
+    align-items: center;
+  }
+  .fo-mini{border-radius: 7px !important; box-shadow: none !important;}
+  .fo-mini .cim{height: 65% !important; border: none !important;}
+  .fo-mini .leiras{height: 35% !important;}
+.olvaso .inner-div {background: transparent;}
+    .leiras{font-weight:normal !important;  font-size: small !important; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;}
+    .dobaktiv{  background: #ffeede; color: #4b5563; text-shadow: 0px 0px 2px #4b556371;}
+    .cim:hover{  background: #ffeede; color: #4b5563;text-shadow: 0px 0px 2px #4b5563; }
+    #fulek { grid-area: b; }
+    .munka { grid-area: a; }
+.gobut5 a:hover{color: white !important;}
+/* Nagy: 3 oszlop egy sorban */
+
+#lapok { grid-area: b; }
+.main { grid-area: a; }
+.savos { grid-area: c; }
+section h4{width: 50%; display: flex;    align-items: center;}
+h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
+    padding: 1vh;
+    border-radius: 8px;
+    width: 100%;
+    box-shadow: 1px 1px 5px 1px #80808075;justify-content: space-around;flex-wrap: wrap; background-color: whitesmoke;}
+.diag{height: 100% !important;}
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+} 
+.lapok.aktiv-tartalom{height: 85vh !important;}
+#jelenlegi h4 {margin: 0px;}
+
+#ujak h4 {width: 50%; margin: 3vh; cursor: auto; background: transparent; color: orange;}
+#ujraszamolas-gomb {
+    border-radius: 5px;
+    color: #ffffff;
+    margin-bottom: 1vh;
+
+    text-align: center;
+    font-family: auto;
+    font-size: small;
+    cursor: pointer;
+    background: #ff6500;
+    font-family: system-ui;
+    padding: 5px;}
+#maininf{width: 100%; height: 100%; display: none;}
+#keszulo {border-top-left-radius: 0px;}
+#keszulo .ikontarto{display: none;}
+#chart-container{height: 100% !important; border-radius: 0px;}
+.leiras{border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;}
+.udv{height: 50% !important;}
+</style>
+
+</head>
+<body>    
+
+   <div id="gobut4" style="display: none;" ></div>
+
+
+<input type="hidden" id="menu-type" value="private">
+<div class="hero-bg" aria-hidden="true"></div>
+  <header class="nav">
+    <men id="men"></men>
+ </header>
+<div class="layout">
+    <article class="main"> 
+        <div class="alap">   
+            <div class="munka">
+                <div class="olvaso" style="height: 100%;"> 
+                    <div class="felso" style="flex-direction: column; height: 15%; align-items: center;">
+                          <div class="udv">
+                                <div class="logo" style="font-size: small;"> Kedves <div id="sajatnev"> </div>! Üdv a adminisztrációs rendszerben! </div>
+                            </div>    
+                                   <div style="display: flex;flex-direction:row-reverse;">                         
+                            <div class="gomb" style="flex-direction: column-reverse; aspect-ratio: 0; width: fit-content;">
+                                <div id="ujraszamolas-gomb">
+                                    <div  >Százalék frissítés</div>
+                                    <div style="font-size: small; font-family: auto; text-align: center; color: red;" id="ujraszamolas-eredmeny"></div>
+                                </div>                     
+                            </div> 
+                            <div class="holvagyok" style="color: #ffffff; font-size: small; font-family: auto;  text-align: center; margin: 5px;"></div>
+</div>          
+                    </div>
+                            
+                    <div class="kozep" style="height: 10%;    display: flex
+;
+    justify-content: center;
+    align-items: center;" > 
+                            <div class="gyikcim" style="font-size: small !important;">Felhasználói adatok és jogosultságok</div>                                                                    
+                          
+                    </div>
+        
+                    <div class="also" style="height: 65%; background: #ffedde;border-radius: 13px; padding: 1vh;">
+                                        <div class="outer-div">
+                                            <div class="inner-div" style="padding-top: 0px;">
+                                                <div id="fo-kategoriak-container" style="display: none;" class="infobox">
+                                                        <div class="gyikcim">Feltöltött témák és kérdések</div>
+                                                        <div><p id="fo-kategoriak-count"></p>
+                                                        <ul id="fo-kategoriak-list"></ul></div>
+                                                    </div>
+            
+                                                <div class="infobox">                           
+                                                <div>
+                                                       
+                                                        <div class="gyikcim">AKTÍV FELHASZNÁLÓK</div>
+
+                                                        <p id="user-sectiont"></p>
+                                                        <div class="search-bar"  style="margin: auto;">
+                                                        <span class="material-symbols-rounded search-icon">search</span>
+                                                        <input type="text" id="kereso" class="search-input" placeholder="Keressen a felhasználók közt...">
+                                                    </div>
+                                                        <div id="module-users-list"></div>
+                                                        
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                    </div>      
+                </div>
+            </div>
+        </div>   
+    </article>
+    <article id="lapok">
+                    <div id="lapozo">
+                        <div class="grap">Jogkörök infó</div>
+                        <div class="gyik aktiv">GY.I.K.</div>
+                        <div class="sta">Feltöltési statisztika</div>
+                    </div>
+                    <div id="fulek">
+                        <div id="maininf" class="outer-div">
+                            <div class="diag" style=" position: relative;">
+                                                            <div class="gyikcim panel-header">JOGKÖRÖK</div>
+                                                            
+                                                            <div class="panel-body">
+
+                                                                <div>
+                                                                    <div class="minigyik">ÉRTÉKELŐ</div>
+                                                                    <span class="material-symbols-outlined eva"> person_edit</span>
+                                                                    <span style="font-size: small;">Általános felhasználó. Értékeléseket indíthat, szerkeszthet, oszthat meg. Belépéis felület: csak az értékelő modulba</span>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="minigyik">ELEMZŐ</div>
+                                                                    <span class="material-symbols-outlined ana"> person_search</span>
+                                                                    <span style="font-size: small;">Bővített jogkörű felhasználó. 
+                                                                        Nem hozhat létre értékeléseket.
+                                                                        Elemző modulba bejelentkezve, az adott licenszelt szakmai anyag minden értékelését láthatja amely intézményén belül van.
+                                                                        Belépési felület: Elemző modul</span>
+                                                                </div>
+                                                                <div>
+                                                                    <div class="minigyik">ADMINISZTRÁTOR</div>
+                                                                    <span class="material-symbols-outlined adm"> person_search</span>
+                                                                    <span style="font-size: small;">Adminisztrátor jogkörű felhasználó. 
+                                                                        Értékeléseket indíthat, szerkeszthet, oszthat meg.
+                                                                        Elemző modulba átjelentkezve, az adott licenszelt szakmai anyag minden értékelését láthatja amely intézményén belül van.
+                                                                        Licenszelt intézményen belül jogköröket módosíthat, oszthat ki. Főkategóriákat hozhat létre és szakmai anyagot tölthet fel. 
+                                                                        Belépési felület: Elemző, értékelési, adminisztrációs modul</span>
+                                                                </div>
+                                                        </div>
+                            
+                        </div>
+
+
+                        </div>
+                        <div id="osszesitett" class="inner-div2 ">
+                            <div style="display: flex;  width: 100%; flex-direction: row; justify-content: space-evenly; align-content: flex-end; align-items: center;">
+                                <h3 class="szummcim vizualBlokk">Összesített adatok</h3>
+                                <button id="export-pdf" class="gobut5">
+                                    <span class="material-symbols-rounded">picture_as_pdf</span>
+
+
+                                    </button>
+                                </div>
+                                <div id="vizsgaltSzemelyek" class="vizualBlokk"></div>
+                                <div id="szumm-chart-container"class="vizualBlokk">
+                                    <div class="szummcim">Csoport/osztály átlag</div>
+                                    <canvas id="szummChart"></canvas>
+                                </div>
+                                <div class="szummcim vizualBlokk" >Értékelt személyek képességhálója</div>
+                                    <div class="kisero" style="text-align: center; font-style: italic; padding: 25px;">
+                                    <p>Kattintson a már meglévő értékelésekben lévő kis 
+                                    négyzetekre a kijelöléshez, hogy csoporot/osztály átlagot készítsen. 
+                                </p>
+                                    <ul>
+                                        <li style=" font-size: small">Ehhez legalább 2 értékelést kell kijelölnie</li>
+                                        <li style=" font-size: small">A félkész értékelések jelentősen befolyásolhatják az átlagolt végeredményt</li>
+                                    </ul>
+                                    </div>   
+                                <div id="szumm-radar" class="vizualBlokk">
+                                        <div id="radarLegend" class="legend-bar"></div>
+                                        <canvas id="szummRadarChart" width="400" height="400"></canvas>
+                                </div>
+                                <div class="szummcim vizualBlokk">Részletes csoport/osztály átlag</div>
+
+                                <div id="szumm-fa">
+                                
+                                
+                                </div>                        
+                        </div>
+                        <div id="gyik" data-role="admin">
+                            <div id="hirek">
+                                <div class="gyikcim">Híreink</div>
+                                <div id="pergo-container"> 
+                            </div>
+                        </div>
+                            <div id="gykerdesek" class="outer-div">
+                                <div class="gyikcim">gyakran ismételt kérdések</div>
+                                <div class="inner-div">
+                                </div>
+                            </div>  
+                        </div>
+                    </div>
+                
+    </article>   
+    <article class="savos">
+            <div class="gomb" id="ertekek0">
+                <div class="cim dobaktiv" id="ertekek">Felhasználók</div>
+            </div>  
+               <div class="gomb" id="hozzaj0">                                
+                <div class="cim" id="plussz">Kategóriák</div>
+            </div>    
+            <div class="gomb" id="ujert0">
+                <div class="cim" id="ujany">Feltöltés</div>
+            </div>                    
+            
+            <div class="gomb" id="accunt0">
+                <div class="cim" id="accunt">Fiókom</div>
+            </div>       
+           
+    </article>  
+
+</div>
+        
+ <!-- láthatatlan dolgok -->
+  <!--jogosultság  -->
+    <div id="confirmModal" class="modal hidden">
+  <div class="modal-content">
+    <p id="modalText"></p>
+    <div class="modal-buttons">
+      <button id="confirmYes">Módosítás</button>
+      <button id="confirmNo">Mégse</button>
+    </div>
+  </div>
+</div>
+<!-- statisztika -->
+    <div id="felbukkano2">
+        <div id="sav2">
+            <button id="kilep2">X</button>
+        </div>
+        <div id="tartalom2">
+                   
+                              
+        </div>    
+    </div>
+<!-- Témakörök -->
+    <div id="felbukkano3">
+        <div id="sav3">
+            <button id="kilep3">X</button>
+        </div>
+        <div id="tartalom3">
+                   
+                        
+        </div>
+    </div>
+
+</script>
+<script type="module" src="./dashAMain.js"></script>
+<script src="../both/both.js"></script>
+<script ></script>
+
+</body>
+</html>
