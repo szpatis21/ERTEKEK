@@ -11,7 +11,49 @@ if (!process.env.SECRET_KEY) throw new Error('SECRET_KEY hiányzik');
 const app = express();
 const port = 3000;
 const fs = require('fs');
+const logFilePath = path.join(__dirname, 'logi', 'minden_log.txt');
 
+// Hozzunk létre egy "stream"-et, ami folyamatosan nyitva tartja a fájlt
+const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
+
+// Térítsük el a console.log-ot:
+console.log = (...args) => {
+    const timestamp = new Date().toISOString();
+    const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
+    const logMessage = `[${timestamp}] [LOG]: ${message}\n`;
+    
+    // Írjuk a stream-be (ez gyors)
+    logStream.write(logMessage);
+    
+    // Írjuk ki az eredeti process-be is, hátha (de ez az, amit a Passenger elkap)
+    process.stdout.write(logMessage); 
+};
+
+// Térítsük el a console.error-t:
+console.error = (...args) => {
+    const timestamp = new Date().toISOString();
+    const message = args.map(arg => arg instanceof Error ? arg.stack : util.format(arg)).join(' ');
+    const logMessage = `[${timestamp}] [HIBA]: ${message}\n`;
+    
+    // Írjuk a stream-be
+    logStream.write(logMessage);
+    
+    // Írjuk az eredeti process-be is
+    process.stderr.write(logMessage);
+};
+
+// Térítsük el a kezeletlen hibákat is!
+process.on('uncaughtException', (err) => {
+    console.error('!!! KEZELETLEN HIBA (UNCAUGHT EXCEPTION) !!!', err);
+    // Adjunk időt a log írására, mielőtt a process leáll
+    setTimeout(() => {
+        process.exit(1);
+    }, 1000);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('!!! KEZELETLEN PROMISE HIBA (UNHANDLED REJECTION) !!!', reason);
+});
 //MIDDLEWARE
 app.use(express.urlencoded({ extended: true }));
 app.use(session({

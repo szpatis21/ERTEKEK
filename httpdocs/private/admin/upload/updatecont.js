@@ -1,6 +1,4 @@
 //Előre bekészített blokkok   
-   
-
     //Generáció 1 - a már kitöltött divekből
     export function generateAlkerdesHTML(alk) {
     return `

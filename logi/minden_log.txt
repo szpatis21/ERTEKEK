@@ -1,0 +1,1 @@
+[2025-11-17T06:07:31.748Z] [LOG]: Szerver fut a http://localhost:3000 címen
