@@ -15,7 +15,7 @@ Adatbázis: ertekek02
 		- sznev: számlázási név, HA nem intézményként regisztrált
 		- szcim: számlázási cím, HA nem intézményként regisztrált
 
-	- intezmeny: (intzéményi adatok)
+	- intezmeny: (intézményi adatok)
 		- id: alap_id
 		- intnev: intézmény neve
 		- intado: inézmény adószáma
@@ -43,7 +43,7 @@ Adatbázis: ertekek02
 		- al_kategoria: Kérdés 2. szintje
 		- alt_tema: Kérdés 3. szintje
 		- kerdes_szoveg: maga a kérdés
-		- parent_id: kérdés azonosítója ( alkérdések hívatkozási száma a főkérdés alap_id értéke)
+		- parent_id: kérdés azonosítója ( alkérdések hivatkozási száma a főkérdés alap_id értéke)
 		- ertek: kérdés pontszáma
 		- szoveges: a kérdés input mező e
 		- valasz_ag: az alkérdés "igen" vagy "nem" ágban jelenik e meg
@@ -51,7 +51,7 @@ Adatbázis: ertekek02
 		- ossz_ertek: Kérdés százalékos értéke
 		- maximalis_szint: boolean, egy kérdés az adott kérdéskör teljes egészére alkalmazza a saját pontszámát, ha aktív
 		- modul_id: mely modulhoz tartozik a kérdés ("modulok" tábla alap_id -je
-		- osztott: más modulbólban is megjeleni e a kérdés?
+		- osztott: más modulban is megjeleni e a kérdés?
 
 	- kitoltesek: (már megválaszolt kérdések)
 		- id: alap_id
@@ -72,11 +72,11 @@ Adatbázis: ertekek02
 		- id: alap_id
 		- nev: modul neve
 		- leiras: modul leírása
-		- ai_kontextus: mesterséges inteligencia irányelvei az adott modulhoz
+		- ai_kontextus: mesterséges intelligencia irányelvei az adott modulhoz
 
 	- roles: (szerepkörök)
 		- id: alap_id
-		- role: admin/alanilst/evaulator - ki hova jelentkezhet ve
+		- role: admin/alanilst/evaulator - ki hova jelentkezhet vele
 		- leiras: rövid tájékoztatás a szerepkörökről
 
 	- valaszok: (kitöltött kérdések)
@@ -84,7 +84,7 @@ Adatbázis: ertekek02
 		- kitoltes_id: "kitoltesek" tábla alap_id oszlopa
 		- kerdes_id: "kerdesek" tábla alap_id oszlopa
 		- valasz_szoveg: input kérdés tartalma
-		- létrehozva: valszok létrehozásának időpontja
+		- létrehozva: valaszok létrehozásának időpontja
 		- kerdes_valasz: kérdés ága
 		- felhasznalo_id : "felhasznalok" tábla alap_id oszlopa
 		
@@ -94,10 +94,10 @@ Adatbázis: ertekek02
 		- nev_enc: titkosított név adatok
 
 	-vizsglat_hozzajarulas_naplo: (Hozzájárulások naplózása, természetes személyek esetén)
-		- naplo_id: alap_id
+		- naplo_id: alap_ids
 		- user_id: "felhasznalok" tábla alap_id oszlopa 
 		- beleegyezes_datuma: hozzájárulás létrehozásának dátuma
 		- vizsglat_id: "kitoltesek" tábla alap_id oszlopa
 		- ip_cim: belegyezés mely IP címről érkezett		
-		- user_agent: mely böngészéből érkezett a kérés
+		- user_agent: mely böngészőből érkezett a kérés
 		- verzio_tag: verziószám
