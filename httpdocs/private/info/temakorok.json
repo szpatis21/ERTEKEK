@@ -48,9 +48,9 @@
       {
         "value": "Általános jellemzők",
         "text": "Általános jellemzők",
-        "leiras": "Alapadatok, szociális és egyedi jellemzők",
-        "szin": "rgb(0, 0, 0)",
-        "chart": "rgba(255, 193, 7, 0.5)"
+        "leiras": "Alapadatok, egyedi jellemzők",
+        "szin": "rgb(255, 198, 21)",
+        "chart": "rgb(255, 193, 7, 0.5)"
       },
       {
         "value": "Kommunikáció és beszéd",
@@ -92,21 +92,7 @@
         "text": "Önkiszolgálásra nevelés",
         "leiras": "Önkiszolgálási képességek",
         "szin": "rgb(24, 157, 0)",
-        "chart": "#189d00"
-      },
-      {
-        "value": "Új Főkategória",
-        "text": "Új Főkategória",
-        "leiras": "Új Főkategória leírása",
-        "szin": "#ff8000",
-        "chart": "#ff8000"
-      },
-      {
-        "value": "Sajt",
-        "text": "Sajt",
-        "leiras": "Új Főkategória leírása",
-        "szin": "linear-gradient(0deg, rgba(255, 128, 0, 0.48) 0%, #ff8000 100%)",
-        "chart": "#ff8000"
+        "chart": "rgba(24, 157, 0, 0.5)"
       }
     ],
     "2": [
@@ -133,23 +119,23 @@
       {
         "value": "Hon és népismeret",
         "text": "Hon és népismeret",
-        "leiras": "",
-        "szin": "rgb(156, 39, 176)",
-        "chart": "rgb(156, 39, 176, 0.5)"
+        "leiras": "Otthonunk Magyarország",
+        "szin": "rgb(53, 199, 0)",
+        "chart": "rgba(156, 39, 176, 0.5)"
       },
       {
         "value": "Magyar nyelv és irodalom",
         "text": "Magyar nyelv és irodalom",
-        "leiras": "Magyar nyelvi készségek fejlettségének, olvasási készségek valamint az egyszerű szövegek megértésének vizsgálata",
+        "leiras": "Magyar nyelvi készségek, olvasási készségek",
         "szin": "rgb(255, 0, 0)",
-        "chart": "#e91e63"
+        "chart": "rgba(233, 30, 99, 0.5)"
       },
       {
         "value": "Matematika",
         "text": "Matematika",
-        "leiras": "",
+        "leiras": "Számolás és mérés területei",
         "szin": "rgb(92, 0, 255)",
-        "chart": "rgb(92, 0, 255, 0.5)"
+        "chart": "rgba(92, 0, 255, 0.5)"
       },
       {
         "value": "Természettudomány és környezetismeret",
@@ -204,16 +190,16 @@
       {
         "value": "Környezetismeret",
         "text": "Környezetismeret",
-        "leiras": "Évszakok, időjárás, alapvető növény- és állatfajok felismerését, mindennapi környezeti helyzetekben való tájékozódás.",
-        "szin": "rgb(156, 39, 176)",
+        "leiras": "Évszakok, időjárás, mindennapi környezeti helyzetekben való tájékozódás.",
+        "szin": "rgb(156, 39, 176, 0.5)",
         "chart": "#9c27b0"
       },
       {
         "value": "Olvasás-írás",
         "text": "Olvasás-írás",
-        "leiras": "Mindennapi élethez szükséges alapjelek, szavak és rövid mondatok felismerése",
+        "leiras": "Alapjelek, szavak és rövid mondatok felismerése",
         "szin": "rgb(233, 30, 99)",
-        "chart": "#e91e63"
+        "chart": "rgba(156, 39, 176, 0.5)"
       },
       {
         "value": "Számolás-mérés",
@@ -225,14 +211,14 @@
       {
         "value": "Kommunikáció és beszéd",
         "text": "Kommunikáció és beszéd",
-        "leiras": "Készségek és képességek, kommunikáció személyekkel, családtagokkal, csoport társakkal.",
+        "leiras": "Kommunikációs készségek és képességek",
         "szin": "rgb(33, 150, 243)",
         "chart": "rgb(33, 150, 243, 0.5)"
       },
       {
         "value": "Önkiszolgálásra nevelés",
         "text": "Önkiszolgálásra nevelés",
-        "leiras": "Ez a kategória az önkiszolgálási képességek fejlesztésére koncentrál.",
+        "leiras": "Önkiszolgálási képességek",
         "szin": "rgb(24, 157, 0)",
         "chart": "rgb(24, 157, 0, 0.5)"
       }
