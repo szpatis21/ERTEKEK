@@ -77,22 +77,35 @@ if (document.getElementById('ertekelesneve')) {
   .catch(error => {console.error('Fetch hiba:', error);
   });
 
-  fetch(`/api/get-kitoltes-neve?idk=${kitoltesId}`) 
-  .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-            const ertekesneve = document.querySelector("#ertekelesneve");
+  // Kliens oldali kód (pl. ertekelo.html scriptje vagy ertekelo.js)
 
-            const kitneve = document.querySelector("#kitneve");
-            ertekesneve.textContent = data.kitoltes_neve
-            .split('-')                          // Szétbontjuk kötőjelek mentén
-            .map(resz => ` ${resz.replace(/~/g, '-').trim()} `)  // ~ cseréje kötőjelre, szóköz hozzáadása
-            .join('-');                          // Újra összefűzzük kötőjelekkel
-                      kitneve.textContent = `  ${data.kitoltes_neve}  `;
-          } else { console.error('Hiba:', data.message);}
-      })
-      .catch(error => { console.error('Fetch hiba:', error);
-      });
+fetch(`/api/get-kitoltes-neve?idk=${kitoltesId}`) 
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          const ertekesneve = document.querySelector("#ertekelesneve");
+          const kitneve = document.querySelector("#kitneve");
+
+          // 1. A rejtett mezőbe mehet a teljes, formázott cím (a régi logika szerint)
+          if (ertekesneve) {
+             ertekesneve.textContent = data.kitoltes_neve
+                .split('-')
+                .map(resz => ` ${resz.replace(/~/g, '-').trim()} `)
+                .join('-');
+          }
+
+          // 2. A főcímbe (kitneve) pedig a SZERVER ÁLTAL KÜLDÖTT, VISSZAFEJTETT NEVET tesszük
+            if (kitneve) {
+            // innerHTML kell, hogy a HTML tagek (pl. <b>) működjenek
+kitneve.innerHTML = `<b><u>${data.vizsgalt_nev}</u></b> - ${data.kitoltes_neve}` || "Név nem elérhető";        }
+          
+      } else { 
+          console.error('Hiba:', data.message);
+      }
+  })
+  .catch(error => { 
+      console.error('Fetch hiba:', error);
+  });
 }
 
 // Értékelés mentése

@@ -100,4 +100,15 @@ Adatbázis: ertekek02
 		- vizsglat_id: "kitoltesek" tábla alap_id oszlopa
 		- ip_cim: belegyezés mely IP címről érkezett		
 		- user_agent: mely böngészéből érkezett a kérés
-		- verzio_tag: verziószám
+		- verzio_tag: verziószám[2026-01-19T10:37:56.873Z] UNCAUGHT EXCEPTION: ReferenceError: action is not defined
+    at module.exports (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\felhasznalomodul.js:301:1)
+    at Object.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\app.js:137:21)
+    at Module._compile (node:internal/modules/cjs/loader:1546:14)
+    at Object..js (node:internal/modules/cjs/loader:1689:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:315:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:218:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49
+[2026-02-02T09:38:24.611Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\index.html'

@@ -4,48 +4,39 @@ const express = require('express');
 const path = require('path');
 const session = require('express-session');
 const db = require('./modulok/dbmodul');
+const util = require('util');
 
-require('dotenv').config();
 if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY hiányzik');
 if (!process.env.SECRET_KEY) throw new Error('SECRET_KEY hiányzik');
 const app = express();
 const port = 3000;
+app.set('trust proxy', 1);
 const fs = require('fs');
 const logFilePath = path.join(__dirname, 'logi', 'minden_log.txt');
-
-// Hozzunk létre egy "stream"-et, ami folyamatosan nyitva tartja a fájlt
 const logStream = fs.createWriteStream(logFilePath, { flags: 'a' });
 
-// Térítsük el a console.log-ot:
 console.log = (...args) => {
     const timestamp = new Date().toISOString();
     const message = args.map(arg => typeof arg === 'object' ? JSON.stringify(arg) : arg).join(' ');
     const logMessage = `[${timestamp}] [LOG]: ${message}\n`;
     
-    // Írjuk a stream-be (ez gyors)
     logStream.write(logMessage);
     
-    // Írjuk ki az eredeti process-be is, hátha (de ez az, amit a Passenger elkap)
     process.stdout.write(logMessage); 
 };
 
-// Térítsük el a console.error-t:
-/* console.error = (...args) => {
+console.error = (...args) => {
     const timestamp = new Date().toISOString();
     const message = args.map(arg => arg instanceof Error ? arg.stack : util.format(arg)).join(' ');
     const logMessage = `[${timestamp}] [HIBA]: ${message}\n`;
     
-    // Írjuk a stream-be
     logStream.write(logMessage);
     
-    // Írjuk az eredeti process-be is
     process.stderr.write(logMessage);
-}; */
+};
 
-// Térítsük el a kezeletlen hibákat is!
 process.on('uncaughtException', (err) => {
     console.error('!!! KEZELETLEN HIBA (UNCAUGHT EXCEPTION) !!!', err);
-    // Adjunk időt a log írására, mielőtt a process leáll
     setTimeout(() => {
         process.exit(1);
     }, 1000);
@@ -54,6 +45,7 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
     console.error('!!! KEZELETLEN PROMISE HIBA (UNHANDLED REJECTION) !!!', reason);
 });
+
 //MIDDLEWARE
 app.use(express.urlencoded({ extended: true }));
 app.use(session({
@@ -175,23 +167,16 @@ app.get('/', (req, res) => {
 res.sendFile(path.join(__dirname, 'httpdocs', 'public', 'index.html'));
 });
 // Statikus fájlok kezelése (public, user, admin)
-app.use('/user', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'user')));
-app.use('/elemzo', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'elemzo')));
-app.use('/admin', authMiddleware, adminAuthMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'admin')));
-app.use('/info',authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'info')));
-app.use('/main', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'main')));
+
 
 //ALIASOK
 
 const routes = [
-    // Public
     { path: '/register.html', file: 'public/reg/register.html', auth: [] },
-    
-    // Private - Itt adjuk hozzá az ellenőrzéseket
     { 
-        path: '/admin/dashboard.html', // Teljes útvonal használata ajánlott
+        path: '/admin/dashboard.html', 
         file: 'private/admin/dashboard.html', 
-        auth: [authMiddleware, adminAuthMiddleware] // Itt dől el a visszairányítás
+        auth: [authMiddleware, adminAuthMiddleware] 
     },
     { path: '/upload.html', file: 'private/admin/upload/upload.html', auth: [authMiddleware, adminAuthMiddleware] },
     { path: '/teszt.html', file: 'private/admin/teszt/teszt.html', auth: [authMiddleware, adminAuthMiddleware] },
@@ -201,6 +186,15 @@ routes.forEach(route => {
     app.get(route.path, ...route.auth, (req, res) => {
         res.sendFile(path.join(__dirname, 'httpdocs', route.file));
     });
+});
+app.use('/user', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'user')));
+app.use('/elemzo', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'elemzo')));
+app.use('/admin', authMiddleware, adminAuthMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'admin')));
+app.use('/info', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'info')));
+app.use('/main', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'main')));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'httpdocs', 'public', 'index.html'));
 });
 
 app.use((err, req, res, next) => {
@@ -223,6 +217,4 @@ app.get('/status', (req, res) => {
   });  
 
 app.listen(port, () => {
-    console.log(`Szerver fut a http://localhost:${port} címen`);
-
 });

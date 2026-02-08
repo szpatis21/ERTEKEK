@@ -105,16 +105,24 @@ document.querySelector("form").addEventListener("submit", function(e) {
         }
     })
 })
-const bejelentkezes = document.querySelector("#bejelentkezes")
-bejelentkezes.addEventListener('click', function(){
-    bejbutt.style.display = "none";
-    rlog.classList.add('fade2'); 
-    belso.classList.add("kijelolt");
-    rlog.style.display = "flex"; 
+const bejelentkezesGombok = document.querySelectorAll("#bejelentkezes, #lepjenbe");
 
-    setTimeout(function() {
-        rlog.classList.add('fade-in2');
-    }, 10); 
+bejelentkezesGombok.forEach(gomb => {
+    gomb.addEventListener('click', function(e){
+        e.preventDefault(); 
+        if(bejbutt) bejbutt.style.display = "none";
+        
+        if(rlog) {
+            rlog.classList.add('fade2'); 
+            rlog.style.display = "flex"; 
+            
+            setTimeout(function() {
+                rlog.classList.add('fade-in2');
+            }, 10); 
+        }
+
+        if(belso) belso.classList.add("kijelolt");
+    });
 });
 
 // Animációk és kisebb megjelenítési cuccok

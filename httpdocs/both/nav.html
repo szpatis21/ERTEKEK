@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="nav.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <header>
+    <aside>
+        <div class="navbar">
+            <div class="logo"><a href="#">ÉRTÉKEK</a></div>
+            <ul class="links">
+                <li>
+                    <span class="nav-icon material-symbols-rounded">home</span>
+                    <a href="/index.html">Fooldal</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">settings</span>
+                    <a href="/index.html">Szolgáltatásaink</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">policy</span>
+                    <a href="/index.html">Adatvédelem</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">account_circle</span>
+                    <a href="/register.html">Regisztráció</a>
+                </li>
+            </ul>
+
+            <span class="nav-icon material-symbols-rounded" id="lepjenbe">logout</span>
+            <a href="" class="action_btn" id="lepjenbe">Bejelentkezés</a>
+
+            <div class="toggle_btn">
+                <i class="fa-solid fa-bars"></i>            
+            </div>
+        </div>
+        <div class="dropdown_menu">
+                  <li>
+                    <span class="nav-icon material-symbols-rounded">home</span>
+                    <a href="/index.html">Fooldal</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">settings</span>
+                    <a href="/index.html">Szolgáltatásaink</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">policy</span>
+                    <a href="/index.html">Adatvédelem</a>
+                </li>
+                <li>
+                    <span class="nav-icon material-symbols-rounded">account_circle</span>
+                    <a href="/register.html">Regisztráció</a>
+                </li>
+                
+                <li>
+                    <span class="nav-icon material-symbols-rounded" id="lepjenbe">logout</span>
+                    <a href="" class="action_btn" id="lepjenbe">Bejelentkezés</a>
+                </li>
+                <div class="mobillogo">
+                    <div id="logokulso" style="width: 130px; height: 130px; border-radius: 15px;"></div>
+                    <div id="logobelso" style="width: 110px; height: 110px; font-size: small;border-radius: 15px; color: black"><span class="gold">É</span>RTÉKEK</div>
+                </div> 
+        </div>
+    </aside>
+    </header>
+
+    <script>
+
+        const toggleBtn = document.querySelector(".toggle_btn ")
+        const toogleBtnIcon = document.querySelector(".toggle_btn i")
+        const dropDownMenu = document.querySelector(".dropdown_menu ")
+
+toggleBtn.onclick = function () {
+    dropDownMenu.classList.toggle("open"); 
+    
+    const isOpen = dropDownMenu.classList.contains("open");
+    
+    toogleBtnIcon.classList = isOpen 
+        ? 'fa-solid fa-xmark' 
+        : 'fa-solid fa-bars';
+}
+    </script>
+</body>
+
+</html>

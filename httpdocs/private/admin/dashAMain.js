@@ -67,7 +67,10 @@ const userLoaded = (async () => {
   try {
     const res  = await fetch('/get-username');
     const data = await res.json();
-    if (!data.success) throw new Error(data.message);
+    if (!data.success) {
+      window.location.href = '/login.html';
+            return;
+    };
 
     // Feltöltjük a state-et
     Object.assign(userState, {

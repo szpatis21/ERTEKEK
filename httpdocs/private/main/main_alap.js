@@ -69,8 +69,8 @@ export const modulIdBetoltve = new Promise((resolve, reject) => {
                 modulId = data.modulId;
                 resolve(modulId);  // promise feloldása modulId-vel
             } else {
-                reject(new Error(data.message));
-            }
+    window.location.href = '/login.html';
+            return;            }
         } catch (error) {
             reject(error);
         }

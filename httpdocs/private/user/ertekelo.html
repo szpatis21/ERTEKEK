@@ -11,13 +11,8 @@
                 <link rel="stylesheet" href="/public/stylei.css">
     <link rel="stylesheet" href="dashmobile.css">
 
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
-    
-    <style>body{ align-items: flex-start; flex-direction: column;}
+    <style>
+    body{ align-items: flex-start; flex-direction: column;}
    
      .savos{    display: flex;
         background-position: center;
@@ -78,6 +73,12 @@
     grid-template-areas: "c a b";
 
   }
+  
+#maininf{width: 100%; display: grid !important;
+    position: sticky;
+    top: 60px;
+        gap: 1vh;
+    grid-template-rows: 33vh 55vh;}
   .gomb{display: flex; width: 90%; aspect-ratio: 1/1;    box-shadow: 0px 0px 5px 1px #ffeede; border-radius: 11px; }
 
   
@@ -102,7 +103,6 @@
     height: 100vh;
 
   }
-      .sidebar-nav .nav-link  {font-size: medium;}
 #logokulso{    width: 130px !important;
     height: 130px !important;
     border-radius: 15px;}
@@ -194,7 +194,7 @@ font-size: 80% !important;}
                         <canvas id="altTemaChart"></canvas>
                     </div>
                 </div>
-                <div id="keszulo" >
+                <div id="keszulo" style="height: 100%;">
                     <div id="ertekelesek-container" >
                         <div class="szalag">
                             <div style="text-align: center; font-style: italic;">
@@ -215,18 +215,12 @@ font-size: 80% !important;}
                 </div>
 </div>
        
-
-  <script type="module" src="/private/main/main_alap.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="../both/both.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-  <script src="../both/fonts/vfs_fonts.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth > 500) {
-    sidebar.classList.remove("collapsed");
-  }
-});</script>
+    <script type="module" src="/both/both.js"></script>
+    <script type="module" src="/private/main/main_alap.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="../both/fonts/vfs_fonts.js"></script>
 
 </body>
 </html>

@@ -233,7 +233,7 @@ function rgbToRgba(rgb, alpha = 0.2) {
 // Átlagszámoló
 function averageEvaluations(list) {
   // Ha 5-ből 3 fő is elég,  0.6-ra. (most 5-ből pl 4)
-  const MIN_REPRESENTATION_RATIO = 0.8;
+  const MIN_REPRESENTATION_RATIO = 0.6;
 
   if (!list.length) return {};
 
@@ -489,7 +489,9 @@ if (pct === 0) continue;              // 0-ás belső csomópontot is ugorjuk
       walk(next, [...path, { key, pct }]);
     }
   })(jsonObj);
-
+if (leaves.length === 0) {
+target.innerHTML = '<div class="no-data">Nincs elegendő közös adat a statisztika megjelenítéséhez (a válaszadási arány túl alacsony).</div>';
+   return;}
   const depth        = Math.max(...leaves.map(p => p.length));
   const rowspanTodo  = Array(depth).fill(0);
 

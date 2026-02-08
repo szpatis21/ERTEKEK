@@ -4,20 +4,12 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Autentikációs hiba</title>
-                        <link rel="stylesheet" href="../both/both.css">
-
-                <link rel="stylesheet"  href="/reg/stylereg.css">
-
-
-<link rel="stylesheet" href="/private/main/main.css">
-
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
-
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+        <link rel="stylesheet" href="../both/both.css">
+        <link rel="stylesheet"  href="/reg/stylereg.css">
+        <link rel="stylesheet" href="/private/main/main.css">
 
     <style> 
-    .berorr{ 
-        
+    .berorr{     
     color: whitesmoke;
     font-family: "Montserrat Subrayada", sans-serif;
     font-size: larger;
@@ -27,7 +19,9 @@
     padding: 10px;
     border-radius: 12px;
     background-color: #00000061;
-} 
+    position:relative;
+    z-index:-1 ;
+    } 
      ul{ font-size: medium; font-family: Arial, Helvetica, sans-serif;font-weight: 900;
     width: fit-content;
     margin: auto;
@@ -46,13 +40,13 @@
     <article style="width: 100%;">
         
     <div class="berorr">
+        A munkamenete lejárt, vagy
         Olyan oldalhoz kíván hozzáférni amihez nincs jogosultsága!
         <ul>
             <li>Ha nincs fiókja, regisztráljon</li> 
             <li>Ha van, csak jelentkezzen be</li>
 
         </ul>
-       
 
     </div>
     <article class="opening" >
@@ -164,9 +158,6 @@
                                 </div>
                                 <div class="err" id="telerr"></div>
                             </div>
-
-                            
-
 
                         </div>
                         <div id="kotelezo">
@@ -496,12 +487,9 @@
     </article>
     <div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
 </article>
+    <script type="module" src="/both/both.js"></script>    
     <script type="module" src="/reg/regifo.js"></script>
-    <script src="../both/both.js"></script>
     <script src="../both/policy.js"></script>
-
-
-
 
 </body>
 </html>

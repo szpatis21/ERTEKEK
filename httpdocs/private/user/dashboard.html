@@ -11,8 +11,6 @@
     <link rel="stylesheet" href="/private/main/main.css">
     <link rel="stylesheet" href="/public/stylei.css">
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
     <style>
         #ai-generate-btn:hover{background-color: transparent;}
       #kimenetbelso{
@@ -60,14 +58,10 @@
     color: #4b5563;
     text-shadow: 0px 0px 2px #4b5563;
     }
-canvas {
-  image-rendering: auto;  /* ne pixelesítsen */
-}
+canvas {image-rendering: auto;}
 
 #fulek { grid-area: b; }
 .munka { grid-area: a; }
-
-
 /* Nagy: 3 oszlop egy sorban */
 
 #lapok { grid-area: b; }
@@ -134,11 +128,6 @@ canvas {
                             
                                 
                             <div id="chart-container">
-                                <div style="position: absolute; background: linear-gradient(45deg, #ff6500, #ff00cf);margin: 10px 0px; font-size: x-small; width: fit-content; border-radius: 7px;padding: 2px;">
-                                    <button id="egyeni-ai-generate-btn" class="gobut5" style=" aspect-ratio: 0;box-shadow: none; height: 100%; margin: 0px;">
-                                        Egyéni Értékeés generálása
-                                    </button>
-                                </div>
                                 <canvas id="fokategoriaChart"></canvas>
                                
                             </div>
@@ -376,9 +365,7 @@ canvas {
                                                 <div id="kuldendo" class="inner-div">
                                                 
                                                     <span>Jelenlegi szerkesztők</span>
-    <!--                                                 <textarea name="kmsg" id="msgtxt" placeholder="Írjon üzenetet a társ szerkesztőknek. Ezt a megosztás után e-mailben fogják megkapni..."> </textarea>
-    -->
-                                                </div>
+    </div>
 
                                         </div>    
                                     <div id="go4">
@@ -413,7 +400,6 @@ canvas {
    </div>
 
 
-
 <div id="toast" class="toast hidden">Ez az üzenet ide kerül</div>
 <div id="loading-overlay" style="display: none;">
     <div id="kont">
@@ -425,37 +411,22 @@ canvas {
     </div>
 </div>
 
-
-<div>
-
-</div>
-
-
-
-<script>document.addEventListener('DOMContentLoaded', () => {
-    const elemek = document.querySelectorAll('.category-container .fo');
-    elemek.forEach((elem, index) => {
-        setTimeout(() => {
-            elem.classList.add('megjelenik');
-        }, index * 2000); 
+    <script>document.addEventListener('DOMContentLoaded', () => {
+        const elemek = document.querySelectorAll('.category-container .fo');
+        elemek.forEach((elem, index) => {
+            setTimeout(() => {
+                elem.classList.add('megjelenik');
+            }, index * 2000); 
+        });
     });
-});
 
-</script>
-<script src="../both/both.js"></script>
-<script type="module" src="/private/user/dashMain.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script>//NAVMENU
-document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth > 500) {
-    sidebar.classList.remove("collapsed");
-  }
-});
+    </script>
+    <script type="module" src="/both/both.js"></script>
+    <script type="module" src="/private/user/dashMain.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-
-</script>
 
 </body> 
 </html>

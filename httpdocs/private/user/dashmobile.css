@@ -1,4 +1,4 @@
-  @media (max-width: 1024px) {
+  @media (max-width: 900px) {
       .layout {
     grid-template-columns: 1fr;
      grid-template-areas:
@@ -131,7 +131,7 @@ justify-content: space-evenly !important}
         .kozepc div{justify-content: center;}
     .sidebar .sidebar-header{margin-top: 0px;}
     .picik{flex-direction: column;}
-.gomb{width: 120px; height:5vh;margin: auto;}
+.gomb{width: 25%; height:5vh;margin: auto;}
 .sidebar{position: fixed;} 
 .udv {
     display: flex
@@ -162,7 +162,7 @@ search-bar{width: 100%;}
     width: 3px;}
     .outer-div{height: 100%;}
 
-
+.gomb .cim {padding: 0px; font-size: x-small !important;}
 .sta{    text-align: center;
 }
       #pergo-container{  font-size: small;
@@ -171,14 +171,13 @@ search-bar{width: 100%;}
 #szumm-chart-container div{display: flex; gap: 16px;align-items: stretch;}
 #magyarazat{flex-direction: column !important;}
 .savos{     
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:12px;  
-  grid-template-areas: "a a a"
-   "b c d";
+display: flex;
 }
 #ertekek0{ grid-area: a;}
 #ujert0{ grid-area: c;}
 #accunt0{grid-area: b;}
 #hozzaj0{grid-area: d;}
+
+
+#accunt0{display: none;}
 }

@@ -20,14 +20,16 @@ export const BUTTONS = {
     {cls: 'fo_edit',        icon: 'edit',           help: 'Értékelés folytatása'},
     {cls: 'edit',           icon: 'page_header',    help: 'Átnevezés', action: 'edit'},
     {cls: 'share',          icon: 'share',          help: 'Megosztás',                      action: 'share'},
-    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',         action: 'mail'},
+    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',         action: 'generate_ai'},
     {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
     {cls: 'deleted',        icon: 'delete',         help: 'Törlés',                         action: 'delete'},
+        { icon: 'content_copy', action: 'duplicate', cls: 'duplicate', help: 'Duplikálás' }, // <--- Ezt add hozzá
+
   ],
   szerkeszto: [
     {cls: 'fo_edit',        icon: 'edit',           help: 'Éretékelés folytatása'},
-    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',               action: 'mail'},
+    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',               action: 'generate_ai'},
     {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
   ]

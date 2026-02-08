@@ -140,42 +140,61 @@ export class KategoriaKezelo {
                 }
             }
         }
-        // 2) Szöveges válaszok (szovegesValaszok) beolvasása
+      // 2) Szöveges válaszok (szovegesValaszok) beolvasása
+  // 2) Szöveges válaszok (szovegesValaszok) beolvasása
         for (const [key, value] of Object.entries(szovegesValaszok)) {
             const trimmedVal = value.trim();
-            if (!trimmedVal) continue;  
-        
-            const kerdesId = parseInt(key, 10); // 🔹 Győződjünk meg róla, hogy szám!
-            if (isNaN(kerdesId)) continue; // Ha nem szám, hagyjuk ki!
-        
+            if (!trimmedVal) continue;
+
+            const kerdesId = parseInt(key, 10);
+            if (isNaN(kerdesId)) continue;
+
             const kerdes = KategoriaKezelo.kerdesek.find(k => k.id === kerdesId);
             if (!kerdes) continue;
-        
+
             const foKategoriaNev = kerdes.foKategoria;
             const alKategoriaNev = kerdes.alKategoria;
-            const altTemaNev     = kerdes.altTema;
-        
+            const altTemaNev = kerdes.altTema;
+
+            // Struktúra biztosítása
             if (!foKategoriak[foKategoriaNev]) foKategoriak[foKategoriaNev] = {};
             if (!foKategoriak[foKategoriaNev][alKategoriaNev]) foKategoriak[foKategoriaNev][alKategoriaNev] = {};
             if (!foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev]) foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev] = {};
-            if (!foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][kerdes.parentId || kerdes.id]) {
-                foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][kerdes.parentId || kerdes.id] = {
+            
+            const parentKey = kerdes.parentId || kerdes.id;
+            if (!foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][parentKey]) {
+                foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][parentKey] = {
                     kerdesek: [],
                     alkerdesek: []
                 };
             }
-        
-            // **ÚJ: Frissítjük az értékelési táblázatban lévő szöveges válaszokat is**
-            let kerdesContainer = document.querySelector(`p[data-id="${kerdes.id}"]`);
-            if (kerdesContainer) {
-                kerdesContainer.textContent = trimmedVal;  // 🔹 Valós időben frissíti az adott kérdés sorát
+
+            const aktualisCsoport = foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][parentKey];
+
+            if (kerdes.parentId) {
+                // --- ALKÉRDÉS KEZELÉSE 
+                const letezoAlkerdesIndex = aktualisCsoport.alkerdesek.findIndex(item => item[2] === kerdes.id);
+
+                if (letezoAlkerdesIndex > -1) {
+                    aktualisCsoport.alkerdesek[letezoAlkerdesIndex][0] = trimmedVal;
+                } else {
+                    aktualisCsoport.alkerdesek.push([trimmedVal, kerdes.ertek, kerdes.id, kerdes.maximalis_szint]);
+                }
+
             } else {
-                // Ha nincs még ilyen kérdés a listában, adjuk hozzá megfelelő formátumban
-                foKategoriak[foKategoriaNev][alKategoriaNev][altTemaNev][kerdes.parentId || kerdes.id]
-                    .kerdesek.push([trimmedVal, null, kerdes.id, null]);
+                // --- FŐKÉRDÉS KEZELÉSE ---
+                const letezoKerdesIndex = aktualisCsoport.kerdesek.findIndex(item => item[2] === kerdes.id);
+
+                if (letezoKerdesIndex > -1) {
+                    // Ha már létezik (van pontszáma), csak a szöveget frissítjük
+                    aktualisCsoport.kerdesek[letezoKerdesIndex][0] = trimmedVal;
+                } else {
+                    // Ha nincs, HOZZÁADJUK, de a végére teszünk egy 'true' jelölőt (isTextOnly)
+                    // Formátum: [szoveg, ertek, id, negalt_ertek, maximalis_szint, isTextOnly]
+                    aktualisCsoport.kerdesek.push([trimmedVal, 0, kerdes.id, 0, kerdes.maximalis_szint, true]);
+                }
             }
         }
-        
         // Összesített pontszám inicializálása
         let osszesitettPontszam = 0;
         const ertekelesJSON = {};
@@ -282,12 +301,16 @@ fetch('/private/info/temakorok.json')
                             let kerdesOsszpont = 0;
                                            
                             valaszok.kerdesek.forEach((alkerd) => {
-                                const [szoveg, ertek, id, negalt_ertek, maximalis_szint] = alkerd;                                
+                                const [szoveg, ertek, id, negalt_ertek, maximalis_szint, isTextOnly] = alkerd;                                
                                 const p = document.createElement('p');
                                 p.classList.add('fokerd');
                                 p.setAttribute('data-id', id);
                                 p.setAttribute('data-maxi', maximalis_szint == 1 ? 'true' : 'false');
 
+                                // ÚJ RÉSZ: Ha ez csak szöveges válasz, megjelöljük, hogy ne számítson bele az átlagba
+                                if (isTextOnly) {
+                                    p.setAttribute('data-ignore-score', 'true');
+                                }
                             
                                 // 🔍 Kikeressük a főkérdés objektumot a Kerdesek tömbből
                                 const parentKerdes = KategoriaKezelo.kerdesek.find(k => k.id === id);
@@ -345,6 +368,7 @@ const maximalizaltErtekek = [];
 const normalErtekek = [];
 
 kerdesekCell.querySelectorAll('.fokerd').forEach(pElem => {
+    if (pElem.getAttribute('data-ignore-score') === 'true') return;
     const maxi = pElem.getAttribute('data-maxi') === 'true';
     const ertek = parseInt(pElem.querySelector('span')?.textContent?.match(/\((\d+)%\)/)?.[1]) || 0;
 
@@ -488,12 +512,11 @@ window.ertekelesJSON = ertekelesJSON;   // ha később más kódból is kell
         });
         // 🔹 1. főkategória értékek kigyűjtése charthoz () Ha már van ilyen chart, előbb megsemmisítjük
             const { chartLabels, chartData } = kiszamoltFoKategoriaDiagramAdatok();
-
             const ctx = document.getElementById('fokategoriaChart').getContext('2d');
-            if (window.foKategoriaChartInstance) {
-                window.foKategoriaChartInstance.destroy();
-            }
-            window.foKategoriaChartInstance = letrehozFoKategoriaChart(ctx, chartLabels, chartData, kategoriakChartSzinek);
+            
+            // Átadjuk az előző példányt (window.foKategoriaChartInstance) utolsó paraméterként
+            // Ha létezik, a függvény frissíti. Ha null, újat gyárt.
+            window.foKategoriaChartInstance = letrehozFoKategoriaChart(ctx, chartLabels, chartData, kategoriakChartSzinek, window.foKategoriaChartInstance);
             const aktivFoKatElem = document.querySelector('.fo.active .cim');
             if (aktivFoKatElem) {
                 const aktivFoKategoriaNev = aktivFoKatElem.textContent.trim();

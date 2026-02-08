@@ -296,6 +296,96 @@ router.get('/original-admin', (req, res) => {
             });
         });
     });
+// modulok/felhasznalomodul.js
+
+// Kitöltés duplikálása
+router.post('/duplicate-kitoltes', (req, res) => {
+    const { originalIdk, ujNev, userId } = req.body;
+
+    if (!originalIdk || !ujNev || !userId) {
+        return res.status(400).json({ success: false, message: 'Hiányzó adatok (originalIdk, ujNev, userId)!' });
+    }
+
+    // 1. Eredeti kitöltés adatainak lekérése
+    const selectOriginal = `SELECT * FROM kitoltesek WHERE idk = ? LIMIT 1`;
+
+    db.query(selectOriginal, [originalIdk], (err, rows) => {
+        if (err) {
+            console.error('Hiba az eredeti kitöltés lekérésekor:', err);
+            return res.status(500).json({ success: false, message: 'Adatbázis hiba (Select)' });
+        }
+        if (rows.length === 0) {
+            return res.status(404).json({ success: false, message: 'Az eredeti kitöltés nem található!' });
+        }
+
+        const original = rows[0];
+        const maiDatum = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+
+        // 2. Új kitöltés beszúrása
+        // Id: auto-increment, idk: később update-eljük, letrehozva: most, kitoltes_neve: user input
+        // A többi adat (vizsgalt_id, modul_id, szazalek, role) másolva az eredetiből.
+        const insertKitoltes = `
+            INSERT INTO kitoltesek 
+            (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, szazalek)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        `;
+
+        db.query(insertKitoltes, [
+            userId,           // Aktuális felhasználó (lehet, hogy más, mint az eredeti készítője)
+            maiDatum,         // Új dátum
+            ujNev,            // Új név
+            'admin',          // Role: alapértelmezetten admin a másolat létrehozójának
+            original.modul_id,
+            original.vizsgalt_id,
+            original.szazalek // Százalékos állapot másolása
+        ], (insErr, result) => {
+            if (insErr) {
+                console.error('Hiba az új kitöltés beszúrásakor:', insErr);
+                return res.status(500).json({ success: false, message: 'Adatbázis hiba (Insert Kitoltes)' });
+            }
+
+            const newId = result.insertId;
+
+            // 3. IDK frissítése (hogy megegyezzen az ID-vel, a rendszer logikája szerint)
+            const updateIdk = `UPDATE kitoltesek SET idk = ? WHERE id = ?`;
+            
+            db.query(updateIdk, [newId, newId], (updErr) => {
+                if (updErr) {
+                    console.error('Hiba az IDK frissítésekor:', updErr);
+                    return res.status(500).json({ success: false, message: 'Adatbázis hiba (Update IDK)' });
+                }
+
+                // 4. Válaszok másolása (Duplicate Answers)
+                // Egy lépésben átmásoljuk a válaszokat az SQL INSERT INTO ... SELECT segítségével.
+                // Az új 'kitoltes_id' a 'newId' lesz. A 'letrehozva' a mostani időpont.
+                const duplicateAnswers = `
+                    INSERT INTO valaszok 
+                    (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
+                    SELECT ?, kerdes_id, kerdes_valasz, valasz_szoveg, ?, NOW()
+                    FROM valaszok
+                    WHERE kitoltes_id = ?
+                `;
+
+                db.query(duplicateAnswers, [newId, userId, originalIdk], (copyErr, copyRes) => {
+                    if (copyErr) {
+                        console.error('Hiba a válaszok másolásakor:', copyErr);
+                        // Megjegyzés: Bár a kitöltés létrejött, a válaszok nem. Ilyenkor érdemes lenne rollbackelni, 
+                        // de egyszerűsítve csak hibát dobunk.
+                        return res.status(500).json({ success: false, message: 'Hiba a válaszok másolásakor!' });
+                    }
+
+                    res.json({ 
+                        success: true, 
+                        message: 'Sikeres duplikálás!', 
+                        newId: newId, 
+                        copiedAnswers: copyRes.affectedRows 
+                    });
+                });
+            });
+        });
+    });
+});
+    
     // Kitoltes_neve lekérése ID alapján
 // Lekéri a kitöltéseket a dekódolt alanynévvel együtt
 router.get('/get-kitoltesek', (req, res) => {
@@ -376,61 +466,74 @@ router.get('/get-kitoltes-neve', (req, res) => {
 });
 
     // Kitöltés mentése / válaszok upsert + százalék-JSON update
-    router.post('/save-valaszok', (req, res) => {
+// felhasznalomodul.js - Optimalizált /save-valaszok
+
+router.post('/save-valaszok', (req, res) => {
     const {
         kitoltesId, kerdesValaszok, szovegesValaszok,
-        userId, ido, szazalek        // ⬅️ új mező
+        userId, ido, szazalek
     } = req.body;
 
-    if (!kitoltesId || !userId
-        || typeof kerdesValaszok   !== 'object'
-        || typeof szovegesValaszok !== 'object') {
-        return res.status(400).json({ success:false, message:'Hiányzó vagy hibás adatok!' });
+    if (!kitoltesId || !userId || typeof kerdesValaszok !== 'object' || typeof szovegesValaszok !== 'object') {
+        return res.status(400).json({ success: false, message: 'Hiányzó vagy hibás adatok!' });
     }
 
-    /* -------- 1. válaszok upsert -------- */
-    const insertQ = `
+    // 1. Adatok előkészítése egyetlen tömbbe (mátrixba) a Bulk Inserthez
+    // Egyesítjük a kulcsokat, hogy minden érintett kérdésid meglegyen
+    const allKeys = new Set([...Object.keys(kerdesValaszok), ...Object.keys(szovegesValaszok)]);
+    const valuesToInsert = [];
+
+    allKeys.forEach(kerdesId => {
+        const valasz = kerdesValaszok[kerdesId] ?? null;
+        const szoveg = szovegesValaszok[kerdesId] ?? null;
+        
+        // A sorrendnek meg kell egyeznie az SQL VALUES résszel:
+        // (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
+        valuesToInsert.push([kitoltesId, kerdesId, valasz, szoveg, userId, ido]);
+    });
+
+    // Segédfüggvény a JSON mentéshez (hogy ne kelljen duplikálni a kódot)
+    const saveJsonAndResponse = () => {
+        if (!szazalek) {
+            return res.json({ success: true, message: 'Válaszok mentve!' });
+        }
+        const updQ = 'UPDATE kitoltesek SET szazalek = ? WHERE idk = ?';
+        db.query(updQ, [JSON.stringify(szazalek), kitoltesId], (err) => {
+            if (err) {
+                console.error('JSON update hiba:', err);
+                return res.status(500).json({ success: false, message: 'JSON mentési hiba!' });
+            }
+            res.json({ success: true, message: 'Válaszok + JSON mentve!' });
+        });
+    };
+
+    // Ha nincs válasz, csak JSON update (vagy kilépés)
+    if (valuesToInsert.length === 0) {
+        return saveJsonAndResponse();
+    }
+
+    // 2. Egyetlen SQL lekérdezés az összes válaszhoz
+    const bulkInsertQuery = `
         INSERT INTO valaszok
         (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
-        VALUES (?, ?, ?, ?, ?, ?)
+        VALUES ?
         ON DUPLICATE KEY UPDATE
         kerdes_valasz = VALUES(kerdes_valasz),
         valasz_szoveg = VALUES(valasz_szoveg),
         letrehozva     = VALUES(letrehozva),
-        felhasznalo_id = VALUES(felhasznalo_id);
+        felhasznalo_id = VALUES(felhasznalo_id)
     `;
 
-    const promises = Object.keys({ ...kerdesValaszok, ...szovegesValaszok })
-        .map(kerdesId => new Promise((resolve, reject) => {
-        const v  = kerdesValaszok[kerdesId]  ?? null;
-        const sz = szovegesValaszok[kerdesId] ?? null;
-
-        db.query(insertQ,
-                [kitoltesId, kerdesId, v, sz, userId, ido],
-                (err, r) => err ? reject(err) : resolve(r));
-        }));
-
-    /* -------- 2. ha kész az összes válasz, frissítjük a JSON-t -------- */
-    Promise.all(promises)
-        .then(() => {
-        if (!szazalek) {                     // ha nincs JSON, nincs update
-            return res.json({ success:true, message:'Válaszok mentve!' });
+    // A mysql2 driver a [valuesToInsert] formátumot (tömbök tömbje) automatikusan kezeli a '?' helyén
+    db.query(bulkInsertQuery, [valuesToInsert], (err, result) => {
+        if (err) {
+            console.error('Adatbázis hiba (Bulk Insert):', err);
+            return res.status(500).json({ success: false, message: 'Adatbázis hiba történt!' });
         }
-
-        const updQ = 'UPDATE kitoltesek SET szazalek = ? WHERE idk = ?';
-        db.query(updQ, [JSON.stringify(szazalek), kitoltesId], (err) => {
-            if (err) {
-            console.error('JSON update hiba:', err);
-            return res.status(500).json({ success:false, message:'JSON mentési hiba!' });
-            }
-            res.json({ success:true, message:'Válaszok + JSON mentve!' });
-        });
-        })
-        .catch(err => {
-        console.error('Adatbázis hiba:', err);
-        res.status(500).json({ success:false, message:'Adatbázis hiba történt!' });
-        });
+        // Sikeres mentés után jöhet a JSON update
+        saveJsonAndResponse();
     });
+});
     //Százalék betöltése
     router.get('/get-kitoltes-szazalek', (req, res) => {
     const id = req.query.kitoltes_id;

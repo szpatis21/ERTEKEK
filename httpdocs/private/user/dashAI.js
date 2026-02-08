@@ -1,5 +1,6 @@
-import { modulId } from './dashMain.js';
+import { modulId, animateMessage } from './dashMain.js';
 import { readBarLegendItems } from './dashPDF.js';
+import { showAlert } from '/both/alert.js';
 
 async function triggerAiAnalysis() {
   const outputContainer = document.getElementById('Kimenet');
@@ -12,13 +13,16 @@ async function triggerAiAnalysis() {
     return false;
   }
 
+  // --- 1. Stopper indítása ---
+  const startTime = Date.now();
+
   outputContainer.style.display = 'none';
   outputContainer.style.opacity = '0';
   outputContainer.style.transition = 'opacity 0.5s ease-in-out';
   esszeDiv.textContent = ''; 
+  
   loadingOverlay.style.display = 'flex';
-
-  await new Promise(resolve => setTimeout(resolve, 10)); 
+  animateMessage('Elemzés folyamatban...', '2rem', 'orange');
 
   let buffer = '';
   let textBuffer = ''; 
@@ -29,6 +33,7 @@ async function triggerAiAnalysis() {
       throw new Error('A sűrített adatok generálása sikertelen.');
     }
 
+    // --- 2. Adatok lekérése ---
     const response = await fetch('/api/generate/jellemzes-from-text', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -43,6 +48,14 @@ async function triggerAiAnalysis() {
       throw new Error(`Szerverhiba (${response.status}): ${errorData.message}`);
     }
 
+    // --- 3. Időellenőrzés (Egyszerű matek) ---
+    const elapsed = Date.now() - startTime;
+    if (elapsed < 8000) {
+        // Ha gyorsabb volt mint 8mp, kivárjuk a maradékot
+        await new Promise(resolve => setTimeout(resolve, 8000 - elapsed));
+    }
+
+    // --- 4. Töltő levétele és megjelenítés ---
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
@@ -95,7 +108,8 @@ async function triggerAiAnalysis() {
 
   } catch (err) {
     console.error('AI elemzés hiba (stream):', err);
-    esszeDiv.textContent = `Hiba történt az AI elemzés során: ${err.message}`;
+    showAlert(`Hiba történt az AI elemzés során: ${err.message}`);
+    
     loadingOverlay.style.display = 'none';
     outputContainer.style.display = 'block';
     setTimeout(() => { outputContainer.style.opacity = '1'; }, 20);
@@ -250,35 +264,45 @@ function buildAiPromptText() {
   return prompt;
 }
 
-async function triggerIndividualAiAnalysis() {
+// --- EGYÉNI JELLEMZÉS (Ugyanaz a logika) ---
+export async function triggerIndividualAiAnalysis(callerBtn = null) {
   const outputContainer = document.getElementById('egyeni-ai-kimenet');
-  const loadingOverlay = document.getElementById('egyeni-ai-loading');
-  const aiBtn = document.getElementById('egyeni-ai-generate-btn');
+  const loadingOverlay = document.getElementById('loading-overlay'); 
 
-  if (!outputContainer || !loadingOverlay || !aiBtn) {
+  if (!outputContainer || !loadingOverlay) {
     console.warn('Egyéni AI elemzéshez szükséges HTML elemek hiányoznak.');
     return false;
   }
   
-  if (!window.ertekelesJSON || Object.keys(window.ertekelesJSON).length === 0) {
-    alert('Nincs elegendő adat az elemzéshez. Kérem, előbb válasszon ki kérdéseket.');
+  if (!window.ertekelesJSON || Object.keys(window.ertekelesJSON).length < 3) {
+    showAlert('Nincs elegendő adat az elemzéshez. Legalább 3 témakört értékelnie kell a generáláshoz.');
     return false;
   }
 
+  // --- 1. Stopper indítása ---
+  const startTime = Date.now();
+
   outputContainer.textContent = ''; 
-  loadingOverlay.style.display = 'block';
-  aiBtn.disabled = true;
-  aiBtn.textContent = 'Egy pillanat...';
+  
+  loadingOverlay.style.display = 'flex';
+    loadingOverlay.style.opacity = '1';
+
+  animateMessage('Elemzés folyamatban...', '2rem', 'orange');
+  
+  if (callerBtn) {
+    callerBtn.style.pointerEvents = 'none';
+  }
 
   let buffer = '';
   let textBuffer = ''; 
 
   try {
-    const response = await fetch('/api/generate/jellemzes-from-json', { // <-- ÚJ VÉGPONT
+    // --- 2. Adatok lekérése ---
+    const response = await fetch('/api/generate/jellemzes-from-json', { 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-          jsonData: window.ertekelesJSON, // <-- A main_quest.js-ben generált JSON
+          jsonData: window.ertekelesJSON, 
           modulId: modulId 
       })
     });
@@ -288,12 +312,19 @@ async function triggerIndividualAiAnalysis() {
       throw new Error(`Szerverhiba (${response.status}): ${errorData.message}`);
     }
 
+    // --- 3. Időellenőrzés (Egyszerű matek) ---
+    const elapsed = Date.now() - startTime;
+    if (elapsed < 8000) {
+        // Ha gyorsabb volt mint 8mp, kivárjuk a maradékot
+        await new Promise(resolve => setTimeout(resolve, 8000 - elapsed));
+    }
+
+    // --- 4. Töltő levétele és adatfeldolgozás ---
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
 
     loadingOverlay.style.display = 'none';
 
-    // A stream-feldolgozás logikája (ugyanaz, mint a dashAI.js-ben)
     while (true) {
       const { done, value } = await reader.read();
       if (done) {
@@ -335,16 +366,12 @@ async function triggerIndividualAiAnalysis() {
 
   } catch (err) {
     console.error('Egyéni AI elemzés hiba (stream):', err);
-    outputContainer.textContent = `Hiba történt az AI elemzés során: ${err.message}`;
+    showAlert(`Hiba történt az AI elemzés során: ${err.message}`);
     loadingOverlay.style.display = 'none';
     return false;
   } finally {
-     aiBtn.disabled = false;
-     aiBtn.textContent = 'Egyéni elemzés készítése';
+     if (callerBtn) {
+       callerBtn.style.pointerEvents = 'auto';
+     }
   }
-}
-
-const egyeniAiBtn = document.getElementById('egyeni-ai-generate-btn');
-if (egyeniAiBtn) {
-  egyeniAiBtn.addEventListener('click', triggerIndividualAiAnalysis);
 }

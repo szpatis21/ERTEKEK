@@ -7,14 +7,8 @@
   <meta name="description" content="Innovatív értékelésrendszer – szakértelem, tapasztalat, értékek. Nép­szerű, modern, fiatalos landing oldal animációkkal." />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../both/both.css">
-        <link rel="stylesheet" href="stylei.css">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+    <link rel="stylesheet" href="stylei.css">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <!-- Montserrat Subrayada via local TTF + system fallbacks -->
 
 </head>
 <body>
@@ -190,45 +184,22 @@
     <div style="display:flex; align-items:center; gap:10px">
       <div>
         <div class="mock reveal">
-      <!--    <div style="position: relative;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    display: flex;
-    justify-content: center;
-    align-items: center;">
-          <div id="logokulso" style="width: 100px; height: 100px; border-radius: 6px;"></div>
-          <div id="logobelso" style="width: 80px; height: 80px; font-size: small;border-radius: 6px;"><span class="gold">É</span>RTÉKEK</div>
-        </div>    --> 
         </div>
       <small>© ÉRTÉKEK – Innovatív Értékelés Rendszer</small>
     </div>
   </footer>
 
   <script>
-    // ===== On-load and on-scroll animációk (kliens oldali, villanás nélkül) =====
     const io = new IntersectionObserver((entries)=>{
       for(const e of entries){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } }
     }, {threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
-
- /*    // Sticky nav kisebb árnyék on scroll
-    const nav = document.querySelector('header.nav');
-    const setNav = ()=> nav.style.boxShadow = window.scrollY>24 ? '0 6px 18px rgba(0,0,0,.18)' : 'none';
-    setNav(); window.addEventListener('scroll', setNav, {passive:true}); */
-
-    // Egyszerű „szerverszerű” betöltési hatás: késleltetett hero elemek (imitált streaming)
-    // Nem ígérek csodát – de a szemnek jobb, mint egy vak villanás.
     document.querySelectorAll('.hero .reveal').forEach((el,i)=>{
       el.style.transitionDelay = (i*70)+'ms';
     });
   </script>
-   <script src="../both/both.js"></script>
- <script src="../both/policy.js"></script>
-<script>document.addEventListener("DOMContentLoaded", () => {
-  if (window.innerWidth < 1024) {
-    sidebar.classList.add("collapsed");
-  }
-});</script>
+  <script type="module" src="/both/both.js"></script>
+  <script src="../both/policy.js"></script>
+
 </body>
 </html>

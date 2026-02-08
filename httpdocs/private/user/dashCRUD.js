@@ -5,6 +5,7 @@ import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
 import { generatePdfMakePDF } from '../main/main_pdf.js';
 import{showAlert,showMissingChecklist} from "/both/alert.js"
+import { triggerIndividualAiAnalysis } from './dashAI.js'; // Importálás
 const grap = document.querySelector(".grap");
 const sta = document.querySelector(".sta");
 const gyik = document.querySelector(".gyik");
@@ -436,23 +437,63 @@ if (auditData.success && auditData.kitoltesek.length > 0) {
         if (fej2) {
             fej2.innerHTML = kitoltesNev;
         }
-
-        // Akciók
-      
             
-// a megosztást a dashsShare.js kezeli
-if (action === "share") {
-  
-  initMegosztas({ fullname, intezmeny_id });
-  return;
-}        
-if (action === "print") {
+      // a megosztást a dashsShare.js kezeli
+      if (action === "share") {
+        
+        initMegosztas({ fullname, intezmeny_id });
+        return;
+      }       
+
+// --- ÚJ KÓD RÉSZ KEZDETE ---
+if (action === "duplicate") {
+    // 1. Új név bekérése
+    // A jelenlegi név formátuma: "Időszak-Megnevezés"
+    const originalName = kitoltesNev; 
+    const ujNev = prompt("Kérlek add meg az új értékelés nevét (formátum: Időszak-Megnevezés):", `${originalName} - másolat`);
+
+    if (ujNev === null) return; // Ha a felhasználó mégsét nyom
+    if (ujNev.trim() === "") {
+        showAlert("A név nem lehet üres!");
+        return;
+    }
+
+    // 2. Kérés küldése a szervernek
+    fetch('/api/duplicate-kitoltes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            originalIdk: kitoltesId, // Ez az 'idk', ami alapján másolunk
+            ujNev: ujNev,
+            userId: userId // Importálva a dashMain.js-ből
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('Sikeres duplikálás! Az oldal újratölt.');
+            // Kis késleltetés, hogy az alert olvasható legyen, majd reload
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            console.error('Hiba:', data.message);
+            showAlert('Hiba történt a duplikálás során: ' + data.message);
+        }
+    })
+    .catch(err => {
+        console.error('Fetch hiba:', err);
+        showAlert('Szerver hiba történt.');
+    });
+
+    return; // Kilépünk, hogy ne fusson tovább a kód
+}
+
+      if (action === "print") {
       generatePdfMakePDF(true,  meglevok);
         } else if (action === "picture_as_pdf") {
       generatePdfMakePDF(false, meglevok);
-        } else if (action === "mail") {
-            showAlert('Még nincs kész a mailküldés, nyugi.');
-
+        } else if (action === "generate_ai") {
+            // ÚJ: AI generálás indítása a gomb megnyomásakor
+            await triggerIndividualAiAnalysis(e.target);
         }
     });
 });

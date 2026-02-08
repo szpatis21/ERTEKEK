@@ -15,6 +15,7 @@ a:link, a:visited {color: white;}
     grid-template-columns: repeat(2, 50%);
     justify-items: center;
     margin: 45px 40px;
+    position: relative;
 }
 .inputs input {
     font-family: 'Times New Roman', Times, serif; 
@@ -309,10 +310,7 @@ border: none;
     justify-content: center;
     align-content: center;
     align-items: center;}
-    #men{ position:relative !important;
-  left: 50% !important; 
-  top: 30px !important;
-  transform: translate(-50%, -50%);}
+   
     }
  #fo{width: 250px !important; margin: auto !important;}
 
@@ -338,7 +336,6 @@ border: none;
     #log{justify-content: center;
     align-items: center;}
     body {align-items:flex-start  !important;}
-    /* Animáció a fade-out (elhalványulás) hatáshoz */
 @keyframes fadeOut {
     from {
       opacity: 1;
@@ -348,11 +345,9 @@ border: none;
     }
   }
   
-  /* Az animációt a teljes oldalra alkalmazzuk */
   body.fade-out {
     animation: fadeOut 1s forwards;
   }
-  /* Példa egy forgásra (spin) */
 @keyframes spin {
     from {
       transform: rotate(0deg);
@@ -405,37 +400,10 @@ border: none;
         border-bottom: 2px solid #ff7c008f;
     margin-bottom: 5px;
     padding-bottom: 5px;}
-    men {position: sticky; top: 0
-        ;}
+
         
 
-.sidebar-nav .nav-list {
-flex-direction: row; font-size: small;
-width: fit-content !important;
-}
-.sidebar {
-    display: flex;  border: none;
-    width: 100% ;
-    border-top-right-radius: 0px;
- border-bottom-right-radius: 0px;
-height: 60px} 
-   #navmenu {width: 100%;} 
-    .sidebar-nav{
-    width: 100%;
-    display: flex;
-    font-size: medium;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-}
-.sidebar .sidebar-header{margin-bottom: 0px !important; padding: 0px !important; display: none;}
-.sidebar.collapsed .sidebar-nav .primary-nav{margin: 0px !important;}
-.sidebar-nav .nav-list{margin: 0px !important; transform: translateY(0px) !important;}
-.sidebar-nav .nav-item {height: fit-content};
-.sidebar.collapsed .sidebar-nav .primary-nav {transform: translateY(0px) !important;}
-.sidebar-nav .secondary-nav{
-     background: rgba(0, 0, 0, 0); 
-}
+
 .main{width: 100% !important;}
 main{width: 100% !important;}
 
@@ -464,50 +432,15 @@ main{width: 100% !important;}
     body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
         color: #111; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}
 
-    /* SVG háttér (helyezd a dragon-scales.svg-t a gyökérbe vagy módosítsd az elérési utat) */
     body::before{
       content:""; position:fixed; inset:0; z-index:-2;
- background-image: url('media/dragon-scales.svg');      background-repeat:repeat; background-size: 480px auto; opacity:.08;
-      filter:contrast(120%);
-    
-    }
+    background-image: url('media/dragon-scales.svg');      background-repeat:repeat; background-size: 480px auto; opacity:.08;
+      filter:contrast(120%);}
             .hero-bg{position:fixed; inset:0 -20vw auto -20vw; height:70vh; z-index:-1;    transition: all 0.3s;  background-image: url('media/dragon-scales.svg'); }    
-
-
-.sidebar-nav .nav-list {
-flex-direction: row; font-size: small;
-width: fit-content !important;
-}
-.sidebar {
-    display: flex;  border: none;
-    width: 100% ;
-    border-top-right-radius: 0px;
- border-bottom-right-radius: 0px;
-height: 60px} 
-   #navmenu {width: 100%;} 
-    .sidebar-nav{
-    width: 100%;
-    display: flex;
-    font-size: medium;
-    justify-content: center;
-    align-items: center;
-    align-content: center;
-}
-.sidebar .sidebar-header{margin-bottom: 0px !important; padding: 0px !important; display: none;}
-.sidebar.collapsed .sidebar-nav .primary-nav{margin: 0px !important;}
-.sidebar-nav .nav-list{margin: 0px !important; transform: translateY(0px) !important;}
-.sidebar-nav .nav-item {height: fit-content};
-.sidebar.collapsed .sidebar-nav .primary-nav {transform: translateY(0px) !important;}
-.sidebar-nav .secondary-nav{
-     background: rgba(0, 0, 0, 0); 
-}
 .main{width: 100% !important;}
 main{width: 100% !important;}
-.nav{width: 100%;}
-#men{display: flex; width: 100%;}
-            @media (max-width: 920px){
-.inputs{    display: flex
-;
+            @media (max-width: 900px){
+.inputs{    display: flex;
     margin: auto;
     align-items: center;
     justify-content: center;}
@@ -519,9 +452,7 @@ main{width: 100% !important;}
       .cta-footer .cta-card{flex-direction:column; text-align:center}
       #logokulso{width:220px;height:220px}
       #logobelso{width:200px;height:200px;font-size:180%}
-      .sidebar{flex-direction: column; position: absolute;height: calc(99vh); width: 100%; background: linear-gradient(45deg, #411a00, transparent) }
-      .sidebar .sidebar-header{display: flex; margin-bottom: 30px !important; margin-top: 30px;}
-      .sider .collapsed{position: relative; }
+
       #fnev, #pass {width: 70%; height: 30px;}
       #temakor, #szerepkor {
     font-size: x-small}
@@ -529,37 +460,11 @@ main{width: 100% !important;}
 
     margin-top: 5px;}
     .csomagok{display: none !important;}
-      .sidebar-nav .nav-list {
-                width: 90% !important;
-     
-        align-items: flex-start;
-    flex-direction: column;}
-    .sidebar-nav{
-        flex-direction: column;
-        margin-bottom: 50px;
-}
-.regi{margin: auto;}
-.sidebar.collapsed .sidebar-nav .nav-tooltip {display: none !important;}
-.sidebar.collapsed .sidebar-nav .nav-link{transform: translateX(-150%);}
 
-  .sidebar.collapsed .sidebar-nav .nav-tooltip {
-    display: block; height: calc(99vh);
-  }
-  .sidebar .mobillogo{position: relative;
-    
-    width: 100%;
-    height: fit-content;
- 
-    justify-content: center;
-    align-items: center;}
+.regi{margin: auto;}
+
  
  .hero-bg{height: 100vh;      }
-.sidebar.collapsed { height: calc(10vh);
- background: transparent;}
-.sidebar-nav .nav-link {
-color: #ffffff;
-font-size: large;
-     
-    }
+
 
     }

@@ -114,8 +114,7 @@ align-items: center;}
   font-weight: 900;
   color: white;
   text-align: center;
-  transition: all 0.3s;
-}
+transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s;}
 
 .fo.active{transition: all 0.3s;}
   .al{
@@ -125,9 +124,9 @@ align-items: center;}
       width: 110px;
       font-size: 100%;
       font-weight: bolder;
+transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s;}
 
-      transition: all 0.3s;
-  }
+  
   .alkerdeskont{margin-top: 20px;  transition: filter 0.5s ease;}
   #kerdesek .kerdesmodul .question .alkerdeskont.hidden{margin-top: 0px;}
       .alal{
@@ -410,8 +409,6 @@ font-size: medium;
     color: #474747;
 }
 
-nav{width: 100%;}
-a:visited{color: white;}
 
 nav button{border:none;
 color: rgb(251, 251, 251);
@@ -443,10 +440,8 @@ transition: all 0.3s;}
 .uresszoveg:hover{transform: scale(1.5);}
   .igenteli{color: green;}
   .nemteli{color: red;}
-  .nav-item:hover button {color: rgb(255, 174, 0);border: none;}
-.nav{position: sticky; top: 0;}
 .tooltip,.tooltip2 {
-visibility: hidden;
+visibility: hidden; ;
 opacity: 0;
 height: fit-content;
 width: fit-content;
