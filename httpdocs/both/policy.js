@@ -4,11 +4,15 @@ const modalHtml = `
 <div id="modal">
   <h1>Adatkezelési Tájékoztató a Rendszer Felhasználói Számára</h1>
   <p>
-    Üdvözöljük az Értékelő Rendszerben! Ez a tájékoztató Önnek, mint a rendszer felhasználójának szól. Kérjük, figyelmesen olvassa el, hogy megértse az adatkezeléssel kapcsolatos szerepköröket és felelősségeket.
+Az ÉRTÉKEK egy speciális értékelő – kérdőív rendszer, mely jelenleg tesztfázisban üzemel és SEMMILYEN kereskedelmi tevekénységet NEM folytat.
+Jelenleg egyedüli tesztpartnerként a Kerek Világ Általános Iskola munkatársai és annak megbízottjai használhatják a programot, kizárólag minőségfejlesztés és új funkciók bevezetésének tesztelésének céljából. Minden más regisztrációs kérelem vagy próbálkozás automatikusan elutasításra kerül a tesztfázis végéig. 
+<br><br> Amennyiben Ön nem intézményi alkalmazott kérjük nézzen vissza később, vagy érdeklődjön az <a href="ertekek@info.hu"> ertekek@info.hu </a>  címen.
   </p>
-
   <h2>1. A Szerepkörök Tisztázása a GDPR Alapján</h2>
+
   <p>
+    Ez a tájékoztató Önnek, mint a rendszer felhasználójának szól. Kérjük, figyelmesen olvassa el, hogy megértse az adatkezeléssel kapcsolatos szerepköröket és felelősségeket.
+
     A rendszer működése során az adatvédelmi szerepkörök a következők szerint oszlanak meg:
   </p>
   <ul>
@@ -116,7 +120,7 @@ style.textContent = `
     position: fixed; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     background: #fff; padding: 2rem;
-    z-index: 9999; max-width: 90%; max-height: 90%;
+    z-index: 9999; width: 95%; height: 95%;
     overflow-y: auto;
   }
   body.modal-open { overflow: hidden; } /* tiltja a háttér görgetését */

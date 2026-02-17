@@ -28,6 +28,8 @@ import { menuTartalmak } from './navmenu.js';
 
     // Material Symbols
     addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0')
+ // Montserrat Subrayada betűtípus betöltése
+    addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap');
     addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
 })();
 

@@ -4,19 +4,20 @@ import { resetSzemleView, resetKitoltesCache } from './dashView.js';
 import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
 import { generatePdfMakePDF } from '../main/main_pdf.js';
-import{showAlert,showMissingChecklist} from "/both/alert.js"
-import { triggerIndividualAiAnalysis } from './dashAI.js'; // Importálás
+import {initSzuro,initChekingToggle,initSearch  } from './dashSort.js';
+import {showAlert,showMissingChecklist, customConfirm,customPrompt3 } from "/both/alert.js"
+import { triggerIndividualAiAnalysis } from './dashAI.js';
+import { initMegosztas } from './dashsShare.js'; //Megosztás
+
 const grap = document.querySelector(".grap");
 const sta = document.querySelector(".sta");
 const gyik = document.querySelector(".gyik");
 const felbukkano2 = document.querySelector("#felbukkano2");
 const felbukkano4 = document.querySelector("#felbukkano4");
-import { initMegosztas } from './dashsShare.js'; //Megosztás
-
-
 let megtekintesMod = false;
-// --- eredeti admin nevek cache ---
 const originalAdminCache = new Map();
+let eredetiErtekekTomb = [];
+let eredetIdTomb       = [];
 
 async function getOriginalAdminName(kitoltesId) {
   if (originalAdminCache.has(kitoltesId)) {
@@ -35,7 +36,6 @@ async function getOriginalAdminName(kitoltesId) {
 }
 
 //CREAT
-// dashCRUD.js — initLetrehoz patch (részlet)
 export function initLetrehoz({ userId, modulId }) {
   const attachOnce = () => {
     const go = document.querySelector('#gobut');
@@ -71,16 +71,13 @@ export function initLetrehoz({ userId, modulId }) {
     });
   };
 
-  // 1) azonnali próbálkozás (ha már a DOM-ban van)
   attachOnce();
 
-  // 2) amikor a felület legenerálja az „Új értékelés” panelt:
   document.addEventListener('click', (e) => {
     const target = e.target.closest('#ujert');
     if (target) setTimeout(attachOnce, 0);
   });
 
-  // 3) egyszeri megfigyelés – első találat után lekapcsol
   const mo = new MutationObserver((mut) => {
     if (document.querySelector('#gobut')) {
       attachOnce();
@@ -89,19 +86,12 @@ export function initLetrehoz({ userId, modulId }) {
   });
   mo.observe(document.body, { childList: true, subtree: true });
 }
-
 //READ
+export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false } = {}) {
 
-  export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false } = {}) {
-
-  // Audit nélküli kitöltések lekérése
-  const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}`
-);
- 
-
+  const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}` );
   const auditData = await auditResponse.json();
   const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk) : [];
-
 
   const innerDiv = document.querySelector('.inner-div');
   innerDiv.innerHTML = '';
@@ -115,503 +105,431 @@ export function initLetrehoz({ userId, modulId }) {
   let currentList      = null;
   let lastCreatorName  = null;
   if (!document.getElementById('ujert')) return;
-        const kozep = document.createElement("div");
-            kozep.classList.add("kozep");
-            kozep.classList.add("kozepc")
-           
-            kozep.innerHTML= `
+  
+  const kozep = document.createElement("div");
+  kozep.classList.add("kozep");
+  kozep.classList.add("kozepc");
+            
+  kozep.innerHTML= `
+       <div>
+                  <div id="picik">
+                      <div id="tomlo">
+                        <div class="search-bar">
+                          <span class="material-symbols-rounded search-icon">search</span>
+                          <div id="belsosearch">
+                            <select id="kereso-tipus" class="search-select">
+                                <option value="nev">Név</option>
+                                <option value="idoszak">Időszak</option>
+                                <option value="megnevezes">Típus</option>
+                                <option value="all">Mind</option>
+                            </select>
+                            <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                          </div>
+                        </div>
+                        <div id="endezo">
+                        <span class="material-symbols-rounded sort-icon">sort</span>
 
-          
-                      <div class="picik">
-                         <div style = "display: flex;flex-wrap: wrap; align-content: center; justify-content: center;">
-                             <span class="material-symbols-rounded">filter_alt </span>   Rendezés: 
-                               <select name="szuro" id="szuro">
-                                  <option value="role">Megosztás szerint</option>
+                      <select name="szuro" id="szuro">
+                              <option value="role2" selected disabled hidden>Rendezés...</option>
+                                  <option value="role">Tulaj szerint</option>
                                   <option value="nev">Név szerint</option>
-                                  <option value="periodus">Időszak szerint</option>
+                                  <option value="periodus">Dátum szerint</option>
                                   <option value="megnev">Típus szerint</option>
                             </select>
+                      </div>
+                    </div>
+                        <div id="statisztika"> 
+                          <div id="mozgo">
+                            <label class="swics">
+                                <input id="cheking2" type="checkbox" class="cheking2" style="opacity: 0; width: 0; height: 0;">
+                                <span class="slider round"></span>
+                            </label>
+
+                            <span class="swicsi">Értékelések kijelölése csoportos statisztikára</span>
                           </div>
-                          <div>
-                            <input id="cheking2" type="checkbox" class="cheking2"> Kijelölés statisztikára
-                          </div>
-            
+                          <div id="stat-info-box">
+                              <span id="sel-count">0 </span> értékelés kijelölve.
                           </div>
 
-                          <div style="justify-content: flex-start;">
-                            <div class="search-bar">  
-                                <span class="material-symbols-rounded search-icon">search</span>
-                                <input type="text" id="kereso" class="search-input" placeholder="Keressen értékelései közt...">
-                            </div> <div id="swics" style="display: flex;flex-direction: row;">
-                                 
-                            
-                            <label class="switch">
-                                    <input type="checkbox" id="chart-toggle">
-                                    <span class="slider"></span>
-                            </label> 
-                            <span>Fejlődési görbe </span>
-                       
-                          </div>
+                        </div>
 
-                              </div>` ;
+                      </div>
+              </div>
+          ` ;
                           
   innerDiv.appendChild(kozep);
   initChekingToggle();   
+  
+  // --- SEGÉDFÜGGVÉNYEK A GOMBOKHOZ ---
+  function renderButtons(role, kit) {
+      return BUTTONS[role].map(btn => {
+          const dataAttributes = btn.action 
+          ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
+          : `data-id="${kit.idk}"`; // Ha nincs action (pl. fo_edit), az ID akkor is kell
+
+          const labelHtml = btn.label 
+              ? `<span style="pointer-events: none;">${btn.label}</span>` // pointer-events: none fontos!
+              : '';
+
+          return `
+          <div class="modulebutt ${btn.cls}" ${dataAttributes}">
+              <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
+              ${labelHtml}
+              <span class="help">${btn.help}</span>
+          </div>`;
+      }).join('');
+  }
+
+  function renderButtons2(role, kit) {
+      return BUTTONS2[role].map(btn => {
+          const dataAttributes = btn.action 
+          ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
+          : `data-id="${kit.idk}"`;
+
+          const labelHtml = btn.label 
+              ? `<span style="margin-left: 5px; pointer-events: none;">${btn.label}</span>` 
+              : '';
+
+          return `
+          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="display: flex; align-items: center; padding: 5px; cursor: pointer;">
+              <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
+              ${labelHtml}
+              <span class="help">${btn.help}</span>
+          </div>`;
+      }).join('');
+  }
+
+  // --- SOROK GENERÁLÁSA ---
   items.forEach(kitoltes => {
-if (groupByCreator && kitoltes.creator_name !== lastCreatorName) {
-  currentWrapper = document.createElement('div');
-  currentWrapper.classList.add('creator-wrapper');
+    if (groupByCreator && kitoltes.creator_name !== lastCreatorName) {
+      currentWrapper = document.createElement('div');
+      currentWrapper.classList.add('creator-wrapper');
 
-  const csopigomb = document.createElement('div');
-  csopigomb.innerHTML = "Csoport kijelölése";
-  csopigomb.classList.add("csopigomb");
-  csopigomb.dataset.user = kitoltes.creator_name;
+      const csopigomb = document.createElement('div');
+      csopigomb.innerHTML = "Csoport kijelölése";
+      csopigomb.classList.add("csopigomb");
+      csopigomb.dataset.user = kitoltes.creator_name;
 
-  // kattintáskor kigyűjtjük és bepipáljuk az összes egyező sornál levő checkboxot
-    csopigomb.addEventListener('click', () => {
-        const user = csopigomb.dataset.user;
-        const selector = `.meglevok[data-user="${CSS.escape(user)}"] input.cheking[type="checkbox"]`;
-        const checkboxes = Array.from(document.querySelectorAll(selector));
+      csopigomb.addEventListener('click', () => {
+          const user = csopigomb.dataset.user;
+          const selector = `.meglevok[data-user="${CSS.escape(user)}"] input.cheking[type="checkbox"]`;
+          const checkboxes = Array.from(document.querySelectorAll(selector));
+          if (checkboxes.length === 0) return;
+          const allChecked = checkboxes.every(cb => cb.checked);
+          checkboxes.forEach(cb => cb.checked = !allChecked);
+          const first = checkboxes[0];
+          first.dispatchEvent(new Event('change', { bubbles: true }));
+      });
 
-        if (checkboxes.length === 0) {
-            console.warn(`Nincs találat a "${user}" felhasználóra.`);
-            return;
+      const csoport = document.createElement('div');
+      csoport.classList.add('tarolo');
+      const header = document.createElement('div');
+      header.classList.add('creator-head');
+      header.textContent = kitoltes.creator_name || 'Ismeretlen';
+      currentList = document.createElement('div');
+      currentList.classList.add('creator-list');
+
+      currentWrapper.append(header, currentList);
+      csoport.append(csopigomb, currentWrapper);
+      innerDiv.appendChild(csoport);
+      lastCreatorName = kitoltes.creator_name;
+    }
+
+    const tartaly = document.createElement("div");
+    tartaly.classList.add("tart");
+    innerDiv.appendChild(tartaly);
+
+    const kitoltesDiv = document.createElement('div');
+    kitoltesDiv.classList.add('meglevok');
+    const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen alany';
+    const nameHtml = `<div class="vizsgalt-nev"><strong>${decryptedName}</strong></div>`;
+    const formattedText = (kitoltes.kitoltes_neve || '').replace(/-/g, '- <br>');
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.dataset.id = kitoltes.idk;
+    checkbox.classList.add("cheking");
+
+    const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
+    
+    // --- Megosztás jelzés ---
+    let warning = '';
+    if (role === 'szerkeszto') {
+      warning = `<div class="savdiv" style="background:#ff6500">Megosztva…</div>`;
+      getOriginalAdminName(kitoltes.idk).then(ownerName => {
+        const savdiv = kitoltesDiv.querySelector('.savdiv');
+        if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
+      });
+    }
+
+    const modules = `<div class="modules" data-kitoltes-id="${kitoltes.idk}">${
+        groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
+    }</div>`;
+
+    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText;        
+    
+    // Dataset beállítás
+    kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
+    kitoltesDiv.setAttribute('data-role', kitoltes.role);
+    kitoltesDiv.setAttribute('data-user', kitoltes.creator_name);
+    kitoltesDiv.dataset.undo = kitoltes.vizsgalt_id;
+    kitoltesDiv.appendChild(checkbox);
+    kitoltesDiv.dataset.modulId = modulId;
+    
+    const [periodus, megnev] = kitoltes.kitoltes_neve.split('-').map(s => s.replace(/~/g, '-').trim());
+    kitoltesDiv.dataset.nev       = kitoltes.vizsgalt_nev; 
+    kitoltesDiv.dataset.periodus  = periodus;
+    kitoltesDiv.dataset.megnev    = megnev;
+
+    // --- KATTINTÁS ESEMÉNY (SOR KIVÁLASZTÁSA) ---
+    kitoltesDiv.addEventListener('click', async (event) => {
+        if (event.target.closest('.modulebutt') || event.target.matches('input[type="checkbox"]')) return;
+
+        // 1. Kijelölés vizuális kezelése
+        document.querySelectorAll('.meglevok.kijelolt').forEach(el => el.classList.remove('kijelolt'));
+        kitoltesDiv.classList.add('kijelolt');
+
+        // 2. Infó kiírása
+        const infoDiv = document.querySelector('#selection-info');
+        if (infoDiv) {
+            const nev = kitoltesDiv.dataset.nev || '';
+            let nevHtml = nev;
+            infoDiv.innerHTML = `
+                <div>
+                    ${nevHtml}
+                </div>
+                
+            `;
         }
 
-        const allChecked = checkboxes.every(cb => cb.checked);
-        checkboxes.forEach(cb => cb.checked = !allChecked);
-        const first = checkboxes[0];
-        first.dispatchEvent(new Event('change', { bubbles: true }));
-    });
+        const kitNevePara = document.getElementById('kitneve');
+        if (kitNevePara) {
+            // OPCIÓ 1: Ha csak a vizsgált személy nevét akarod kiírni:
+            // kitNevePara.textContent = kitoltes.vizsgalt_nev; 
 
-  const csoport = document.createElement('div');
-  csoport.classList.add('tarolo');
+            // OPCIÓ 2: Ha a teljes "Értékelés Címét" (Időszak - Megnevezés) akarod formázva:
+            const formazottCim = (kitoltes.kitoltes_neve || '').replace(/-/g, ' - ');
+            kitNevePara.innerHTML = `<strong>${kitoltes.vizsgalt_nev}</strong>: ${formazottCim}`;
+        }
+        // 3. Gombok áthelyezése
+        const modulesDiv = kitoltesDiv.querySelector('.modules');
+        const targetContainer = document.querySelector('#moved-buttons-container');
 
-  const header = document.createElement('div');
-  header.classList.add('creator-head');
-  header.textContent = kitoltes.creator_name || 'Ismeretlen';
-
-  currentList = document.createElement('div');
-  currentList.classList.add('creator-list');
-
-  currentWrapper.append(header, currentList);
-  csoport.append(csopigomb, currentWrapper);
-  innerDiv.appendChild(csoport);
-
-  lastCreatorName = kitoltes.creator_name;
-}
-            const tartaly = document.createElement("div");
-            tartaly.classList.add("tart");
-    
-            innerDiv.appendChild(tartaly);
-
-            const kitoltesDiv = document.createElement('div');
-            kitoltesDiv.classList.add('meglevok');
-             const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen alany';
-            const nameHtml = `<div class="vizsgalt-nev"><strong>${decryptedName}</strong></div>`;
-
-           
-const formattedText = (kitoltes.kitoltes_neve || '').replace(/-/g, '- <br>');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.dataset.id = kitoltes.idk;
-            checkbox.classList.add("cheking");
-
-            function renderButtons(role, kit) {
-                return BUTTONS[role].map(btn => {
-                    const data = btn.action 
-                    ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
-                    : '';
-                    return `
-                    <div class="modulebutt">
-                        <span class="material-symbols-rounded ${btn.cls}" ${data}>${btn.icon}</span>
-                        <span class="help">${btn.help}</span>
-                    </div>`;
-                }).join('');
+        if (modulesDiv && targetContainer) {
+            if (targetContainer.children.length > 0) {
+                const oldModules = targetContainer.firstElementChild;
+                if (oldModules._originalParent) {
+                    oldModules._originalParent.appendChild(oldModules);
+                    oldModules.style.display = 'none'; 
+                    oldModules.style.position = ''; 
+                }
             }
-                  function renderButtons2(role, kit) {
-                return BUTTONS2[role].map(btn => {
-                    const data = btn.action 
-                    ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
-                    : '';
-                    return `
-                    <div class="modulebutt">
-                        <span class="material-symbols-rounded ${btn.cls}" ${data}>${btn.icon}</span>
-                        <span class="help">${btn.help}</span>
-                    </div>`;
-                }).join('');
-            }
+            modulesDiv._originalParent = kitoltesDiv;
+            modulesDiv._originalRow = kitoltesDiv;
+            targetContainer.appendChild(modulesDiv);
 
-                const role     = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
-                const modules = `<div class="modules">${
-                            groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
-                            }</div>`;                
- // --- Megosztás jelzés szerkesztőknek ---
-let warning = '';
-if (role === 'szerkeszto') {
-  // ideiglenes felirat, amíg a név megérkezik
-  warning = `<div class="savdiv" style="background:#ff6500">Megosztva…</div>`;
+            modulesDiv.style.display = 'grid';    
+            modulesDiv.style.opacity = '1';
+        }
 
-  // név beillesztése aszinkron
-  getOriginalAdminName(kitoltes.idk).then(ownerName => {
-    const savdiv = kitoltesDiv.querySelector('.savdiv');
-    if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
-  });
-}
-
-        kitoltesDiv.innerHTML =
-            nameHtml 
-            + warning 
-            + modules
-            + formattedText;        
-            kitoltesDiv.dataset.kitoltesId = kitoltes.id;
-                kitoltesDiv.setAttribute('data-role', kitoltes.role);
-                kitoltesDiv.setAttribute('data-user', kitoltes.creator_name);
-                kitoltesDiv.dataset.undo = kitoltes.vizsgalt_id;
-                kitoltesDiv.appendChild(checkbox);
-                kitoltesDiv.dataset.modulId = modulId;                // modul
-              const [periodus, megnev] = kitoltes.kitoltes_neve
-    .split('-')
-    .map(s => s.replace(/~/g, '-').trim());
-
-  // dataset-be NE az inputot, hanem a szöveget mentsük:
-  kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
-  kitoltesDiv.dataset.nev       = kitoltes.vizsgalt_nev; 
-  kitoltesDiv.dataset.periodus  = periodus;  // most már egy string
-  kitoltesDiv.dataset.megnev    = megnev;         // "Vizsgálat"
-
-
-            kitoltesDiv.addEventListener('click', async (event) => {
-                if (
-                    event.target.closest('.modulebutt') || 
-                    event.target.matches('input[type="checkbox"]')
-                ) return;
-
-    document.querySelectorAll('.modules').forEach(mod => mod.style.display = 'none');
-
-    const modulesDiv = kitoltesDiv.querySelector('.modules');
-    const maininf = document.getElementById('maininf');
+        // UI Reset
+        const maininf = document.getElementById('maininf');
         const gyiik = document.getElementById('gyik');
+        const osszesitett = document.getElementById('osszesitett');
+        if(grap) grap.classList.add("aktiv");
+        if(sta) sta.classList.remove("aktiv");
+        if(gyik) gyik.classList.remove("aktiv");
+        if(maininf) maininf.style.display = 'flex';
+        if(gyiik) gyiik.style.display="none"
+        if(osszesitett) osszesitett.style.display = 'none';
+        if(felbukkano2) felbukkano2.style.display="none";
+        if(felbukkano4) felbukkano4.style.display="none";
 
-    const osszesitett = document.getElementById('osszesitett');
-    grap.classList.add("aktiv");
-    sta.classList.remove("aktiv");
-    gyik.classList.remove("aktiv");
-    maininf.style.display = 'flex';
-    gyiik.style.display="none"
-    osszesitett.style.display = 'none';
-    modulesDiv.style.position = 'absolute';
-    modulesDiv.style.display = 'grid';
-      felbukkano2.style.display="none";
-      felbukkano4.style.display="none";
-    setTimeout(() => { modulesDiv.style.opacity = "1"; }, 100);
-    resetSzemleView();
+        resetSzemleView();
 
-    // URL módosítása
-    const kitoltesId = kitoltesDiv.dataset.kitoltesId;
-    const newParams = new URLSearchParams(window.location.search);
-    newParams.set("kitoltes_id", kitoltesId);
-    newParams.set("megtekintes", "true");
-    history.replaceState(null, "", `${location.pathname}?${newParams.toString()}`);
-
-    // Tartalom újratöltése
-    resetKitoltesCache();
-    await KategoriaKezelo.loadValaszok();
-    KategoriaKezelo.frissitErtekelesekContainer();
-
-    // Mentés az adatbázisba a frissített százalékos JSON alapján
-    const aktualisSzazalekJSON = window.ertekelesJSON;
-    console.log(aktualisSzazalekJSON)
-    const aktualisKitoltesId = kitoltesDiv.dataset.kitoltesId;
-
-    if (aktualisSzazalekJSON && aktualisKitoltesId) {
-        fetch('/api/save-szazalek-json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                kitoltesId: aktualisKitoltesId,
-                szazalek: aktualisSzazalekJSON
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (!data.success) {
-                console.error('Százalék mentése sikertelen:', data.message);
-            } else {
-                console.log('Százalék JSON automatikusan elmentve (kitoltesDiv-kattintáskor).');
-            }
-        })
-        .catch(err => {
-            console.error('Mentési hiba:', err);
-        });
-    }
-
-    // Fejléc frissítése
-    const fej2 = document.querySelector('#kitneve');
-    if (fej2) {
-        fej2.innerHTML = nameHtml
-            + warning 
-            + modules
-            + formattedText; ;
-    }
-    // Gördítés a megjelenített értékeléshez
-            const keszulo = document.getElementById("keszulo");
-            if (keszulo) {
-                keszulo.scrollIntoView({ behavior: "smooth", block: "start" });
-            }
-            });
-
-              
-            tartaly.appendChild(kitoltesDiv);
-              document.querySelectorAll('.fo_edit').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        event.stopPropagation(); // ne triggerelje a parent kattintást
-                        const kitoltesDiv = event.target.closest('.meglevok');
-                        const kitoltesId = kitoltesDiv.dataset.kitoltesId;
-                        const newUrl = `./ertekelo.html?kitoltes_id=${kitoltesId}&letrehozva=${encodeURIComponent(letrehozva)}`;
-                        window.location.href = newUrl;
-
-                    });
-                        (groupByCreator ? currentList : innerDiv).appendChild(tartaly);
-
-                });
-        });
-if (auditData.success && auditData.kitoltesek.length > 0) {
-  showMissingChecklist(auditData.kitoltesek)
-    .then(confirmedVizsgaltIds => {
-      return fetch('/api/audit-confirm', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userId,
-          vizsgalt_ids: confirmedVizsgaltIds
-        })
-      });
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        showAlert(`${data.inserted} audit bejegyzés rögzítve.`);
-        setTimeout(() => location.reload(), 500);
-      } else {
-        showAlert('Audit mentés hiba: ' + data.message);
-      }
-    })
-    .catch(err => {
-      console.error('Audit-confirm hiba:', err);
-      showAlert('Audit mentési hiba történt.');
-    });
-}
-
-
-
-         initFrissites({ userId, letrehozva });
-        initTorol();
-        document.querySelectorAll('.modulebutt span[data-action]')
-        .forEach(icon => {
-        icon.addEventListener('click', async (e) => {
-        e.stopPropagation();
-            const meglevok = e.target.closest('.meglevok'); // ← EZ KELL
-
-
-        const action = icon.dataset.action;
-        const kitoltesId = icon.dataset.id;
-        const kitoltesNev = icon.dataset.name;
-
-        // URL frissítése
+        const kitoltesId = kitoltesDiv.dataset.kitoltesId;
         const newParams = new URLSearchParams(window.location.search);
         newParams.set("kitoltes_id", kitoltesId);
         newParams.set("megtekintes", "true");
         history.replaceState(null, "", `${location.pathname}?${newParams.toString()}`);
 
-        // Tartalom újratöltése
-        resetSzemleView();
         resetKitoltesCache();
         await KategoriaKezelo.loadValaszok();
         KategoriaKezelo.frissitErtekelesekContainer();
 
-        // Fejléc frissítése, ha van
-        const fej2 = document.querySelector('#kitneve');
-        if (fej2) {
-            fej2.innerHTML = kitoltesNev;
+        const aktualisSzazalekJSON = window.ertekelesJSON;
+        const aktualisKitoltesId = kitoltesDiv.dataset.kitoltesId;
+        if (aktualisSzazalekJSON && aktualisKitoltesId) {
+            fetch('/api/save-szazalek-json', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ kitoltesId: aktualisKitoltesId, szazalek: aktualisSzazalekJSON })
+            }).catch(err => { console.error('Mentési hiba:', err); });
         }
-            
-      // a megosztást a dashsShare.js kezeli
-      if (action === "share") {
-        
-        initMegosztas({ fullname, intezmeny_id });
-        return;
-      }       
 
-// --- ÚJ KÓD RÉSZ KEZDETE ---
-if (action === "duplicate") {
-    // 1. Új név bekérése
-    // A jelenlegi név formátuma: "Időszak-Megnevezés"
-    const originalName = kitoltesNev; 
-    const ujNev = prompt("Kérlek add meg az új értékelés nevét (formátum: Időszak-Megnevezés):", `${originalName} - másolat`);
-
-    if (ujNev === null) return; // Ha a felhasználó mégsét nyom
-    if (ujNev.trim() === "") {
-        showAlert("A név nem lehet üres!");
-        return;
-    }
-
-    // 2. Kérés küldése a szervernek
-    fetch('/api/duplicate-kitoltes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            originalIdk: kitoltesId, // Ez az 'idk', ami alapján másolunk
-            ujNev: ujNev,
-            userId: userId // Importálva a dashMain.js-ből
-        })
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.success) {
-            showAlert('Sikeres duplikálás! Az oldal újratölt.');
-            // Kis késleltetés, hogy az alert olvasható legyen, majd reload
-            setTimeout(() => window.location.reload(), 1000);
-        } else {
-            console.error('Hiba:', data.message);
-            showAlert('Hiba történt a duplikálás során: ' + data.message);
-        }
-    })
-    .catch(err => {
-        console.error('Fetch hiba:', err);
-        showAlert('Szerver hiba történt.');
-    });
-
-    return; // Kilépünk, hogy ne fusson tovább a kód
-}
-
-      if (action === "print") {
-      generatePdfMakePDF(true,  meglevok);
-        } else if (action === "picture_as_pdf") {
-      generatePdfMakePDF(false, meglevok);
-        } else if (action === "generate_ai") {
-            // ÚJ: AI generálás indítása a gomb megnyomásakor
-            await triggerIndividualAiAnalysis(e.target);
+        const keszulo = document.getElementById("keszulo");
+        if (keszulo) {
+            keszulo.scrollIntoView({ behavior: "smooth", block: "start" });
         }
     });
-});
-// --- CSOPORTOSÍTÁS A SZŰRŐ SELECT ALAPJÁN ----------------------------
-function groupBySelect(type = 'role') {
+
+    tartaly.appendChild(kitoltesDiv);
+    (groupByCreator ? currentList : innerDiv).appendChild(tartaly);
+  }); // items.forEach VÉGE
+
+  // --- HIÁNYZÓ AUDIT ELLENŐRZÉS ---
+  if (auditData.success && auditData.kitoltesek.length > 0) {
+      showMissingChecklist(auditData.kitoltesek)
+          .then(confirmedVizsgaltIds => {
+              return fetch('/api/audit-confirm', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ user_id: userId, vizsgalt_ids: confirmedVizsgaltIds })
+              });
+          })
+          .then(res => res.json())
+          .then(data => {
+              if (data.success) {
+                  showAlert(`${data.inserted} audit bejegyzés rögzítve.`);
+              } else {
+                  showAlert('Audit mentés hiba: ' + data.message);
+              }
+          })
+          .catch(err => {
+              console.error('Audit-confirm hiba:', err);
+              showAlert('Audit mentési hiba történt.');
+          });
+  }
   
-  const innerDiv = document.querySelector('.inner-div');
-  if (!innerDiv) return;
+  // 1. Folytatás gomb
+  document.querySelectorAll('.modulebutt.fo_edit').forEach(button => {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation(); 
+            let kitoltesDiv = event.target.closest('.meglevok');
+            if (!kitoltesDiv) {
+                 const wrapper = event.target.closest('.modules');
+                 if (wrapper && wrapper._originalRow) kitoltesDiv = wrapper._originalRow;
+            }
 
-  const tartok = [...innerDiv.querySelectorAll('.tart')];
-  innerDiv.querySelectorAll('.csopi').forEach(e => e.remove());
-  tartok.forEach(t => t.remove());
+            if (kitoltesDiv) {
+                const kitoltesId = button.dataset.id || kitoltesDiv.dataset.kitoltesId;
+                const newUrl = `./ertekelo.html?kitoltes_id=${kitoltesId}&letrehozva=${encodeURIComponent(letrehozva)}`;
+                window.location.href = newUrl;
+            } else {
+                console.error("Nem található a kitöltés ID a gombhoz.");
+            }
+        });
+  });
 
-  // =============== MEGOSZTÁS SZERINT ===============================
-  if (type === 'role') {
-    const ROLE_TITLE = {
-      admin : 'Saját Értékelések',
-      editor: 'Velem megosztott értékelések'
-    };
-    const ROLE_ORDER = ['admin', 'editor'];
+  // 2. Init Egyéb modulok (Update, Delete)
+  initFrissites({ userId, letrehozva });
+  initTorol();
 
-    const groups = new Map();   // role → { csopi, doboz, fejlec, count }
-    tartok.forEach(tart => {
-      const role = (tart.querySelector('.meglevok').dataset.role || 'other').trim();
+  // 3. Általános funkciógombok (Share, Print, PDF, Duplicate, AI)
+  document.querySelectorAll('.modulebutt[data-action]').forEach(btnDiv => {
+      btnDiv.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          
+          let meglevok = e.target.closest('.meglevok'); 
+          if (!meglevok) {
+              const wrapper = e.target.closest('.modules');
+              if (wrapper && wrapper._originalRow) meglevok = wrapper._originalRow;
+          }
 
-      if (!groups.has(role)) {
-        const csopi  = document.createElement('div');
-        csopi.classList.add('csopi');
+          const action = btnDiv.dataset.action;
+          const kitoltesId = btnDiv.dataset.id;
+          const kitoltesNev = btnDiv.dataset.name;
 
-        const fejlec = document.createElement('div');
-        fejlec.classList.add('fejlec2');
+          // Action logika
+          const newParams = new URLSearchParams(window.location.search);
+          newParams.set("kitoltes_id", kitoltesId);
+          newParams.set("megtekintes", "true");
+          history.replaceState(null, "", `${location.pathname}?${newParams.toString()}`);
 
-        const doboz  = document.createElement('div');
-        doboz.classList.add('doboztart');
+          resetSzemleView();
+          resetKitoltesCache();
+          await KategoriaKezelo.loadValaszok();
+          KategoriaKezelo.frissitErtekelesekContainer();
 
-        csopi.append(fejlec, doboz);
-        groups.set(role, { csopi, doboz, fejlec, count: 0, title: ROLE_TITLE[role] || 'Egyéb megosztások' });
-      }
+         if (action === "share") {
+              // Adatok összegyűjtése a sorból (meglevok)
+              const vizsgaltId = meglevok.dataset.undo;
+              const modulId = meglevok.dataset.modulId;
 
-      const g = groups.get(role);
-      g.doboz.appendChild(tart);
-      g.count += 1;
-    });
+              // Meghívjuk a függvényt AZONNAL, nem csak beállítjuk
+              initMegosztas(kitoltesId, kitoltesNev, modulId, vizsgaltId, { fullname, intezmeny_id });
+          }
+         else if (action === "duplicate") {
+              
+              // 1. Adatok kiolvasása a sorból (dataset)
+              const sor = document.querySelector(`.meglevok[data-kitoltes-id="${kitoltesId}"]`);
+              const currNev = sor.dataset.nev;      // Pl: Gipsz Jakab
+              const currIdoszak = sor.dataset.periodus; // Pl: 2023/24
+              const currTipus = sor.dataset.megnev;     // Pl: Év végi
 
-    // végleges fejléc-szöveg + sorrend
-    ROLE_ORDER.concat([...groups.keys()].filter(k => !ROLE_ORDER.includes(k)))
-      .forEach(k => {
-        const g = groups.get(k);
-        if (g) {
-          g.fejlec.textContent = `${g.title} (${g.count})`;
-          innerDiv.appendChild(g.csopi);
-        }
+              // 2. Az ÚJ custom ablak meghívása (await - megvárjuk míg kitölti)
+              const result = await customPrompt3(
+                  "Értékelés másolása", 
+                 `${currNev} - másolat`,
+                  currIdoszak, 
+                  currTipus
+              );
+
+              // Ha a felhasználó Mégsem-re nyomott, a result null lesz
+              if (!result) return; 
+
+              // 3. Összerakjuk az adatokat
+              // A backend valószínűleg a 'ujNev' mezőben várja a "Időszak-Típus" kombinációt (kitoltes_neve)
+              const ujKitoltesNeve = `${result.idoszak}-${result.tipus}`;
+
+              fetch('/api/duplicate-kitoltes', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ 
+                      originalIdk: kitoltesId, 
+                      ujNev: ujKitoltesNeve, // Ez lesz a kitoltes_neve
+                      ujVizsgaltNev: result.nev, // Elküldjük ezt is, hátha a backend kezeli (vagy később fogja)
+                      userId: userId 
+                  })
+              })
+              .then(r => r.json())
+              .then(data => {
+                  if (data.success) {
+                      showAlert('Sikeres duplikálás!');
+                      
+                      // Lista frissítése reload nélkül
+                      if (typeof window.frissitKitoltesek === 'function') {
+                          window.frissitKitoltesek(); 
+                      } else {
+                          setTimeout(() => window.location.reload(), 1000);
+                      }
+                  } else {
+                      showAlert('Hiba történt a duplikálás során: ' + data.message);
+                  }
+              })
+              .catch(err => { 
+                  console.error(err);
+                  showAlert('Szerver hiba történt.'); 
+              });
+          }
+          else if (action === "print") {
+              generatePdfMakePDF(true,  meglevok);
+          }
+          else if (action === "picture_as_pdf") {
+              generatePdfMakePDF(false, meglevok);
+          }
+          else if (action === "generate_ai") {
+              await triggerIndividualAiAnalysis(e.target);
+          }
       });
-    return;
-  }
-
-  // =============== NÉV / IDŐSZAK / TÍPUS SZERINT ===================
-  const groups = new Map();     // key → { csopi, doboz, fejlec, count }
-  tartok.forEach(tart => {
-    const key = (tart.querySelector('.meglevok').dataset[type] || 'Ismeretlen').trim();
-
-    if (!groups.has(key)) {
-      const csopi  = document.createElement('div');
-      csopi.classList.add('csopi');
-
-      const fejlec = document.createElement('div');
-      fejlec.classList.add('fejlec2');
-
-      const doboz  = document.createElement('div');
-      doboz.classList.add('doboztart');
-
-      csopi.append(fejlec, doboz);
-      groups.set(key, { csopi, doboz, fejlec, count: 0, title: key });
-    }
-
-    const g = groups.get(key);
-    g.doboz.appendChild(tart);
-    g.count += 1;
   });
 
-  groups.forEach(g => {
-    g.fejlec.textContent = `${g.title} (${g.count})`;
-    innerDiv.appendChild(g.csopi);
-  });
+  initSzuro();
+  initSearch();
 }
-
-
-
-// --- SZŰRŐ KAPCSOLÓ ---------------------------------------------------
-function initSzuro() {
-     if (!document.getElementById('foglalt')) return;
-
-  const sel = document.getElementById('szuro'); // <select id="szuro">
-  if (!sel) return;
-
-  groupBySelect(sel.value);
-
-  sel.addEventListener('change', e => groupBySelect(e.target.value));
-}
-initSzuro();
-const toggleSwitch = document.getElementById('chart-toggle');
-const chartContainer = document.querySelector('#folyamat');
-
-// Eseményfigyelő hozzáadása a kapcsolóhoz
-toggleSwitch.addEventListener('change', function() {
-  // Ellenőrizzük, hogy a kapcsoló be van-e kapcsolva
-  if (this.checked) {
-    chartContainer.style.display = 'flex';
-  } else {
-    chartContainer.style.display = 'none';
-  }
-});
-    }
-let eredetiErtekekTomb = [];
-let eredetIdTomb       = [];
-
+// UPDATE
 export function initFrissites({ userId, letrehozva }) {
-  const editButtons   = document.querySelectorAll(".edit");
+  const editButtons   = document.querySelectorAll(".modulebutt.edit"); 
   const kilep3        = document.querySelector("#kilep3");
   const felbukkano3   = document.querySelector("#felbukkano3");
   const ujinek2       = document.querySelector("#ujinek2");
@@ -620,160 +538,205 @@ export function initFrissites({ userId, letrehozva }) {
   const megnevezes2   = document.querySelector("#megnevezes2");
   const go2           = document.querySelector("#gobut2");
 
-  // 1) Szerkesztés gomb kezelése
   editButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      // popup animáció
+    btn.addEventListener('click', (event) => {
+      let kitDiv = event.target.closest('.meglevok');
+      if (!kitDiv) {
+         const wrapper = event.target.closest('.modules');
+         if (wrapper && wrapper._originalRow) kitDiv = wrapper._originalRow;
+      }
+      if (!kitDiv) return;
+
       felbukkano3.style.display = 'flex';
- if (felbukkano4) {
-  felbukkano4.style.display = 'none';
- }      felbukkano2.style.display = 'none';
-      setTimeout(() => {
-        felbukkano3.style.opacity = '1';
-        felbukkano3.style.scale   = '1';
-      }, 100);
+      if (felbukkano4) felbukkano4.style.display = 'none';      
+      if (felbukkano2) felbukkano2.style.display = 'none';
+      setTimeout(() => { felbukkano3.style.opacity = '1'; felbukkano3.style.scale = '1'; }, 100);
       ujinek2.style.display = 'flex';
-      setTimeout(() => {
-        ujinek2.style.opacity = '1';
-        ujinek2.style.scale   = '1';
-      }, 50);
+      setTimeout(() => { ujinek2.style.opacity = '1'; ujinek2.style.scale = '1'; }, 50);
 
-      // kitoltesDiv, ahonnan átolvassuk az adatokat
-  const kitDiv      = btn.closest('.meglevok');
-    const vizsgaltNev = kitDiv.dataset.nev     || '';
-    const periodus    = kitDiv.dataset.periodus|| '';
-    const megnev      = kitDiv.dataset.megnev  || '';
-          const kitoltesId  = kitDiv.dataset.kitoltesId;
+      const vizsgaltNev = kitDiv.dataset.nev || '';
+      const periodus    = kitDiv.dataset.periodus|| '';
+      const megnev      = kitDiv.dataset.megnev  || '';
+      const kitoltesId  = kitDiv.dataset.kitoltesId;
 
+      neve2.value       = vizsgaltNev;
+      idszak2.value     = periodus;
+      megnevezes2.value = megnev;
 
-    neve2.value       = vizsgaltNev;
-    idszak2.value     = periodus;     // most már pl. "2024/I"
-    megnevezes2.value = megnev;       // pl. "Vizsgálat"
-
-      // eredeti értékek tárolása összehasonlításhoz
       eredetIdTomb.push(kitoltesId);
       eredetiErtekekTomb.push(`${periodus}-${megnev}`);
     });
   });
 
-  // 2) Kilépés a popupból
-  kilep3.addEventListener("click", () => {
-    felbukkano3.style.scale   = "0";
-    felbukkano3.style.opacity = "0";
-    setTimeout(() => {
-      felbukkano3.style.display = "none";
-    }, 400);
-  });
+  if (kilep3 && !kilep3.__bound) {
+      kilep3.__bound = true;
+      kilep3.addEventListener("click", () => {
+        felbukkano3.style.scale   = "0";
+        felbukkano3.style.opacity = "0";
+        setTimeout(() => { felbukkano3.style.display = "none"; }, 400);
+      });
+  }
 
-  // 3) Mentés (UPDATE)
-go2.addEventListener("click", event => {
-    event.preventDefault();
+  if (go2 && !go2.__bound) {
+      go2.__bound = true;
+      go2.addEventListener("click", event => {
+        event.preventDefault();
+        const ujPeriodus = idszak2.value.trim();
+        const ujMegnev   = megnevezes2.value.trim();
+        const [eredetiNeve2, eredetiKitNev, eredetiLetrehoz] = eredetiErtekekTomb;
 
-    // !!! NE definiálj új letrehozva-t, itt az outer scope változó a lényeg !!!
-    // const letrehozva = letrehozva; // <<< EZ FÖLÖSLEGES!!!
+        if (!neve2.value || !ujPeriodus || !ujMegnev) { showAlert('Az egyik mező üres'); return; }
 
-    const ujPeriodus = idszak2.value.trim();
-    const ujMegnev   = megnevezes2.value.trim();
+        const ujKitNev = `${ujPeriodus.replace(/-/g, "~")}-${ujMegnev.replace(/-/g, "~")}`;
+        const kitoltesId = eredetIdTomb.at(-1);
+        const adat = { id: kitoltesId, letrehozva: letrehozva, kitoltes_neve: ujKitNev, vizsgalt_nev: neve2.value };
+        
+        fetch('/api/update-kitoltes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(adat)})
+          .then(r => r.json())
+        .then(data => {
+            if (!data.success) { showAlert("Hiba: " + data.message); return; }
 
-  const [eredetiNeve2, eredetiKitNev, eredetiLetrehoz] = eredetiErtekekTomb;
+            // 1. Megkeressük a módosított sort a DOM-ban
+            const row = document.querySelector(`.meglevok[data-kitoltes-id="${kitoltesId}"]`);
 
-if (!neve2.value || !ujPeriodus || !ujMegnev) {
-            showAlert('Az egyik mező üres');
-  return;
-}
+            if (row) {
+                // --- A) SOR ADATOK FRISSÍTÉSE (DATASET) ---
+                // Ez kell, hogy ha legközelebb megnyitod szerkesztésre, az újat lásd
+                row.dataset.nev = neve2.value;
+                row.dataset.periodus = ujPeriodus;
+                row.dataset.megnev = ujMegnev;
 
-const ujKitNev = `${ujPeriodus.replace(/-/g, "~")}-${ujMegnev.replace(/-/g, "~")}`;
+                // --- B) NÉV MEGJELENÍTÉSÉNEK FRISSÍTÉSE ---
+                const nameContainer = row.querySelector('.vizsgalt-nev strong');
+                if (nameContainer) {
+                    nameContainer.textContent = neve2.value;
+                }
 
-// Ellenőrzés: se neve, se a kitöltés neve vagy dátuma nem változott?
-if (
-  neve2.value       === eredetiNeve2 &&  // az alanynév
-  ujKitNev           === eredetiKitNev && // a kitöltés neve
-  letrehozva.value   === eredetiLetrehoz   // a dátum
-) {
-              showAlert('Nem módosított adatot');
+                // --- C) A SZÖVEG CSERÉJE (Időszak - Megnevezés) ---
+                // Takarítunk a név és a checkbox között
+                const nameDiv = row.querySelector('.vizsgalt-nev');
+                const checkbox = row.querySelector('.cheking');
 
-  return;
-}
-
-    const kitoltesId = eredetIdTomb.at(-1);
-
-  const adat = {
-  id:            kitoltesId,
-  letrehozva:    letrehozva,
-  kitoltes_neve: ujKitNev,
-  vizsgalt_nev:   neve2.value      // új mező a popupból
-};
-fetch('/api/update-kitoltes', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(adat)
-})
-
-      .then(r => r.json())
-      .then(data => {
-        if (!data.success) {
-          showAlert("Hiba: " + data.message);
-          return;
-        }
-            showAlert('Sikeres frissítés. Az oldal újratölt');
-        window.location.reload();
-      })
-      .catch(err => console.error("Fetch hiba:", err));
-  });
-
-}
-
-//DELETE
-    export function initTorol() {
-       const deletedButtons = document.querySelectorAll(".deleted"); // Minden törlés gomb kiválasztása
-                    deletedButtons.forEach(deleted => {
-                        deleted.addEventListener('click', function() {
-                            const kitoltesId = deleted.dataset.id; // Az adott kitöltés ID-jének lekérése
-    
-                            const megerosites = confirm(`Biztosan törölni szeretné ezt a kitöltést? ${kitoltesId}`);
-                            if (!megerosites) {return;  }
-                            fetch('/api/delete-kitoltes', {
-                                method: 'DELETE',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ id: kitoltesId })
-                            })
-                                .then(response => response.json())
-                                .then(data => {
-                                    if (data.success) {
-            showAlert('Sikeres törlés');
-                                        window.location.reload(); // Oldal újratöltése a frissített adatokkal
-                                    } else {
-                                        console.error('Hiba történt a törlés során:', data.message);
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Fetch hiba:', error);
-                                });
-                        });
+                if (nameDiv && checkbox) {
+                    let currentNode = nameDiv.nextSibling;
+                    while (currentNode && currentNode !== checkbox) {
+                        const nextNode = currentNode.nextSibling;
+                        const isElement = currentNode.nodeType === 1; 
                         
+                        // Fontos: a .modules-t (gombokat) és a figyelmeztetést NE töröljük!
+                        const isModules = isElement && currentNode.classList.contains('modules');
+                        const isWarning = isElement && currentNode.classList.contains('savdiv'); 
+
+                        if (!isModules && !isWarning) {
+                            currentNode.remove();
+                        }
+                        currentNode = nextNode;
+                    }
+
+                    // Beszúrjuk az új szöveget
+                    const ujSzovegHTML = `${ujPeriodus} - <br>${ujMegnev}`;
+                    checkbox.insertAdjacentHTML('beforebegin', ujSzovegHTML);
+                }
+
+                // --- D) FŐCÍM FRISSÍTÉSE (Ha épp ez van megnyitva) ---
+                if (row.classList.contains('kijelolt')) {
+                    const kitNevePara = document.getElementById('kitneve');
+                    if (kitNevePara) {
+                        const ujTeljesCim = `${ujPeriodus} - ${ujMegnev}`;
+                        kitNevePara.innerHTML = `<strong>${neve2.value}</strong>: ${ujTeljesCim}`;
+                    }
+                }
+
+                // --- E) GOMBOK FRISSÍTÉSE (A kulcs a "data-name" cseréje!) ---
+                // 1. Megpróbáljuk megkeresni a gombokat a soron belül
+                let modulesDiv = row.querySelector('.modules');
+                
+                // 2. Ha nincs a sorban (mert ki van jelölve), akkor a fenti tárolóban keressük
+                if (!modulesDiv && row.classList.contains('kijelolt')) {
+                     modulesDiv = document.querySelector('#moved-buttons-container .modules');
+                }
+                
+                // 3. Ha megvan a gombok tárolója, minden gombot frissítünk benne
+                if (modulesDiv) {
+                    // Az ujKitNev változót már kiszámoltad feljebb a kódban
+                    // (Ez a teljes név: "Időszak~Megnevezés" formátumban vagy ahogy a backend várja)
+                    // A gomboknak a megjelenítendő nevet szoktuk adni, vagy a formátumozottat.
+                    // A te kódodban: const ujKitNev = `${ujPeriodus...}-${ujMegnev...}`; 
+                    
+                    modulesDiv.querySelectorAll('[data-name]').forEach(btn => {
+                        btn.setAttribute('data-name', ujKitNev); 
+                        // Mostantól a "Másolás" és a "Megosztás" is az új nevet látja!
                     });
-    }
+                }
+            }
 
+            showAlert('Sikeres frissítés!');
+            felbukkano3.style.display = 'none'; // Ablak bezárása
+          })
+          .catch(err => console.error("Fetch hiba:", err));
+      });
+  }
+}
+// DELETE
+export function initTorol() {
+    const deletedButtons = document.querySelectorAll(".modulebutt.deleted"); 
+    deletedButtons.forEach(deleted => {
+        // ASYNC kulcsszó hozzáadva a függvény elejéhez!
+        deleted.addEventListener('click', async function(event) {
+            const wrapper = deleted.closest('.modules');
+            let target = deleted.closest('.meglevok');
+            
+            if(!target && wrapper && wrapper._originalRow) {
+                target = wrapper._originalRow;
+            }
 
-// --- cheking2 checkbox mutat/elrejt minden .cheking elemet -----------
-function initChekingToggle() {
-  const master = document.getElementById('cheking2'); // <input id="cheking2">
-  if (!master) return;                           // ha nincs, kilépünk
+            const kitoltesId = deleted.dataset.id;
+            const isMoved = wrapper && wrapper.parentElement && wrapper.parentElement.id === 'moved-buttons-container';
 
-  const apply = () => {
-    const show = master.checked;
-    const swics = document.querySelector("#swics");
+            // --- ITT AZ ÚJ RÉSZ ---
+            // A natív confirm helyett a saját customConfirm-et hívjuk await-tel
+            const megerosites = await customConfirm("Biztosan törölni szeretné ezt a kitöltést?");
+            
+            if (!megerosites) return; // Ha a "Mégsem"-re nyomott, kilépünk
+            
+            fetch('/api/delete-kitoltes', { 
+                method: 'DELETE', 
+                headers: { 'Content-Type': 'application/json' }, 
+                body: JSON.stringify({ id: kitoltesId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) { 
+                    showAlert('Sikeres törlés'); 
+                    
+                    if (isMoved) {
+                         resetSzemleView();
+                         const maininf = document.getElementById('maininf');
+                         const gyikPanel = document.getElementById('gyik');
+                         const selectionInfo = document.querySelector('#selection-info');
+                         
+                         if (maininf) maininf.style.display = 'none';
+                         if (gyikPanel) gyikPanel.style.display = 'block';
 
-    // Itt van a kulcsfontosságú változtatás:
-    // A 'swics' display tulajdonságát is a 'show' változó vezérli.
-    // Javítottam az elírást is ('dispay' -> 'display').
-    swics.style.display = show ? 'flex' : 'none'; 
+                         const grap = document.querySelector(".grap");
+                         const sta = document.querySelector(".sta");
+                         const gyikTab = document.querySelector(".gyik");
 
-    document.querySelectorAll('.cheking').forEach(el => {
-      el.style.display = show ? 'inline-flex' : 'none'; // inputnál inkább inline-flex
+                         if (grap) grap.classList.remove("aktiv");
+                         if (sta) sta.classList.remove("aktiv");
+                         if (gyikTab) gyikTab.classList.add("aktiv");
+                         
+                         if (selectionInfo) selectionInfo.innerHTML = '';
+                    }
+
+                    if (target) target.remove();
+                    if (wrapper) wrapper.remove();
+                } 
+                else { 
+                    console.error('Hiba történt a törlés során:', data.message); 
+                }
+            })
+            .catch(error => { console.error('Fetch hiba:', error); });
+        });
     });
-  };
-
-  master.addEventListener('change', apply);
-  apply();                                      // induláskor is
 }

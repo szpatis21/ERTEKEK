@@ -9,7 +9,6 @@
   background: white;      width: 100%;
   height: 100%;
   margin: auto;
-  border: 6px solid #553800;
   justify-content: center;
   align-items: center;
 }
@@ -68,7 +67,7 @@
     border-radius: 12px;
     padding: 3vh;
       }
-      .inek label{    font-weight: normal;
+      .inek label{    font-weight: normal; font-size: small;
     font-family: system-ui;}
       .inek input, .aktivp input{     
          height: 30px;
@@ -96,19 +95,96 @@
   flex-wrap: wrap;     
   border: 2px solid orange;
   border-radius: 15px;}
+
+  
+/* A konténer */
+.custom-dropdown {
+  
+  position: absolute;
+  top: 60%;
+  width: 90%; /* Vagy amennyi a fenti gomb */
+  margin: 0 auto;
+  font-family: inherit;
+}
+
+.dropdown-trigger {
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #333;
+  font-style: italic;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: small;
+}
+
+.dropdown-content {
+  display: none; /* Alapból rejtett */
+  position: absolute;
+  top: 100%; /* Rögtön a gomb alatt */
+  left: 0;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 100; /* Hogy a többi elem fölött legyen */
+  padding: 5px 0;
+}
+
+/* Amikor nyitva van */
+.dropdown-content.show {
+  display: block;
+  width: 150px;
+}
+.cim:hover #triggerText{color: whitesmoke;}
+.cim:hover .dropdown-item{text-shadow: none;}
+.dropdown-item input{width: 15px !important;height: 15px !important; box-shadow: none !important;}
+
+/* Az egyes sorok stílusa */
+.dropdown-item {
+  display: flex;
+  color: orangered;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+   font-style: italic;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: smaller;
+}
+
+.dropdown-item:hover {
+  background-color: #ffe0b2; /* Halvány narancs hover */
+}
+
+.dropdown-item input {
+  margin-right: 10px;
+  transform: scale(1.2); /* Kicsit nagyobb checkbox */
+}
+
+
       #legordulo{margin: auto; height: 5%;} 
-      select{
-          width: 200px;
-          background:whitesmoke;
-          color: white;
-          font-family: 'Times New Roman', Times, serif;
-          height: fit-content;
-          font-size: medium;
-          text-align: center;
-          border-radius: 5px;
-          color: black;
+      #ertekek{position: relative;}
+      #szuro{
+           display: flex;
+    background: #fff0de;
+    width: fit-content;
+    color: #ffa500;
+    border: none;
+    font-family: system-ui;
+    height: 100%;
+    font-size: small;
+    text-align: center;
+    cursor: pointer;
+    margin: 0px;
+    padding: 0px;
+     border-radius: 6px;
+    border-bottom-left-radius: 15px;
+    border-top-left-radius: 15px;
       }
-      #kitneve .savdiv {display: none;}
+      #belsosearch{flex-direction: row-reverse !important; height: 100%;}
+      #kereso-tipus{height: 100%;border-radius: 7px;width:fit-content; border-top-left-radius: 30px; border-bottom-left-radius: 30px; text-align: center;}
+      #kitneve {padding: 0px !important;}
       .outer-div {
           width: 100%;
           padding-bottom: 4px;
@@ -152,8 +228,8 @@
             position: relative;
             flex-wrap: wrap;
             font-size: small;
-            font-family: 'Times New Roman', Times, serif;
-            font-weight: normal !important;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-weight: normal;
             color: black;
             text-align: center;
             border-radius: 12px;
@@ -164,9 +240,10 @@
             align-content: center;
             flex-direction: column;
             justify-content: center;
+            border: 1px solid transparent;
         }
 .meglevok strong {    color: #454545;}
-.meglevok:hover{color:#ff7b00}
+.meglevok:hover{color:#ff7b00; border: 1px solid #4c4a56}
 .savdiv{    
   white-space: normal;  
       position: absolute;
@@ -186,7 +263,6 @@
     font-size: smaller;
     text-align: center;
     color: #ffffff;
-    text-shadow: #ffffff73 0px 0px 3px;
     font-family: system-ui;
 }
 
@@ -223,20 +299,28 @@
     border: 2px solid #ffffff;
 }
 #kilep, #kilep2, #kilep3, #kilep4{    
-  box-shadow: white 0px 0px 0px 2px;
-  position: absolute;
-  top: 0;
-  right: 0;
-  margin: 10px;
-  color: #ff001a;
-  font-size: large;
-  font-family: cursive;
-  background-color: whitesmoke;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s;}
- #kilep:hover{scale: 1.1;}
+      display: flex;
+      z-index: 60;
+    box-shadow: white 0px 0px 0px 2px;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 10px;
+    color: #ff7207;
+    font-size: large;
+    font-family: cursive;
+    background-color: whitesmoke;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid orange;
+    width: 5vh;
+    height: 5vh;
+    align-content: center;
+    justify-content: center;
+    align-items: center;}
+ #kilep:hover,#kilep2:hover,#kilep3:hover, #kilep4:hover{scale: 1.1;}
  .gobut6{width: fit-content;
     font-size: small;
     background: #ff9707;
@@ -253,9 +337,16 @@
     transition: all 0.3s;
     cursor: pointer;}
 .gobut6:hover{color: #ff9707; background-color: white; border: 1px solid grey;}
-
+#legordulo2 select{    width: 150px;
+    border: orange 1px solid;
+    border: 1px solid orange;
+    border-radius: 7px;
+    font-family: system-ui;
+    height: 24px;
+    font-size: small;}
   #go button, #go2 button, #go4 button, .gobut5{    
-    box-shadow: #ffbd16 0px 0px 11px 10px;
+   margin-top: 4vh !important;
+    box-shadow: #ffbd1647 0px 0px 24px 3px;
     align-content: center;
     background: #f1f1f1;
     position: relative;
@@ -374,13 +465,12 @@
         font-size: smaller;
         position: absolute;    
         margin: auto;}
-       #add, #add2{font-family: auto;
-        background: #ff6500;
+       #add, #add2{font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        background: #ff9e01;
+        font-size: small !important;
         text-align: center;
         width: 85% !important;
         font-weight: 100;
-        padding: 1px;
-        font-size: medium !important;
         color: white;
         margin: 2px !important;
         transition: all 0.3s;
@@ -398,7 +488,8 @@
               align-items: center;
               flex-direction: row;}
       #ujinek4, #ujinek4 form {display: flex; height: 100%; SCALE: 1;flex-direction: column;}
-      #gobut4{width: 110px;height: 45px !important;}
+      #gobut4, #gobut2{    width: 20vh !important;
+    height: 5vh !important;}
 .ex, .ex2{    
   cursor: pointer !important;
   margin: 0px !important;
@@ -437,7 +528,8 @@
         flex-direction: column;
         justify-content:space-around; 
       align-items: center;}
-          .sharing p{margin: 0px;}
+          .sharing p{margin: 0px;    font-size: small;
+    font-family: system-ui;}
           .megoszto_dob{    
     background: #ffa5001a;
     border: 1px solid orange;
@@ -453,27 +545,28 @@
     width: 50%;} 
       .megoszto_dob input{height: 25%;margin: auto;width: 90%;}
       #kuldendo {
-        width: 100%;    
-        background: whitesmoke;
-        cursor: auto !important;
-        border: 2px #004e00 double;
-        display: flex;
-        align-content: flex-start;
-        flex-wrap: wrap;
+      width: 100%;
+    background: whitesmoke;
+    cursor: auto !important;
+    border: 1px #ff7207 double;
+    display: flex;
+    border-radius: 7px;
+    align-content: flex-start;
+    flex-wrap: wrap;
         }
         #kuldendo span {
           margin: auto;
+          font-size: small;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
           width: 100%;
           text-align: center;
           color: black;
-          font-family: auto;}
+         }
         #kuldendo div, .oldDiv{
           position: relative;        
           text-align: center;    
-          color: white;
-          font-size: smaller;
-          background: darkgreen;
-          font-family: auto;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+          font-size: small;
           font-weight: normal;
           border: 1px solid #ff7300;
           border-radius: 5px;
@@ -485,7 +578,7 @@
           margin-right: 10px;
           cursor: auto; }
       #go4{height: 10%;}
-      .oldDiv{ background-color: #ff98001a !important; color: #000000 !important; font-weight: bolder !important;}
+      .oldDiv{ background-color: #ff98001a !important; color: #575757 !important; font-weight: bolder !important;}
       .info{    
         font-family: auto;
         color: black;
@@ -524,6 +617,7 @@
 #msg{  
     margin: 10px;
     display: flex;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
     justify-content: space-around;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -533,20 +627,10 @@
     text-align: center;
     align-content: flex-end;}
       #msg input{height: 20px; width: 20px;}
-      #msg div{margin: 0px;display: flex;align-items: center;width: 50%;}
-      #msg label{ font-family: 'Times New Roman', Times, serif; font-weight: normal;}
+      #msg div{margin: 0px;display: flex;font-size: x-small; align-items: center;justify-content: center; width: 50%; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;}
+      #msg label{font-size: small;  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; font-weight: normal;}
       #hiddenmsg{
-        border: 2px white solid;
-        padding: 5px;
-        border-radius: 10px;
-        font-size: smaller;
-        color: rgb(255, 81, 0);
-        background-color: whitesmoke;
-        justify-content: center;
-        font-family: auto;
-        height: 10px;
-      display: none; transition: all 0.3s;}
-      #hiddenmsg:hover{ background-color: orange; color: whitesmoke;}
+       display: none;}
       #msgtxt{  
         width: 100%;
         height: 100px;
@@ -595,14 +679,15 @@
 .help {
   visibility: hidden;
   opacity: 0;
+  text-decoration: none;
   width: max-content;
-  max-width: 200px;
   background-color: rgba(0, 0, 0, 0.85);
-  color: white;
+  color: white !important;
   text-align: center;
   font-family: 'Times New Roman', Times, serif;
   font-size: 14px;
   border-radius: 6px;
+  font-weight: normal;
   padding: 6px 10px;
   position: absolute;
   z-index: 100;
@@ -623,14 +708,57 @@
   border-style: solid;
   border-color: rgba(0, 0, 0, 0.85) transparent transparent transparent;
 }
+#moved-buttons-container2{
+gap: 10px;
+display: grid;
+    margin: 0px 3vh;
+    justify-content: stretch;    
+    padding: 1.5%;
+    border-bottom: 2px solid #ffeede;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1, auto);}
+    #moved-buttons-container2 button{
+      width: 100%;
+      font-family: system-ui !important;
+      
+    }
+#moved-buttons-container{
+  display: flex;
+
+padding: 1.5%;
+    border-bottom: 2px solid #ffeede;
+}
+#moved-buttons-container .modulebutt .help {
+    bottom: auto;       
+    top: 125%;         
+    
+    text-decoration: none; 
+}
+
+#moved-buttons-container .modulebutt .help::after {
+    top: auto;          
+    bottom: 100%;       
+    
+    border-color: transparent transparent rgba(0, 0, 0, 0.85) transparent;
+}
+#atlatszo{
+  height: 3vh; background-color: black;
+}
 .modulebutt:hover .help {visibility: visible;opacity: 1;}
-  .modulebutt {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  cursor: pointer;
+  .modulebutt {transition: all 0.1s;
+  border: 1px solid #fecd9f;
+    padding: 4px;
+        font-weight: 500;
+    color: #3d3c3c;
+    box-shadow: #ffead6cc 3px 2px 2px -1px;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 7px;
 }
 #go .material-symbols-rounded,#gobut2 .material-symbols-rounded , #gobut4 .material-symbols-rounded,.gobut5 .material-symbols-rounded {    position: absolute;
     color: #ff66001a;
@@ -639,41 +767,24 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
-  .modulebutt .material-symbols-rounded{font-size: 24px; z-index: 50;} 
-    .modules{
+  .modulebutt .material-symbols-rounded{
+       position: absolute;
+    font-size: 32px;
+    color: #ff66003b;
+    text-decoration: none;
+    margin-right: 1px;} 
+  .modulebutt:hover{background: #ff6500;
+    color: white;}  
+  
+  .modules{
     display:none;
-    height: 19vh;
-    width: 19vh;
-    grid-template-areas:
-        "i1 i1 i1"
-        "i2 i3 i4"
-        "i5 i6 i7";
-    gap: 8px;
-    box-shadow: 0px 0px 12px 2px grey;
-    opacity: 0;
-    padding: 10px;
-    color: whitesmoke;
-    border: 2px solid whitesmoke;
-    border-radius: 12px;
-    background: linear-gradient(45deg, #ff6500e8 0%, #ff9800b5 100%);
-    backdrop-filter: blur(1px);
-    transition: all 0.7s;}
-.modulebutt:nth-child(1) { grid-area: i1; }
-.modulebutt:nth-child(2) { grid-area: i2; }
-.modulebutt:nth-child(3) { grid-area: i3; }
-.modulebutt:nth-child(4) { grid-area: i4; }
-.modulebutt:nth-child(5) { grid-area: i5; }
-.modulebutt:nth-child(6) { grid-area: i6; }
-.modulebutt:nth-child(7) { grid-area: i7; }
-.fo_edit{
-    padding: 2px;
-    border-radius: 10px;
-    color: #000000;
-    width: 71px;
-    background-color: white;
-    transition: all 0.3S;
-}
-.fo_edit:hover{width: 100%; color: black; background-color: white;box-shadow: 0px 0px 6px 3px rgb(255, 128, 0);}
+width: 100%;
+    gap: 10px;
+    margin: 0px 3vh;
+    justify-content: stretch;
+          grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, auto);
+  }
 
 .alap {
   display: flex;
@@ -693,7 +804,9 @@ padding: 0%;
 border-radius: 12px;  
 justify-content:space-around
 }
-
+.muv{display: flex;
+    flex-direction: column;
+    background: white;}
 .helpdesk {width: 19%; background-color: #000000c9;}
 .udv{    
   display: flex;
@@ -710,14 +823,24 @@ justify-content:space-around
     background: #ffffffde;
     margin:  0% auto;
     }
+    #statisztika {flex-direction: row !important; padding: 0% 5%;}
+    #tomlo { 
+    display: flex;
+    justify-content: space-around;}
+    #endezo{height: 35px !important;   background-color: white;
+      width: 40%;
+    border: 1px solid #ff6500;
+    justify-content: space-between;
+    border-radius: 6px;
+    box-shadow: white 0px 0px 8px 1px;}
 .search-bar {
-  display: flex;
-    align-items: center;
-    padding: 4px;
-    width: 55% !important;
+    padding: 0px;
+        flex-direction: row !important;
+height: 35px !important;
+width: 55% !important;
     background-color: white;
-    border: 2px solid #ff6500;
-    border-radius: 10px;
+    border: 1px solid #ff6500;
+    border-radius: 6px;
     box-shadow: white 0px 0px 8px 1px;
 }
 .search-icon {color: #ff7207;font-weight: bold;font-size: x-large;}
@@ -726,11 +849,28 @@ justify-content:space-around
   outline: none;
   font-size: 16px;
   flex: 1;
+  height: 100%;
   font-style: italic;
   font-size: smaller;
   font-family: 'Times New Roman', Times, serif;
   background: transparent;
 }
+.arrow {
+  width: 6px;
+  height: 6px;
+  
+  border-bottom: 2px solid white; 
+  border-right: 2px solid white;
+  
+  transform: rotate(45deg);
+  
+  margin-bottom: 3px; /* Ezzel tudod fel-le tologatni */
+  display: inline-block;
+  transition: transform 0.3s; /* Hogy szépen forduljon meg, ha akarod */
+}
+#elemzesDropdown {display: none;}
+
+
 .logo{
     display: flex;
     font-family: auto;
@@ -756,9 +896,8 @@ border-radius: 4px;
 border: 1px solid #ff6500;
 appearance: none;
 cursor: pointer;
-box-shadow: inset 2px 2px 1px -1px orange;
-width: 20px;
-height: 20px;
+width: 16px;
+height: 16px;
 position: relative;
 }
 
@@ -830,23 +969,25 @@ input[type="checkbox"]:checked::after {
   display: flex; 
   font-size: small;}
 .kozepb{display: flex;align-items: center;flex-direction: row-reverse}
+#moved-buttons-container2 .help::after {
+    display: none !important;
+}
  .kozepc{   
+      box-shadow: 5px 7px 21px -3px #0a0a0a;
+
    color: grey;
     top: 0;
     z-index: 10;
     display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    font-weight: bold;
-    width: 100%;
     margin-right:3vh;
     font-family: system-ui;
-    align-content: center;
-    justify-content: space-around;
-    align-items: center;
+ 
     height: 20%;
     position: sticky;
   }
+  #selection-info{display: none;/* font-weight: bold; height: 10vh; margin-right:2%; padding: 5%;
+    width: 25%; border-right: 2px solid #ff6500; */}#selection-info span {width: 100%;margin: 6%;}
+#selection-info div{justify-content: center !important;}
   .kozepc select:hover {color: orange;}
   .kozepc select {    
     width: 150px;
@@ -858,20 +999,26 @@ input[type="checkbox"]:checked::after {
     font-family: system-ui;
     font-size: small;
     background: #fff0de;}
-    #swics{display: none; width: 35% !important;}
-  .kozepc div{margin: 0px 3%;
-    width: 100%;
+  .kozepc div{
     display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    font-size: small;
+    width: 100%;
     text-align: center;
     align-items: center;
-    justify-content: flex-end;}
-    .kozepc span {color: orange; text-align: center;}
+  }
+#picik{    height: 98%;
+    display: flex;
+    flex-direction: column !important;
+    justify-content: space-evenly;}
+    .kozepc span {color: rgb(51, 51, 51); text-align: center;text-decoration: underline; text-decoration-color: coral;}
     .grap, .sta, .gyik{
-    border-top: 2px solid #ffffffb8;
+       border-top: 2px solid #ffffffb8;
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     display: flex;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: system-ui;
     cursor: pointer;
     align-items: center;
     height: 100%;
@@ -879,11 +1026,12 @@ input[type="checkbox"]:checked::after {
     text-align: center;
     justify-content: center;
     text-shadow: 0px 0px 5px #ffece0;
-    font-size: 104%;
+    font-size: 100%;
  }
  .aktiv{
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
+  
     color: black;
     background-color: white;
     transition: all 0.3s;
@@ -957,7 +1105,7 @@ input[type="checkbox"]:checked::after {
   font-size: 0.9rem;
 }
 #szummRadarChart{background-color: white;}
-.vizualBlokk{background-color: white;}
+.vizualBlokk{background-color: white; }
 #hirek, #gykerdesek{
   display: flex;
     width: 100%;
@@ -1027,18 +1175,19 @@ font-family: Arial, Helvetica, sans-serif; font-weight: bold; text-transform:mat
     .gyujto{
       display: flex; 
       width: 100%;
-      background-color: white;  
       flex-direction: column-reverse;
-       justify-content: space-evenly;
-        align-content: flex-end;
-         align-items: center}
+      background-color: white;  
+    
+       }
+       .aktivm{background: #ff6500;
+    color: white;
+}
         #osszesitett input{
            text-align: center;
-    font-size: 22px;
+    font-size: 20px;
     width: 90%;
     padding: 5px;
-    display: flex
-;
+    display: flex;
     background: #ff470017;
     box-shadow: 0px 0px 4px 1px #eea87b;
     border: 1px solid orange;
@@ -1052,12 +1201,6 @@ font-family: Arial, Helvetica, sans-serif; font-weight: bold; text-transform:mat
     border-radius: 15px;
     display: none;}
      #osszesitett{width: 100%; height: 81vh; background-color: white;}
-     .switch {
-  position: relative;
-  display: inline-block;
-  width: 45px;
-  height: 20px;
-}
 
 /* Az alapértelmezett checkbox elrejtése */
 .switch input {
@@ -1065,29 +1208,22 @@ font-family: Arial, Helvetica, sans-serif; font-weight: bold; text-transform:mat
   width: 0;
   height: 0;
 }
-
+.swicsi{font-size: smaller;}
 /* A kapcsoló háttere (a "csúszka") */
 .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc; /* Szürke, ha ki van kapcsolva */
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 34px; /* Lekerekítés */
+position: absolute;width: 30px; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 34px;
 }
+#sel-count{margin-right: 5px;}
+.swics{position: relative; display: inline-block; width: 34px; height: 20px; margin-bottom: 0;}
 
 /* A kapcsoló gombja (a pöcök) */
 .slider:before {
      position: absolute;
     content: "";
-    height: 19px;
-    width: 19px;
-    left: 5px;
-    bottom: 1px;
+  height: 15px;
+    width: 15px;
+    left: 2px;
+    bottom: 2px;
   background-color: white;
   -webkit-transition: .4s;
   transition: .4s;
@@ -1106,9 +1242,9 @@ input:focus + .slider {
 
 /* A gomb elmozdulása, amikor be van kapcsolva */
 input:checked + .slider:before {
-  -webkit-transform: translateX(15px);
-  -ms-transform: translateX(15px);
-  transform: translateX(15px);
+  -webkit-transform: translateX(10px);
+  -ms-transform: translateX(10px);
+  transform: translateX(10px);
 }
 .folyamat{display: none;}
 #barLegend{    
@@ -1208,27 +1344,63 @@ display: none;
 
 /* A gombok és az aktív állapot stílusa */
 /* A gombok stílusa változatlan */
+.gomb{height: 15vh; width: 15vh;}
 .gomb .cim {
-    cursor: pointer;
-    padding: 10px;
-    border-left: 5px solid transparent;
-    background: #ffeede;
-    transition: background-color 0.3s ease, border-left 0.3s ease;
-    color: black;}
+  display: flex;
+      justify-content: space-evenly;
 
-.gomb .cim:hover {    border-left: 5px solid whitesmoke;
+  flex-direction: column;
+    cursor: pointer;
+   
+    background: #ffeede;
+    transition: background-color 0.3s ease, border-top 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: black;}
+  
+.gomb:hover #szuro {color: white;}
+.gomb:hover option {color:orangered}
+.gomb .cim:hover {    border-top: 5px solid whitesmoke;
 
     background-color: #ff770000;
     color: whitesmoke;
 }
+/* A felugró üzenet stílusa */
+.info-toast {
+    position: fixed;
+    top: 20px; /* Vagy bottom: 20px ha alulra szeretnéd */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333; /* Sötét háttér */
+    color: #fff;            /* Fehér szöveg */
+    padding: 12px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 9999;          /* Hogy mindenen felül legyen */
+    font-size: 14px;
+    opacity: 1;
+    transition: opacity 1s ease-out; /* 1 másodperces elhalványulás */
+    pointer-events: none;   /* Hogy át lehessen kattintani rajta */
+}
+#hozzaj2{    letter-spacing: -0.5px;
+}
+/* Ez a class tünteti el */
+.info-toast.fade-out {
+    opacity: 0;
+}
 
+/* A gomb aktív állapota (példa) */
+.dobaktiv2 {
+    background-color: #4CAF50 !important; /* Zöld jelzés, vagy ami tetszik */
+    color: white !important;
+    border-color: #4CAF50 !important;
+}
 .gomb .cim.dobaktiv {
     font-weight: bold;
     color: white;
-     border-left: 5px solid whitesmoke;
+     border-top: 3px solid whitesmoke;
     background-color: #e7f1ff00;
 }
-
+.cim.dobaktiv #szuro{color: whitesmoke; display: flex;}
+.cim.dobaktiv2 #elemzesDropdown{display: flex;}
 .layout > article:not(.savos) {
     opacity: 0;
     visibility: hidden;
@@ -1310,7 +1482,14 @@ display: none;
     color: #5f6368; /* Szolid szín az ikonnak */
     user-select: none; /* Ne lehessen kijelölni az ikont, mint szöveget */
 }
-
+.kijelolt{        border: 1px solid #ffffff;
+    background-color: #f7b42e96;
+    color: #ffffff;
+    font-size: 85%;
+    box-shadow: 0px 0px 7px 1px #ffffff;
+    }
+    .kijelolt:hover{color:white}
+    .kijelolt strong {color: rgb(246 247 255);}
 .toggle-jelszo:hover {
     color: #202124; /* Sötétebb szín, ha fölé visszük az egeret */
 }
@@ -1332,3 +1511,14 @@ display: none;
     transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
   
   }
+.gobut5{margin-top: 0vh !important;border-radius: 5px; cursor: pointer;}
+
+#btn-nem, #btn-igen{transition: all 0.3s; padding: 8px 15px; border: none;border-radius: 5px; cursor: pointer;font-family: system-ui;}
+#btn-igen{ background: #ff6500; color: white;}
+#btn-nem{ background: #e0e0e0; color: #333;}
+
+#btn-igen:hover{box-shadow: orange 0px 0px 6px 2px;}
+#btn-nem:hover{box-shadow: rgb(86, 86, 86) 0px 0px 6px 2px;}
+
+#stat-info-box{flex-direction: row !important;width: 50%; justify-content: center;}
+#mozgo{width: 50%;}

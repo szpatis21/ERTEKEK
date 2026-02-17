@@ -92,6 +92,8 @@
 .alal{height: 35px;}
 .diag{display: flex;}
   @media (max-width: 1024px) {
+    .gomb{        height: 40px;
+        width: 30%;}
       .layout {display: grid !important;
     grid-template-columns: 1fr;
      grid-template-areas:
@@ -113,12 +115,9 @@ font-size: 80% !important;}
 .savos{        background: linear-gradient(293deg, #ff3400b5 0%, #ffab02a1 100% 100%);       
     position: sticky;
         height: fit-content;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
         gap: 12px;
-        grid-template-areas:
-        "a a"
-        "b d";
+       
         top: 0;
         z-index: 50;
         backdrop-filter: blur(2px);

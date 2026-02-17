@@ -1,3 +1,6 @@
+// A fájl elején importáld a függvényt a dashAside-ból
+
+
 export const menuTartalmak = {
     public: `
         <aside>
@@ -76,7 +79,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">factory</span>
                     <a>Licenszek</a>
                 </li>
-                <li>
+                <li id="fiokom">
                     <span class="nav-icon material-symbols-rounded">account_circle</span>
                     <a>Fiókom</a>
                 </li>
@@ -105,7 +108,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">factory</span>
                     <a>Licenszek</a>
                 </li>
-                <li>
+                <li id="fiokom">
                     <span class="nav-icon material-symbols-rounded">account_circle</span>
                     <a>Fiókom</a>
                 </li>
@@ -139,11 +142,11 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">quiz</span>
                     <a >GYIK</a>
                 </li>
-                <li>
+                <li id="engedelyek">
                     <span class="nav-icon material-symbols-rounded">finance_chip</span>
                     <a>Engedélyek</a>
                 </li>
-                <li>
+                <li id="fiokom">
                     <span class="nav-icon material-symbols-rounded">account_circle</span>
                     <a>Fiókom</a>
                 </li>
@@ -172,11 +175,11 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">quiz</span>
                     <a >GYIK</a>
                 </li>
-                <li>
+                <li id="engedelyek">
                     <span class="nav-icon material-symbols-rounded">finance_chip</span>
                     <a>Engedélyek</a>
                 </li>
-                <li>
+                <li id="fiokom">
                     <span class="nav-icon material-symbols-rounded">account_circle</span>
                     <a>Fiókom</a>
                 </li>
@@ -202,7 +205,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">home</span>
                     <a href="/user/dashboard.html">ÉRtÉKEIM</a>
                 </li>
-                <li>
+                <li id="ertnone">
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
@@ -239,7 +242,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">home</span>
                     <a href="/user/dashboard.html">ÉRtÉKEIM</a>
                 </li>
-                <li>
+                <li id="ertnone">
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
@@ -281,7 +284,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">home</span>
                     <a href="/user/dashboard.html">ÉRtÉKEIM</a>
                 </li>
-                <li>
+                <li id="ertnone">
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
@@ -318,7 +321,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded">home</span>
                     <a href="/user/dashboard.html">ÉRtÉKEIM</a>
                 </li>
-                <li>
+                <li id="ertnone">
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>

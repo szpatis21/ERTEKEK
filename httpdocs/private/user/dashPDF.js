@@ -225,13 +225,14 @@ if (pdfBtn && !pdfBtn.dataset.listenerAdded) {
     pdfBtn.disabled = true;
 
     try {
-      pdfBtn.textContent = 'PDF készítése...';
+      pdfBtn.textContent = 'Folyamatban';
       await generate('download');
     } catch (err) {
       console.error('PDF export teljes folyamat hiba:', err);
     } finally {
       pdfBtn.disabled = false;
-      pdfBtn.textContent = oldText;
+      pdfBtn.innerHTML = `  <span class="material-symbols-rounded">picture_as_pdf</span>
+                                                    <span>Letöltés</span>`
       window.__pdfBusy = false;
     }
   });
@@ -249,15 +250,13 @@ if (printBtn && !printBtn.dataset.listenerAdded) {
     const labelEl = printBtn.querySelector('p');
     const oldLabel = labelEl ? labelEl.textContent : null;
 
-    const release = lockMouseAndScroll({ hideCursor: true });
-
     try {
       if (labelEl) labelEl.textContent = 'Nyomtatási előkészítés…';
       await generate('print');
     } catch (err) {
       console.error('PDF nyomtatás hiba:', err);
     } finally {
-      release();
+    
       printBtn.disabled = false;
       if (labelEl) labelEl.textContent = oldLabel ?? oldText;
       window.__pdfBusy = false;

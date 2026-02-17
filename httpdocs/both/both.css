@@ -14,7 +14,9 @@ body {
     li button{    background: transparent;
     color: white;
     border: none;
+    width: fit-content;
     transition: all 0.3s;
+    margin: 0px;
     font-family: inherit;
     font-size: initial;}
     li button:hover{ scale: 1.01;text-shadow: 0px 0px 10px whitesmoke;}
@@ -468,8 +470,9 @@ li a {color: white; font-weight: bold;}
     display: flex;
     justify-content: center;
 }
-
+.kozepd{display: none !important;}
 @media(max-width:992px){
+    #ertnone{display: none;}
   .navbar{
     justify-content: space-between;
   }

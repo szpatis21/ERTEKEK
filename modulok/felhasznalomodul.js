@@ -299,15 +299,24 @@ router.get('/original-admin', (req, res) => {
 // modulok/felhasznalomodul.js
 
 // Kitöltés duplikálása
+// Kitöltés duplikálása
 router.post('/duplicate-kitoltes', (req, res) => {
-    const { originalIdk, ujNev, userId } = req.body;
+    // 1. MÓDOSÍTÁS: Fogadjuk az "ujVizsgaltNev" paramétert is!
+    const { originalIdk, ujNev, ujVizsgaltNev, userId } = req.body;
 
     if (!originalIdk || !ujNev || !userId) {
-        return res.status(400).json({ success: false, message: 'Hiányzó adatok (originalIdk, ujNev, userId)!' });
+        return res.status(400).json({ success: false, message: 'Hiányzó adatok!' });
     }
 
-    // 1. Eredeti kitöltés adatainak lekérése
-    const selectOriginal = `SELECT * FROM kitoltesek WHERE idk = ? LIMIT 1`;
+    // 1. Eredeti kitöltés adatainak lekérése (modul_id, szazalek, stb. miatt kell)
+    const selectOriginal = `
+        SELECT k.*, 
+               CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS original_vizsgalt_nev
+        FROM kitoltesek k
+        LEFT JOIN vizsgaltak v ON k.vizsgalt_id = v.vizsgalt_id
+        WHERE k.idk = ? 
+        LIMIT 1
+    `;
 
     db.query(selectOriginal, [originalIdk], (err, rows) => {
         if (err) {
@@ -319,66 +328,80 @@ router.post('/duplicate-kitoltes', (req, res) => {
         }
 
         const original = rows[0];
-        const maiDatum = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
-
-        // 2. Új kitöltés beszúrása
-        // Id: auto-increment, idk: később update-eljük, letrehozva: most, kitoltes_neve: user input
-        // A többi adat (vizsgalt_id, modul_id, szazalek, role) másolva az eredetiből.
-        const insertKitoltes = `
-            INSERT INTO kitoltesek 
-            (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, szazalek)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+        
+        // 2. MÓDOSÍTÁS: A név kiválasztása
+        // Ha kaptunk új nevet (ujVizsgaltNev), azt használjuk. 
+        // Ha nem, akkor maradunk a réginél (original.original_vizsgalt_nev).
+        const subjectName = ujVizsgaltNev || original.original_vizsgalt_nev || 'Névtelen alany';
+        
+        // 3. Létrehozunk egy ÚJ alanyt a választott névvel
+        const insertNewSubject = `
+            INSERT INTO vizsgaltak (nev_enc, hozzajarulas_datuma)
+            VALUES (AES_ENCRYPT(?, @aes_key), NOW())
         `;
 
-        db.query(insertKitoltes, [
-            userId,           // Aktuális felhasználó (lehet, hogy más, mint az eredeti készítője)
-            maiDatum,         // Új dátum
-            ujNev,            // Új név
-            'admin',          // Role: alapértelmezetten admin a másolat létrehozójának
-            original.modul_id,
-            original.vizsgalt_id,
-            original.szazalek // Százalékos állapot másolása
-        ], (insErr, result) => {
-            if (insErr) {
-                console.error('Hiba az új kitöltés beszúrásakor:', insErr);
-                return res.status(500).json({ success: false, message: 'Adatbázis hiba (Insert Kitoltes)' });
+        db.query(insertNewSubject, [subjectName], (subjErr, subjResult) => {
+            if (subjErr) {
+                console.error('Hiba az új alany létrehozásakor:', subjErr);
+                return res.status(500).json({ success: false, message: 'Adatbázis hiba (Insert Subject)' });
             }
 
-            const newId = result.insertId;
+            const newVizsgaltId = subjResult.insertId; 
+            const maiDatum = new Date().toISOString().split('T')[0];
 
-            // 3. IDK frissítése (hogy megegyezzen az ID-vel, a rendszer logikája szerint)
-            const updateIdk = `UPDATE kitoltesek SET idk = ? WHERE id = ?`;
-            
-            db.query(updateIdk, [newId, newId], (updErr) => {
-                if (updErr) {
-                    console.error('Hiba az IDK frissítésekor:', updErr);
-                    return res.status(500).json({ success: false, message: 'Adatbázis hiba (Update IDK)' });
+            // 4. Új kitöltés beszúrása az ÚJ vizsgalt_id-val és ÚJ kitoltes_neve-vel
+            const insertKitoltes = `
+                INSERT INTO kitoltesek 
+                (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, szazalek)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            `;
+
+            db.query(insertKitoltes, [
+                userId,
+                maiDatum,
+                ujNev, // Ez az "Időszak-Típus" amit a frontend küldött
+                'admin',
+                original.modul_id,
+                newVizsgaltId,    
+                original.szazalek
+            ], (insErr, result) => {
+                if (insErr) {
+                    console.error('Hiba az új kitöltés beszúrásakor:', insErr);
+                    return res.status(500).json({ success: false, message: 'Adatbázis hiba (Insert Kitoltes)' });
                 }
 
-                // 4. Válaszok másolása (Duplicate Answers)
-                // Egy lépésben átmásoljuk a válaszokat az SQL INSERT INTO ... SELECT segítségével.
-                // Az új 'kitoltes_id' a 'newId' lesz. A 'letrehozva' a mostani időpont.
-                const duplicateAnswers = `
-                    INSERT INTO valaszok 
-                    (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
-                    SELECT ?, kerdes_id, kerdes_valasz, valasz_szoveg, ?, NOW()
-                    FROM valaszok
-                    WHERE kitoltes_id = ?
-                `;
+                const newId = result.insertId;
 
-                db.query(duplicateAnswers, [newId, userId, originalIdk], (copyErr, copyRes) => {
-                    if (copyErr) {
-                        console.error('Hiba a válaszok másolásakor:', copyErr);
-                        // Megjegyzés: Bár a kitöltés létrejött, a válaszok nem. Ilyenkor érdemes lenne rollbackelni, 
-                        // de egyszerűsítve csak hibát dobunk.
-                        return res.status(500).json({ success: false, message: 'Hiba a válaszok másolásakor!' });
+                // 5. IDK frissítése
+                const updateIdk = `UPDATE kitoltesek SET idk = ? WHERE id = ?`;
+                
+                db.query(updateIdk, [newId, newId], (updErr) => {
+                    if (updErr) {
+                        console.error('Hiba az IDK frissítésekor:', updErr);
+                        return res.status(500).json({ success: false, message: 'Adatbázis hiba (Update IDK)' });
                     }
 
-                    res.json({ 
-                        success: true, 
-                        message: 'Sikeres duplikálás!', 
-                        newId: newId, 
-                        copiedAnswers: copyRes.affectedRows 
+                    // 6. Válaszok másolása
+                    const duplicateAnswers = `
+                        INSERT INTO valaszok 
+                        (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
+                        SELECT ?, kerdes_id, kerdes_valasz, valasz_szoveg, ?, NOW()
+                        FROM valaszok
+                        WHERE kitoltes_id = ?
+                    `;
+
+                    db.query(duplicateAnswers, [newId, userId, originalIdk], (copyErr, copyRes) => {
+                        if (copyErr) {
+                            console.error('Hiba a válaszok másolásakor:', copyErr);
+                            return res.status(500).json({ success: false, message: 'Hiba a válaszok másolásakor!' });
+                        }
+
+                        res.json({ 
+                            success: true, 
+                            message: 'Sikeres duplikálás!', 
+                            newId: newId,
+                            copiedAnswers: copyRes.affectedRows 
+                        });
                     });
                 });
             });

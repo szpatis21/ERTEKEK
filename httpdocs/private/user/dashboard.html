@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="/public/stylei.css">
     
     <style>
-        #ai-generate-btn:hover{background-color: transparent;}
+        
       #kimenetbelso{
             width: 100%;
     background: white;
@@ -56,7 +56,7 @@
     .cim:hover{
             background: #ffeede;
     color: #4b5563;
-    text-shadow: 0px 0px 2px #4b5563;
+    
     }
 canvas {image-rendering: auto;}
 
@@ -87,18 +87,17 @@ canvas {image-rendering: auto;}
             <div class="olvaso" style="height: 100%;"> 
                   
                     <div class="kozep" style="height: 15%;">
-                            <div class="udv">
+                        <div class="udv">
                             <div class="logo">
-                                <div style="margin-right: 5px;">
-                                Kedves </div> <div class="sajtnev" id="sajatnev"></div>! Üdv a kezelőpanelen! </div>
-
-                            
-                        
-                        <div class="kozepb">
-                            <div class="holvagyok"></div>
+                                <div> Kedves
+                                </div> 
+                                <div class="sajtnev" id="sajatnev">
+                                </div>! Üdv a kezelőpanelen! 
+                            </div>
+                            <div class="kozepb">
+                                <div class="holvagyok"></div>
+                            </div>
                         </div>
-                        
-                    </div>
                     </div>
                     <div class="also" style="height: 80%;">
                         
@@ -124,6 +123,14 @@ canvas {image-rendering: auto;}
                 </div>
                 <div id="fulek">
                     <div id="maininf" class="outer-div">
+                           <div class="muveletek">
+           
+              
+               <div class="muv">
+                  <div id="moved-buttons-container"></div>
+              </div>
+
+          </div>
                         <div class="diag" style=" position: relative;">
                             
                                 
@@ -163,32 +170,40 @@ canvas {image-rendering: auto;}
                     <div id="osszesitett" class="inner-div2 ">
                         <div class="gyujto">
                             <input id="szalagcim" class="szummcim vizualBlokk" placeholder="Adjon nevet a statiszikának">
-                            <div style="display: flex; justify-content: space-around; width: 100%; border-bottom: 5px solid orange;">
-                            <div style=" background: linear-gradient(45deg, #ff6500, #ff00cf);margin: 10px 0px; font-size: x-small; width: fit-content; border-radius: 7px;padding: 2px;">
-                                <button id="ai-generate-btn" class="gobut5" style=" aspect-ratio: 0;box-shadow: none; height: 100%; margin: 0px;">
-                                AI Generálás
+                                
+                                    <div class="muv">
+                                        <div id="moved-buttons-container2">  
+                                            <button id="print-pdf" class="modulebutt">
+                                                    <span class="material-symbols-rounded">print</span>
+                                                    <span>Nyomtatás</span>
+                                                </button>
+                                                
+                                                <button id="ai-generate-btn" class="modulebutt">
+                                                    <span class="material-symbols-rounded">lightbulb_2</span>
+                                                    <span>AI Generálás</span>
+                                                </button>
+                                                <button class="modulebutt" id="elore">
+                                                    <span class="material-symbols-rounded">bar_chart_4_bars</span>
+                                                    <span>Előrehaladás</span>
+                                                </button>
+                                                 <button id="export-pdf" class="modulebutt">
+                                                    <span class="material-symbols-rounded">picture_as_pdf</span>
+                                                    <span>Letöltés</span>
+                                                </button>
+                                    
+                                                
+                                        
+                                               
+                                        
+                                                
+                                        </div>
+                                
                             
-                                </button>
-                            </div>
-                              <button id="export-pdf" class="gobut5" style="aspect-ratio: 0;box-shadow: none;">
-                                <span class="material-symbols-rounded">picture_as_pdf</span>
-                                <p>Exportálás PDF-be</p>
-                                </button>
+
                                 
-                                <button id="print-pdf" class="gobut5" style="aspect-ratio: 0;box-shadow: none;">
-                                <span class="material-symbols-rounded">print</span>
-
-                                <p>Küldés nyomtatóra</p>
-
-                                </button>
+                      
                                 
-                                <button id="export-pdf3" class="gobut5" style="aspect-ratio: 0;box-shadow: none;">
-
-                                <span class="material-symbols-rounded">mail</span>
-
-                                <p>Küldés e-mailben</p>
-
-                                </button>
+                                
                                 </div>
                             </div>
                                <article id="Kimenet" style="display: none; opacity: 0;">
@@ -284,9 +299,9 @@ canvas {image-rendering: auto;}
                                     <div class="gyikcim">Értékelés címének módosítása</div>
                                     <div class="gyikcontent">
                                         <div class="gyikvalasz">
-                                            <p>                                    
+                                            <p style="    font-family: system-ui;">                                    
                                                 Az alábbi adatok a kinyomtatott/lementett értékelés Főcímét képzik.
-                                                <br> Módosítsa a vizsgálatra vonatkozó adatokat, majd kattintson az <b>"Módosítások mentése"</b> gombra.
+                                                <br> Módosítsa a vizsgálatra vonatkozó adatokat, majd kattintson az <b>"Átnevezés"</b> gombra.
                                             </p>
                                         </div>
                                         </div>
@@ -306,7 +321,7 @@ canvas {image-rendering: auto;}
                                 <div id="go2">    
                                     <button id="gobut2" type="submit">
                                         <span class="material-symbols-rounded">page_header</span>
-                                        <p>Módosítások mentése</p>
+                                        <p>Átnevezés</p>
                                     </button>
                                 </div>
                             </form>
@@ -379,7 +394,8 @@ canvas {image-rendering: auto;}
                     </div>
                 </div>
     </article>
-
+ 
+               
     <article class="savos">
         <div class="gomb" id="ertekek0">
             <div class="cim dobaktiv" id="ertekek"> Értékeim</div>
@@ -393,7 +409,7 @@ canvas {image-rendering: auto;}
         <div class="gomb" id="hozzaj0">                                
             <div class="cim" id="hozzaj">Engedélyek</div>
         </div>   
-    </article>  
+    </article>   
 </div>
 
    <div id="mainart"><div id="seh"></div>

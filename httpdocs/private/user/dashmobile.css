@@ -8,9 +8,7 @@
     margin: 1vh;
     gap: 1vh;
   }
-  .savos{height: fit-content; padding: 0px;}
   .savdiv{height: fit-content;}
-.search-bar{padding: 0px; width: 95% !important;}
     #men{margin: auto;}
     .meglevok{width: 18vh; height: 18vh;     font-size: 80%;
       font-family: auto;}
@@ -27,7 +25,7 @@
         gap: 5px;
         }
         .main{width: 100%;}
-#keszulo{        margin-top: -5% !important;}
+#keszulo{        margin-top: -10px !important;}
         #kuldendo span {font-size: 70%; color: #ff7207; font-style: italic;}
         .oldDiv, .newDiv{ min-height:25px;  display: flex; font-size: x-small !important; padding: 2px !important; margin: 0px !important;
               flex: 5 1 !important; max-width: 95px; align-items: center;}
@@ -41,16 +39,24 @@
           #nevet{ padding: 10px 5px 0px 5px;   margin: 0px 5px 0px 0px;}
           .sharing .inek div{margin: 0px;}
     .info{display: none !important}
+    .holvagyok{width: 100% !important;}
+        #legordulo2 select{font-size: x-small; width: 110px};
+#stat-info-box{font-size: smaller;}
+.swicsi {font-size: x-small; margin-left:15px;    text-align: right !important;}
     .mobi{
- 
     width: 90% !important;
     justify-content: center !important;}
     #nevet select{ width: 100%; font-size: small;}
     #nevet, #legordulo2 {justify-content: space-between;}
-    .logo{font-size: small;}
-    #felbukkano,#felbukkano2,#felbukkano3,#felbukkano4{        width: 98%;
-
-        margin: 0%;}
+    .logo{display: none;}
+    #felbukkano,#felbukkano2,#felbukkano3,#felbukkano4{  
+    height: 100vh;
+    width: 100%;
+    margin: 0%;}
+    #tomlo{margin-bottom: 1vh;}
+    .szin-kocka{    width: 19px;
+    height: 19px;}
+        #szuro, #kereso-tipus{width: fit-content; font-weight: normal; font-size: smaller;border-radius: 7px; }
     #go button {height: 40px; margin: auto};
     .meglevok{width: 15vh;
       height: 15vh;}
@@ -125,22 +131,22 @@ justify-content: space-evenly !important}
     margin-top: 0px !important;
         background: white !important;
 }
+
 .kozep{height: fit-content !important;}
 .kozepc{height: fit-content !important;
-        padding: 2% 0%;}
-        .kozepc div{justify-content: center;}
+        padding: 2% 0%; margin-right: 0px;}
+        .kozepc div{justify-content: flex-start;}
     .sidebar .sidebar-header{margin-top: 0px;}
     .picik{flex-direction: column;}
-.gomb{width: 25%; height:5vh;margin: auto;}
+.gomb{width: 16vh; height:5vh;margin: auto; font-size: smaller;}
 .sidebar{position: fixed;} 
 .udv {
-    display: flex
-;
+    display: flex;
     flex-direction: column;
     align-items: center;
     margin: auto;
-    height: 100%;
-    justify-content: flex-end;}
+    height: 5vh;
+    justify-content: center;}
 .munka{flex-direction: column;}
 .olvaso{width: 100%; height: 85%;justify-content: space-evenly; }
 .felso{flex-direction: row-reverse; padding-bottom: 20px;
@@ -148,13 +154,18 @@ justify-content: space-evenly !important}
 align-items: center; width: 96%;
 }
 #lapozo{margin-top: 50px;}
-search-bar{width: 100%;}
+.search-bar{height: 25px !important; width: 60% !important; font-weight: normal; font-size: smaller;
+   }.modulebutt{font-size: small;padding: 2px;
+}
+#endezo{height: 25px !important; width: 35% !important;  }
+
 .logo{margin: 10px; font-size: small; font-weight: normal;}
-.modules{height: 14vh; width: 14vh; gap: 5px; }
 .modulebutt .material-symbols-rounded {font-size: 80%;}
 #lapok{width: 100%; margin-top: -3vh;}
 .sta,.grap, .gyik{ font-size: small;}
-
+.modules {
+    gap: 5px;
+    margin: 0px 0vh;}
 .meglevok .cheking {width: 15px;
     height: 15px;}
     input[type="checkbox"]:checked::after {
@@ -162,7 +173,7 @@ search-bar{width: 100%;}
     width: 3px;}
     .outer-div{height: 100%;}
 
-.gomb .cim {padding: 0px; font-size: x-small !important;}
+.gomb .cim {padding: 0px; font-size: x-small !important; border-radius: 5px;}
 .sta{    text-align: center;
 }
       #pergo-container{  font-size: small;
@@ -172,12 +183,21 @@ search-bar{width: 100%;}
 #magyarazat{flex-direction: column !important;}
 .savos{     
 display: flex;
+gap:2vh;height: fit-content; padding: 0px;
 }
+#ertekek, #accunt2 {
+    flex-direction: row; justify-content: space-evenly;}
+    #triggerText {display: none;}
+    .custom-dropdown{position: relative !important; top:0; width: fit-content; margin: 0;
+    position: absolute; }
+    .dropdown-trigger{width: fit-content;}
 #ertekek0{ grid-area: a;}
 #ujert0{ grid-area: c;}
 #accunt0{grid-area: b;}
 #hozzaj0{grid-area: d;}
-
+  .modulebutt .material-symbols-rounded{
+display: none};
 
 #accunt0{display: none;}
+.arrow{ color: #ffeede;}
 }

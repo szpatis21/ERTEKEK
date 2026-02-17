@@ -37,11 +37,8 @@ missingModal.innerHTML = `
     align-items: center;"}>
     <label for="missingConfirm" style="    margin: 5px;
     font-size: small;"> Nyilatkozom a kiválasztott személyek hozzájáruló nyilatkozatának meglétéről</label>
-    <button id="missingConfirm" disabled>Meglévők elfogadása</button>
-    </div>
+<button id="missingConfirm" type="button" disabled>Meglévők elfogadása</button>    </div>
       </div>
-
-  
   </div>
 </div>`;
 document.body.appendChild(missingModal);
@@ -75,8 +72,9 @@ const missingListEl = missingModal.querySelector('#missingList');
 const missingConfirm = missingModal.querySelector('#missingConfirm');
 let onConfirm;
 
-missingConfirm.addEventListener('click', () => {
-  closeModal(); // A közös bezáró függvényt hívjuk
+missingConfirm.addEventListener('click', (event) => {
+  event.preventDefault(); // Megakadályozza az újratöltést
+  closeModal();
   if (typeof onConfirm === 'function') onConfirm();
 });
 
@@ -110,4 +108,134 @@ function updateConfirmState() {
   const total = missingListEl.querySelectorAll('input').length;
   const checked = missingListEl.querySelectorAll('input:checked').length;
   missingConfirm.disabled = checked !== total;
+}
+
+export function customConfirm(uzenet) {
+    return new Promise((resolve) => {
+        // 1. Létrehozzuk az overlay-t és a dobozt
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            justifyContent: 'center', alignItems: 'center', zIndex: 10000,
+            opacity: 0, transition: 'opacity 0.3s'
+        });
+
+        const box = document.createElement('div');
+        Object.assign(box.style, {
+            backgroundColor: 'white', padding: '20px', borderRadius: '10px',
+            boxShadow: '0 4px 15px rgba(0,0,0,0.3)', textAlign: 'center',
+            minWidth: '300px', transform: 'scale(0.8)', transition: 'transform 0.3s'
+        });
+
+        box.innerHTML = `
+            <div style="margin-bottom: 20px; font-size: 1.1em; color: #333;">${uzenet}</div>
+            <div style="display: flex; justify-content: center; gap: 15px;">
+                <button id="btn-nem">Mégsem</button>
+                <button id="btn-igen">Igen</button>
+            </div>
+        `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        // Animáció indítása
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        // 2. Gomb események
+        const close = (valasz) => {
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                if(overlay.parentElement) document.body.removeChild(overlay);
+                resolve(valasz); // Itt küldjük vissza az Igen/Nem választ
+            }, 300);
+        };
+
+        box.querySelector('#btn-igen').onclick = () => close(true);
+        box.querySelector('#btn-nem').onclick = () => close(false);
+    });
+}
+// alert.js - A fájl végére illeszd be ezt a függvényt:
+
+export function customPrompt3(uzenet, defaultNev, defaultIdoszak, defaultTipus) {
+    return new Promise((resolve) => {
+        // 1. Overlay és Modal létrehozása
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            justifyContent: 'center', alignItems: 'center', zIndex: 10000,
+            opacity: '0', transition: 'opacity 0.3s'
+        });
+
+        const box = document.createElement('div');
+        Object.assign(box.style, {
+            backgroundColor: 'white', padding: '25px', borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.3)', textAlign: 'center',
+            minWidth: '350px', transform: 'scale(0.8)', transition: 'transform 0.3s',
+            fontFamily: "'Montserrat', sans-serif"
+        });
+
+        // 2. Belső HTML felépítése (A 3 mezővel)
+        box.innerHTML = `
+            <h3 style="margin-top: 0; color: #333; margin-bottom: 20px;">${uzenet}</h3>
+            
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="display:block; font-size:0.8em; color:#666; margin-bottom:5px;">Vizsgált személy:</label>
+                <input id="cp3-nev" type="text" value="${defaultNev}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 15px;">
+                <label style="display:block; font-size:0.8em; color:#666; margin-bottom:5px;">Időszak:</label>
+                <input id="cp3-idoszak" type="text" value="${defaultIdoszak}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <div style="text-align: left; margin-bottom: 25px;">
+                <label style="display:block; font-size:0.8em; color:#666; margin-bottom:5px;">Vizsgálat típusa:</label>
+                <input id="cp3-tipus" type="text" value="${defaultTipus}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="btn-megsem" style="padding: 8px 15px; border: none; background: #eee; border-radius: 5px; cursor: pointer;">Mégsem</button>
+                <button id="btn-ok" style="padding: 8px 15px; border: none; background: #ff6500; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Másolás</button>
+            </div>
+        `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        // Animáció indítása
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        // 3. Eseménykezelők
+        const close = (result) => {
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                resolve(result);
+            }, 300);
+        };
+
+        box.querySelector('#btn-megsem').addEventListener('click', () => close(null));
+
+        box.querySelector('#btn-ok').addEventListener('click', () => {
+            const nev = box.querySelector('#cp3-nev').value;
+            const idoszak = box.querySelector('#cp3-idoszak').value;
+            const tipus = box.querySelector('#cp3-tipus').value;
+
+            if(!nev || !idoszak || !tipus) {
+                alert("Minden mezőt ki kell tölteni!"); // Vagy használhatsz showAlert-et is
+                return;
+            }
+            close({ nev, idoszak, tipus });
+        });
+    });
 }

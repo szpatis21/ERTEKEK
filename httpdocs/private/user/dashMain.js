@@ -1,8 +1,6 @@
 //Dashboard kezelő (CRUD,SHARE,VIEW,ANALISTIC, PDF)
-import { initMegosztas } from './dashsShare.js'; //Megosztás
 import { initFrissites, initTorol, initOlvas, initLetrehoz } from './dashCRUD.js'; //Szerkesztés, törlés, létrehozás, stb
 import { monitorozCheckek } from './dashStatic.js'; //Csoport statisztika
-import { generate as exportPDF } from './dashPDF.js'; // PDF generálás
 import { loadInfoAndInit } from '../info/infoLoader.js'; //Hírek és gyk betöltése
 import { betoltKategoriakChartSzinek } from '../main/main_alap.js';
 import {initAside} from './dashAside.js';
@@ -10,72 +8,75 @@ import './dashAI.js';
 
 import{showAlert} from "/both/alert.js"
 
+
 loadInfoAndInit(); 
 initAside();
+
+
 //Változók... sok.... változó
 //Gombok 
 
 export const BUTTONS = {
   tulaj: [
-    {cls: 'fo_edit',        icon: 'edit',           help: 'Értékelés folytatása'},
-    {cls: 'edit',           icon: 'page_header',    help: 'Átnevezés', action: 'edit'},
-    {cls: 'share',          icon: 'share',          help: 'Megosztás',                      action: 'share'},
-    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',         action: 'generate_ai'},
-    {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
-    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
-    {cls: 'deleted',        icon: 'delete',         help: 'Törlés',                         action: 'delete'},
-        { icon: 'content_copy', action: 'duplicate', cls: 'duplicate', help: 'Duplikálás' }, // <--- Ezt add hozzá
-
+    {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
+    {cls: 'edit',           icon: 'page_header',    help: 'Értékelés átnevezése', action: 'edit', label: 'Átnevezés'},  
+    {icon: 'content_copy', action: 'duplicate', cls: 'duplicate', help: 'Értékelés másolása',label:'Másolás' },
+    {cls: 'deleted',        icon: 'delete',         help: 'Értékelés törlése',                         action: 'delete', label:'Törlés'},    
+    {cls: 'share',          icon: 'share',          help: 'Értékelés megosztása',                      action: 'share', label:'Megosztás'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
+    {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ],
   szerkeszto: [
-    {cls: 'fo_edit',        icon: 'edit',           help: 'Éretékelés folytatása'},
-    {cls: 'lightbulb_2',     icon: 'lightbulb_2',     help: 'Generálás',               action: 'generate_ai'},
-    {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
-    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
+    {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
+    {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
 };
 export const BUTTONS2 = {
   tulaj: [
-    {cls: 'mail',           icon: 'mail',           help: 'Küldés e-mailben',               action: 'mail'},
-    {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
-    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
+    {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ],
   szerkeszto: [
-    {cls: 'mail',           icon: 'mail',           help: 'Küldés e-mailben',               action: 'mail'},
-    {cls: 'print',          icon: 'print',          help: 'Nyomtatás',                      action: 'print'},
-    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Mentés PDF-be',                  action: 'picture_as_pdf'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
+    {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
 };
-const alap = document.querySelector("#fo_kategoriak");
+function addHelpToButtons() {
+    const buttonsConfig = [
+        { id: 'ai-generate-btn', text: 'Csoportos értékelés átalakítása szabadszavas esszévé' },
+        { id: 'print-pdf',       text: 'Nyomtatás' },
+        { id: 'elore',           text: 'Értékelések összehasonlítása, fejlődési mutató' },
+        { id: 'export-pdf',      text: 'Mentése PDF formátumban' }
+    ];
+
+    buttonsConfig.forEach(config => {
+        const btn = document.getElementById(config.id);
+        if (btn) {
+            btn.classList.add('modulebutt');
+            
+            if (!btn.querySelector('.help')) {
+                const span = document.createElement('span');
+                span.className = 'help'; 
+                span.style.top ="110%";
+                span.style.height="100%";
+                span.textContent = config.text;
+                btn.appendChild(span);
+            }
+        }
+    });
+}
+
     export const felbukkano3 = document.querySelector("#felbukkano3");
     export const felbukkano2 = document.querySelector("#felbukkano2");
     export const felbukkano4 = document.querySelector("#felbukkano4");
-        const kilep2 = document.querySelector("#kilep2");
-
-        let eredetiErtekekTomb = [];
-        let eredetIdTomb = [];
-        let eredetiTorlesTomb = [];
-        let torlesIdTomb = [];
-
-    const ujkezd = document.querySelector("#ujkezd");
-    const uj = document.querySelector("#uj");
-    const uj2 = document.querySelector("#uj2");
-    const go2 = document.querySelector("#gobut2");
-
-    const ujinek = document.querySelector("#ujinek");
-    const ujinek2 = document.querySelector("#ujinek2");
-    const ujinek4 = document.querySelector("#ujinek4");
-
-    const letrehozva = new Date().toISOString().split('T')[0]; // Mai dátum (YYYY-MM-DD formátumban)
-    const neve = document.querySelector("#neve");
-    let neve2 = document.querySelector("#neve2");
     export const idszak = document.querySelector("#idoszak");
-    let idszak2 = document.querySelector("#idoszak2");
-    const megnevezes = document.querySelector("#megnevezes");
-    let megnevezes2 = document.querySelector("#megnevezes2");
-
+    const kilep2 = document.querySelector("#kilep2");
     const innerDiv = document.querySelector(".inner-div")
-    const go = document.querySelector("#gobut");
     const sajtnev = document.querySelector("#sajatnev");
     const lapozo = document.getElementById('lapozo');
     const maininf = document.getElementById('maininf');
@@ -166,8 +167,7 @@ const alap = document.querySelector("#fo_kategoriak");
                 const holis = document.querySelector('.holvagyok')
                 holis.innerHTML = modulLeiras;
 
-              await betoltKategoriakChartSzinek(modulId);
-
+                await betoltKategoriakChartSzinek(modulId);
 
                 await loadKitoltesek();
             } else {console.error('Hiba:', data.message);}
@@ -176,6 +176,7 @@ const alap = document.querySelector("#fo_kategoriak");
     }
     //azonosítási adatok alapján mérések szipkázása, kezelése
     async function loadKitoltesek() {
+        window.frissitKitoltesek = loadKitoltesek;
         try {
 const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
     const response = await fetch(url);
@@ -205,6 +206,8 @@ const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
 
         //TÖRLÉS - Törlési kezelés - dasCRUD.js
             initTorol();
+            addHelpToButtons();
+
        
         //MEGOSZTÁS - megosztási logika - dashShare.js fájl
         //Analaizis
@@ -225,8 +228,6 @@ const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
             felbukkano2.style.opacity = "1"; 
             felbukkano2.style.scale ="1";
         }, 100);
-    
-
     
 try { initLetrehoz({ userId, modulId }); } catch(e) { console.warn(e); }  })
      kilep2.addEventListener("click", function(){
@@ -278,7 +279,32 @@ document.addEventListener('change', (e) => {
       maininf.style.display = 'none';
       osszesitett.style.display = 'flex';
             gyik.style.display = 'none';
-
     }
   }
 });
+
+const eloreBtn = document.getElementById('elore');
+const chartContainer = document.querySelector('#folyamat');
+if (eloreBtn && chartContainer) {
+    eloreBtn.addEventListener('click', function() {
+        const currentDisplay = window.getComputedStyle(chartContainer).display;
+        
+        if (currentDisplay === 'none') {
+            chartContainer.style.display = 'flex';
+            eloreBtn.classList.add('aktivm'); // Aktiv class hozzáadása
+        } else {
+            chartContainer.style.display = 'none';
+            eloreBtn.classList.remove('aktivm'); // Aktiv class levétele
+        }
+    });
+}
+
+const toggleSwitch = document.getElementById('chart-toggle');
+if(toggleSwitch){
+    const chartContainer = document.querySelector('#folyamat');
+    toggleSwitch.addEventListener('change', function() {
+      if (this.checked) chartContainer.style.display = 'flex';
+      else chartContainer.style.display = 'none';
+    });
+}
+
