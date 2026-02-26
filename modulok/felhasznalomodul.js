@@ -420,6 +420,7 @@ router.get('/get-kitoltesek', (req, res) => {
     return res.status(400).json({ success: false, message: 'Hiányzó felhasznalo_id vagy intezmeny_id!' });
   }
 
+  // A JAVÍTOTT SQL LEKÉRDEZÉS
   const sql = `
     SELECT
       k.id,
@@ -427,11 +428,14 @@ router.get('/get-kitoltesek', (req, res) => {
       k.kitoltes_neve,
       k.role,
       k.vizsgalt_id,
-      f.vez                                   AS creator_name,
+      k.audit,
+      a.warm, -- <-- BEKÉRJÜK A WARM OSZLOPOT
+      f.vez                                           AS creator_name,
       CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS vizsgalt_nev
     FROM kitoltesek k
     JOIN felhasznalok f ON k.felhasznalo_id = f.id
     LEFT JOIN vizsgaltak v ON k.vizsgalt_id   = v.vizsgalt_id
+    LEFT JOIN audit a ON a.audit_id = k.id -- <-- ÖSSZEKAPCSOLJUK AZ AUDIT TÁBLÁVAL (Ha nálad idk-ra mutat, írd át k.idk-ra!)
     WHERE 1=1
       ${felhasznaloId   ? 'AND k.felhasznalo_id = ?'  : ''}
       ${modulId         ? 'AND k.modul_id       = ?'  : ''}

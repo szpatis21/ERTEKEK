@@ -5,6 +5,7 @@ import { loadInfoAndInit } from '../info/infoLoader.js'; //Hírek és gyk betöl
 import { betoltKategoriakChartSzinek } from '../main/main_alap.js';
 import {initAside} from './dashAside.js';
 import './dashAI.js';
+import { initAuditLista } from '../elemzo/dashEmain.js';
 
 import{showAlert} from "/both/alert.js"
 
@@ -195,6 +196,12 @@ const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
     
          if (data.success) {
   const kitoltesek = data.kitoltesek;
+
+
+
+
+  window.userAuditKitoltesek = kitoltesek.filter(k => k.audit == 1 || k.audit == 2);
+
   initLetrehoz({ userId, modulId });
 
   const role = data.role;
@@ -213,7 +220,7 @@ const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
             initOlvas(kitoltesek, letrehozva);
 
             initFrissites({ userId, letrehozva });
-
+initAuditLista(kitoltesek)
         //TÖRLÉS - Törlési kezelés - dasCRUD.js
             initTorol();
             addHelpToButtons();
@@ -318,3 +325,14 @@ if(toggleSwitch){
     });
 }
 
+document.addEventListener('click', (e) => {
+    // Ha a user rákattint a "Javaslatok / Engedélyek" gombra
+    if (e.target.closest('#hozzaj') || e.target.closest('#hozzaj0')) {
+        setTimeout(() => {
+            if (window.userAuditKitoltesek) {
+                // Átadjuk a SZŰRT listát a függvénynek!
+                initAuditLista(window.userAuditKitoltesek);
+            }
+        }, 150);
+    }
+});

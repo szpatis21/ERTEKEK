@@ -239,10 +239,115 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
 
         </div>`
             }},
-            'hozzaj': {
-                main: `<h3>Engedélyek Kezelése</h3><p>Itt állíthatod be, hogy ki mihez férhet hozzá a rendszerben.</p>`,
-                lapok: `<h4>Szerepkörök</h4><p>Felhasználók csoportosítása szerepkörök szerint.</p>`
-            },  
+         'hozzaj': {
+                main: () => {
+                    const isElemzo = window.location.pathname.includes('/elemzo/');
+
+                    if (isElemzo) {
+                        return `
+                         <div id="tartalom2">
+                                    <div class="audit-lista">
+                                        <h3>Jóváhagyott értékelések</h3>
+                                        <div class="audit-list-container outer-div">
+                                            <div class="inner-div inner-div-ok">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="audit-lista">
+                                        <h3>Jóváhagyásra váró értékelések</h3>
+                                        <div class="audit-list-container outer-div">
+                                            <div class="inner-div inner-div-notok">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    } else {
+                        // --- Y: NORMÁL FELHASZNÁLÓI NÉZET ---
+                        return `
+                        <div id="tartalom2">
+                                    <div class="audit-lista">
+                                        <h3>Jóváhagyott értékelések</h3>
+                                        <div class="audit-list-container outer-div">
+                                            <div class="inner-div inner-div-ok">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="audit-lista">
+                                        <h3>Jóváhagyásra váró értékelések</h3>
+                                        <div class="audit-list-container outer-div">
+                                            <div class="inner-div inner-div-notok">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                    }
+                },
+                lapok: () => {
+                    const isElemzo = window.location.pathname.includes('/elemzo/');
+                    
+                    if (isElemzo) {
+                        return `
+                        <div class="info-strip">
+                            <div class="outer-div messageouter">
+                                <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó határidő</h3>
+
+                                <div class="calendardiv">
+                                    <div>
+                                        <span>Határidő:</span> 
+                                        <span id="akthat">Nincs megadva</span>
+                                    </div>
+                                    <button id="audit-calendar">Leadási határidő</button>
+                                </div>
+
+                                <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek</h3>
+
+                                <div class="inner-div messengerdiv">
+                                    <p style="text-align:center; color:gray; padding: 20px;">Válasszon ki egy értékelést a jóváhagyott, vagy jóváhagysára váró értékelések közül a hozzájuktartozó információk megtekintéséhez.</p>
+                                </div>
+                                
+                                <div class="audit-input-area">
+                                    <input type="text" id="audit-msg-input" placeholder="Üzenet írása...">
+                                    <div>   
+                                        <button id="audit-msg-send">Küldés</button>
+                                    </div>
+                                </div>
+                                <div class="audit-input-area">
+                                    <button id="audit-approve-btn">Értékelés Jóváhagyása</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    } else {
+                        return `
+                         <div class="info-strip">
+                            <div class="outer-div messageouter">
+                                <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó határidő</h3>
+
+                                <div class="calendardiv">
+                                    <div>
+                                        <span>Határidő:</span> 
+                                        <span id="akthat">Nincs megadva</span>
+                                    </div>
+                                </div>
+
+                                <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek</h3>
+
+                                <div class="inner-div messengerdiv">
+                                    <p style="text-align:center; color:gray; padding: 20px;">Válasszon ki egy értékelést a jóváhagyott, vagy jóváhagysára váró értékelések közül a hozzájuktartozó információk megtekintéséhez.</p>
+                                </div>
+                                
+                                <div class="audit-input-area">
+                                    <input type="text" id="audit-msg-input" placeholder="Üzenet írása...">
+                                    <div>   
+                                        <button id="audit-msg-send">Küldés</button>
+                                    </div>
+                                </div>
+                                <div class="audit-input-area">
+                                </div>
+                            </div>
+                        </div>`;
+                    }
+                }
+            },
             'ujany': {
                 main: ` <div id="tartalom2">
                                 <div id="ujinek">

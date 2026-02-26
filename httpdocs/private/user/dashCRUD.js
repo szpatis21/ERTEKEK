@@ -8,6 +8,7 @@ import {initSzuro,initChekingToggle,initSearch  } from './dashSort.js';
 import {showAlert,showMissingChecklist, customConfirm,customPrompt3 } from "/both/alert.js"
 import { triggerIndividualAiAnalysis } from './dashAI.js';
 import { initMegosztas } from './dashsShare.js'; //Megosztás
+import { loadColorMaps } from './dashStatic.js';
 
 const grap = document.querySelector(".grap");
 const sta = document.querySelector(".sta");
@@ -87,8 +88,7 @@ export function initLetrehoz({ userId, modulId }) {
   mo.observe(document.body, { childList: true, subtree: true });
 }
 //READ
-export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false } = {}) {
-
+export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false, isElemzo = false } = {}) {
   const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}` );
   const auditData = await auditResponse.json();
   const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk) : [];
@@ -203,7 +203,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
 
   // --- SOROK GENERÁLÁSA ---
   items.forEach(kitoltes => {
-    if (groupByCreator && kitoltes.creator_name !== lastCreatorName) {
+  if (groupByCreator && kitoltes.creator_name !== lastCreatorName) {
       currentWrapper = document.createElement('div');
       currentWrapper.classList.add('creator-wrapper');
 
@@ -243,6 +243,8 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
 
     const kitoltesDiv = document.createElement('div');
     kitoltesDiv.classList.add('meglevok');
+    
+    // --- HTML RÉSZEK ÖSSZEÁLLÍTÁSA ---
     const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen alany';
     const nameHtml = `<div class="vizsgalt-nev"><strong>${decryptedName}</strong></div>`;
     const formattedText = (kitoltes.kitoltes_neve || '').replace(/-/g, '- <br>');
@@ -254,21 +256,55 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
 
     const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
     
-    // --- Megosztás jelzés ---
     let warning = '';
     if (role === 'szerkeszto') {
-      warning = `<div class="savdiv" style="background:#ff6500">Megosztva…</div>`;
-      getOriginalAdminName(kitoltes.idk).then(ownerName => {
-        const savdiv = kitoltesDiv.querySelector('.savdiv');
-        if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
-      });
+        warning = `<div class="savdiv" style="background:#ff6500">Megosztva…</div>`;
+        getOriginalAdminName(kitoltes.idk).then(ownerName => {
+            const savdiv = kitoltesDiv.querySelector('.savdiv');
+            if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
+        });
     }
 
     const modules = `<div class="modules" data-kitoltes-id="${kitoltes.idk}">${
         groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
     }</div>`;
 
-    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText;        
+    // --- ÚJ WARM (WARNING) LOGIKA ---
+    let warmHtml = '';
+    
+    // Biztos, ami biztos, számmá alakítjuk
+    const auditStatus = Number(kitoltes.audit); 
+
+    // Csak akkor aktiváljuk, ha az audit értéke 2
+    if (auditStatus === 1) {
+        // Ha a backendről jön warm szöveg, kiírjuk, amúgy adunk egy alapértelmezettet
+        const warmText = kitoltes.warm || 'Értékelését egy auditor módosításra jelölte ki. További információt a "Javaslatok" fülön talál.'; 
+        
+        warmHtml = `
+          <div class="warm" style="display: flex;">
+            <div>
+              <span class="warmnote">${warmText}</span>
+              <div>!</div>
+            </div>
+          </div>
+        `;
+        
+        // Hozzáadjuk a piros inset shadow-t magához a kitoltesDiv-hez
+        kitoltesDiv.style.boxShadow = 'inset 0px 0px 0px 2px #ff0000bd';
+    } else {
+        // Ha nem 2-es az audit, rejtve marad (és keret sincs)
+        warmHtml = `
+          <div class="warm" style="display: none;">
+            <div>
+              <span class="warmnote"></span>
+              <div>!</div>
+            </div>
+          </div>
+        `;
+    }
+
+    // ITT VOLT A HIBA: Hozzá kell adni a warmHtml-t a végéhez!
+    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText + warmHtml;    
     
     // Dataset beállítás
     kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
@@ -277,6 +313,8 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     kitoltesDiv.dataset.undo = kitoltes.vizsgalt_id;
     kitoltesDiv.appendChild(checkbox);
     kitoltesDiv.dataset.modulId = modulId;
+    kitoltesDiv.dataset.auditId = kitoltes.audit || '0';
+
     
     const [periodus, megnev] = kitoltes.kitoltes_neve.split('-').map(s => s.replace(/~/g, '-').trim());
     kitoltesDiv.dataset.nev       = kitoltes.vizsgalt_nev; 
@@ -375,7 +413,52 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
         }
     });
 
+    if (isElemzo) {
+        const temaContainer = document.createElement('div');
+        temaContainer.className = 'elemzo-tema-container';
+        temaContainer.style.display = 'flex';
+        temaContainer.style.flexWrap = 'wrap';
+        temaContainer.style.gap = '6px';
+        temaContainer.style.marginTop = '10px';
+        temaContainer.style.width = '100%';
+        kitoltesDiv.appendChild(temaContainer);
+
+        // Lekérjük a százalékokat specifikusan ehhez az értékeléshez
+        fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${kitoltes.idk}`)
+            .then(res => res.json())
+            .then(async data => {
+                if (data.szazalek) {
+                    const raw = typeof data.szazalek === 'string' ? JSON.parse(data.szazalek) : data.szazalek;
+                    
+                    const topLevel = {};
+                    for (const [k, v] of Object.entries(raw || {})) {
+                        if (v && typeof v === 'object' && typeof v['%'] === 'number') {
+                            topLevel[k] = v['%'];
+                        }
+                    }
+
+                    const { chartMap } = await loadColorMaps(modulId);
+                    
+                    let badgesHtml = '';
+                    for (const [tema, pct] of Object.entries(topLevel)) {
+                        const baseColor = chartMap[tema] || 'rgba(160,160,160,0.8)';
+                        badgesHtml += `
+                            <span class="szazalek" style="background: ${baseColor};">
+                                ${tema}: ${pct}%
+                            </span>`;
+                    }
+                    
+                    if (badgesHtml) {
+                        temaContainer.innerHTML = badgesHtml;
+                    }
+                }
+            })
+            .catch(err => console.error(`Hiba a témakörök betöltésekor (${kitoltes.idk}):`, err));
+    }
     tartaly.appendChild(kitoltesDiv);
+
+
+    
     (groupByCreator ? currentList : innerDiv).appendChild(tartaly);
   }); // items.forEach VÉGE
 

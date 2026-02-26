@@ -129,6 +129,9 @@ app.use((err, req, res, next) => {
 //Admin modul    
      const admin = require('./modulok/adminmodul');
     app.use('/', admin(db)); 
+//Audit modul    
+    const audit = require('./modulok/auditmodul');    
+    app.use('/', audit(db));
 // Kijelentkező modul
     const logout = require('./modulok/logoutmodul');
     app.use('/logout', logout(db)); 
