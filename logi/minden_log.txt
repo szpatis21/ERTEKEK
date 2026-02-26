@@ -30,3 +30,8 @@
 [2026-02-16T16:26:37.965Z] [LOG]: Email elküldve: 250 2.0.0 OK  1771259197 5b1f17b1804b1-48371a3647asm85874615e9.22 - gsmtp
 [2026-02-16T16:29:23.166Z] [LOG]: Email elküldve: 250 2.0.0 OK  1771259362 5b1f17b1804b1-4835dcfafcdsm686226795e9.9 - gsmtp
 [2026-02-16T16:51:15.461Z] [LOG]: Email elküldve: 250 2.0.0 OK  1771260675 ffacd0b85a97d-43796abc21dsm29703037f8f.20 - gsmtp
+[2026-02-16T17:10:53.171Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-02-16T17:12:31.797Z] [LOG]: Email elküldve: 250 2.0.0 OK  1771261951 5b1f17b1804b1-4837b68e5adsm253794065e9.9 - gsmtp
+[2026-02-17T07:26:51.348Z] [LOG]: Email elküldve: 250 2.0.0 OK  1771313211 5b1f17b1804b1-483801ff9b3sm209362505e9.13 - gsmtp
+[2026-02-18T10:04:29.755Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-02-18T16:50:42.113Z] [LOG]: Szerver fut a http://localhost:3000 címen

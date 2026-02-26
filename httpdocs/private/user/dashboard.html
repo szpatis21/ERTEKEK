@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Értékeim kezelőfelület</title>
 
-    <link rel="stylesheet" href="../both/both.css">
-    <link rel="stylesheet" href="dashboardU.css">
-    <link rel="stylesheet" href="dashmobile.css">
-    <link rel="stylesheet" href="/private/main/main.css">
-    <link rel="stylesheet" href="/public/stylei.css">
+    <link rel="stylesheet" href="../both/both.css?v=3.3">
+    <link rel="stylesheet" href="dashboardU.css?v=3.3">
+    <link rel="stylesheet" href="dashmobile.css?v=3.3">
+    <link rel="stylesheet" href="/private/main/main.css?v=3.3">
+    <link rel="stylesheet" href="/public/stylei.css?v=3.3">
     
     <style>
-        
+        .valtos span { font-size: 80% !important};
       #kimenetbelso{
             width: 100%;
     background: white;
@@ -130,24 +130,51 @@ canvas {image-rendering: auto;}
                   <div id="moved-buttons-container"></div>
               </div>
 
-          </div>
-                        <div class="diag" style=" position: relative;">
-                            
-                                
+                            </div>
+                    <div class="diag" style=" position: relative;">
+                             <div class="diaggombok">
+                            <div class="valtos modulebutt">
+                                <label for="chartTypeSelector">
+                                    <span class="material-symbols-outlined">bid_landscape</span> 
+                                </label>
+                                <select id="chartTypeSelector">
+                                    <option value="polarArea" selected>Kördiagram</option>
+                                    <option value="bar">Oszlopdiagram</option>
+                                    <option value="line">Fánkdiagram</option>
+                                    <option value="radar">Radardiagram</option>
+                                </select>
+                            </div>
+                          
+                        <div class="valtos modulebutt" id="melletolt">
+                                <span class="material-symbols-outlined">picture_as_pdf</span> 
+                                <span>Melléklet letöltése</span>
+                            </div>
+                            <div class="valtos modulebutt" id="melprint">
+                                <span class="material-symbols-outlined">print</span> 
+                                <span>Melléklet nyomtatása</span>
+                            </div>
+                            <div class="modulebutt valtos">
+                                <label for="chartTypeOff">
+                                    <span class="material-symbols-outlined">bid_landscape_disabled</span>
+                               </label>
+                                <select id="chartTypeOff">
+                                    <option value="on" selected>Diagrammok: Be</option>
+                                    <option value="off">Diagrammok: Ki</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="charts">
                             <div id="chart-container">
                                 <canvas id="fokategoriaChart"></canvas>
-                               
+                            </div> 
+                            <div id="alkategoriaChartContainer">
+                                <canvas id="alkategoriaChart"></canvas>
                             </div>
-                             
-                        <div id="alkategoriaChartContainer">
-                            <canvas id="alkategoriaChart"></canvas>
+                            <div id="altTemaChartContainer">
+                                <canvas id="altTemaChart"></canvas>
+                            </div>
                         </div>
-                        <div id="altTemaChartContainer">
-                            <canvas id="altTemaChart"></canvas>
-                        </div>
- 
                     </div>
-                                  
                     <div id="keszulo" >
                         <div id="egyeni-ai-vezerlo">
                             <div id="egyeni-ai-loading" style="display: none; margin-top: 10px;text-align: center;">Elemzés folyamatban...</div>
@@ -402,7 +429,7 @@ canvas {image-rendering: auto;}
         </div>     
         <div class="gomb" id="ujert0">
             <div class="cim" id="ujert">Új értékelés</div>
-        </div>                    
+        </div>
         <div class="gomb" id="accunt0">
             <div class="cim" id="accunt">Fiókom</div>
         </div>       
@@ -437,8 +464,8 @@ canvas {image-rendering: auto;}
     });
 
     </script>
-    <script type="module" src="/both/both.js"></script>
-    <script type="module" src="/private/user/dashMain.js"></script>
+    <script type="module" src="/both/both.js?v=3.3"></script>
+    <script type="module" src="/private/user/dashMain.js?v=3.3"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>

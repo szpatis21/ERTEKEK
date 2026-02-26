@@ -95,11 +95,13 @@ export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false
 
   const innerDiv = document.querySelector('.inner-div');
   innerDiv.innerHTML = '';
-  let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includes(k.idk));
+let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includes(k.idk));
 
   if (groupByCreator) {
-    kitoltesek.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
+    // ITT A JAVÍTÁS: kitoltesek.sort helyett items.sort
+    items.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
   }
+ 
 
   let currentWrapper   = null;
   let currentList      = null;

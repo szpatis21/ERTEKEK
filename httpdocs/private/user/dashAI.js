@@ -124,7 +124,7 @@ if (aiBtn && !aiBtn.dataset.listenerAdded) {
   aiBtn.addEventListener('click', async () => {
     if (window.__pdfBusy) return;
     window.__pdfBusy = true;
-    const oldText = aiBtn.textContent;
+    const oldText = "Ai Generálás";
     aiBtn.disabled = true;
     aiBtn.textContent = 'Egy pillanat...';
 

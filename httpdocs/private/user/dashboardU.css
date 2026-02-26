@@ -182,9 +182,34 @@
     border-bottom-left-radius: 15px;
     border-top-left-radius: 15px;
       }
+      .diaggombok{
+        position: absolute;
+        z-index: 80;
+        width: 100%;
+        justify-content: space-between;
+        display: flex !important;
+        flex-direction: row;
+        font-size: x-small;
+      }
+      #belsosearch{    display: flex;
+    flex-direction: row-reverse;
+    height: 100%;}
+      .valtos{background-color: #f7b42e12 !important; padding: 2px !important; backdrop-filter: blur(1px); width: fit-content !important; margin: 2px;} 
+      .valtos label{font-size: x-small;}
+      .valtos select{background-color: transparent !important; }
+      .valtos:hover #chartTypeSelector, .valtos:hover span, .valtos:hover #chartTypeOff {color: orangered !important;}
+      option {background-color: #ffeede;}
+      .valtos span{color:  orangered !important; text-align: center;}
+      .valtos:hover {background-color:  #fee5cd !important;}
+      #chartTypeOff{color: orangered !important;font-size: 78%;
+    font-weight: bold;}
+      #chartTypeSelector{color: orangered !important;font-size: 78%;
+    font-weight: bold;}
+      #ertekelesek-container {
+padding: 15px}; 
       #belsosearch{flex-direction: row-reverse !important; height: 100%;}
       #kereso-tipus{height: 100%;border-radius: 7px;width:fit-content; border-top-left-radius: 30px; border-bottom-left-radius: 30px; text-align: center;}
-      #kitneve {padding: 0px !important;}
+      #kitneve {padding: 0px !important; margin: 30px 5px 5px 5px !important;}
       .outer-div {
           width: 100%;
           padding-bottom: 4px;
@@ -640,7 +665,7 @@
         border-radius: 7px;
         margin: 0px 5px;}
 .pdfiksz,#mainart{display: none !important;}
-.diag{height:40%; margin: auto;width: 100%;}
+.diag{height:fit-content; width: 100%;background-color: white;border-top-left-radius:0px !important; border-top-right-radius: 0px !important;}
 #szumm-radar{
     width: 100%;
     display: flex;
@@ -747,7 +772,7 @@ padding: 1.5%;
 .modulebutt:hover .help {visibility: visible;opacity: 1;}
   .modulebutt {transition: all 0.1s;
   border: 1px solid #fecd9f;
-    padding: 4px;
+    padding: 1px;
         font-weight: 500;
     color: #3d3c3c;
     box-shadow: #ffead6cc 3px 2px 2px -1px;
@@ -779,7 +804,7 @@ padding: 1.5%;
   .modules{
     display:none;
 width: 100%;
-    gap: 10px;
+    gap: 5px;
     margin: 0px 3vh;
     justify-content: stretch;
           grid-template-columns: repeat(4, 1fr);
@@ -1079,6 +1104,7 @@ input[type="checkbox"]:checked::after {
   gap: 0.4rem 0.8rem;
   margin-top: 0.5rem;
 }
+.charts{padding-top: 15px;}
 .legend-badge {
   display: flex;
   align-items: center;
@@ -1319,11 +1345,10 @@ display: none;
   'GRAD' 0,
   'opsz' 24
 }
-#chart-container{border-radius: 0px !important;}
-#maininf{ width: 100% !important; height: 100%; display: none;}
-#keszulo {border-top-left-radius: 0px !important;}
+#maininf{ width: 100% !important; height: 100%; display: none; flex-direction: column;}
+#keszulo {border-top-left-radius: 0px !important;height: 100vh;}
 #keszulo .ikontarto{display: none;}
-#chart-container{height: 100% !important; border-radius: 0px;}
+#chart-container{border-radius: 0px !important; height: 30vh !important; margin-top: 15px;}
 
     .leiras{border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px; font-size: small !important;}
@@ -1441,10 +1466,7 @@ display: none;
     .grid .infocard:hover {color: orangered;}
     .lapok .infocard{    box-shadow: 0 4px 16px rgb(2 6 23 / 16%);
 }
-.aktivp{
 
-
-}
 .aktivp div{      display: flex;
     width: 100%;
     align-content: space-around;

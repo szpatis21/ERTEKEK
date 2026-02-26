@@ -511,7 +511,35 @@ window.ertekelesJSON = ertekelesJSON;   // ha később más kódból is kell
             pont.style.display = pontokLathatok ? 'flex' : 'none';
         });
         // 🔹 1. főkategória értékek kigyűjtése charthoz () Ha már van ilyen chart, előbb megsemmisítjük
-            const { chartLabels, chartData } = kiszamoltFoKategoriaDiagramAdatok();
+const chartSelector = document.getElementById('chartTypeSelector');
+
+// Csak akkor adjuk hozzá az eseményfigyelőt, ha az elem TÉNYLEG létezik
+if (chartSelector) {
+    chartSelector.addEventListener('change', async function(e) {
+        const ujTipus = e.target.value;
+        
+        // Importáljuk a szamitasok.js függvényeit
+        const modul = await import('./szamitasok.js');
+        
+        // Beállítjuk a típust
+        modul.setDiagramTipus(ujTipus);
+        
+        // 1. Főkategória diagram frissítése
+        const canvas = document.getElementById('fokategoriaChart');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const { chartLabels, chartData } = modul.kiszamoltFoKategoriaDiagramAdatok(); 
+            
+            // A szamitasok.js most már magától felismeri, ha frissíteni vagy újra kell rajzolni a diagramot
+            modul.letrehozFoKategoriaChart(ctx, chartLabels, chartData, window.kategoriakChartSzinek);
+        }
+        
+        // 2. A többi diagram (alkategória, altéma) frissítése a memóriából
+        modul.frissitsdAzAlDiagramokat();
+    });
+}  
+        
+        const { chartLabels, chartData } = kiszamoltFoKategoriaDiagramAdatok();
             const ctx = document.getElementById('fokategoriaChart').getContext('2d');
             
             // Átadjuk az előző példányt (window.foKategoriaChartInstance) utolsó paraméterként
@@ -612,6 +640,7 @@ else {
 }
 
             }   
+
 }
     }
     //Főkategóriák    

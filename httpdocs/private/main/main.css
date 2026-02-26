@@ -329,7 +329,8 @@ body{ background-attachment: fixed !important;   background: linear-gradient(293
     .pdfb:hover{scale: 1.2;}
   .nezet:hover,.nezet2:hover,.iksz:hover{scale: 1.1;}
     #keszulo {
-      height: 90vh;
+      width: 100% !important; padding: 0px !important;
+     
       overflow-y: scroll;
       scrollbar-color: auto; /* Firefox: narancs scrollbar világos háttérrel */
       transition: width 0.5s ease-in-out; /* Szélesség átmenet */
@@ -339,7 +340,9 @@ body{ background-attachment: fixed !important;   background: linear-gradient(293
      display: flex;
       flex-direction: column;
       width: 50%;
-      border-radius: 15px;
+      border-bottom-left-radius: 15px;
+            border-bottom-right-radius: 15px;
+
       position: sticky;
       top: 0;
     }
@@ -388,7 +391,7 @@ h3{text-align: center; font-size: 140%; font-family: system-ui;}
 .fo-kategoria{border-left: 1px solid black;
 border-top-left-radius: 15px;}
 h4 {font-size: 115%;}
-.fej2{display: flex;justify-content: space-around;font-style: italic;}
+.fej2{display: none;justify-content: space-around;font-style: italic;}
 .fej1{
 text-align: center;
 text-transform: uppercase;
@@ -476,7 +479,7 @@ align-items: center;
 
 .tooltip2{background-color: rgba(38, 0, 0, 0.752);margin-top: 40px;}
 .kerdesek{border-bottom-left-radius: 4px;border-left: 1px solid #00000082;margin-left: 15px;}
-#kitneve{margin-bottom: -10px;transition: all 1s; padding: 20px;position: relative;} 
+#kitneve{margin:0px 15px;transition: all 1s; padding: 20px;position: relative;} 
 #ertekelesChart {
   width: 100%;
   height: 100%;
@@ -593,6 +596,7 @@ align-items: center;
             align-items: center;}
       #loading-overlay{
         backdrop-filter: blur(6px);
+            font-size: 85%;
     width: 100%;
     height: 100vh;
     z-index: 500;
@@ -663,27 +667,23 @@ align-items: center;
 }
 
 
-#maininf{width: 100%; flex-direction: column;}
+#maininf{width: 100%; 
+    position: sticky;
+    top: 60px;
+     
+    grid-template-rows: 39vh 49vh;}
         .hero-bg {
     background: transparent !important;
     height: 100vh !important;
     width: 40%;
     
 }
-#maincont{  /*   width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-content: center;
-  justify-content: center;
-  align-items: flex-start; */}
-#keszulo{width: 100% !important; padding: 0px !important;}
+
 #ertekelesek-container{padding: 25px;margin-top: -20px;}
 #chart-container, #alkategoriaChartContainer,#altTemaChartContainer{    width: 100%;
-  height: 33vh !important;
+  height: 34vh;
   background: #ffffff;
-  position: relative;
-  border-radius: 15px;
-  margin-bottom: 5px;}
+  position: relative;;}
   #alkategoriaChartContainer{display: none; max-width: 50%;min-width: 33%;}
   #altTemaChartContainer{display: none; max-width: 33%;}
 
@@ -720,6 +720,30 @@ align-items: center;
   z-index: 9999;
   
 }
+.valtos{   display: flex;
+    background: orange;
+    width:fit-content;
+
+    align-items: center;
+    justify-content: center;
+    color:white;
+    border-bottom: 1px solid #ffeede;}
+.valtos select{    background: orange;
+    color: white !important;
+font-size: x-small;
+    width: 100%;
+    height: 100%;
+    border: none;
+    cursor: pointer;}
+    .diagrammok select{    border: none;
+    font-size: x-small;
+    color: #ffa12c;}
+    .valtos span{font-size: x-large !important; color:white}
+
+.charts{display: flex; flex-direction: row;}
+.diag{display: flex; flex-direction: column;background-color: white;border-top-left-radius: 15px;border-top-right-radius: 15px;} 
+.diaggombok {padding: 5px; display: grid; grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1, auto);}
 
 .modal.hidden {
   display: none;
@@ -781,3 +805,11 @@ align-items: center;
     font-size: small;
 }
 .modal-content p{font-size: small; font-family: system-ui;}
+  @media (max-width: 900px) {
+.modulebutt .material-symbols-outlined{display: none;}
+
+  }
+    @media (max-width: 1024px) {
+#main-container{min-height: fit-content;}
+
+  }

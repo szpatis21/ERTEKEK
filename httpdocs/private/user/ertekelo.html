@@ -5,16 +5,16 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title>Értékek</title>
       
-      <link rel="stylesheet" href="/private/main/main.css">
+      <link rel="stylesheet" href="/private/main/main.css?v=3.3">
 
-      <link rel="stylesheet" href="../both/both.css">
-                <link rel="stylesheet" href="/public/stylei.css">
-    <link rel="stylesheet" href="dashmobile.css">
+      <link rel="stylesheet" href="../both/both.css?v=3.3">
+                <link rel="stylesheet" href="/public/stylei.css?v=3.3">
+    <link rel="stylesheet" href="dashmobile.css?v=3.3">
 
     <style>
     body{ align-items: flex-start; flex-direction: column;}
-   
-     .savos{    display: flex;
+#maininf{display: flex; flex-direction: column; height: 88vh;} 
+    .savos{    display: flex;
         background-position: center;
     background-image: url(/media/dragon-scales.svg);
     grid-area: c;
@@ -34,6 +34,8 @@
     border-left: 3px solid transparent;
     transition: background-color 0.3s ease, border-left 0.3s ease;
 }
+        .modulebutt:hover{color: white; background-color: orange;}
+        .modulebutt:hover select{color: rgb(255, 255, 255); background-color: orange;}
 
 .gomb .cimer:hover {
     background-color: #ff8c00 !important;
@@ -67,18 +69,29 @@
 
     .layout {
         display: grid;
-  gap: 5vh;
+  gap: 3vh;
   margin:1vh 3vh 3vh 3vh;
     grid-template-columns:  0.1fr 1fr 1fr;   /* vagy 2fr 2fr 1fr ugyanazt adja */
     grid-template-areas: "c a b";
 
   }
-  
-#maininf{width: 100%; display: grid !important;
-    position: sticky;
-    top: 60px;
-        gap: 1vh;
-    grid-template-rows: 33vh 55vh;}
+    .modulebutt {border: 1px solid #fecd9f;
+    padding: 1px;
+    margin: 0px 5px;
+    font-weight: bold;
+    color: #ff8e00;
+    text-align: center;
+    box-shadow: #ffead6cc 3px 2px 2px -1px;
+    transition: all 1s cubic-bezier(0.075, 0.82, 0.165, 1);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: x-small;
+    cursor: pointer;
+    border-radius: 7px;
+}
+
   .gomb{display: flex; width: 90%; aspect-ratio: 1/1;    box-shadow: 0px 0px 5px 1px #ffeede; border-radius: 11px; }
 
   
@@ -148,7 +161,7 @@ font-size: 80% !important;}
             <div class="cimer" id="accunt">Nyomtatás</div>
         </div>       
         <div class="gomb" id="hozzaj0">                                
-            <div class="cimer" id="hozzaj"><a href="dashboard.html">Kezelö Panel</a></div>
+            <div class="cimer navment"><a>Letöltés</a></div>
         </div>   
     </article>  
     <div id="main" style="grid-area: a;">
@@ -182,17 +195,51 @@ font-size: 80% !important;}
             </article></div>
            <div id="lapok">
             <article id="maininf" style=" grid-area: b;">
-                <div class="diag" style=" position: relative;">
-                    <div id="chart-container">
-                         <canvas id="fokategoriaChart"></canvas>
+                  <div class="diag" style=" position: relative;">
+                        <div class="diaggombok">
+                            <div class="valtos modulebutt">
+                                <label for="chartTypeSelector">
+                                <span class="material-symbols-outlined">bid_landscape</span> </label>
+                                <select id="chartTypeSelector">
+                                    <option value="polarArea" selected>Kördiagram</option>
+                                    <option value="bar">Oszlopdiagram</option>
+                                    <option value="line">Fánkdiagram</option>
+                                    <option value="radar">Radardiagram</option>
+                                </select>
+                            </div>
+                          
+
+                            <div class="modulebutt diagrammok">
+                                <label for="chartTypeOff">Diagrammok:
+                               </label>
+                                <select id="chartTypeOff">
+                                    <option value="on" selected>Be</option>
+                                    <option value="off">Ki</option>
+                                </select>
+                            </div>
+
+
+                            <div class="modulebutt" id="melletolt">
+                                <span class="material-symbols-outlined">picture_as_pdf</span> 
+                                <span>Melléklet letöltése</span>
+                            </div>
+                            <div class="modulebutt" id="melprint">
+                                <span class="material-symbols-outlined">print</span> 
+                                <span>Melléklet nyomtatása</span>
+                            </div>
+                        </div>
+                        <div class="charts">
+                            <div id="chart-container">
+                                <canvas id="fokategoriaChart"></canvas>
+                            </div> 
+                            <div id="alkategoriaChartContainer">
+                                <canvas id="alkategoriaChart"></canvas>
+                            </div>
+                            <div id="altTemaChartContainer">
+                                <canvas id="altTemaChart"></canvas>
+                            </div>
+                        </div>
                     </div>
-                    <div id="alkategoriaChartContainer">
-                        <canvas id="alkategoriaChart"></canvas>
-                    </div>
-                     <div id="altTemaChartContainer">
-                        <canvas id="altTemaChart"></canvas>
-                    </div>
-                </div>
                 <div id="keszulo" style="height: 100%;">
                     <div id="ertekelesek-container" >
                         <div class="szalag">
@@ -214,8 +261,8 @@ font-size: 80% !important;}
                 </div>
 </div>
        
-    <script type="module" src="/both/both.js"></script>
-    <script type="module" src="/private/main/main_alap.js"></script>
+    <script type="module" src="/both/both.js?v=3.3"></script>
+    <script type="module" src="/private/main/main_alap.js?v=3.3"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>

@@ -2,6 +2,77 @@
 
 import { kerdesValaszok,szovegesValaszok, honapok, napok, animateMessage } from './main_alap.js';
 
+async function mentesEsNavigalas(event, url = null, logoutForm = null) {
+    event.preventDefault(); 
+
+    const vanNemMentettValasz = Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0;
+
+    if (!vanNemMentettValasz) {
+        // Nincs mit menteni, mehetünk is tovább azonnal
+        if (logoutForm) logoutForm.submit();
+        else if (url) window.location.href = url;
+        return;
+    }
+
+    // Van mentendő adat, indítjuk a mentést és a vizuális visszajelzést
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.opacity = '1';
+        animateMessage("Adatok mentése kilépés előtt...", "medium", "black");
+    }
+
+    const kitoltesId = new URLSearchParams(window.location.search).get('kitoltes_id');
+    const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const szazalek = window.ertekelesJSON ?? null;
+
+    const teljesSzovegesValaszok = {};
+    Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
+        teljesSzovegesValaszok[kerdesId] = valasz.trim();
+    });
+
+    try {
+        const response = await fetch('/api/save-valaszok', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                kitoltesId: kitoltesId,
+                kerdesValaszok: kerdesValaszok,
+                szovegesValaszok: teljesSzovegesValaszok,
+                userId: userId,
+                ido: datum2,
+                szazalek  
+            })
+        });
+
+        if (!response.ok) throw new Error(`HTTP hiba!`);
+
+        // Sikeres mentés üzenet
+        if (loadingOverlay) {
+            animateMessage("Adatait sikeresen mentettük!", "medium", "gold");
+        }
+
+        // Várunk 1,5 másodpercet, hogy a felhasználó el tudja olvasni, majd navigálunk
+        setTimeout(() => {
+            if (logoutForm) {
+                logoutForm.submit();
+            } else if (url) {
+                window.location.href = url;
+            }
+        }, 1500);
+
+    } catch (error) {
+        console.error('Mentési hiba:', error);
+        if (loadingOverlay) {
+            animateMessage("Hiba történt a mentés során!", "medium", "red");
+        }
+        // Hiba esetén is elengedhetjük az oldalt kis várakozás után, vagy megállíthatjuk
+        setTimeout(() => {
+            if (logoutForm) logoutForm.submit();
+            else if (url) window.location.href = url;
+        }, 2000);
+    }
+}
 const mentesGomb = document.querySelectorAll('.mentesGomb');
 const utols = document.querySelector("#seh");
 const urlParams = new URLSearchParams(window.location.search);
@@ -110,183 +181,41 @@ kitneve.innerHTML = `<b><u>${data.vizsgalt_nev}</u></b> - ${data.kitoltes_neve}`
 
 // Értékelés mentése
 if (document.querySelector('#user')) {
-     window.addEventListener('beforeunload', function (event) {
-        const vanNemMentettValasz = Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0;
+    // Kicseréljük a beforeunload-ot egy automatikus háttérmentésre
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'hidden') {
+            const vanNemMentettValasz = Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0;
 
-        if (vanNemMentettValasz) {
-            
-            event.preventDefault(); 
-            return 'A nem mentett módosítások el fognak veszni. Biztosan elhagyja az oldalt?'; 
-        }
-    });
-    document.addEventListener("keydown", (event) => {
-      if (event.ctrlKey && event.key === 's') {
-          event.preventDefault();
-          document.querySelectorAll('.mentesGomb').forEach(gomb => gomb.click());
-      }
-    });
-    //Mentés API
-    mentesGomb.forEach(mentesGomb => {
+            if (vanNemMentettValasz) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const kitoltesId = urlParams.get('kitoltes_id');
+                const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                const szazalek = window.ertekelesJSON ?? null;
 
-      mentesGomb.addEventListener('click', (event) => {
-        event.preventDefault();  
+                const teljesSzovegesValaszok = {};
+                Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
+                    teljesSzovegesValaszok[kerdesId] = valasz.trim();
+                });
 
-          const urlParams = new URLSearchParams(window.location.search);
-          const kitoltesId = urlParams.get('kitoltes_id');
-          const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
-          const szazalek = window.ertekelesJSON ?? null;   //  ← EZ hiányzik innen
-
-          // Ellenőrizzük, hogy van-e mentendő válasz
-          if (Object.keys(kerdesValaszok).length === 0 && Object.keys(szovegesValaszok).length === 0) {
-              alert('Nincsenek mentendő válaszok!');
-              return;
-          }
-
-          // Szöveges válaszokat előkészítjük
-          const teljesSzovegesValaszok = {};
-          Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
-              teljesSzovegesValaszok[kerdesId] = valasz.trim(); // Üres stringeket is mentünk
-          });
-
-          // Fetch POST kérés
-          fetch('/api/save-valaszok', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                  kitoltesId: kitoltesId,
-                  kerdesValaszok: kerdesValaszok,
-                  szovegesValaszok: teljesSzovegesValaszok,
-                  userId:userId,
-                  ido: datum2,
-                      szazalek  
-            
-              })
-          })
-          .then(response => {
-              if (!response.ok) {
-                  throw new Error(`HTTP hiba! Státusz: ${response.status}`);
-              }
-              return response.json();
-          })
-          .then(data => {
-            console.log(userId)
-              const logobelso = document.getElementById('logobelso');
-              const loadingOverlay = document.getElementById('loading-overlay');
-              const timestamp = Math.floor(Date.now() / 1000);
-    const datum = new Date(timestamp * 1000).toISOString().slice(0, 19).replace('T', ' ');
-
-              if (!logobelso || !loadingOverlay) {
-                  console.error("Nem található a szükséges HTML elem!");
-                  return;
-              }
-
-              // Overlay és kezdeti üzenet
-              loadingOverlay.style.display = 'flex';
-              loadingOverlay.style.opacity = '1';
-
-              animateMessage("Mentés folyamatban...", "large", "black");
-
-              setTimeout(() => {
-                  logobelso.classList.add('fade-out');
-
-                  setTimeout(() => {
-                      const message = data.message || (data.success ? "Sikeres mentés!" : "Hiba történt!");
-                      const textColor = data.success ? "gold" : "red";
-
-                      if (!data.success) {
-                          console.error("Hiba történt:", message);
-                      }
-
-                      animateMessage(message, "medium", textColor);
-
-                  }, 500); // Áttetsző animáció után
-              }, 2000); // 2 másodperc után indul az animáció
-              const startTime = Date.now();
-
-              const elapsedTime = Date.now() - startTime;
-              const remainingTime = Math.max(4000 - elapsedTime, 0);
-
-              setTimeout(() => {
-                  loadingOverlay.style.display = 'none';
-              }, remainingTime);
-              frissitLegfrissebbValasz(kitoltesId);
-
-          })
-          .catch(error => {
-              console.error('Fetch hiba:', error);
-          });
-      });
-    });
-    // Mentés esetei
-    async function mentesEsNavigalas(event, url = null, logoutForm = null) {
-        event.preventDefault(); 
-    
-        if (Object.keys(kerdesValaszok).length === 0 && Object.keys(szovegesValaszok).length === 0) {
-            console.log('Nincsenek mentendő válaszok.');
-        } else {
-            const kitoltesId = new URLSearchParams(window.location.search).get('kitoltes_id');
-            const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            const szazalek   = window.ertekelesJSON ?? null;     // ← itt!
-
-            const teljesSzovegesValaszok = {};
-            Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
-                teljesSzovegesValaszok[kerdesId] = valasz.trim();
-            });
-    
-            try {
-                const response = await fetch('/api/save-valaszok', {
+                // keepalive: true biztosítja, hogy a kérés elmenjen az ablak bezárása után is
+                fetch('/api/save-valaszok', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    keepalive: true, 
                     body: JSON.stringify({
                         kitoltesId: kitoltesId,
                         kerdesValaszok: kerdesValaszok,
                         szovegesValaszok: teljesSzovegesValaszok,
                         userId: userId,
                         ido: datum2,
-                            szazalek  
+                        szazalek  
                     })
-                });
-    
-                if (!response.ok) {
-                    throw new Error(`HTTP hiba! Státusz: ${response.status}`);
-                }
-    
-                const data = await response.json();
-                console.log('Mentés eredménye:', data);
-                frissitLegfrissebbValasz(kitoltesId);
-            } catch (error) {
-                console.error('Mentési hiba:', error);
-                // Döntheted úgy, hogy hibánál mégsem navigálsz
-                return;
+                }).catch(err => console.error('Automatikus mentési hiba:', err));
             }
         }
-    
-        // Ha volt logout form, submitoljuk
-        if (logoutForm) {
-            logoutForm.submit();
-        } 
-        // Ha URL volt megadva, navigálunk oda
-        else if (url) {
-            window.location.href = url;
-        }
-    }
-
-    const logoutForm = document.querySelector('form[action="/logout"]');
-if (logoutForm) {
-    logoutForm.addEventListener('submit', function(event) {
-        mentesEsNavigalas(event, null, logoutForm);
     });
-}
-const dashboardLink = document.querySelector('a[href="./dashboard.html"]');
-if (dashboardLink) {
-    dashboardLink.addEventListener('click', function(event) {
-        mentesEsNavigalas(event, './dashboard.html');
-    });
-}
-
-  
 }
 
 //Pontrendszer megjelenítése
@@ -342,3 +271,10 @@ function showTooltip(targetElement, message) {
 }
 
 
+const logoutForm = document.querySelector('form[action="/logout"]');
+if (logoutForm) {
+    logoutForm.addEventListener('submit', function(event) {
+        // Itt hívod meg:
+        mentesEsNavigalas(event, null, logoutForm);
+    });
+}

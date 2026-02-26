@@ -209,13 +209,10 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
-                <li class="diagrammok">
-                    <span class="nav-icon material-symbols-rounded">pie_chart</span>
-                    <button>Diagramm Be-Ki</button>
-                </li>
+             
                 <li class="navment">
                     <span class="nav-icon material-symbols-rounded">picture_as_pdf</span>
-                    <a>PDF</a>
+                    <a>Letöltés</a>
                 </li>
                 <li class="navnyom">
                     <span class="nav-icon material-symbols-rounded">print</span>
@@ -246,13 +243,10 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
-                <li class="diagrammok">
-                    <span class="nav-icon material-symbols-rounded">pie_chart</span>
-                    <button>Diagramm Be-Ki</button>
-                </li>
+               
                 <li class="navment">
                     <span class="nav-icon material-symbols-rounded">picture_as_pdf</span>
-                    <a>PDF</a>
+                    <a>Letöltés</a>
                 </li>
                 <li class="navnyom">
                     <span class="nav-icon material-symbols-rounded">print</span>
@@ -288,10 +282,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
-                <li class="diagrammok">
-                    <span class="nav-icon material-symbols-rounded">pie_chart</span>
-                    <button>Diagramm Be-Ki</button>
-                </li>
+             
                 <li class="pontok toggleButton">
                     <span class="nav-icon material-symbols-rounded">page_info</span>
                     <a>Pontrendszer</a>
@@ -325,10 +316,7 @@ export const menuTartalmak = {
                     <span class="nav-icon material-symbols-rounded ertekelesek">preview</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
-                <li class="diagrammok">
-                    <span class="nav-icon material-symbols-rounded">pie_chart</span>
-                    <button>Diagramm Be-Ki</button>
-                </li>
+              
                 <li class="pontok toggleButton">
                     <span class="nav-icon material-symbols-rounded">page_info</span>
                     <a>Pontrendszer</a>

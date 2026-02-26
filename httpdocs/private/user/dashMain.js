@@ -36,12 +36,10 @@ export const BUTTONS = {
 };
 export const BUTTONS2 = {
   tulaj: [
-    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ],
   szerkeszto: [
-    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
@@ -134,46 +132,58 @@ function addHelpToButtons() {
         }, 920000); // 1 perc inaktivitás
     }
 //Felhasználó azonosítása
-   export async function getUserAndLoadKitoltesek() {
+  export async function getUserAndLoadKitoltesek() {
+    try {
+        const response = await fetch('/get-username', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+        const data = await response.json();
 
-        try {
-            const response = await fetch('/get-username', {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json'},
-            });
-            const data = await response.json();
-    
-            if (data.success) {
-                sajtnev.innerHTML = "&nbsp;" + data.username;
+        if (data.success) {
+            sajtnev.innerHTML = "&nbsp;" + data.username;
 
-                userId = data.id; 
-                fullname = data.vez;
-                mailname = data.mail;
-                fizetve = data.fizetve;
-                int_fin = data.intfin;
-                userName = data.username; 
-                leiras = data.leiras;
-                role = data.role;
-                tel = data.tel;
-                intezmeny = data.intnev; 
-                intezmeny_id = data.int_id;
-                modulId      = data.modulId;      // pl. 1
-                modulNev     = data.modulNev;     // pl. "Fejlesztő"
-                modulLeiras  = data.modulLeiras;
-                 hozzaferhetoModulok = data.hozzaferesModulok || [];
+            userId = data.id; 
+            fullname = data.vez;
+            mailname = data.mail;
+            fizetve = data.fizetve;
+            int_fin = data.intfin;
+            userName = data.username; 
+            leiras = data.leiras;
+            role = data.role;
+            tel = data.tel;
+            intezmeny = data.intnev; 
+            intezmeny_id = data.int_id;
+            modulId      = data.modulId;      // pl. 1
+            modulNev     = data.modulNev;     // pl. "Fejlesztő"
+            modulLeiras  = data.modulLeiras;
+            hozzaferhetoModulok = data.hozzaferesModulok || [];
 
+            const holis = document.querySelector('.holvagyok')
+            holis.innerHTML = modulLeiras;
 
+            await betoltKategoriakChartSzinek(modulId);
 
-                const holis = document.querySelector('.holvagyok')
-                holis.innerHTML = modulLeiras;
-
-                await betoltKategoriakChartSzinek(modulId);
-
+            // --- INNENTŐL JÖN A MÓDOSÍTÁS ---
+            
+            // Megnézzük, hogy az elemző modulban vagyunk-e (az URL alapján)
+            if (!window.location.pathname.includes('elemzo')) {
+                // Ha NEM az elemzőben vagyunk (hanem a sima user dashboardon), 
+                // akkor töltsük be a sima saját értékeléseket.
                 await loadKitoltesek();
-            } else {console.error('Hiba:', data.message);}
-        } catch (error) {console.error('Fetch hiba:', error);
+            } else {
+      
+                console.log("dashMain.js: Alap adatok betöltve. A megjelenítést a dashEmain.js veszi át.");
+            }
+
+
+        } else {
+            console.error('Hiba:', data.message);
         }
+    } catch (error) {
+        console.error('Fetch hiba:', error);
     }
+}
     //azonosítási adatok alapján mérések szipkázása, kezelése
     async function loadKitoltesek() {
         window.frissitKitoltesek = loadKitoltesek;

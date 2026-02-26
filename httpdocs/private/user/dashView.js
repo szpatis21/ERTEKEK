@@ -4,12 +4,20 @@ import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
 
 // utils/resetView.js  (vagy a fájlod tetejére)
 export function resetSzemleView() {
-  /* --- Értékelés DOM blokkok takarítása --- */
-  const keszulo = document.getElementById('keszulo');
+const keszulo = document.getElementById('keszulo');
   if (keszulo) {
     keszulo
       .querySelectorAll('.fo-kategoria, .al-kategoria, .alt-tema, table')
       .forEach(n => n.remove());
+  }
+
+  /* --- Egyéni AI vezérlő takarítása --- */
+  const aiVezerlo = document.getElementById('egyeni-ai-vezerlo');
+  if (aiVezerlo) {
+    aiVezerlo.innerHTML = `<div id="egyeni-ai-vezerlo">
+                            <div id="egyeni-ai-loading" style="display: none; margin-top: 10px;text-align: center;">Elemzés folyamatban...</div>
+                            <div id="egyeni-ai-kimenet"></div>
+                        </div>`; // Vagy aiVezerlo.replaceChildren();
   }
 
   /* --- Diagram reset --- */

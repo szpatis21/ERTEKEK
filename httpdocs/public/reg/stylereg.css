@@ -292,7 +292,7 @@ border: none;
     @media (max-width: 950px) {
         .choos label {margin: auto};
         #alszamla, #szamla2, #alszamla2 {margin: 10px;}
-        .kulso{width: 30vh;height: 30vh;}
+        .kulso{width: 27vh;height: 27vh;}
         .szoveg{font-size: medium;}
         .szoveg input{border: #ff7c00 solid 1px;}
            #llog{justify-content: center;
@@ -301,7 +301,7 @@ border: none;
     align-items: center;}
     .opening{    display: flex;
     justify-content: center;
-    flex-direction: column;
+    flex-direction: row;
     align-content: center;
     align-items: center;}
     #log label{    display: flex;
@@ -314,9 +314,9 @@ border: none;
     }
  #fo{width: 250px !important; margin: auto !important;}
 
-
-        #llog, #whbutt {font-size: 60%; width: fit-content;height: fit-content;}
-        #whbutt{font-size: 40%; margin-top: 0px;}
+article{margin: auto;}
+        #llog, #whbutt {font-size: 80%; width: fit-content;height: fit-content;}
+        #whbutt{font-size: 70%; margin-top: 0px; padding: 4px;}
         .opening {column-gap: 15px;grid-template-rows: repeat(2, 50%);}
         .inputs input{width: 100px; margin: 4px; padding: 5px;}
         #regi{font-size: medium;}
@@ -453,7 +453,7 @@ main{width: 100% !important;}
       #logokulso{width:220px;height:220px}
       #logobelso{width:200px;height:200px;font-size:180%}
 
-      #fnev, #pass {width: 70%; height: 30px;}
+      #fnev, #pass {width: 70%; height: 17px;}
       #temakor, #szerepkor {
     font-size: x-small}
     .lehetosegek {
