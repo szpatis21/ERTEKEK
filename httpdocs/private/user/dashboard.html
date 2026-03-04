@@ -12,6 +12,18 @@
     <link rel="stylesheet" href="dashmobile.css?v=3.3">
     <link rel="stylesheet" href="/private/main/main.css?v=3.3">
     <link rel="stylesheet" href="/public/stylei.css?v=3.3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
+      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
+      crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <style>
         .valtos span { font-size: 80% !important};
@@ -134,37 +146,39 @@ canvas {image-rendering: auto;}
 
                             </div>
                     <div class="diag" style=" position: relative;">
-                             <div class="diaggombok">
-                            <div class="valtos modulebutt">
-                                <label for="chartTypeSelector">
-                                    <span class="material-symbols-outlined">bid_landscape</span> 
-                                </label>
-                                <select id="chartTypeSelector">
-                                    <option value="polarArea" selected>Kördiagram</option>
-                                    <option value="bar">Oszlopdiagram</option>
-                                    <option value="line">Fánkdiagram</option>
-                                    <option value="radar">Radardiagram</option>
-                                </select>
-                            </div>
-                          
-                        <div class="valtos modulebutt" id="melletolt">
-                                <span class="material-symbols-outlined">picture_as_pdf</span> 
-                                <span>Melléklet letöltése</span>
-                            </div>
-                            <div class="valtos modulebutt" id="melprint">
-                                <span class="material-symbols-outlined">print</span> 
-                                <span>Melléklet nyomtatása</span>
-                            </div>
-                            <div class="modulebutt valtos">
-                                <label for="chartTypeOff">
-                                    <span class="material-symbols-outlined">bid_landscape_disabled</span>
-                               </label>
-                                <select id="chartTypeOff">
-                                    <option value="on" selected>Diagrammok: Be</option>
-                                    <option value="off">Diagrammok: Ki</option>
-                                </select>
-                            </div>
-                        </div>
+<div class="diaggombok-kulso">
+    <div class="diaggombok-fejlec" id="diagToggle">
+        Diagram beállítások <span class="nyil">▼</span>
+    </div>
+
+    <div class="diaggombok-tartalom" id="diagContent">
+        <div class="valtos modulebutt">
+            <label for="chartTypeSelector"></label>
+            <select id="chartTypeSelector">
+                <option value="polarArea" selected="">Kördiagram</option>
+                <option value="bar">Oszlopdiagram</option>
+                <option value="line">Fánkdiagram</option>
+                <option value="radar">Radardiagram</option>
+            </select>
+        </div>
+        
+        <div class="valtos modulebutt" id="melletolt">
+            <span>Melléklet letöltése</span>
+        </div>
+        
+        <div class="valtos modulebutt" id="melprint">
+            <span>Melléklet nyomtatása</span>
+        </div>
+        
+        <div class="modulebutt valtos">
+            <label for="chartTypeOff"></label>
+            <select id="chartTypeOff">
+                <option value="on" selected="">Diagrammok: Be</option>
+                <option value="off">Diagrammok: Ki</option>
+            </select>
+        </div>
+    </div>
+</div>
                         <div class="charts">
                             <div id="chart-container">
                                 <canvas id="fokategoriaChart"></canvas>

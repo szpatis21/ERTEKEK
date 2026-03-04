@@ -6,6 +6,22 @@ body {
   padding: 0;
   align-items: flex-start !important;
 } 
+/* Helyi betöltés a projekt mappájából */
+@font-face {
+    font-family: 'Montserrat Subrayada';
+    src: url('/both/MontserratSubrayada-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: block; /* Megakadályozza a villogást */
+}
+
+@font-face {
+    font-family: 'Montserrat Subrayada';
+    src: url('/both/MontserratSubrayada-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: block;
+}
+
+/* Ha letöltöd az ikonokat, ezeket is így kell definiálni */
 .ite{background: #ffeede;
     width: 100%;
     margin: 0px auto;
@@ -551,6 +567,16 @@ align-items: center;
         position: absolute;
         z-index: 2;
     }
+    .logokulso{border-radius: 30px;
+    border: 2px solid grey;
+    width: 65vh !important;
+    height: 65vh !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: rotateClock 8s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+    position: absolute;
+    z-index: -1;}
     #logobelso { z-index: 1;
         animation: shine 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
         display: flex;
@@ -813,3 +839,91 @@ font-size: x-small;
 #main-container{min-height: fit-content;}
 
   }
+
+
+  .overlayment{position:fixed;top:0;left:0;width:100%;height:100%;backdrop-filter: blur(2px);
+    background: #503900bf;;z-index:999999;display:flex;justify-content:center;align-items:center;}
+  .dobozment{    background: #ffffff;
+    border: 3px solid orange;
+    padding: 3vh;
+    border-radius: 18px;
+    text-align: center;
+    width: 60vh;
+    height: 60vh;
+    display: flex;
+      box-shadow: 0px 0px 15px 3px #000000c9;
+    font-family: system-ui;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: stretch;
+    justify-content: center;}
+  .dobozment h2 {color:#ff9800; margin-top:0; font-family: 'Montserrat Subrayada'}
+  .dobozment p{color:#333; font-size:16px; margin-bottom:15px;}
+  .dobozment button {background:#ff6500; color:white; padding:12px 30px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; font-size:15px; width:20vh;     font-family: 'Montserrat Subrayada';
+}
+.mentes-osszefoglalo {
+    max-height: 40vh;
+    overflow-y: auto;
+    text-align: left;
+    background: #f9f9f9;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* Listák és elemek formázása */
+.mentes-lista-cim {
+    color: #000;
+    font-size: 16px;
+}
+
+.mentes-lista {
+    margin-top: 8px;
+    margin-bottom: 20px;
+    padding-left: 20px;
+}
+
+.mentes-lista-elem {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+
+.mentes-kategoria {
+    color: #555;
+}
+
+/* Színek az Igen / Nem válaszokhoz */
+.valasz-igen {
+    color: #28a745;
+}
+
+.valasz-nem {
+    color: #d9534f;
+}
+
+/* Kiemelés a szöveges válaszoknak */
+.mentes-szoveges-valasz {
+    color: #0056b3;
+    background: #eef5ff;
+    padding: 2px 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-top: 3px;
+}
+
+
+.osszefoglalo{max-height: 25vh; overflow-y: auto; text-align: left; background: #f9f9f9; border: 1px solid #ccc; padding: 15px; border-radius: 5px; font-size: 14px; margin-bottom: 20px; color: #333;}
+
+.nagy{font-size: 5rem;
+font-weight: bold;
+color: white;
+top: 50%;
+left: 50%;
+text-shadow: 0px 0pc 15px;
+    font-family: 'Montserrat Subrayada';
+position: absolute;
+transform: translate(-50%,-50%);
+transition:opacity 1s ease-in-out}

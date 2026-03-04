@@ -292,11 +292,8 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
                                 <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó határidő</h3>
 
                                 <div class="calendardiv">
-                                    <div>
-                                        <span>Határidő:</span> 
-                                        <span id="akthat">Nincs megadva</span>
-                                    </div>
-                                    <button id="audit-calendar">Leadási határidő</button>
+                                   <input type="date" id="audit-calendar" title="Leadási határidő">
+                                   <span id="calendar-btn"> Leadási határidő</span>
                                 </div>
 
                                 <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek</h3>

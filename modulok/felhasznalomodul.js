@@ -430,6 +430,7 @@ router.get('/get-kitoltesek', (req, res) => {
       k.vizsgalt_id,
       k.audit,
       a.warm, -- <-- BEKÉRJÜK A WARM OSZLOPOT
+      a.hatarido,
       f.vez                                           AS creator_name,
       CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS vizsgalt_nev
     FROM kitoltesek k
@@ -501,25 +502,29 @@ router.post('/save-valaszok', (req, res) => {
         userId, ido, szazalek
     } = req.body;
 
-    if (!kitoltesId || !userId || typeof kerdesValaszok !== 'object' || typeof szovegesValaszok !== 'object') {
-        return res.status(400).json({ success: false, message: 'Hiányzó vagy hibás adatok!' });
+    // 1. BIZTONSÁGI HÁLÓ: Ha nem jött objektum (pl. autosave miatt), csinálunk egy üreset.
+    const safeKerdesValaszok = (typeof kerdesValaszok === 'object' && kerdesValaszok !== null) ? kerdesValaszok : {};
+    const safeSzovegesValaszok = (typeof szovegesValaszok === 'object' && szovegesValaszok !== null) ? szovegesValaszok : {};
+
+    // 2. SZIGORÚ ELLENŐRZÉS CSAK A LÉTFONTOSSÁGÚ ADATOKRA (Eltávolítottuk az object ellenőrzést)
+    if (!kitoltesId || !userId) {
+        return res.status(400).json({ success: false, message: 'Hiányzó kitoltesId vagy userId!' });
     }
 
-    // 1. Adatok előkészítése egyetlen tömbbe (mátrixba) a Bulk Inserthez
-    // Egyesítjük a kulcsokat, hogy minden érintett kérdésid meglegyen
-    const allKeys = new Set([...Object.keys(kerdesValaszok), ...Object.keys(szovegesValaszok)]);
+    // 3. Adatok előkészítése egyetlen tömbbe (mátrixba) a Bulk Inserthez
+    // A "safe" (biztosan létező) objektumokat használjuk!
+    const allKeys = new Set([...Object.keys(safeKerdesValaszok), ...Object.keys(safeSzovegesValaszok)]);
     const valuesToInsert = [];
 
     allKeys.forEach(kerdesId => {
-        const valasz = kerdesValaszok[kerdesId] ?? null;
-        const szoveg = szovegesValaszok[kerdesId] ?? null;
+        const valasz = safeKerdesValaszok[kerdesId] ?? null;
+        const szoveg = safeSzovegesValaszok[kerdesId] ?? null;
         
-        // A sorrendnek meg kell egyeznie az SQL VALUES résszel:
-        // (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
+        // A sorrendnek meg kell egyeznie az SQL VALUES résszel
         valuesToInsert.push([kitoltesId, kerdesId, valasz, szoveg, userId, ido]);
     });
 
-    // Segédfüggvény a JSON mentéshez (hogy ne kelljen duplikálni a kódot)
+    // Segédfüggvény a JSON mentéshez
     const saveJsonAndResponse = () => {
         if (!szazalek) {
             return res.json({ success: true, message: 'Válaszok mentve!' });
@@ -534,28 +539,28 @@ router.post('/save-valaszok', (req, res) => {
         });
     };
 
-    // Ha nincs válasz, csak JSON update (vagy kilépés)
+    // Ha nincsenek válaszok (csak pl. JSON frissül), egyből mehet a json mentésre
     if (valuesToInsert.length === 0) {
         return saveJsonAndResponse();
     }
 
-    // 2. Egyetlen SQL lekérdezés az összes válaszhoz
+    // 4. Egyetlen SQL lekérdezés az összes válaszhoz (Bulk Insert)
+// 4. Egyetlen SQL lekérdezés az összes válaszhoz (Bulk Insert)
     const bulkInsertQuery = `
         INSERT INTO valaszok
         (kitoltes_id, kerdes_id, kerdes_valasz, valasz_szoveg, felhasznalo_id, letrehozva)
         VALUES ?
         ON DUPLICATE KEY UPDATE
-        kerdes_valasz = VALUES(kerdes_valasz),
-        valasz_szoveg = VALUES(valasz_szoveg),
+        kerdes_valasz  = COALESCE(VALUES(kerdes_valasz), valaszok.kerdes_valasz),
+        valasz_szoveg  = COALESCE(VALUES(valasz_szoveg), valaszok.valasz_szoveg),
         letrehozva     = VALUES(letrehozva),
         felhasznalo_id = VALUES(felhasznalo_id)
     `;
 
-    // A mysql2 driver a [valuesToInsert] formátumot (tömbök tömbje) automatikusan kezeli a '?' helyén
     db.query(bulkInsertQuery, [valuesToInsert], (err, result) => {
         if (err) {
             console.error('Adatbázis hiba (Bulk Insert):', err);
-            return res.status(500).json({ success: false, message: 'Adatbázis hiba történt!' });
+            return res.status(500).json({ success: false, message: 'Adatbázis hiba történt a válaszok mentésekor!' });
         }
         // Sikeres mentés után jöhet a JSON update
         saveJsonAndResponse();

@@ -1,37 +1,8 @@
 //Nav menü export
-import { menuTartalmak } from './navmenu.js';
+import { menuTartalmak, ikonok } from './navmenu.js';
 // Külső erőforrások (Fontok + Ikonok + Saját CSS) automatikus betöltése
 // Külső erőforrások (Csak Fontok és Ikonok)
-(function loadExternalResources() {
-    
-    function addLink(rel, href, attributes = {}) {
-        const link = document.createElement('link');
-        link.rel = rel;
-        link.href = href;
-        for (const key in attributes) {
-            if (key === 'crossOrigin') link.crossOrigin = attributes[key];
-            else link.setAttribute(key, attributes[key]);
-        }
-        document.head.appendChild(link);
-    }
 
-    // Google Fonts Preconnect
-    addLink('preconnect', 'https://fonts.googleapis.com');
-    addLink('preconnect', 'https://fonts.gstatic.com', { crossOrigin: 'anonymous' });
-
-    // Font Awesome 7.0.1
-    addLink('stylesheet', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css', {
-        integrity: 'sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==',
-        crossOrigin: 'anonymous',
-        referrerpolicy: 'no-referrer'
-    });
-
-    // Material Symbols
-    addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0')
- // Montserrat Subrayada betűtípus betöltése
-    addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap');
-    addLink('stylesheet', 'https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-})();
 
 const menuId = document.getElementById('menu-type')?.value || 'public';
 
@@ -219,4 +190,3 @@ toggleBtn.onclick = function () {
         ? 'fa-solid fa-xmark' 
         : 'fa-solid fa-bars';
 }
-

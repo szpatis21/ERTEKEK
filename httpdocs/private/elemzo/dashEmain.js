@@ -1,6 +1,8 @@
 import { loadInfoAndInit } from '../info/infoLoader.js';
 import { initOlvas, initFrissites, initTorol } from '/private/user/dashCRUD.js'; // Importáld a frissítést és törlést is
 import { monitorozCheckek,loadColorMaps } from '/private/user/dashStatic.js'; // <-- Importáld a figyelőt
+import{showAlert} from "/both/alert.js"
+
 
 console.log("Elemző modul aktív");
 
@@ -172,7 +174,9 @@ export function initAuditLista(kitoltesek) {
                 kitoltesDiv.classList.add('kijelolt');
                 
                 // --- ÚJ RÉSZ: UI elemek elrejtése/módosítása a státusz alapján ---
-                const calendarBtn = document.getElementById('audit-calendar');
+                const calendarBtn = document.getElementById('audit-chat-title');
+                const calendarBtn2 = document.querySelector('.calendardiv');
+
                 // Megkeressük az üzenetküldő input szülő div-jét, hogy az egészet eltüntessük
                 const msgInputArea = document.getElementById('audit-msg-input') ? document.getElementById('audit-msg-input').closest('.audit-input-area') : null;
                 const approveBtn = document.getElementById('audit-approve-btn');
@@ -180,11 +184,13 @@ export function initAuditLista(kitoltesek) {
                 if (kitoltes.audit == 2) {
                     // 2-es státusz (Lezárt): Elrejtjük a fölösleges dolgokat és átírjuk a gombot
                     if (calendarBtn) calendarBtn.style.display = 'none';
+                    if (calendarBtn2) calendarBtn2.style.display = 'none';
                     if (msgInputArea) msgInputArea.style.display = 'none';
                     if (approveBtn) approveBtn.textContent = 'Értékelés visszanyitása';
                 } else {
                     // 1-es státusz (Aktív): Minden látható, gomb szövege az eredeti
-                    if (calendarBtn) calendarBtn.style.display = ''; // Az üres string visszaállítja az eredeti CSS-t (blokk/inline)
+                    if (calendarBtn) calendarBtn.style.display = '';
+                    if (calendarBtn2) calendarBtn2.style.display = ''; // Az üres string visszaállítja az eredeti CSS-t (blokk/inline)
                     if (msgInputArea) msgInputArea.style.display = ''; 
                     if (approveBtn) approveBtn.textContent = 'Értékelés Jóváhagyása';
                 };
@@ -285,3 +291,50 @@ export function initAuditLista(kitoltesek) {
     renderGroupedList(approvedItems, okContainer);
     renderGroupedList(pendingItems, notOkContainer);
 }
+document.addEventListener('change', async (e) => {
+    if (e.target.id === 'audit-calendar') {
+        const kivalasztottDatum = e.target.value; // pl: "2026-06-01"
+        
+        // Megkeressük a kijelölt értékelést
+        const kijeloltSor = document.querySelector('.meglevok.kijelolt');
+        if (!kijeloltSor) {
+            showAlert('Kérjük, előbb válasszon ki egy értékelést!');
+            e.target.value = ''; // Nullázzuk az inputot
+            return;
+        }
+
+        const kitoltesId = kijeloltSor.dataset.kitoltesId;
+
+        if (kivalasztottDatum) {
+            console.log(`Dátum kiválasztva: ${kivalasztottDatum}, ID: ${kitoltesId}`);
+            
+            // Kiírjuk a UI-ra a spenbe szép magyar formátumban
+            const hataridoSpan = document.getElementById('akthat');
+            const hDatum = new Date(kivalasztottDatum);
+            if (hataridoSpan) {
+                hataridoSpan.textContent = hDatum.toLocaleDateString('hu-HU', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                });
+            }
+            
+            // IDE JÖN MAJD A FETCH (Adatbázis mentés)
+        }
+    }
+});
+document.addEventListener('click', (e) => {
+    // Ha a felhasználó a span-ra kattint
+    if (e.target.id === 'calendar-btn') {
+        const dateInput = document.getElementById('audit-calendar');
+        
+        if (dateInput) {
+            try {
+                // Ez a modern, hivatalos módja a naptár szoftveres megnyitásának
+                dateInput.showPicker(); 
+            } catch (error) {
+                // Biztonsági tartalék (fallback) régebbi böngészőkhöz
+                dateInput.focus();
+                dateInput.click();
+            }
+        }
+    }
+});

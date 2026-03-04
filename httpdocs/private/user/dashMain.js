@@ -16,7 +16,18 @@ initAside();
 
 //Változók... sok.... változó
 //Gombok 
+const diagToggle = document.getElementById('diagToggle');
+const diagContent = document.getElementById('diagContent');
 
+// Ellenőrizzük, hogy biztosan megvannak-e az elemek
+if (diagToggle && diagContent) {
+    diagToggle.onclick = function() {
+        this.classList.toggle('open');
+        diagContent.classList.toggle('open');
+        
+        // Debug: írjuk ki, mik az aktuális osztályok
+    };
+}
 export const BUTTONS = {
   tulaj: [
     {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
@@ -259,6 +270,8 @@ try { initLetrehoz({ userId, modulId }); } catch(e) { console.warn(e); }  })
 
 //Oldalső lapozó sáv aktív classa
 lapozo.addEventListener('click', (e) => {
+            const fw = document.getElementById('floating-audit-warning');
+
   if (e.target.classList.contains('grap') || e.target.classList.contains('sta') || e.target.classList.contains('gyik'))  {
     // Aktiv osztály váltása.
     [...lapozo.children].forEach(child => child.classList.remove('aktiv'));
@@ -269,15 +282,19 @@ lapozo.addEventListener('click', (e) => {
       maininf.style.display = 'flex';
       osszesitett.style.display = 'none';
       gyik.style.display="none";
+if (fw) fw.style.display = 'block';
+      
     } else if (e.target.classList.contains('gyik')) {
       maininf.style.display = 'none';
       osszesitett.style.display = 'none';
       gyik.style.display="flex";
+if (fw) fw.style.display = 'none';
     } 
     else if (e.target.classList.contains('sta')) {
         maininf.style.display = 'none';
         osszesitett.style.display = 'flex';
         gyik.style.display="none";
+if (fw) fw.style.display = 'none';
     }
   }
 });

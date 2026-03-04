@@ -28,18 +28,20 @@ let inactivityTimer;
 let modulLeiras = null;
 let modulNev = null;
 let userName = null;
+export let userId = null; 
 
- async function modulinfo() {
-        try {
-            const response = await fetch('/get-username', {
-                method: 'GET',
-                headers: {'Content-Type': 'application/json'},
-            });
-            const data = await response.json();
-    
-            if (data.success) {  
-                userName = data.username; 
-                modulId      = data.modulId;      // pl. 1
+async function modulinfo() {
+    try {
+        const response = await fetch('/get-username', {
+            method: 'GET',
+            headers: {'Content-Type': 'application/json'},
+        });
+        const data = await response.json();
+
+        if (data.success) {  
+            userName = data.username; 
+            userId = data.id; // <--- EZT ADD HOZZÁ (elmentjük a felhasználó ID-ját)
+            modulId = data.modulId;   // pl. 1
                 modulNev     = data.modulNev;     // pl. "Fejlesztő"
                 modulLeiras  = data.modulLeiras;  // pl. "Fejlesztői kompetencia …"
                 console.log(modulNev + " " + modulId)
@@ -120,28 +122,47 @@ for (const it of set) {
 }
 function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
-    inactivityTimer = setTimeout(async () => {
-        const urlParams = new URLSearchParams(window.location.search);
-        const kitoltesId = urlParams.get('kitoltes_id');
+  inactivityTimer = setTimeout(async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const kitoltesId = urlParams.get('kitoltes_id');
 
-        if (kitoltesId && Object.keys(kerdesValaszok).length > 0) {
-            try {
-                // Mentési API hívás
-                const response = await fetch('/api/save-valaszok', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ kitoltesId: kitoltesId, kerdesValaszok: kerdesValaszok })
-                });
+    // Módosított feltétel: ha van kérdés válasz VAGY szöveges válasz
+    if (kitoltesId && (Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0)) {
+        try {
+            // Előkészítjük a hiányzó változókat
+            const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            const szazalek = window.ertekelesJSON ?? null;
 
-                const data = await response.json();
-                if (data.success) {
-                } else {
-                    console.error('Mentési hiba:', data.message);
-                }
-            } catch (error) {
-                console.error('Fetch hiba a mentés során:', error);
+            // Szöveges válaszok formázása (ahogy a main_graph.js is csinálja)
+            const teljesSzovegesValaszok = {};
+            Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
+                teljesSzovegesValaszok[kerdesId] = valasz.trim();
+            });
+
+            // Teljes, hiánytalan API hívás
+            const response = await fetch('/api/save-valaszok', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    kitoltesId: kitoltesId, 
+                    kerdesValaszok: kerdesValaszok,
+                    szovegesValaszok: teljesSzovegesValaszok,
+                    userId: userId,
+                    ido: datum2,
+                    szazalek: szazalek
+                })
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                console.log("Automatikus mentés sikeres!");
+            } else {
+                console.error('Automatikus mentési hiba:', data.message);
             }
+        } catch (error) {
+            console.error('Fetch hiba az automatikus mentés során:', error);
         }
+    }
 
         // Logout kérés küldése a backend felé
         fetch('/logout', { method: 'POST' })
@@ -160,17 +181,39 @@ function resetInactivityTimer() {
         modulinfo()
 
 //Animáció a töltésekhez        
-    export function animateMessage(text, fontSize, color) {
+export function animateMessage(text, fontSize, color) {
+    const loadingOverlay = document.getElementById('loading-overlay');
     const logobelso = document.getElementById('logobelso');
-    if (logobelso) {
+    
+    if (logobelso && loadingOverlay) {
+        // 1. Szülő (overlay) megjelenítése
+        loadingOverlay.style.display = 'flex';
+        loadingOverlay.style.opacity = '1';
+
+        // 2. Szöveg beállítása
         logobelso.innerHTML = text;
         logobelso.style.fontSize = fontSize;
         logobelso.style.color = color;
         logobelso.style.textAlign = "center";
+        
+        // 3. Belső elem láthatósága és animálása
+        logobelso.style.display = "flex";
+        logobelso.style.opacity = "1";
         logobelso.classList.remove('fade-out', 'fade-in');
         logobelso.classList.add('fade-in');
+
+        // 4. Automatikus eltüntetés 3 másodperc után, hogy ne fagyjon ki a képernyő
+        setTimeout(() => {
+            loadingOverlay.style.opacity = '0';
+            logobelso.style.opacity = '0';
+            
+            // Megvárjuk a CSS fade-out végét, aztán levesszük a display-t
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 400); 
+        }, 3000);
     }
-    }
+}
     let loadingMessageTimeouts = []; // Globális változó a setTimeout-okra
     export function showLoading(text = "Csak egy pillanat...", color = "orange", fontSize = "large") {
       const loadingOverlay = document.getElementById('loading-overlay');

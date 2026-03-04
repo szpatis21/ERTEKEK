@@ -298,17 +298,17 @@ function torjFeliratot(label, hossz = 5) {
 // determinisztikus címke-gyűjtés és dataset-készítés
 function radarAdatokKijeloltből(results) {
   const labelSet = new Set();
+  
+  // 1. Külön változóba tesszük csak azokat, amiknek van értékelhető százaléka
+  const validResults = results.filter(r => r && r.szazalek);
 
-  results
-    .filter(r => r && r.szazalek)
-    .forEach(r => Object.keys(r.szazalek).forEach(k => labelSet.add(k)));
+  validResults.forEach(r => Object.keys(r.szazalek).forEach(k => labelSet.add(k)));
 
-  // 1) nyers kulcsok (lookuphoz)
   const rawLabels = Array.from(labelSet).sort((a,b) => a.localeCompare(b, 'hu'));
-  // 2) tördelve a megjelenítéshez
   const displayLabels = rawLabels.map(l => torjFeliratot(l));
 
-  const datasets = results.map((r, i) => {
+  // 2. Itt már csak a validResults tömbön megyünk végig a teljes results helyett!
+  const datasets = validResults.map((r, i) => {
     const data = rawLabels.map(k => {         
       const v = r.szazalek[k];
       if (v == null) return 0;
@@ -317,13 +317,13 @@ function radarAdatokKijeloltből(results) {
     });
 
     const col = RADAR_BASE[i % RADAR_BASE.length];
-    const bg  = rgbToRgba(col);   //  áttetsző háttér
+    const bg  = rgbToRgba(col);
 
     return {
       label: (r.nev || '').split(/\s*-\s*/)[0].trim() || `#${i+1}`,
       data,
       borderColor: col,
-  backgroundColor: bg,
+      backgroundColor: bg,
       pointBackgroundColor: col,
       borderWidth: 2,
       fill: true,
@@ -858,76 +858,111 @@ async function frissitAtlag() {
   
 }
 export function monitorozCheckek() {
-  
-  const container = document.querySelector('.inner-div'); // vagy ahol a pipák vannak
-
+  const container = document.querySelector('.inner-div');
   if (!container) return;
 
-container.addEventListener('change', async (e) => {
-  if (!e.target.matches('input[type="checkbox"].cheking')) return;
+  // 1. Védelem: Ne csatoljunk újabb figyelőt, ha már van rajta
+  if (container._hasChangeMonitor) return;
+  container._hasChangeMonitor = true;
 
-const osszes = [...container.querySelectorAll('input[type="checkbox"].cheking')];
-  const aktivak = osszes.filter(cb => cb.checked);
+  container.addEventListener('change', async (e) => {
+    if (!e.target.matches('input[type="checkbox"].cheking')) return;
 
-if (aktivak.length === 0) return;   // vagy teljesen szedd ki
+    const osszes = [...container.querySelectorAll('input[type="checkbox"].cheking')];
+    const aktivak = osszes.filter(cb => cb.checked);
 
+if (aktivak.length === 0) {
+      // Ha nincs kijelölve semmi, takarítsunk ki mindent a képernyőről
+      kijelolt.length = 0;
+      atlagolt.length = 0;
+      
+      const vizsgaltDiv = document.getElementById('vizsgaltSzemelyek');
+      if (vizsgaltDiv) vizsgaltDiv.innerHTML = '';
+      
+      
+      const osszesitett = document.getElementById('vizsgaltSzemelyek');
+      if (osszesitett) osszesitett.style.display = 'none';
 
-  // 1) Töltsd be és push-old be a kijelolt tömbbe
-  kijelolt.length = 0;
-    const pdf = document.querySelector("#export-pdf");
-  pdf.style.display="flex";
-  for (const cb of aktivak) {
-    const idk = Number(cb.dataset.id);
-    try {
-      const r  = await fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${idk}`);
-      const { szazalek } = await r.json();
-      const parsed = typeof szazalek === 'string' ? JSON.parse(szazalek) : szazalek;
+      const radarLegend = document.getElementById("radarLegend");
+      if (radarLegend) radarLegend.innerHTML="";
+      const temaContainer = document.getElementById('tema-valaszto-container');
+      if (temaContainer) temaContainer.innerHTML = '';
 
-      // név kinyerése...
-const card = cb.closest('.meglevok');
+      const szummFa = document.getElementById('szumm-fa');
+      if (szummFa) szummFa.innerHTML = '';
 
-const nev = (card?.dataset.nev || 
-             card?.querySelector('.vizsgalt-nev')?.textContent || 
-             '')
-            .trim();
+      const magy = document.getElementById('magyarazat');
+      if (magy) magy.innerHTML = '';
 
-const periodus = (card?.dataset.periodus || '').trim();
-const raw   = typeof szazalek === 'string' ? JSON.parse(szazalek) : szazalek;
-const clean = stripZeros(raw);
-
-kijelolt.push({
-  id: idk,
-  nev,
-  periodus,
-  szazalek: clean          // már karcsúsítva megy tovább
-});
-
-    } catch (err) {
-      console.error(`Hiba az értékelés betöltésénél (${idk}):`, err);
-      cb.checked = false;
+      // Chart.js diagram példányok törlése a memóriából és a vászonról
+      if (szummChartInstance) { szummChartInstance.destroy(); szummChartInstance = null; }
+      if (szummPolarInstance) { szummPolarInstance.destroy(); szummPolarInstance = null; }
+      if (szummRadarInstance) { szummRadarInstance.destroy(); szummRadarInstance = null; }
+      if (szummMultiPieInstance) { szummMultiPieInstance.destroy(); szummMultiPieInstance = null; }
+      if (osszehasonlitoDiagramInstance) { osszehasonlitoDiagramInstance.destroy(); osszehasonlitoDiagramInstance = null; }
+      
+      return; // Kilépünk, hogy ne induljon el a hálózati letöltés
     }
-  }
+    // 2. Létrehozunk egy LOKÁLIS tömböt a letöltések idejére
+    const ujKijelolt = [];
+    
+    const pdf = document.querySelector("#export-pdf");
+    if (pdf) pdf.style.display="flex";
 
-  // 2) Egyszer ürítsd és építsd fel a vizsgalt-tag-eket
-  const vizsgaltDiv = document.getElementById('vizsgaltSzemelyek');
-  vizsgaltDiv.innerHTML = '';
-  kijelolt.forEach(obj => {
-    const namePart = (obj.nev || '').split(/\s*-\s*/)[0].trim();
-    const span = document.createElement('span');
-    span.textContent = namePart;
-    span.className = 'vizsgalt-tag';
-    vizsgaltDiv.appendChild(span);
+    for (const cb of aktivak) {
+      const idk = Number(cb.dataset.id);
+      try {
+        const r  = await fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${idk}`);
+        const { szazalek } = await r.json();
+        
+        const card = cb.closest('.meglevok');
+        const nev = (card?.dataset.nev || card?.querySelector('.vizsgalt-nev')?.textContent || '').trim();
+        const periodus = (card?.dataset.periodus || '').trim();
+        
+        const raw   = typeof szazalek === 'string' ? JSON.parse(szazalek) : szazalek;
+        const clean = stripZeros(raw);
+
+        // A lokális tömbbe gyűjtjük az elemeket
+        ujKijelolt.push({
+          id: idk,
+          nev,
+          periodus,
+          szazalek: clean
+        });
+
+      } catch (err) {
+        console.error(`Hiba az értékelés betöltésénél (${idk}):`, err);
+        cb.checked = false;
+      }
+    }
+
+    // 3. Csak a letöltések VÉGÉN írjuk felül a globális tömböt
+    kijelolt.length = 0;
+    kijelolt.push(...ujKijelolt);
+
+    // 4. UI frissítése (Címkék kirajzolása)
+    const vizsgaltDiv = document.getElementById('vizsgaltSzemelyek');
+    if (vizsgaltDiv) {
+      vizsgaltDiv.innerHTML = '';
+      kijelolt.forEach(obj => {
+        const namePart = (obj.nev || '').split(/\s*-\s*/)[0].trim();
+        const span = document.createElement('span');
+        span.textContent = namePart;
+        span.className = 'vizsgalt-tag';
+        vizsgaltDiv.appendChild(span);
+      });
+    }
+
+    // Felbukkanók elrejtése biztonságosan
+    if (typeof felbukkano2 !== 'undefined' && felbukkano2) felbukkano2.style.display = 'none';
+    if (typeof felbukkano3 !== 'undefined' && felbukkano3) felbukkano3.style.display = 'none';
+    if (typeof felbukkano4 !== 'undefined' && felbukkano4) felbukkano4.style.display = 'none';
+    
+    document.querySelectorAll('.szummcim').forEach(el => el.style.display = 'flex');
+
+    await frissitAtlag();
+    await temaChecklistLetrehoz(kijelolt);
   });
-
-  // 3) Elrejted / mutatod a felbukkanókat és címeket
-  felbukkano2.style.display = felbukkano3.style.display = felbukkano4.style.display = 'none';
-  document.querySelectorAll('.szummcim').forEach(e => e.style.display = 'flex');
-
-  // 4) Átlag és diagram frissítése
-  await frissitAtlag();
-  await temaChecklistLetrehoz(kijelolt); // <<< ASZINKRON HÍVÁS
-});
-
 }
 
 //Gomb

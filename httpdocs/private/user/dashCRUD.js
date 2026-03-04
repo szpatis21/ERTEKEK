@@ -88,8 +88,7 @@ export function initLetrehoz({ userId, modulId }) {
   mo.observe(document.body, { childList: true, subtree: true });
 }
 //READ
-export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false, isElemzo = false } = {}) {
-  const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}` );
+export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false, isElemzo = false } = {}) {  const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}` );
   const auditData = await auditResponse.json();
   const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk) : [];
 
@@ -225,11 +224,52 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
 
       const csoport = document.createElement('div');
       csoport.classList.add('tarolo');
-      const header = document.createElement('div');
+      
+    const header = document.createElement('div');
       header.classList.add('creator-head');
-      header.textContent = kitoltes.creator_name || 'Ismeretlen';
+      
+      // Megszámoljuk, hány értékelés tartozik ehhez a készítőhöz
+      const currentCreatorName = kitoltes.creator_name || 'Ismeretlen';
+      const itemCount = items.filter(item => (item.creator_name || 'Ismeretlen') === currentCreatorName).length;
+      
+      header.innerHTML = `
+          <span style="display: flex; align-items: center; gap: 8px;">
+              ${currentCreatorName}
+              <span style="background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">
+                  ${itemCount}
+              </span>
+          </span>
+          <span class="material-symbols-rounded toggle-icon" style="transition: transform 0.3s;">expand_more</span>
+      `;
+      header.style.cursor = 'pointer';
+      header.style.userSelect = 'none';
+      header.style.display = 'flex';
+      header.style.justifyContent = 'flex-start';
+      header.style.alignItems = 'center';
+
       currentList = document.createElement('div');
       currentList.classList.add('creator-list');
+      currentList.style.display = 'none';
+
+      // Javított eseményfigyelő:
+      header.addEventListener('click', () => {
+          // A fejléc közvetlen testvérelemét (a hozzá tartozó listát) fogjuk meg
+          const myTargetList = header.nextElementSibling;
+          const icon = header.querySelector('.toggle-icon');
+          
+          if (myTargetList.style.display === 'none') {
+              myTargetList.style.display = 'flex'; 
+              header.style.height = '45px'
+              csopigomb.style.height='45px'
+              if (icon) icon.style.transform = 'rotate(180deg)';
+          } else {
+              myTargetList.style.display = 'none';
+                            header.style.height = '8vh'
+                            csopigomb.style.height = '8vh'
+
+              if (icon) icon.style.transform = 'rotate(0deg)';
+          }
+      });
 
       currentWrapper.append(header, currentList);
       csoport.append(csopigomb, currentWrapper);
@@ -269,38 +309,61 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
         groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
     }</div>`;
 
-    // --- ÚJ WARM (WARNING) LOGIKA ---
-    let warmHtml = '';
-    
-    // Biztos, ami biztos, számmá alakítjuk
-    const auditStatus = Number(kitoltes.audit); 
+
 
     // Csak akkor aktiváljuk, ha az audit értéke 2
+  // --- ÚJ WARM (WARNING) ÉS HATÁRIDŐ LOGIKA ---
+   // --- ÚJ WARM (WARNING) ÉS HATÁRIDŐ LOGIKA (EGYESÍTETT BUBORÉK) ---
+    let warmHtml = '';
+    const auditStatus = Number(kitoltes.audit); 
+
     if (auditStatus === 1) {
-        // Ha a backendről jön warm szöveg, kiírjuk, amúgy adunk egy alapértelmezettet
-        const warmText = kitoltes.warm || 'Értékelését egy auditor módosításra jelölte ki. További információt a "Javaslatok" fülön talál.'; 
+        // 1. Alap üzenet (ez mindig ott lesz)
+        let combinedText = (kitoltes.warm || 'Értékelését egy auditor módosításra jelölte ki. További információt a "Javaslatok" fülön talál.').trim(); 
         
+        // Alap ikon (felkiáltójel)
+        let iconsHtml = `<div class="warm-icon" style="font-weight: bold;">!</div>`; 
+
+        // 2. Határidő hozzáadása (ha van)
+        if (kitoltes.hatarido) {
+            const hDatum = new Date(kitoltes.hatarido);
+            const ma = new Date();
+            
+            ma.setHours(0,0,0,0);
+            hDatum.setHours(0,0,0,0);
+
+            const diffTime = hDatum.getTime() - ma.getTime();
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            let napSzoveg = "";
+            if (diffDays > 0) {
+                napSzoveg = `(még ${diffDays} nap)`;
+            } else if (diffDays === 0) {
+                napSzoveg = `(ma jár le!)`;
+            } else {
+                napSzoveg = `(lejárt ${Math.abs(diffDays)} napja)`;
+            }
+
+            const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            // Hozzáadjuk a határidőt a közös szöveghez (egy a sortöréssel elválasztva)
+            combinedText += `<br><br><span style="color: #ffbd16;">Határidő:</span> ${formatDatum} ${napSzoveg}`;
+            
+            // Hozzáadjuk a naptár ikont a felkiáltójel mellé
+            iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
+        }
+
+        // 3. ÖSSZEFŰZÉS EGYETLEN KÖZÖS DOBOZBA
         warmHtml = `
-          <div class="warm" style="display: flex;">
-            <div>
-              <span class="warmnote">${warmText}</span>
-              <div>!</div>
-            </div>
+          <div class="warm warm-item" style="display: flex; align-items: center;">
+            <span class="warmnote">${combinedText}</span>
+            ${iconsHtml}
           </div>
         `;
-        
-        // Hozzáadjuk a piros inset shadow-t magához a kitoltesDiv-hez
         kitoltesDiv.style.boxShadow = 'inset 0px 0px 0px 2px #ff0000bd';
+
     } else {
-        // Ha nem 2-es az audit, rejtve marad (és keret sincs)
-        warmHtml = `
-          <div class="warm" style="display: none;">
-            <div>
-              <span class="warmnote"></span>
-              <div>!</div>
-            </div>
-          </div>
-        `;
+        warmHtml = `<div class="warm" style="display: none;"></div>`;
     }
 
     // ITT VOLT A HIBA: Hozzá kell adni a warmHtml-t a végéhez!
@@ -324,7 +387,62 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     // --- KATTINTÁS ESEMÉNY (SOR KIVÁLASZTÁSA) ---
     kitoltesDiv.addEventListener('click', async (event) => {
         if (event.target.closest('.modulebutt') || event.target.matches('input[type="checkbox"]')) return;
+let floatingWarn = document.getElementById('floating-audit-warning');
+        if (!floatingWarn) {
+            floatingWarn = document.createElement('div');
+            floatingWarn.id = 'floating-audit-warning';
+            document.body.appendChild(floatingWarn);
+        }
 
+        const auditStatus = Number(kitoltes.audit);
+
+        if (auditStatus === 1) {
+            // Szöveg kinyerése
+            const warmText = (kitoltes.warm || 'Értékelését egy auditor módosításra jelölte ki. További információt a "Javaslatok" fülön talál.').trim();
+            
+            // Határidő feldolgozása (Ugyanaz a logika, mint a buboréknál)
+            let hataridoHtml = '';
+            if (kitoltes.hatarido) {
+                const hDatum = new Date(kitoltes.hatarido);
+                const ma = new Date();
+                ma.setHours(0,0,0,0); hDatum.setHours(0,0,0,0);
+                
+                const diffDays = Math.ceil((hDatum.getTime() - ma.getTime()) / (1000 * 60 * 60 * 24));
+                let napSzoveg = diffDays > 0 ? `(még ${diffDays} nap)` : (diffDays === 0 ? `(ma jár le!)` : `(lejárt ${Math.abs(diffDays)} napja)`);
+                const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+                
+                hataridoHtml = `
+                    <div class="f-warn-date">
+                        <span class="material-symbols-outlined" style="font-size:1.2em;">calendar_clock</span>
+                        Határidő: ${formatDatum} <span style="color:white; font-weight:normal;">${napSzoveg}</span>
+                    </div>
+                `;
+            }
+
+            // A lebegő ablak HTML tartalmának összeállítása
+            floatingWarn.innerHTML = `
+                <div class="f-warn-header">
+                    <div class="title-area">
+                        <span class="material-symbols-outlined">warning</span>
+                        Értékelési visszajelzés
+                    </div>
+                    <span class="f-warn-close" onclick="document.getElementById('floating-audit-warning').style.display='none'">&times;</span>
+                </div>
+                <div class="f-warn-body">
+                    ${warmText}
+                    ${hataridoHtml}
+                    <br>
+                    <i>További információt a "javaslatok" fülön talál a "Jóváhagyásra váró értékelések" közt</i>
+
+                </div>
+            `;
+            
+            // Megjelenítjük
+            floatingWarn.style.display = 'block';
+        } else {
+            // Ha nem 1-es az audit, biztosan elrejtjük
+            floatingWarn.style.display = 'none';
+        }
         // 1. Kijelölés vizuális kezelése
         document.querySelectorAll('.meglevok.kijelolt').forEach(el => el.classList.remove('kijelolt'));
         kitoltesDiv.classList.add('kijelolt');
