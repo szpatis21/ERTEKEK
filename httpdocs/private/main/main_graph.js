@@ -2,6 +2,7 @@ import { kerdesValaszok, szovegesValaszok, honapok, napok, animateMessage } from
 import { KategoriaKezelo } from './main_quest.js';
 
 let utolsoMentettAllapot = { kerdesValaszok: {}, szovegesValaszok: {} };
+let utolsoSikeresMentesIdeje = "Még nem történt mentés";
 const mentesGomb = document.querySelectorAll('.mentesGomb');
 const urlParams = new URLSearchParams(window.location.search);
 const kitoltesId = urlParams.get('kitoltes_id');
@@ -81,8 +82,14 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
     // Ha nincs új adat
     if (!vanUjdonsag) {
         if (!logoutForm && !url) {
-            // Ez fut le, ha csak simán a Mentés gombra (mentesGomb) kattintanak
-showTooltip(event.target, "Jelenleg nincs menthető válasz!");        } else {
+            const gombElem = event.currentTarget || event.target;
+            // Ha már volt mentés, írjuk ki az idejét, így a felhasználó tudja, hogy a gép dolgozott helyette
+            let uzenet = utolsoSikeresMentesIdeje === "Még nem történt mentés" 
+                ? "Nincs menthető adat." 
+                : `Minden válasza naprakész!\n(Utolsó automatikus mentés: ${utolsoSikeresMentesIdeje})`;
+                
+            showTooltip(gombElem, uzenet);
+        } else {
             // Ez fut le, ha kilépnek vagy navigálnak
             if (logoutForm) logoutForm.submit();
             else if (url) window.location.href = url;
@@ -121,6 +128,11 @@ showTooltip(event.target, "Jelenleg nincs menthető válasz!");        } else {
         });
 
         if (!response.ok) throw new Error(`HTTP hiba!`);
+        if (logoutForm || url) {
+            if (logoutForm) logoutForm.submit();
+            else if (url) window.location.href = url;
+            return; // Kilépünk, hogy ne ugorjon fel az összesítő ablak
+        }
 
         const osszefoglaloDiv = document.createElement('div');
         osszefoglaloDiv.classList.add("osszefoglalo");
@@ -219,8 +231,12 @@ showTooltip(event.target, "Jelenleg nincs menthető válasz!");        } else {
                 doboz.innerHTML = `
                     <h2>Sikeres Mentés!</h2>
                     <p>Az alábbi <b>új és módosított</b> adatok frissültek a rendszerben:</p>
+                    <p style="font-size: 12px; color: gray; margin-top: 15px;">
+                    <i>Tipp: A rendszer 15 percenként a háttérben is automatikusan elmenti a válaszait, így adatai folyamatosan biztonságban vannak.</i>
+                    </p>
                 `;
-                
+                const most = new Date();
+                utolsoSikeresMentesIdeje = `${String(most.getHours()).padStart(2, '0')}:${String(most.getMinutes()).padStart(2, '0')}`;
                 doboz.appendChild(osszefoglaloDiv);
                 
                 const gomb = document.createElement('button');
@@ -243,7 +259,7 @@ showTooltip(event.target, "Jelenleg nincs menthető válasz!");        } else {
                 });
 
             }, 1000); // 1 másodperc halványulási idő
-        }, 1200); // 1,2 másodpercig marad tisztán látható a szöveg
+        }, 1000); // 1 másodpercig marad tisztán látható a szöveg
 
     } catch (error) {
         console.error('Mentési hiba:', error);
@@ -376,6 +392,8 @@ if (document.querySelector('#user')) {
                     if(response.ok) {
                         Object.assign(utolsoMentettAllapot.kerdesValaszok, elkuldottKerdesValaszok);
                         Object.assign(utolsoMentettAllapot.szovegesValaszok, elkuldottSzovegesValaszok);
+                        const most = new Date();
+                        utolsoSikeresMentesIdeje = `${String(most.getHours()).padStart(2, '0')}:${String(most.getMinutes()).padStart(2, '0')}`;
                     }
                 }).catch(err => console.error('Automatikus mentési hiba:', err));
             }
@@ -431,7 +449,12 @@ function showTooltip(targetElement, message) {
 const logoutForm = document.querySelector('form[action="/logout"]');
 if (logoutForm) {
     logoutForm.addEventListener('submit', function(event) {
-        mentesEsNavigalas(event, null, logoutForm);
+        const isMegtekintes = new URLSearchParams(window.location.search).get('megtekintes') === 'true';
+        
+      
+        if (kitoltesId && !isMegtekintes && mentesGomb.length > 0) {
+            mentesEsNavigalas(event, null, logoutForm);
+        } 
     });
 }
 
@@ -440,3 +463,104 @@ mentesGomb.forEach(gomb => {
         mentesEsNavigalas(event);
     });
 });
+// Diszkrét értesítés létrehozása
+function mutasdDiszkretMentes() {
+    let toast = document.getElementById('auto-mentes-toast');
+    if (toast) toast.remove();
+
+    toast = document.createElement('div');
+    toast.id = 'auto-mentes-toast';
+    toast.innerHTML = '&#10003; Mentve'; // Egy kis pipa és a szöveg
+    
+    // Stílus beállítása JS-ből (jobb alsó sarok, zöldes háttér)
+    Object.assign(toast.style, {
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        backgroundColor: 'rgba(255, 128, 0, 0.85)', 
+        color: 'white',
+        padding: '6px 14px',
+        borderRadius: '20px',
+        fontSize: '13px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+        zIndex: '9999',
+        opacity: '0',
+        transition: 'opacity 0.5s ease-in-out',
+        pointerEvents: 'none' // Át lehessen kattintani rajta, ha pont alatta van valami
+    });
+
+    document.body.appendChild(toast);
+
+    // Beúszás
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+    });
+
+    // 3 másodperc után elhalványul és törlődik
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            if (toast.parentNode) toast.remove();
+        }, 500); 
+    }, 3000); 
+}
+
+// Automatikus háttérmentés 15 percenként (900 000 ms)
+setInterval(() => {
+    if (!userId || !kitoltesId) return;
+
+    const isMegtekintes = new URLSearchParams(window.location.search).get('megtekintes') === 'true';
+    if (isMegtekintes) return;
+
+    const ujKerdesValaszok = {};
+    const ujSzovegesValaszok = {};
+
+    for (const [kId, valasz] of Object.entries(kerdesValaszok)) {
+        if (utolsoMentettAllapot.kerdesValaszok[kId] !== valasz) {
+            ujKerdesValaszok[kId] = valasz;
+        }
+    }
+
+    for (const [kId, valasz] of Object.entries(szovegesValaszok)) {
+        const trimValasz = valasz?.trim() || '';
+        const regiValasz = utolsoMentettAllapot.szovegesValaszok[kId]?.trim() || '';
+        if (regiValasz !== trimValasz) {
+            ujSzovegesValaszok[kId] = trimValasz;
+        }
+    }
+
+    const vanUjdonsag = Object.keys(ujKerdesValaszok).length > 0 || Object.keys(ujSzovegesValaszok).length > 0;
+
+    if (vanUjdonsag) {
+        const datum2 = getHelyiIdo();
+        const szazalek = window.ertekelesJSON ?? null;
+
+        const elkuldottKerdesValaszok = { ...ujKerdesValaszok };
+        const elkuldottSzovegesValaszok = { ...ujSzovegesValaszok };
+
+        fetch('/api/save-valaszok', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                kitoltesId: kitoltesId,
+                kerdesValaszok: elkuldottKerdesValaszok,
+                szovegesValaszok: elkuldottSzovegesValaszok,
+                userId: userId,
+                ido: datum2,
+                szazalek  
+            })
+       }).then(response => {
+            if (response.ok) {
+                Object.assign(utolsoMentettAllapot.kerdesValaszok, elkuldottKerdesValaszok);
+                Object.assign(utolsoMentettAllapot.szovegesValaszok, elkuldottSzovegesValaszok);
+                
+                // --- EZ A KÉT SOR HIÁNYZOTT ---
+                const most = new Date();
+                utolsoSikeresMentesIdeje = `${String(most.getHours()).padStart(2, '0')}:${String(most.getMinutes()).padStart(2, '0')}`;
+                
+                // Itt hívjuk meg a diszkrét értesítést
+                mutasdDiszkretMentes();
+            }
+        }).catch(err => console.error('Hiba az automatikus mentés során:', err));
+    }
+}, 900000);//15 perc

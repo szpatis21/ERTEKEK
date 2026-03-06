@@ -9,12 +9,14 @@ a:link, a:visited {color: white;}
     #log button:hover{
         background-color: #ff7c00; color: white; transform: scale(1.05);
     }
-    #regi {background-color: white;}
+    #regi {background-color: white; margin-top: 5vh;min-height: 20vh;}
 .opening {display: grid;
     grid-auto-flow: row;
     grid-template-columns: repeat(2, 50%);
     justify-items: center;
-    margin: 45px 40px;
+    margin: 1vh;
+    margin-top: 3vh;
+    backdrop-filter: blur(4px);
     position: relative;
 }
 .inputs input {
@@ -289,7 +291,7 @@ border: none;
     #fo{width: 400px !important; margin: auto !important;}
 
 
-    @media (max-width: 950px) {
+    @media (max-width: 900px) {
         .choos label {margin: auto};
         #alszamla, #szamla2, #alszamla2 {margin: 10px;}
         .kulso{width: 27vh;height: 27vh;}
@@ -297,11 +299,14 @@ border: none;
         .szoveg input{border: #ff7c00 solid 1px;}
            #llog{justify-content: center;
     align-items: center;}
+    .berorr {font-size: small !important; }
+    .berorr ul {font-size: smaller !important;}
        #log{justify-content: center;
     align-items: center;}
     .opening{    display: flex;
     justify-content: center;
-    flex-direction: row;
+    flex-direction: column;
+    margin: 1vh;
     align-content: center;
     align-items: center;}
     #log label{    display: flex;
@@ -315,8 +320,8 @@ border: none;
  #fo{width: 250px !important; margin: auto !important;}
 
 article{margin: auto;}
-        #llog, #whbutt {font-size: 80%; width: fit-content;height: fit-content;}
-        #whbutt{font-size: 70%; margin-top: 0px; padding: 4px;}
+        #llog, #whbutt {font-size: small; width: fit-content;height: fit-content;}
+        #whbutt{font-size: small; margin-top: 0px; padding: 4px;}
         .opening {column-gap: 15px;grid-template-rows: repeat(2, 50%);}
         .inputs input{width: 100px; margin: 4px; padding: 5px;}
         #regi{font-size: medium;}
@@ -416,17 +421,15 @@ main{width: 100% !important;}
     margin-top: 25px;
     flex-direction: column;}
  body::before {
-    content: '';
+    content: "";
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-
-    height: 100vh;
-    background-image: url('media/dragon-scales.svg');
-   background-repeat: no-repeat;
-    z-index: -1;
-    will-change: transform;
+    inset: 0;
+    z-index: -2;
+    background-image: url(media/dragon-scales.svg);
+    background-repeat: repeat;
+    opacity: 1 !important;
+    filter: contrast(120%);
+        background-size: revert-layer !important;
 } 
     html,body{height:100%}
     body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
@@ -468,3 +471,89 @@ main{width: 100% !important;}
 
 
     }
+/* --- LEBEGŐ KÁRTYÁK SZEKCIÓ --- */
+.landing-features {
+    width: 100%;
+    margin: 0px auto;
+    text-align: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.features-title {
+       color: whitesmoke;
+    font-size: 2rem;
+    margin-top: 0px;
+    margin-bottom: 20px;
+    font-family: "Montserrat Subrayada", sans-serif;
+    text-shadow: 0px 0px 7px rgb(255 255 255 / 80%);
+}
+
+
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+}
+
+.feature-card {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 30px 20px;
+    flex: 1 1 300px;
+    max-width: 350px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.feature-card:hover {
+    transform: translateY(-15px);
+    border-color: rgba(255, 124, 0, 0.5);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.7), 0 0 20px rgba(255, 124, 0, 0.2);
+    background: rgba(20, 20, 20, 0.7);
+}
+
+.card-icon {
+   width: 70px;
+    height: 70px;
+    background: rgba(255, 124, 0, 0.15);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    border: 1px solid rgb(255 255 255 / 30%);
+    transition: transform 0.3s ease;
+    box-shadow: 0px 0px 5px 0px white;
+}
+
+.feature-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: rgba(255, 124, 0, 0.25);
+}
+
+.card-icon .material-symbols-outlined {
+    font-size: 35px;
+    color: white;
+}
+
+.feature-card h3 {
+    color: whitesmoke;
+    margin: 0 0 15px 0;
+    font-size: 1.3rem;
+    letter-spacing: 1px;
+}
+
+.feature-card p {
+    color: #b3b3b3;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}

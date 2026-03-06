@@ -362,8 +362,7 @@ padding: 15px};
    border-bottom: #ff000087 5px solid;
     border-radius: 15px;     
     background: white; z-index: 20;
-    margin: 3vh 0vh;
-  margin-bottom: 0vh;}
+ }
 .tart{display: flex;
       flex-direction: column;
       justify-content: center;
@@ -425,7 +424,6 @@ padding: 15px};
     height: 24px;
     font-size: small;}
   #go button, #go2 button, #go4 button, .gobut5{    
-   margin-top: 4vh !important;
     box-shadow: #ffbd1647 0px 0px 24px 3px;
     align-content: center;
     background: #f1f1f1;
@@ -840,7 +838,9 @@ padding: 1.5%;
     font-size: 14px;
     cursor: pointer;
     border-radius: 7px;
+    
 }
+#go{justify-content: space-around;}
 #go .material-symbols-rounded,#gobut2 .material-symbols-rounded , #gobut4 .material-symbols-rounded,.gobut5 .material-symbols-rounded {    position: absolute;
     color: #ff66001a;
     top: 50%;

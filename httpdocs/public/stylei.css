@@ -365,7 +365,7 @@ main{width: 100% !important;}
 } 
     html,body{height:100%}
     body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
-        color: #111; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}
+        color: orange; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}
 
     /* SVG háttér (helyezd a dragon-scales.svg-t a gyökérbe vagy módosítsd az elérési utat) */
     body::before{

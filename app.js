@@ -139,8 +139,8 @@ app.use((err, req, res, next) => {
 const addKitoltesRoute = require('./modulok/felhasznalomodul');
     app.use('/api', addKitoltesRoute(db));
 // Autentikációs Middleware (bejelentkezés ellenőrzése)
-const aiJellemzes = require('./modulok/aiJellemzesModul');// csak bejelentkezve:
-app.use('/api', authMiddleware, aiJellemzes(db)); // <<< ÁT KELL ADNI A 'db' VÁLTOZÓT!
+const aiJellemzes = require('./modulok/aiJellemzesModul');
+app.use('/api', authMiddleware, aiJellemzes(db)); 
 //BEJELENTKEZTETÉS        
 // Autentikációs Middleware (bejelentkezés ellenőrzése)
 function authMiddleware(req, res, next) {

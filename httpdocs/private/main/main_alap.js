@@ -122,55 +122,65 @@ for (const it of set) {
 }
 function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
-  inactivityTimer = setTimeout(async () => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const kitoltesId = urlParams.get('kitoltes_id');
-
-    // Módosított feltétel: ha van kérdés válasz VAGY szöveges válasz
-    if (kitoltesId && (Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0)) {
-        try {
-            // Előkészítjük a hiányzó változókat
-            const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
-            const szazalek = window.ertekelesJSON ?? null;
-
-            // Szöveges válaszok formázása (ahogy a main_graph.js is csinálja)
-            const teljesSzovegesValaszok = {};
-            Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
-                teljesSzovegesValaszok[kerdesId] = valasz.trim();
-            });
-
-            // Teljes, hiánytalan API hívás
-            const response = await fetch('/api/save-valaszok', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    kitoltesId: kitoltesId, 
-                    kerdesValaszok: kerdesValaszok,
-                    szovegesValaszok: teljesSzovegesValaszok,
-                    userId: userId,
-                    ido: datum2,
-                    szazalek: szazalek
-                })
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                console.log("Automatikus mentés sikeres!");
-            } else {
-                console.error('Automatikus mentési hiba:', data.message);
-            }
-        } catch (error) {
-            console.error('Fetch hiba az automatikus mentés során:', error);
+    inactivityTimer = setTimeout(async () => {
+        
+        // 1. Ellenőrizzük, hogy van-e hálózat (felébredés utáni állapot kivédése)
+        if (!navigator.onLine) {
+            console.warn("Nincs internetkapcsolat. Az automatikus kiléptetés és mentés megszakítva.");
+            alert("A hálózati kapcsolat megszakadt (például a gép alvó állapota miatt). Kérjük, frissítse az oldalt!");
+            return; // Megállítjuk a futást, nem küldünk semmit a semmibe
         }
-    }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const kitoltesId = urlParams.get('kitoltes_id');
+
+        if (kitoltesId && (Object.keys(kerdesValaszok).length > 0 || Object.keys(szovegesValaszok).length > 0)) {
+            try {
+                const datum2 = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                const szazalek = window.ertekelesJSON ?? null;
+
+                const teljesSzovegesValaszok = {};
+                Object.entries(szovegesValaszok).forEach(([kerdesId, valasz]) => {
+                    teljesSzovegesValaszok[kerdesId] = valasz.trim();
+                });
+
+                const response = await fetch('/api/save-valaszok', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        kitoltesId: kitoltesId, 
+                        kerdesValaszok: kerdesValaszok,
+                        szovegesValaszok: teljesSzovegesValaszok,
+                        userId: userId,
+                        ido: datum2,
+                        szazalek: szazalek
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    console.log("Automatikus mentés inaktivitás miatt sikeres!");
+                } else {
+                    console.error('Automatikus mentési hiba:', data.message);
+                }
+            } catch (error) {
+                // Ha itt esik el (pl. az utolsó pillanatban megy el a net), kulturáltan kiírjuk
+                console.warn('Nem sikerült az inaktivitási mentés (Hálózati hiba):', error);
+            }
+        }
 
         // Logout kérés küldése a backend felé
         fetch('/logout', { method: 'POST' })
             .then(() => {
                 alert('Automatikusan kijelentkeztettük tétlenség miatt. Válaszait mentettük. Várjuk vissza.');
-                window.location.href = '/index.html'; // Átirányítás az index oldalra
+                window.location.href = '/index.html'; 
             })
-            .catch(err => console.error('Hiba a kijelentkezés során:', err));
+            .catch(err => {
+                console.warn('Nem sikerült a szerver oldali kijelentkezés (Hálózati hiba):', err);
+                // Ha elszáll a fetch, legalább a felületről dobjuk ki a felhasználót
+                window.location.href = '/index.html'; 
+            });
+            
     }, 2400000); // 40 perc inaktivitás
 }
         // Minden aktivitásnál újraindítja az időzítőt

@@ -63,7 +63,7 @@ export async function initAside() {
                                     <input id="megnevezes" type="text" required placeholder="Pl: év végi értékelés, jelentés, stb.">
                                         </div>
                                     </div>
-                                    <div id="go" style="flex-direction: column-reverse;">
+                                    <div id="go" style="height:100%; flex-direction:column">
                                         <div class="kijelentem">
                                             <label for="kijelentem">
                                                 „Nyilatkozom, hogy rendelkezem a kitöltésben érintett személyek személyes adatainak jogszerű kezeléséhez szükséges
@@ -75,16 +75,16 @@ export async function initAside() {
                                             <input type="checkbox" name="kijelentem" id="kijelentem">
                                         </div>
                             <div class="mas">
-                                    <div style="margin-top:6vh" id="masik">
+                                    <div id="masik">
                                             <p>Keressünk...</p>
                                         </div>
                                              
-                                        <button id="gobut" type="submit" style="    box-shadow: #ffbd16 0px 0px 35px 25px;">
+                                        <button id="gobut" type="submit" style="    box-shadow: #ffbd1673 0px 0px 11px 11px;">
                                             <span class="material-symbols-rounded">edit</span>
                                             <p>Indítás</p>
                                         </button>
                                         
-                                             <div id="egyik" style="margin-top:3vh">
+                                             <div id="egyik">
                                             <p>...Értékeket</p>
                                         </div>
                                     </div>

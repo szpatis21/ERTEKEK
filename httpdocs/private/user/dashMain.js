@@ -5,7 +5,7 @@ import { loadInfoAndInit } from '../info/infoLoader.js'; //Hírek és gyk betöl
 import { betoltKategoriakChartSzinek } from '../main/main_alap.js';
 import {initAside} from './dashAside.js';
 import './dashAI.js';
-import { initAuditLista } from '../elemzo/dashEmain.js';
+import { initAuditLista } from '../elemzo/dashAudit.js';
 
 import{showAlert} from "/both/alert.js"
 

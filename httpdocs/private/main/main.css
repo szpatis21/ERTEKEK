@@ -569,8 +569,8 @@ align-items: center;
     }
     .logokulso{border-radius: 30px;
     border: 2px solid grey;
-    width: 65vh !important;
-    height: 65vh !important;
+    width: 70vh !important;
+    height: 70vh !important;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -831,14 +831,7 @@ font-size: x-small;
     font-size: small;
 }
 .modal-content p{font-size: small; font-family: system-ui;}
-  @media (max-width: 900px) {
-.modulebutt .material-symbols-outlined{display: none;}
 
-  }
-    @media (max-width: 1024px) {
-#main-container{min-height: fit-content;}
-
-  }
 
 
   .overlayment{position:fixed;top:0;left:0;width:100%;height:100%;backdrop-filter: blur(2px);
@@ -848,8 +841,8 @@ font-size: x-small;
     padding: 3vh;
     border-radius: 18px;
     text-align: center;
-    width: 60vh;
-    height: 60vh;
+    width: 65vh;
+    height: 65vh;
     display: flex;
       box-shadow: 0px 0px 15px 3px #000000c9;
     font-family: system-ui;
@@ -859,7 +852,13 @@ font-size: x-small;
     justify-content: center;}
   .dobozment h2 {color:#ff9800; margin-top:0; font-family: 'Montserrat Subrayada'}
   .dobozment p{color:#333; font-size:16px; margin-bottom:15px;}
-  .dobozment button {background:#ff6500; color:white; padding:12px 30px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; font-size:15px; width:20vh;     font-family: 'Montserrat Subrayada';
+  .dobozment button {    border: 1px solid #ffffff; transition: all 0.4s; background:#ff6500; color:white; padding:12px 30px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:15px; width:20vh;     font-family: 'Montserrat Subrayada';
+}
+.dobozment button:hover{
+      background: #ffffff;
+    color: #ffab02;
+    border: 1px solid #ffb700;
+    box-shadow: 0px 0px 5px 1px;
 }
 .mentes-osszefoglalo {
     max-height: 40vh;
@@ -927,3 +926,31 @@ text-shadow: 0px 0pc 15px;
 position: absolute;
 transform: translate(-50%,-50%);
 transition:opacity 1s ease-in-out}
+
+  @media (max-width: 900px) {
+.modulebutt .material-symbols-outlined{display: none;}
+.dobozment{width: 50vh !important; height: 50vh !important;}
+.dobozment h2{ font-size: medium;}
+.dobozment p {font-size: smaller; margin: 0%;}  .logokulso {
+    width: 55vh !important;
+    height: 55vh !important;}
+    .osszefoglalo {
+        max-height: 15vh;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: x-small;
+    margin-bottom: 5px;}
+    .dobozment button {
+    padding: 7px 20px;
+    font-size: 13px;
+    width: 20vh;
+}
+.nagy{font-size: 3rem;}
+.dobozment i {font-size: 10px;}
+  }
+
+
+    @media (max-width: 1024px) {
+#main-container{min-height: fit-content;}
+
+  }

@@ -96,19 +96,18 @@ body::before {
   .mas{
     display: flex; 
     justify-content: space-evenly;
-    margin-top: 3vh;
     font-family: "Montserrat Subrayada", sans-serif;
     color:white; 
 text-shadow: 0px 0px 3px #ffffffec;
     font-size: smaller;  
   font-weight: normal;}
-  .mas div{backdrop-filter: blur(2px);
+  .mas div{
     height: fit-content;
-    border: 1px solid #ffffff69;
-    padding: 0px 10px;
-    border-radius: 11px;
+    margin: auto;
+    color: #ff6500;
+      text-shadow: 4px 4px 4px orange;
     cursor: auto;
-  background: #ff7001c2}
+  background: #00000000}
   .mas:hover #egyik {
     /* ...a bal oldali div jobbra mozdul 2 pixelt. */
     transform: translateX(-25px);
@@ -277,8 +276,10 @@ ul {
     padding-left: 20px;
 }
 form{display: flex;justify-content:center}
-#ujinek form{
-    flex-direction: column;}
+#uj {height: 100% !important;}
+#ujinek {height: 100%;}
+#ujinek form{    justify-content: space-between;height: 100%;
+    flex-direction: column; }
 .kerdes-container{display: flex;
       flex-wrap: wrap;}
       .custom-tooltip {
@@ -332,7 +333,7 @@ form{display: flex;justify-content:center}
         height: 25px;
     border-color: #ffaa00;
     cursor: pointer;
-    color: #ffaa00;
+    color: #4b5563;
     font-family: Arial, Helvetica, sans-serif;
     border-radius: 6px;
     margin-bottom: 5px;}

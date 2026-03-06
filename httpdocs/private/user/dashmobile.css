@@ -8,6 +8,7 @@
     margin: 1vh;
     gap: 1vh;
   }
+  #egyik, #masik{font-size: smaller;}
   .savdiv{height: fit-content;}
     #men{margin: auto;}
     .meglevok{width: 18vh; height: 18vh;     font-size: 80%;
@@ -57,9 +58,11 @@
     .szin-kocka{    width: 19px;
     height: 19px;}
         #szuro, #kereso-tipus{width: fit-content; font-weight: normal; font-size: smaller;border-radius: 7px; }
-    #go button {height: 40px; margin: auto};
+    #go button {height: 30px; margin: auto; font-size: small};
     .meglevok{width: 15vh;
       height: 15vh;}
+      #uj{width: 100%;}
+      #go label {     font-size: x-small;}
       #msg{
         right: 0%;
         bottom: 0%;

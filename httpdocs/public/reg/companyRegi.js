@@ -24,7 +24,7 @@ regi0.addEventListener("click", function(){
  */      regi.classList.add('fade');  
      regi.scrollIntoView({
   behavior: "smooth",   // vagy "auto"
-    block: "start" 
+    block: "nearest" 
       })
     setTimeout(function() {
         regi.classList.add('fade-in'); 
