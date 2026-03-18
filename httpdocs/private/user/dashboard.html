@@ -72,8 +72,38 @@
     color: #4b5563;
     
     }
-canvas {image-rendering: auto;}
+    .audit-slider-panel{
+        padding: 0px;
+    }
+     .audit-slider-controls .search-bar{display: flex;
+    width: 80% !important;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;}
+    .audit-lista{height: 100%;}
+    .audit-slider-container {
+    height: 100%;}
+    .creator-wrapper{height: 100%;}
+    .inner-div-notok .tarolo, .inner-div-ok .tarolo {    width: 98%;
+  
+    height: 98%;
+    margin: auto;margin-top: 1%;}
+    .helyi-endezo {top: -1vh}
 
+    .audit-slider-controls{margin-bottom: 0px; width: 100%;}
+    .inner-div.inner-div-ok, .inner-div.inner-div-notok {height: 100%;
+    border: none;}
+    #belsosearch{width: 100%;}
+    .creator-list{display: flex !important;
+    max-height: 100%;
+    height: 60vh;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: flex-start; }
+    .audit-slider-viewport{height: 100%;}
+canvas {image-rendering: auto;}
+#mozgo2{display: none !important;}
 #fulek { grid-area: b; }
 .munka { grid-area: a; }
 /* Nagy: 3 oszlop egy sorban */
@@ -81,6 +111,7 @@ canvas {image-rendering: auto;}
 #lapok { grid-area: b; }
 .main { grid-area: a; }
 .savos { grid-area: c; }
+
 
 </style>
 </head>
@@ -131,9 +162,9 @@ canvas {image-rendering: auto;}
     <article id="lapok">
      
                 <div id="lapozo">
-                    <div class="grap">egyéni értékelés</div>
-                    <div class="gyik aktiv">GY.I.K.</div>
-                    <div class="sta">csoportos értékelés</div>
+                  <button class="grap aktiv" data-target="maininf">Egyéni Értékelés</button>
+                    <button class="sta" data-target="osszesitett">Csoportos Értékelés</button>
+                    <button class="gyik" data-target="gyik">GYIK</button>
                 </div>
                 <div id="fulek">
                     <div id="maininf" class="outer-div">

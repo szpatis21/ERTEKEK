@@ -29,10 +29,38 @@
         .cheking{display: flex !important;}
 #endezo{display: none;}
 .tarolo{justify-content: flex-end;}
-        #mozgo {display: none;}
+        #mozgo {display: none !important;}
+        
 .olvaso{justify-content: flex-start; gap:2vh}
 .warmnote,.warmnote2{    position: absolute;
 }
+.udv{display: none;}
+.swicsi,.swics{display: none;}
+.swicsi2,.swicsi3{
+        background: white;
+    border: 2px solid orange;
+    padding: 3px;
+    cursor: pointer;
+    box-shadow: 2px 2px 2px 1px #00000029;
+    border-radius: 8px;
+    margin: 3px;
+    transition: all 0.3s;
+}
+#tartalom2{
+     padding: 3vh;display: flex;  width: 100%; gap: 15px; padding-top: 0px;}
+.swicsi2:hover,.swicsi3:hover{
+    background-color: orange; color: white;
+}
+#statisztika{flex-direction: column !important; padding: 0% 3%;}
+#stat-info-box{width: 100%; margin-top: 3px;}
+.audit-actions{
+    justify-content: space-evenly !important;}
+
+.search-bar{display: flex;
+    flex-direction: row;
+    align-items: center;
+    }.belsosearch{width: 100%;}
+.aktiv-tartalom h3{margin: 5px;}
 </style>
 </head>
 <body>
@@ -48,7 +76,7 @@
             <div class="munka">
                 <div class="olvaso" style="height: 100%;"> 
                       
-                    <div class="kozep" style="height: 15%;">
+                     <div class="kozep" style="display: none;">
                         <div class="udv">
                             <div class="logo">
                                 <div> Kedves
@@ -59,9 +87,9 @@
                             <div class="kozepb">
                                 <div class="holvagyok"></div>
                             </div>
-                        </div>
+                        </div> 
                     </div>
-                        <div class="also" style="height: 80%;">
+                        <div class="also" style="height: 100%;">
                             <div class="outer-div">
                                 <div class="inner-div"></div>
                                 </div>
@@ -72,12 +100,16 @@
     </article>
         <article id="lapok">
      
-                <div id="lapozo">
-                    <div class="grap">egyéni értékelés</div>
-                    <div class="gyik aktiv">GY.I.K.</div>
-                    <div class="sta">csoportos értékelés</div>
-                </div>
+  <div id="lapozo">
+    <button class="grap aktiv" data-target="maininf">Egyéni teljesítmény</button>
+    <button class="sta" data-target="osszesitett">Csoportos teljesítmény</button>
+    <button class="gyik" data-target="gyik">GYIK</button>
+    <button class="lista" data-target="lista">Lista</button>
+</div>
+
+
                 <div id="fulek">
+                    <div id="lista"></div>
                     <div id="maininf" class="outer-div">
                            <div class="muveletek">
            
@@ -393,8 +425,9 @@
             <div class="cim" id="accunt">Fiókom</div>
         </div>       
         <div class="gomb" id="hozzaj0">                                
-            <div class="cim" id="hozzaj">Javaslatok</div>
+            <div class="cim" id="hozzaj">Auditáció</div>
         </div>   
+       
     </article>  
 </div>            
    <div id="mainart"><div id="seh"></div>
@@ -432,3 +465,5 @@
 
 </body>
 </html>
+
+

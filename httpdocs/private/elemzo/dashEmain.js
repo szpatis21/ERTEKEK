@@ -1,14 +1,20 @@
 import { loadInfoAndInit } from '../info/infoLoader.js';
-import { initOlvas, initFrissites, initTorol } from '/private/user/dashCRUD.js'; // Importáld a frissítést és törlést is
-import { monitorozCheckek,loadColorMaps } from '/private/user/dashStatic.js'; // <-- Importáld a figyelőt
-import{showAlert} from "/both/alert.js"
+import { initOlvas, initFrissites, initTorol } from '/private/user/dashCRUD.js'; 
+import { monitorozCheckek, loadColorMaps } from '/private/user/dashStatic.js'; 
+import { showAlert, customConfirm, customDatePrompt } from "/both/alert.js";
 import { initAuditLista } from './dashAudit.js';
-
 
 console.log("Elemző modul aktív");
 
 // Globális változók, amiket később más modulok is használhatnak
 export let modulId, modulNev, modulLeiras, userId, userName, intezmeny, intezmeny_id;
+
+// --- EZ HIÁNYZOTT: A globális függvény, amit a dashAside.js meghív a fül váltásakor! ---
+window.renderAuditListaDOM = () => {
+    if (window.elemzoKitoltesek) {
+        initAuditLista(window.elemzoKitoltesek);
+    }
+};
 
 // Betöltés indul
 loadInfoAndInit();
@@ -57,20 +63,18 @@ async function loadAllKitoltesek() {
         }
 
         const letrehozva = new Date().toISOString().split('T')[0];
-        
         const adminKitoltesek = kitoltesek.filter(k => k.role === 'admin');
         
-        // --- 1. MÓDOSÍTÁS: Elmentjük a tömböt globálisan, hogy a menü kattintáskor is meglegyen ---
+        // Elmentjük a tömböt globálisan, hogy a menü kattintáskor is meglegyen
         window.elemzoKitoltesek = adminKitoltesek;
 
         // Lista generálása az eredeti nézethez
         initOlvas(adminKitoltesek, letrehozva, { groupByCreator: true, isElemzo: true });
-        
         initFrissites({ userId, letrehozva });
         initTorol();
         monitorozCheckek(); 
 
-        // --- 2. MÓDOSÍTÁS: Meghívjuk rögtön a betöltéskor is ---
+        // Meghívjuk rögtön a betöltéskor is
         initAuditLista(adminKitoltesek);
 
     } catch (error) {
@@ -78,67 +82,103 @@ async function loadAllKitoltesek() {
     }
 }
 
-// --- 3. ÚJ RÉSZ: Figyeljük, ha az Elemző rákattint az "Engedélyek" gombra ---
-document.addEventListener('click', (e) => {
-    // Ha az id="hozzaj" (vagy a szülője) gombra kattintanak a bal menüben
-    if (e.target.closest('#hozzaj') || e.target.closest('#hozzaj0')) {
-        // Várunk egy picit (150ms), hogy a dashAside.js biztosan legenerálja a HTML konténereket
-        setTimeout(() => {
-            if (window.elemzoKitoltesek) {
-                initAuditLista(window.elemzoKitoltesek);
-            }
-        }, 150);
-    }
-});
-
-
-// (Itt folytatódik a kódod az export function initAuditLista(kitoltesek) résszel)
-// Új függvény az Audit/Engedélyek listák generálására
-
-document.addEventListener('change', async (e) => {
-    if (e.target.id === 'audit-calendar') {
-        const kivalasztottDatum = e.target.value; // pl: "2026-06-01"
-        
-        // Megkeressük a kijelölt értékelést
+// --- ÚJ HATÁRIDŐ GOMB ESEMÉNY (Custom Prompttal) ---
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('#calendar-btn');
+    
+    if (btn) {
+        // 1. Megkeressük a kijelölt értékelést a DOM-ban
         const kijeloltSor = document.querySelector('.meglevok.kijelolt');
+        
         if (!kijeloltSor) {
             showAlert('Kérjük, előbb válasszon ki egy értékelést!');
-            e.target.value = ''; // Nullázzuk az inputot
             return;
         }
 
+        // 2. Adatok kinyerése a dataset-ből
         const kitoltesId = kijeloltSor.dataset.kitoltesId;
+        const currNev = kijeloltSor.dataset.nev || 'Ismeretlen';
+        const currIdoszak = kijeloltSor.dataset.periodus || '';
+        const currTipus = kijeloltSor.dataset.megnev || '';
+        const teljesNev = `${currNev} (${currIdoszak} - ${currTipus})`;
 
-        if (kivalasztottDatum) {
-            console.log(`Dátum kiválasztva: ${kivalasztottDatum}, ID: ${kitoltesId}`);
+        // 3. Dátum bekérése a naptáras ablakkal
+        const valasztottDatum = await customDatePrompt(teljesNev);
+        
+        if (!valasztottDatum) return; 
+
+        // 4. Megerősítő ablak
+        const confirmMsg = `Biztos, hogy beállítja a(z) <b>${valasztottDatum}</b> határidőt a(z) <b>${teljesNev}</b> értékeléshez?<br><br><span style="font-size:0.85em; color:gray;">Az értékelő kollégát erről e-mailben értesítjük.</span>`;
+        const megerosites = await customConfirm(confirmMsg);
+
+        if (!megerosites) return; 
+
+        // 5. Backend hívás
+        try {
+            const response = await fetch('/api/set-audit-deadline', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    audit_id: kitoltesId,           
+                    user_audit: userId,             
+                    audit_modul_id: modulId,        
+                    audit_int_id: intezmeny_id,     
+                    hatarido: valasztottDatum       
+                })
+            });
             
-            // Kiírjuk a UI-ra a spenbe szép magyar formátumban
-            const hataridoSpan = document.getElementById('akthat');
-            const hDatum = new Date(kivalasztottDatum);
-            if (hataridoSpan) {
-                hataridoSpan.textContent = hDatum.toLocaleDateString('hu-HU', {
-                    year: 'numeric', month: 'short', day: 'numeric'
-                });
+            const data = await response.json();
+            
+            if (data.success) {
+                showAlert('Határidő sikeresen beállítva!');
+                
+                // Vizuális frissítések a felületen
+                const hataridoSpan = document.getElementById('akthat');
+                const hDatum = new Date(valasztottDatum);
+                if (hataridoSpan) {
+                    hataridoSpan.textContent = hDatum.toLocaleDateString('hu-HU', {
+                        year: 'numeric', month: 'short', day: 'numeric'
+                    });
+                }
+                
+                kijeloltSor.classList.add("hatarido");
+                kijeloltSor.dataset.auditId = "1";
+                
+                setTimeout(() => {
+                    getUserAndLoadAllKitoltesek();
+                }, 1500);
+
+            } else {
+                showAlert('Hiba történt: ' + data.message);
             }
-            
-            // IDE JÖN MAJD A FETCH (Adatbázis mentés)
+        } catch (error) {
+            console.error('Fetch hiba:', error);
+            showAlert('Szerver hiba történt a határidő mentése során.');
         }
     }
 });
-document.addEventListener('click', (e) => {
-    // Ha a felhasználó a span-ra kattint
-    if (e.target.id === 'calendar-btn') {
-        const dateInput = document.getElementById('audit-calendar');
-        
-        if (dateInput) {
-            try {
-                // Ez a modern, hivatalos módja a naptár szoftveres megnyitásának
-                dateInput.showPicker(); 
-            } catch (error) {
-                // Biztonsági tartalék (fallback) régebbi böngészőkhöz
-                dateInput.focus();
-                dateInput.click();
-            }
-        }
+
+// --- AUDIT FÜLEK LOGIKÁJA ---
+document.addEventListener("DOMContentLoaded", () => {
+    // Kiválasztjuk a gombokat és a mozgatható elemeket
+    const tabButtons = document.querySelectorAll(".audit-tab-btn");
+    const sliderBg = document.querySelector(".audit-tab-slider-bg");
+    const contentSlider = document.querySelector(".audit-content-slider");
+
+    function initAuditTabs() {
+        if (!tabButtons.length) return;
+
+        tabButtons.forEach(button => {
+            button.addEventListener("click", () => {
+                tabButtons.forEach(btn => btn.classList.remove("active"));
+                button.classList.add("active");
+
+                const index = parseInt(button.dataset.index);
+                sliderBg.style.transform = `translateX(${index * 100}%)`;
+                contentSlider.style.transform = `translateX(-${index * 50}%)`;
+            });
+        });
     }
+
+    initAuditTabs();
 });

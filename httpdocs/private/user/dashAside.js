@@ -104,12 +104,7 @@ export async function initAside() {
                     <br> Töltse ki a vizsgálatra vonatkozó adatokat, majd kattintson az <b>"Indítás"</b>  gombra. Így rögtön az értékelő modulba kerül.
                 </p>
             </div>
-            <div class="infocard">
-                <h3>Hol fogom látni a most létrehozott értékelést?</h3>
-                <p>                                    
-                    A főoldalon az "ÉRTÉKEIM" menüpont alatt (baloldali sáv).
-                </p>
-            </div>
+            
             <div class="infocard">
                 <h3>Mire jók a bekért adatok?</h3>
                 <p>                                    
@@ -245,41 +240,109 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
 
                     if (isElemzo) {
                         return `
-                         <div id="tartalom2">
-                                    <div class="audit-lista">
-                                        <h3>Jóváhagyott értékelések</h3>
-                                        <div class="audit-list-container outer-div">
-                                            <div class="inner-div inner-div-ok">
+                         <div class="audit-tab-container">
+                            <div class="audit0">
+                                <div class="audit-tabs">
+                                    <div class="audit-tab-slider-bg"></div>
+                                    <button class="audit-tab-btn activex" data-index="0">Jóváhagyásra váró értékelések</button>
+                                    <button class="audit-tab-btn" data-index="1">Jóváhagyott értékelések</button>
+                                </div>
+                                <div id="tomlo">
+                                <div class="search-bar">
+                                    <span class="material-symbols-rounded search-icon">search</span>
+                                    <div class="belsosearch">
+                                        <select id="kereso-tipus" class="search-select">
+                                            <option value="nev">Név</option>
+                                            <option value="idoszak">Időszak</option>
+                                            <option value="megnevezes">Típus</option>
+                                            <option value="all">Mind</option>
+                                        </select>
+                                        <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                                    </div>
+                                </div>
+                             </div>
+
+
+                            </div>
+                            
+                            <div id="tartalom2" class="audit-content-wrapper">
+                                <div class="audit-content-slider">
+                                    
+                                    <div class="audit-slide">
+                                        <div class="audit-lista">
+                                            <div class="audit-list-container">
+                                                <div class="inner-div-notok">
+                                                    </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="audit-lista">
-                                        <h3>Jóváhagyásra váró értékelések</h3>
-                                        <div class="audit-list-container outer-div">
-                                            <div class="inner-div inner-div-notok">
+
+                                    <div class="audit-slide">
+                                        <div class="audit-lista">
+                                            <div class="audit-list-container">
+                                                <div class="inner-div-ok">
+                                                    </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>`;
+
+                                </div>
+                            </div>
+                        </div>`;
                     } else {
                         // --- Y: NORMÁL FELHASZNÁLÓI NÉZET ---
                         return `
                         <div id="tartalom2">
-                                    <div class="audit-lista">
-                                        <h3>Jóváhagyott értékelések</h3>
-                                        <div class="audit-list-container outer-div">
-                                            <div class="inner-div inner-div-ok">
+                            <div class="audit-slider-controls audit0">
+                             <div class="audit-tabs">
+                                <button class="audit-tab-btn activex" data-slide="0">
+                                    Jóváhagyásra váró értékelések
+                                </button>
+                                <button class="audit-tab-btn" data-slide="1">
+                                    Jóváhagyott értékelések
+                                </button>
+                                 </div>
+
+                                <div id="tomlo">
+                                <div class="search-bar">
+                                    <span class="material-symbols-rounded search-icon">search</span>
+                                    <div class="belsosearch">
+                                        <select id="kereso-tipus" class="search-select">
+                                            <option value="nev">Név</option>
+                                            <option value="idoszak">Időszak</option>
+                                            <option value="megnevezes">Típus</option>
+                                            <option value="all">Mind</option>
+                                        </select>
+                                        <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                                    </div>
+                                </div>
+                             </div>
+                            </div>
+
+                            <div class="audit-slider-viewport">
+                                <div class="audit-slider-container" id="auditSlider">
+                                    
+                                    <div class="audit-slider-panel">
+                                        <div class="audit-lista">
+                                            <div class="audit-list-container outer-div">
+                                                <div class="inner-div inner-div-notok">
+                                                    </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="audit-lista">
-                                        <h3>Jóváhagyásra váró értékelések</h3>
-                                        <div class="audit-list-container outer-div">
-                                            <div class="inner-div inner-div-notok">
+
+                                    <div class="audit-slider-panel">
+                                        <div class="audit-lista">
+                                            <div class="audit-list-container outer-div">
+                                                <div class="inner-div inner-div-ok">
+                                                    </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>`;
+
+                                </div>
+                            </div>
+                        </div>`;
                     }
                 },
                 lapok: () => {
@@ -291,10 +354,16 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
                             <div class="outer-div messageouter">
                                 <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó határidő</h3>
 
-                                <div class="calendardiv">
-                                   <input type="date" id="audit-calendar" title="Leadási határidő">
-                                   <span id="calendar-btn"> Leadási határidő</span>
-                                </div>
+                             <div class="calendardiv" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee; margin-bottom: 15px;">
+                            <div>
+                                <span style="color: gray; font-size: 0.9em;">Jelenlegi határidő:</span><br>
+                                <span id="akthat" style="font-weight: bold; font-size: 1.1em; color: #ffbd16;">Nincs megadva</span>
+                            </div>
+                            <div id="calendar-btn" style="cursor: pointer; padding: 8px 12px; background: rgba(255, 101, 0, 0.1); border: 1px solid #ff6500; border-radius: 6px; color: #ff6500; font-weight: bold; transition: all 0.3s; display: flex; align-items: center; gap: 5px;">
+                                <span class="material-symbols-rounded" style="font-size: 1.2em;">edit_calendar</span>
+                                Határidő módosítása
+                            </div>
+                        </div>
 
                                 <h3 id="audit-chat-title"> <span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek</h3>
 
@@ -502,8 +571,50 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
             `
             }
         };
+function initAuditSlider(container) {
+    const wrapper = container || document;
+    
+    // Gombok és a tartalmi panelek lekérése
+    const tabButtons = wrapper.querySelectorAll('.audit-tab-btn');
+    const panels = wrapper.querySelectorAll('.audit-slider-panel, .audit-slide'); // Kezeli mindkét nézetet
 
-        // Kezdeti állapot beállítása: A meglévő tartalmak kapnak egyedi azonosítót és aktívak lesznek
+    if (panels.length === 0 || tabButtons.length === 0) return;
+
+    // Alapállapot beállítása: Csak az első panel (0. index) legyen látható, a többi rejtett
+    panels.forEach((panel, index) => {
+        panel.style.display = (index === 0) ? 'block' : 'none';
+    });
+
+    // Kattintás események beállítása
+    tabButtons.forEach(button => {
+        button.onclick = function() {
+            // 1. Gombok "active" stílusának cseréje
+            tabButtons.forEach(btn => btn.classList.remove('activex'));
+            this.classList.add('activex');
+            
+            // 2. Melyik gombra kattintottunk? (Lekérjük a számot: 0 vagy 1)
+            const targetIndex = parseInt(this.getAttribute('data-slide') || this.getAttribute('data-index'));
+            
+            // 3. Panelek megjelenítése/elrejtése a kattintás alapján
+            panels.forEach((panel, panelIndex) => {
+                if (panelIndex === targetIndex) {
+                    panel.style.display = 'block'; // Megjelenítjük a kért divet
+                } else {
+                    panel.style.display = 'none';  // Elrejtjük a másikat
+                }
+            });
+            const auditCheckboxes = document.querySelectorAll('.audit-cheking');
+            if (auditCheckboxes.length > 0) {
+                // 1. Minden pipát kiveszünk
+                auditCheckboxes.forEach(cb => cb.checked = false);
+                
+                // 2. Szimulálunk egy "change" eseményt az elsőn, ami alapállapotba vágja a jobb oldali panelt is!
+                auditCheckboxes[0].dispatchEvent(new Event('change'));
+            }
+        };
+    });
+}
+
         const initialMain = layoutContainer.querySelector('.main');
         const initialLapok = layoutContainer.querySelector('#lapok');
         
@@ -558,18 +669,12 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
         
     };
 
-    // ÚJ FÜGGVÉNY: Eseménykezelők beállítása az "accunt" oldalon
-// CSERÉLD LE ERRE A TELJES FÜGGVÉNYT A KÓDODBAN
-
 function setupAccountInfoListeners(mainElement) {
     const elsoDiv = mainElement.querySelector('.elso');
     const infoCards = mainElement.querySelectorAll('.infocard');
 
     if (!elsoDiv || infoCards.length === 0) return;
 
-    // --- ÚJ RÉSZ KEZDETE: Ez a függvény felel a jelszó ellenőrzésért ---
- // CSERÉLD LE A TELJES FÜGGVÉNYT ERRE
-// CSERÉLD LE A TELJES FÜGGVÉNYT ERRE AZ ÚJ VERZIÓRA
 function addPasswordValidationLogic(panel) {
     const newPassInput = panel.querySelector('#new');
     const newTwoPassInput = panel.querySelector('#newtwo');
@@ -686,8 +791,7 @@ function addPasswordValidationLogic(panel) {
 }
 
 
-    // Eredeti eseménykezelőd a gombokhoz, KIEGÉSZÍTVE
-    // JAVÍTOTT ESEMÉNYKEZELŐ LOGIKA
+   
 
 gombok.forEach(gomb => {
     gomb.addEventListener('click', function() {
@@ -741,14 +845,18 @@ gombok.forEach(gomb => {
         } else {
              newMain = document.querySelector(`.main[data-content-id="${aktivGombId}"]`);
         }
-
-        if (aktivGombId === 'accunt' && newMain) {
+if (aktivGombId === 'accunt' && newMain) {
             setupAccountInfoListeners(newMain);
+        }
+        
+        if (aktivGombId === 'hozzaj' && newMain) {
+            initAuditSlider(newMain);
         }
 
         setTimeout(() => {
             celTartalom.forEach(elem => elem.classList.add('aktiv-tartalom'));
         }, 10);
+  
     });
 });
 

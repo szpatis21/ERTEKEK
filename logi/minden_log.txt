@@ -82,3 +82,6 @@
 [2026-03-02T10:02:15.158Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-03-03T12:27:29.400Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-03-04T09:08:58.430Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-17T11:22:27.113Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-17T11:47:07.729Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-17T11:49:16.450Z] [LOG]: Szerver fut a http://localhost:3000 címen

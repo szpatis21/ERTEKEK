@@ -618,6 +618,7 @@ function renderInlineBarLegend({ mount, labels, values, colors, statsMap }) {
   leg.style.flexWrap = 'wrap';
   leg.style.gap = '10px';
   leg.style.alignItems = 'center';
+  leg.style.flexDirection="row";
 
   const nums = values.filter(v => Number.isFinite(v));
   const minVal = nums.length ? Math.min(...nums) : null;

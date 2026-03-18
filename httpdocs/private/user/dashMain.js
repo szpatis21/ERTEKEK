@@ -42,12 +42,15 @@ export const BUTTONS = {
   szerkeszto: [
     {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
     {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
-    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
+    {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Letöltés PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
 };
 export const BUTTONS2 = {
   tulaj: [
+    {cls: 'audit1',          icon: 'calendar_add_on',          help: 'Határidő beállítása',                      action: 'date', label:'Határidő'},   
+    {cls: 'audit2',          icon: 'error',          help: 'Küldés auditációra',                      action: 'audit', label:'Auditáció'},   
+
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ],
@@ -269,34 +272,41 @@ try { initLetrehoz({ userId, modulId }); } catch(e) { console.warn(e); }  })
     })
 
 //Oldalső lapozó sáv aktív classa
+// Konfiguráció: melyik gomb (osztály) mit mutasson/rejtsen
+
+
+const sections = {
+    'maininf': document.getElementById('maininf'),
+    'osszesitett': document.getElementById('osszesitett'),
+    'gyik': document.getElementById('gyik'),
+    'lista': document.getElementById('lista'), // Új szekció
+    'uj-ful-2': document.getElementById('uj-ful-2') // Új szekció
+};
+
+const fw = document.getElementById('floating-audit-warning');
+
 lapozo.addEventListener('click', (e) => {
-            const fw = document.getElementById('floating-audit-warning');
+    const btn = e.target.closest('button'); // Biztosítja, hogy akkor is működjön, ha ikon van a gombban
+    if (!btn || !btn.dataset.target) return;
 
-  if (e.target.classList.contains('grap') || e.target.classList.contains('sta') || e.target.classList.contains('gyik'))  {
-    // Aktiv osztály váltása.
+    const targetId = btn.dataset.target;
+
+    // 1. Aktiv osztály kezelése minden gyermeken
     [...lapozo.children].forEach(child => child.classList.remove('aktiv'));
-    e.target.classList.add('aktiv');
+    btn.classList.add('aktiv');
 
-    // Megjelenítés logika||
-    if (e.target.classList.contains('grap')) {
-      maininf.style.display = 'flex';
-      osszesitett.style.display = 'none';
-      gyik.style.display="none";
-if (fw) fw.style.display = 'block';
-      
-    } else if (e.target.classList.contains('gyik')) {
-      maininf.style.display = 'none';
-      osszesitett.style.display = 'none';
-      gyik.style.display="flex";
-if (fw) fw.style.display = 'none';
-    } 
-    else if (e.target.classList.contains('sta')) {
-        maininf.style.display = 'none';
-        osszesitett.style.display = 'flex';
-        gyik.style.display="none";
-if (fw) fw.style.display = 'none';
+    // 2. Megjelenítés/Elrejtés logika (Iteratív megközelítés)
+    Object.keys(sections).forEach(id => {
+        const section = sections[id];
+        if (section) {
+            section.style.display = (id === targetId) ? (id === 'gyik' ? 'flex' : 'flex') : 'none';
+        }
+    });
+
+    // 3. Speciális elemek kezelése (pl. a lebegő figyelmeztetés)
+    if (fw) {
+        fw.style.display = (targetId === 'maininf') ? 'block' : 'none';
     }
-  }
 });
 //Checkbox figyelő
 document.addEventListener('change', (e) => {

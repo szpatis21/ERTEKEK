@@ -419,7 +419,15 @@ margin-bottom: 0px;
 .no-print {display: none;}
 }
 
-.szalag{margin-top: 15px;}
+.szalag{    font-family: system-ui;
+    border: 2px solid #ff7207;
+    border-radius: 12px;
+    padding: 10px;
+    width: 50vh;
+    margin: auto;
+    height: 25vh;
+    box-shadow: 2px 2px 10px #4b556370;
+   }
 #ertekelesneve{
 font-size: medium;
     font-family: system-ui;

@@ -1,60 +1,152 @@
 //Rendezés és keresés segítő függvények
 
-// Segédfüggvény: Ha egy csoportban minden kártya rejtett, a fejlécet is elrejtjük
-function updateGroupVisibility() {
-    const groups = document.querySelectorAll('.inner-div .csopi');
-    groups.forEach(group => {
-        const visibleCards = group.querySelectorAll('.tart[style="display: block;"], .tart:not([style*="display: none"])');
-        if (visibleCards.length === 0) {
-            group.style.display = 'none';
-        } else {
-            group.style.display = 'block';
-        }
-    });
-}
 //Keresés funkció
+
+let searchInitialized = false;
+let popupTimeout = null; // ÚJ: Az időzítő változója a popup eltüntetéséhez
+
 export function initSearch() {
-    const searchInput = document.querySelector('#kereso');
-    const searchType = document.querySelector('#kereso-tipus');
-    if (!searchInput || !searchType) return;
+    if (searchInitialized) return;
+    searchInitialized = true;
 
-    const performSearch = () => {
-        const term = searchInput.value.toLowerCase().trim();
-        const type = searchType.value;
-        const cards = document.querySelectorAll('.inner-div .tart');
+    document.addEventListener('input', function(e) {
+        if (!e.target.classList.contains('search-input')) return;
 
-        cards.forEach(card => {
-            const meglevokElement = card.querySelector('.meglevok');
-            if (!meglevokElement) return;
+      const searchText = e.target.value.toLowerCase().trim();
+        
+        const belsoSearch = e.target.closest('#belsosearch, .belsosearch') || e.target.parentElement;
+        
+        const keresoTipus = belsoSearch ? belsoSearch.querySelector('.search-select') : null;
+        const tipus = keresoTipus ? keresoTipus.value : 'all';
 
-            const ds = meglevokElement.dataset;
-            let targetText = "";
+        const tartElemek = document.querySelectorAll('.tart');
+        let totalMatches = 0; // ÚJ: Itt fogjuk számolni, van-e egyáltalán találat
 
-            // A HTML-ed alapján a kulcsok: nev, periodus, megnev
-            if (type === 'all') {
-                targetText = `${ds.nev || ''} ${ds.periodus || ''} ${ds.megnev || ''}`;
-            } else if (type === 'nev') {
-                targetText = ds.nev || "";
-            } else if (type === 'idoszak') {
-                targetText = ds.periodus || ""; // data-periodus javítása
-            } else if (type === 'megnevezes') {
-                targetText = ds.megnev || "";    // data-megnev javítása
+        tartElemek.forEach(tart => {
+            const meglevo = tart.querySelector('.meglevok');
+            if (!meglevo) return;
+
+            let isMatch = false;
+
+            const nev = (meglevo.dataset.nev || '').toLowerCase();
+            const periodus = (meglevo.dataset.periodus || '').toLowerCase();
+            const megnev = (meglevo.dataset.megnev || '').toLowerCase();
+            
+            const teljesSzoveg = `${nev} ${periodus} ${megnev}`;
+
+            if (searchText === '') {
+                isMatch = true;
+            } else if (tipus === 'all' && teljesSzoveg.includes(searchText)) {
+                isMatch = true;
+            } else if (tipus === 'nev' && nev.includes(searchText)) {
+                isMatch = true;
+            } else if (tipus === 'idoszak' && periodus.includes(searchText)) {
+                isMatch = true;
+            } else if (tipus === 'megnevezes' && megnev.includes(searchText)) {
+                isMatch = true;
             }
 
-            if (targetText.toLowerCase().includes(term)) {
-                card.style.display = 'block';
+            if (isMatch) {
+                totalMatches++; // ÚJ: Növeljük a számlálót
+                tart.style.display = '';
+                
+                if (searchText !== '') {
+                    const szuloLista = tart.closest('.creator-list');
+                    if (szuloLista && szuloLista.style.display === 'none') {
+                        szuloLista.style.display = 'flex'; 
+                        
+                        const wrapper = tart.closest('.creator-wrapper') || tart.closest('.tarolo');
+                        if (wrapper) {
+                            const head = wrapper.querySelector('.creator-head');
+                            if (head) {
+                                head.style.height = '45px'; 
+                                const icon = head.querySelector('.toggle-icon');
+                                if (icon) icon.style.transform = 'rotate(180deg)'; 
+                            }
+                        }
+                    }
+                }
             } else {
-                card.style.display = 'none';
+                tart.style.display = 'none'; 
+            }
+        });
+        
+
+        // 3. ÜRES CSOPORTOK (Creator Head) ELREJTÉSE
+        document.querySelectorAll('.tarolo').forEach(csoport => {
+            const lathatoKartyak = Array.from(csoport.querySelectorAll('.tart')).filter(t => t.style.display !== 'none');
+            
+            if (searchText !== '' && lathatoKartyak.length === 0) {
+                csoport.style.display = 'none';
+            } else {
+                csoport.style.display = ''; 
+                
+                if (searchText === '') {
+                    const lista = csoport.querySelector('.creator-list');
+                    const head = csoport.querySelector('.creator-head');
+                    const icon = csoport.querySelector('.toggle-icon');
+                    
+                    if (lista) lista.style.display = 'none';
+                    if (head) head.style.height = '8vh';
+                    if (icon) icon.style.transform = 'rotate(0deg)';
+                }
             }
         });
 
-        updateGroupVisibility();
-    };
+        // 4. ÜRES "HELYI CSOPORTOK" ELREJTÉSE
+        document.querySelectorAll('.helyi-csoport').forEach(helyiCsop => {
+            const lathatoHelyi = Array.from(helyiCsop.querySelectorAll('.tart')).filter(t => t.style.display !== 'none');
+            
+            if (searchText !== '' && lathatoHelyi.length === 0) {
+                helyiCsop.style.display = 'none'; 
+            } else {
+                helyiCsop.style.display = '';     
+            }
+        });
 
-    searchInput.addEventListener('input', performSearch);
-    searchType.addEventListener('change', performSearch);
+     const searchContainer = e.target.parentElement;
+        
+        let noResultPopup = searchContainer.querySelector('.search-no-result-popup');
+        
+        if (!noResultPopup) {
+            noResultPopup = document.createElement('div');
+            noResultPopup.className = 'search-no-result-popup';
+            
+            if (getComputedStyle(searchContainer).position === 'static') {
+                searchContainer.style.position = 'relative';
+            }
+            searchContainer.appendChild(noResultPopup);
+        }
+
+        if (searchText !== '' && totalMatches === 0) {
+            noResultPopup.innerHTML = `<span class="material-symbols-rounded" style="vertical-align: middle; margin-right: 5px;">search_off</span>A(z) <b class="search-term-display"></b> kifejezésre nincs találat.`;
+            noResultPopup.querySelector('.search-term-display').textContent = `"${e.target.value}"`;
+            
+            noResultPopup.style.opacity = '1';
+            noResultPopup.style.display = 'block';
+
+            clearTimeout(popupTimeout);
+
+            popupTimeout = setTimeout(() => {
+                noResultPopup.style.opacity = '0';
+                setTimeout(() => {
+                    if (noResultPopup.style.opacity === '0') {
+                        noResultPopup.style.display = 'none';
+                    }
+                }, 300);
+            }, 3000);
+
+        } else {
+            noResultPopup.style.opacity = '0';
+            noResultPopup.style.display = 'none';
+            clearTimeout(popupTimeout);
+        }
+    });
 }
+
 //infoboxos számláló
+let chekingInitialized = false;
+
 export function initChekingToggle() {
   const master = document.getElementById('cheking2');
   const infoBox = document.getElementById('stat-info-box');
@@ -62,7 +154,6 @@ export function initChekingToggle() {
   
   if (!master) return;
 
-  // Számláló frissítő logika
   const updateCounter = () => {
     const count = document.querySelectorAll('.cheking:checked').length;
     if (countSpan) countSpan.textContent = count;
@@ -80,17 +171,22 @@ export function initChekingToggle() {
     updateCounter();
   };
 
-  master.addEventListener('change', apply);
-  
-  const innerDiv = document.querySelector('.inner-div');
-  if (innerDiv) {
-      innerDiv.addEventListener('change', (e) => {
-          if (e.target.matches('.cheking')) {
-              updateCounter();
-          }
-      });
+  // Csak egyszer kötjük be a figyelőket
+  if (!chekingInitialized) {
+      master.addEventListener('change', apply);
+      
+      const innerDiv = document.querySelector('.inner-div');
+      if (innerDiv) {
+          innerDiv.addEventListener('change', (e) => {
+              if (e.target.matches('.cheking')) {
+                  updateCounter();
+              }
+          });
+      }
+      chekingInitialized = true;
   }
 
+  // A jelenlegi állapot érvényesítése minden híváskor lefut
   apply();
 }
 //CSOPORTOSÍTÁS LOGIKA

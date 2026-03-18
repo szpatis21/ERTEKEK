@@ -56,6 +56,7 @@
     justify-content: center;
     align-items: center;
   }
+  .mozgo{display: none !important;}
   .fo-mini{border-radius: 7px !important; box-shadow: none !important;}
   .fo-mini .cim{height: 65% !important; border: none !important;}
   .fo-mini .leiras{height: 35% !important;}
@@ -180,9 +181,9 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
     </article>
     <article id="lapok">
                     <div id="lapozo">
-                        <div class="grap">Jogkörök infó</div>
-                        <div class="gyik aktiv">GY.I.K.</div>
-                        <div class="sta">Feltöltési statisztika</div>
+                     <button class="grap aktiv" data-target="maininf">Grafikonok</button>
+    <button class="sta" data-target="osszesitett">Statisztika</button>
+    <button class="gyik" data-target="gyik">GYIK</button>
                     </div>
                     <div id="fulek">
                         <div id="maininf" class="outer-div">

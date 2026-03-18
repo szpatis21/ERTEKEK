@@ -239,3 +239,68 @@ export function customPrompt3(uzenet, defaultNev, defaultIdoszak, defaultTipus) 
         });
     });
 }
+export function customDatePrompt(vizsgaltNev) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            justifyContent: 'center', alignItems: 'center', zIndex: 10000,
+            opacity: '0', transition: 'opacity 0.3s'
+        });
+
+        const box = document.createElement('div');
+        Object.assign(box.style, {
+            backgroundColor: 'white', padding: '25px', borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.3)', textAlign: 'center',
+            minWidth: '350px', transform: 'scale(0.8)', transition: 'transform 0.3s',
+            fontFamily: "'Montserrat', sans-serif"
+        });
+
+        // Minimum dátum beállítása (mai nap)
+        const maiDatum = new Date().toISOString().split('T')[0];
+
+        box.innerHTML = `
+            <h3 style="margin-top: 0; color: #333; margin-bottom: 20px;">Határidő beállítása</h3>
+            <p style="font-size: 0.9em; color: #555; margin-bottom: 15px;">Értékelés: <strong>${vizsgaltNev}</strong></p>
+            
+            <div style="text-align: left; margin-bottom: 25px;">
+                <label style="display:block; font-size:0.8em; color:#666; margin-bottom:5px;">Válasszon határidőt:</label>
+                <input id="cp-date" type="date" min="${maiDatum}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="btn-megsem" style="padding: 8px 15px; border: none; background: #eee; border-radius: 5px; cursor: pointer;">Mégsem</button>
+                <button id="btn-ok" style="padding: 8px 15px; border: none; background: #ff6500; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Tovább</button>
+            </div>
+        `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        const close = (result) => {
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                resolve(result);
+            }, 300);
+        };
+
+        box.querySelector('#btn-megsem').addEventListener('click', () => close(null));
+        box.querySelector('#btn-ok').addEventListener('click', () => {
+            const dateVal = box.querySelector('#cp-date').value;
+            if(!dateVal) {
+                // Ideiglenes sima alert, ha nem választott dátumot
+                alert("Kérem válasszon egy dátumot!"); 
+                return;
+            }
+            close(dateVal);
+        });
+    });
+}

@@ -1,6 +1,6 @@
   .leiras{font-weight:normal !important;  font-size: small !important; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;}
 .szazalek{padding: 2px 4px; width: 100%; border-radius: 8px; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); white-space: normal; border: 1px solid rgba(255,255,255,0.2);}
-.meglevok{width: 30vh; display: flex; flex-direction: column;justify-content:  center; flex-wrap: nowrap;
+.meglevok{width: 28vh; display: flex; flex-direction: column;justify-content:  center; border: 1px solid grey;flex-wrap: nowrap;
     min-height: fit-content; max-height: 45vh; padding: 5px;}  
     .warmnote,.warmnote2{ display: none;
         background: #000000bf;
@@ -17,7 +17,6 @@
     padding: 3px;
     z-index: 90;
     }
-    .warm-icon{text-shadow: 0px 0px 5px rgba(255, 0, 0, 0.374);}
     .meglevok:hover .warmnote, .meglevok:hover .warmnote2{  display: flex;
     }
     .messengerdiv {    background: #ffeede; 
@@ -31,24 +30,33 @@
     border: 1px solid grey;
     box-shadow: inset 1px 2px 4px 0px #80808066;}
     #akthat{color: #ff6500; font-style: italic;}
+    .helyicsopgomb{margin-left: 50%;
+    padding: 10px;
+    font-family: system-ui;
+    font-size: smaller;
+    background: #ff7207;
+    color: white;}
     .warm{
-    position: absolute;
-    top: 5%;
+ position: absolute;
+    bottom: 5%;
     left: 5%;
     background: #ffffff00;
-        justify-content: space-evenly;
-    align-items: flex-start;
+    justify-content: space-evenly;
     width: 90%;
     border-radius: 40px;
     height: 20px;
-
     font-weight: bolder;
-    color: #ff0000;
+    color: #ff6e6e;
     font-size: large;
+    }
+    .figyelmeztetve{
+            box-shadow: rgba(255, 0, 0, 0.74) 0px 0px 0px 2px inset;
+    background: #ffe8e8fc !important;;
     }
     .warmed{
                 box-shadow: inset 0px 0px 0px 2px #ff0000bd;
     }
+    #tomlo{width: 100%;}
     .calendardiv{    display: flex;
     align-items: center;
     justify-content: space-around;
@@ -96,6 +104,40 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     color: #4b5563;
     text-shadow: 0px 0px 2px #4b5563;
     }
+    .tart{width:fit-content;}
+    .helyi-fejlec{
+        font-weight: bold;
+        color: #ff6500;
+        font-size: 1rem;
+    }
+    .helyi-csoport{    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    background: #ffffff80;
+    border-radius: 6px;
+    box-shadow: 3px 2px 6px 1px #4b556354;
+    margin: 5px;}
+    .helyi-elemek{display: flex; flex-wrap: wrap; width: 100%; justify-content: space-evenly;}
+    .nagyonhelyi{
+        display: flex;
+    }
+    .helyi-endezo{
+      z-index: 5;
+    color: #ff6500;
+    border-bottom: 2px solid #ff6500;
+    text-shadow: 0px 0px 5px orange;
+    border-radius: 10px;
+    top: 5vh;
+    backdrop-filter: blur(5px);
+    position: absolute;
+ 
+    padding: 5px;
+    display: flex;
+
+    }
+    #mozgo2{display: flex; justify-content: space-around;}
     #stat-info-box{display: flex !important; margin: auto;}
 #swics{display: flex;}
 #melletolt span, #melprint span, .modulebutt  {font-size: small !important; margin-left: 3px;}
@@ -111,14 +153,17 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
         .leiras{    border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;}
         .tarolo{ display: flex; flex-direction: row-reverse;  border-radius: 15px;position: relative;  width: 95%; align-content: center; justify-content: space-around; align-items: center; background: #ffedde; margin-top: 3vh;}
         .creator-list{
-            display: flex;
+            display: none;
             justify-content: center; 
             flex-wrap: wrap;    
+            padding-top: 3vh;
             align-items: flex-start;
-        height: 40vh; overflow-y: scroll;}
+            justify-content: space-evenly;
+            height: fit-content;
+        max-height: 61vh; overflow-y: scroll;}
         .creator-head{    text-transform: uppercase;font-weight: bolder;     color: #666; transition: all 0.3s;
     text-shadow: 0px 0px 5px #808080cc; font-family: Arial, Helvetica, sans-serif;  padding: 10px; height: 8vh;}
-        .modules{        grid-template-columns: repeat(2, 1fr);}
+        .modules{        grid-template-columns: repeat(4, 1fr);}
         .csopigomb:hover{color: black; }
         .csopigomb{
     z-index: 80;
@@ -180,6 +225,7 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     align-content: center;
     justify-content: center;
     align-items: center;}
+    .audit-content-slider{width: 100%;}
         #audit-approve-btn{    width: fit-content;
     padding: 9px;
     background: #ff8701;
@@ -187,14 +233,7 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     box-shadow: 0px 1px 5px 2px #4e9e0780;}
     #audit-approve-btn:hover{    background: #ffffff;
     color: green; border-color: green;}
-    .inner-div-notok .creator-wrapper, .inner-div-ok .creator-wrapper {    display: flex;
-    align-items: center; width: 100%;
-    flex-direction: row;}
-.inner-div-notok .tarolo, .inner-div-ok .tarolo{
-    margin: 10px;
-    margin-bottom: 2vh;
-    justify-content: flex-end;
-}
+
  .layout{grid-template-columns: 0.1fr minmax(0, 1fr) minmax(0, 1fr);}
  .inner-div-notok .tarolo{   
     box-shadow: 0px 0px 3px 2px #ed143d75;
@@ -202,8 +241,7 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     .inner-div-ok .tarolo{    
     box-shadow: 0px 0px 3px 2px #009b2775;
  }
-.inner-div.inner-div-ok,.inner-div.inner-div-notok {    height: 25vh;
-    overflow-x:hidden;
+.inner-div.inner-div-ok,.inner-div.inner-div-notok {   
     border: 2px solid #ff650082;
     border-radius: 8px;}
     .inner-div-ok .meglevok,.inner-div-notok .meglevok{
@@ -223,13 +261,7 @@ height: 15vh;
     box-shadow: 0px 0px 5px 0px crimson;
     color: crimson;
 }
-.inner-div-notok .creator-list, .inner-div-ok .creator-list{    width: 100%;
-    overflow-x: scroll;
-    display: flex;
- justify-content: flex-start;
-  flex-wrap: nowrap;
-   height: fit-content; overflow-y:hidden ;
-    }
+
 
 @media (max-width:900px){
     .layout{grid-template-columns: 1fr;}
@@ -283,6 +315,8 @@ display: flex;
     display: flex;
     flex-direction: column;
 }
+.audit-tab-container{background-color: white; padding: 10px; height: 87vh; border-radius: 13px;    overflow-x: hidden;
+    overflow-y: scroll; }
 .audit-input-area{
  display: flex;
  width: 100%;
@@ -304,8 +338,103 @@ display: flex;
 .audit-list-container{
     font-size: small; color: gray;
 }
-#tartalom2{background-color: white; padding: 3vh;display: flex; height: 100%; width: 100%; gap: 15px;}
+#tartalom2{
+        background-color: white;
+    padding: 3vh;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    gap: 15px;}
 @media (max-width: 900px){
   .split-charts{ grid-template-columns: 1fr; }
   #polarAreaChart, #multiPieChart{ height:300px; }
 }
+#lista{    width: 100%;
+    background: white;
+    height: 100%;
+    border-radius: 12px;}
+
+    /* --- TARTALOM 2 CSÚSZKA RENDSZER --- */
+
+
+
+/* Vezérlőgombok konténere */
+.audit-slider-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+}
+.audit-tabs{display: flex;    gap: 3%;
+    width: 97%;}
+/* Maguk a gombok */
+.audit-tab-btn {
+      flex: 1;
+    font-family: system-ui;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 8px;
+    padding: 5px;
+    font-size: 12px;
+    height: 40px;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+        box-shadow: 2px 2px 4px 1px #80808063;
+    transition: all 0.3s ease;
+    outline: none;
+    margin: 4px;
+    background: #ffeede;
+    border: 2px solid #55555591;
+}
+
+/* Hover effektus a gombokra */
+.audit-tab-btn:hover {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+/* Aktív gomb állapota */
+.audit-tab-btn.activex {
+    background-color: #ffa500; /* Cseréld a projekted főszínére */
+    color: #ffffff;
+    box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2);
+    margin: 4px;
+}
+
+/* A "képkivágás", ami elrejti a kilógó elemeket */
+.audit-slider-viewport {
+    width: 100%;
+    overflow: hidden; /* Ez rejti el a második panelt alapból */
+    position: relative;
+    border-radius: 8px;
+    background-color: #fafafa;
+    
+}
+
+/* A flex konténer, ami kétszer olyan széles, mint a viewport */
+.audit-slider-container {
+    display: flex;
+    width: 100%; /* Két panel miatt pontosan 200% */
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Sima, lassuló animáció */
+}
+
+/* Az egyes panelek */
+.audit-slider-panel {
+    width: 100%; /* A container 200%-ának a fele pont 100% viewport szélesség */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.inner-div-notok .tarolo, .inner-div-ok .tarolo {
+    width: 100%;
+}
+.audit0{display: flex;
+    flex-direction: column;
+    align-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;}
