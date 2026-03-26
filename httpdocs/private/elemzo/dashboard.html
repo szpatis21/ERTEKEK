@@ -24,8 +24,27 @@
       crossorigin="anonymous" referrerpolicy="no-referrer">
 
 <style>
+           #loading-overlay {
+    position: fixed;
+        top: 50%;
+    left: 50%;
+    font-size:medium;
+ width: 100%; height: 100%;
+ backdrop-filter: blur(5px);
+    background: #ff5100df; /* Vagy amilyen háttérszínt szeretnél neki */
+    z-index: 9999; /* Mindenek felett! */
+    transition: opacity 0.4s ease-out;
+}
+  .feherinfo {
+    width:80%;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    position: relative;
+}
     .warm{top: 10%; justify-content: space-between
     }
+    .meglevok.kijelolt,  .meglevok.kijelolt strong{color: black !important;}
         .cheking{display: flex !important;}
 #endezo{display: none;}
 .tarolo{justify-content: flex-end;}
@@ -101,10 +120,10 @@
         <article id="lapok">
      
   <div id="lapozo">
-    <button class="grap aktiv" data-target="maininf">Egyéni teljesítmény</button>
+    <button class="grap" data-target="maininf">Egyéni teljesítmény</button>
     <button class="sta" data-target="osszesitett">Csoportos teljesítmény</button>
-    <button class="gyik" data-target="gyik">GYIK</button>
-    <button class="lista" data-target="lista">Lista</button>
+    <button class="gyik aktiv" data-target="gyik">GYIK</button>
+    <button class="lista" data-target="lista">Határidők</button>
 </div>
 
 
@@ -199,6 +218,19 @@
                                                 <button id="ai-generate-btn" class="modulebutt">
                                                     <span class="material-symbols-rounded">lightbulb_2</span>
                                                     <span>AI Generálás</span>
+                                                </button>
+                                                <button id="group-deadline-btn" class="modulebutt">
+                                                    <span class="material-symbols-rounded">calendar_add_on</span>
+                                                    <span>Csoportos határidő</span>
+                                                </button>
+                                               
+                                                <button id="grup-audit-btn" class="modulebutt">
+                                                    <span class="material-symbols-rounded">error</span>
+                                                    <span>Csoporos Auditáció</span>
+                                                </button>
+                                                  <button id="group-approve-btn" class="modulebutt">
+                                                    <span class="material-symbols-rounded">check_circle</span>
+                                                    <span>Csoportos jóváhagyás</span>
                                                 </button>
                                                 <button class="modulebutt" id="elore">
                                                     <span class="material-symbols-rounded">bar_chart_4_bars</span>
@@ -415,15 +447,12 @@
            <article class="savos">
 
 
-
+ <div class="gomb" id="accunt0">
+            <div class="cim" id="accunt">Infók</div>
+        </div>       
         <div class="gomb" id="ertekek0">
             <div class="cim dobaktiv" id="ertekek" >Intézmény </div>
         </div>     
-        
-                        
-        <div class="gomb" id="accunt0">
-            <div class="cim" id="accunt">Fiókom</div>
-        </div>       
         <div class="gomb" id="hozzaj0">                                
             <div class="cim" id="hozzaj">Auditáció</div>
         </div>   
@@ -433,7 +462,7 @@
    <div id="mainart"><div id="seh"></div>
    </div>
 <div id="toast" class="toast hidden">Ez az üzenet ide kerül</div>
-<div id="loading-overlay" style="display: none;">
+<div id="loading-overlay" style="display: flex;">
     <div id="kont">
         <div id="logokulso">
         </div>

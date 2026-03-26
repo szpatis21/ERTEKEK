@@ -122,3 +122,22 @@ Adatbázis: ertekek02
     at wrapModuleLoad (node:internal/modules/cjs/loader:218:24)
     at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
     at node:internal/main/run_main_module:36:49
+[2026-03-19T11:25:10.483Z] UNCAUGHT EXCEPTION: ReferenceError: cron is not defined
+    at module.exports (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\auditcronmodul.js:4:5)
+    at Object.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\app.js:137:5)
+    at Module._compile (node:internal/modules/cjs/loader:1546:14)
+    at Object..js (node:internal/modules/cjs/loader:1689:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:315:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:218:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49
+[2026-03-24T08:50:36.403Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:50:52.991Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:51:07.900Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:51:11.276Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:51:20.379Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:51:22.685Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:51:22.695Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-24T08:57:11.039Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined

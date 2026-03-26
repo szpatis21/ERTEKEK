@@ -26,12 +26,31 @@
       crossorigin="anonymous" referrerpolicy="no-referrer">
     
     <style>
+        #loading-overlay {
+    position: fixed;
+        top: 50%;
+    left: 50%;
+    font-size: medium;
+ width: 100%; height: 100%;
+ backdrop-filter: blur(5px);
+    background: #ff5100df; /* Vagy amilyen háttérszínt szeretnél neki */
+    z-index: 9999; /* Mindenek felett! */
+    transition: opacity 0.4s ease-out;
+}
         .valtos span { font-size: 80% !important};
       #kimenetbelso{
             width: 100%;
     background: white;
     border-radius: 13px;
       }
+  .feherinfo {
+    width:80%;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    position: relative;
+}
+      .search-bar {width: 50% !important};
     #Kimenet, #egyeni-ai-vezerlo{    
         background: transparent;
     font-family: 'Times New Roman', Times, serif;
@@ -72,6 +91,8 @@
     color: #4b5563;
     
     }
+ 
+
     .audit-slider-panel{
         padding: 0px;
     }
@@ -88,13 +109,17 @@
   
     height: 98%;
     margin: auto;margin-top: 1%;}
-    .helyi-endezo {top: -1vh}
+    .helyi-endezo {top: -1vh;
+    box-shadow: 6px 5px 5px -3px #ff650096;}
 
     .audit-slider-controls{margin-bottom: 0px; width: 100%;}
     .inner-div.inner-div-ok, .inner-div.inner-div-notok {height: 100%;
     border: none;}
     #belsosearch{width: 100%;}
     .creator-list{display: flex !important;
+            flex-direction: row !important;
+            overflow-x: hidden;
+            margin-top: 15px;
     max-height: 100%;
     height: 60vh;
     width: 100%;
@@ -131,21 +156,21 @@ canvas {image-rendering: auto;}
         <div class="munka">
             <div class="olvaso" style="height: 100%;"> 
                   
-                    <div class="kozep" style="height: 15%;">
+                    <div class="kozep" style="height: 15%; display: none;">
                         <div class="udv">
                             <div class="logo">
                                 <div> Kedves
                                 </div> 
                                 <div class="sajtnev" id="sajatnev">
-                                </div>! Üdv a kezelőpanelen! 
+                                </div>! Üdv a kezelőpanelen!                          
+
                             </div>
                             <div class="kozepb">
                                 <div class="holvagyok"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="also" style="height: 80%;">
-                        
+                    <div class="also" style="height: 100%;">
                          <div class="outer-div">    
                             
                              <div class="inner-div">
@@ -162,11 +187,14 @@ canvas {image-rendering: auto;}
     <article id="lapok">
      
                 <div id="lapozo">
-                  <button class="grap aktiv" data-target="maininf">Egyéni Értékelés</button>
+                  <button class="grap" data-target="maininf">Egyéni Értékelés</button>
                     <button class="sta" data-target="osszesitett">Csoportos Értékelés</button>
-                    <button class="gyik" data-target="gyik">GYIK</button>
+                    <button class="gyik aktiv" data-target="gyik">GYIK</button>
+                        <button class="lista" data-target="lista">Határidők</button>
+
                 </div>
                 <div id="fulek">
+                    <div id="lista"></div>
                     <div id="maininf" class="outer-div">
                            <div class="muveletek">
            
@@ -195,6 +223,7 @@ canvas {image-rendering: auto;}
         
         <div class="valtos modulebutt" id="melletolt">
             <span>Melléklet letöltése</span>
+            <span><a href="www.ertekek.com">www.ertekek.com</a></span>
         </div>
         
         <div class="valtos modulebutt" id="melprint">
@@ -471,15 +500,16 @@ canvas {image-rendering: auto;}
  
                
     <article class="savos">
+         <div class="gomb" id="accunt0">
+            <div class="cim" id="accunt">Infók</div>
+        </div> 
         <div class="gomb" id="ertekek0">
-            <div class="cim dobaktiv" id="ertekek"> Értékeim</div>
+            <div class="cim" id="ertekek"> Értékeim</div>
         </div>     
         <div class="gomb" id="ujert0">
             <div class="cim" id="ujert">Új értékelés</div>
         </div>
-        <div class="gomb" id="accunt0">
-            <div class="cim" id="accunt">Fiókom</div>
-        </div>       
+             
         <div class="gomb" id="hozzaj0">                                
             <div class="cim" id="hozzaj">Javaslatok</div>
         </div>   
@@ -491,7 +521,7 @@ canvas {image-rendering: auto;}
 
 
 <div id="toast" class="toast hidden">Ez az üzenet ide kerül</div>
-<div id="loading-overlay" style="display: none;">
+<div id="loading-overlay" style="display: flex;">
     <div id="kont">
         <div id="logokulso">
         </div>

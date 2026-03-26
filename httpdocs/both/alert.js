@@ -159,7 +159,6 @@ export function customConfirm(uzenet) {
         box.querySelector('#btn-nem').onclick = () => close(false);
     });
 }
-// alert.js - A fájl végére illeszd be ezt a függvényt:
 
 export function customPrompt3(uzenet, defaultNev, defaultIdoszak, defaultTipus) {
     return new Promise((resolve) => {
@@ -301,6 +300,111 @@ export function customDatePrompt(vizsgaltNev) {
                 return;
             }
             close(dateVal);
+        });
+    });
+}
+
+export function customAuditPrompt(vizsgaltNev) {
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex',
+            justifyContent: 'center', alignItems: 'center', zIndex: 10000,
+            opacity: '0', transition: 'opacity 0.3s'
+        });
+
+        const box = document.createElement('div');
+        Object.assign(box.style, {
+            backgroundColor: 'white', padding: '25px', borderRadius: '12px',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.3)', textAlign: 'center',
+            minWidth: '400px', maxWidth: '550px', transform: 'scale(0.8)', transition: 'transform 0.3s',
+            fontFamily: "'Montserrat', sans-serif"
+        });
+
+        const maiDatum = new Date().toISOString().split('T')[0];
+
+        box.innerHTML = `
+            <h3 style="margin-top: 0; color: #333; margin-bottom: 20px;">Megjelölés Auditációra</h3>
+            <p style="font-size: 0.9em; color: #555; margin-bottom: 15px;">Értékelés: <strong>${vizsgaltNev}</strong></p>
+
+            <div class="inner-div messengerdiv" style="margin-bottom: 20px;">
+                <div style="text-align:center; padding: 10px; color: #555;">
+                    <span class="material-symbols-rounded" style="font-size: 3em; color: #ffbd16;">checklist</span>
+                    <p style="font-size: 0.9em; margin-bottom: 10px;">
+                        Írjon javaslatokat az értékeléshez. Az utolsó Ön által küldött üzenet megjelenik a szerkesztő oldalán és válaszolni is tud majd rá. Ha folytatná a beszélgetést az "auditáció" fülön az adott értékelésre kattintva tud további üzeneteket küldeni.
+                    </p>
+                </div>
+                
+                <div class="audit-input-area" style="display: flex; gap: 10px; margin-top: 15px;">
+                    <input type="text" id="audit-msg-input" placeholder="Üzenet írása..." style="flex-grow: 1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                </div>
+            </div>
+            
+            <div style="text-align: left; margin-bottom: 15px;">
+                <input type="checkbox" name="szeretne" id="szeretne">
+                <label for="szeretne" style="font-size: 0.9em; color: #333; cursor: pointer;"> Szeretne határidőt beállítani a megjelölt értékeléshez?</label>
+            </div>
+            
+            <div id="date-container" style="display:none; text-align: left; margin-bottom: 25px;">
+                <label style="display:block; font-size:0.8em; color:#666; margin-bottom:5px;">Válasszon határidőt:</label>
+                <input id="cp-date" type="date" min="${maiDatum}" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-family: inherit;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button id="btn-megsem" style="padding: 8px 15px; border: none; background: #eee; border-radius: 5px; cursor: pointer;">Mégsem</button>
+                <button id="btn-ok" style="padding: 8px 15px; border: none; background: #ff6500; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">Tovább</button>
+            </div>
+        `;
+
+        overlay.appendChild(box);
+        document.body.appendChild(overlay);
+
+        requestAnimationFrame(() => {
+            overlay.style.opacity = '1';
+            box.style.transform = 'scale(1)';
+        });
+
+        // Eseménykezelők
+        const checkbox = box.querySelector('#szeretne');
+        const dateContainer = box.querySelector('#date-container');
+        const dateInput = box.querySelector('#cp-date');
+
+        checkbox.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                dateContainer.style.display = 'block';
+            } else {
+                dateContainer.style.display = 'none';
+                dateInput.value = ''; // Ha kiveszi a pipát, töröljük a beírt dátumot
+            }
+        });
+
+        const close = (result) => {
+            overlay.style.opacity = '0';
+            box.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+                resolve(result);
+            }, 300);
+        };
+
+        box.querySelector('#btn-megsem').addEventListener('click', () => close(null));
+        box.querySelector('#btn-ok').addEventListener('click', () => {
+            const msg = box.querySelector('#audit-msg-input').value.trim();
+            const wantsDate = checkbox.checked;
+            const dateVal = dateInput.value;
+
+            if (!msg) {
+                alert("Kérem, írjon egy üzenetet a szerkesztőnek!");
+                return;
+            }
+
+            if (wantsDate && !dateVal) {
+                alert("Kérem válasszon egy dátumot, vagy vegye ki a pipát!");
+                return;
+            }
+
+            close({ message: msg, deadline: wantsDate ? dateVal : null });
         });
     });
 }

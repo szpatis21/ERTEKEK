@@ -132,6 +132,12 @@ app.use((err, req, res, next) => {
 //Audit modul    
     const audit = require('./modulok/auditmodul');    
     app.use('/', audit(db));
+//Időzítős leveles modul
+    const auditCron = require('./modulok/auditcronmodul');
+    auditCron(db);
+ //Statisztika modul
+    const statisztika = require('./modulok/statisztikaModul');
+    app.use('/', statisztika(db));
 // Kijelentkező modul
     const logout = require('./modulok/logoutmodul');
     app.use('/logout', logout(db)); 

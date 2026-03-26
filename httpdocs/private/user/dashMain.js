@@ -35,13 +35,13 @@ export const BUTTONS = {
     {icon: 'content_copy', action: 'duplicate', cls: 'duplicate', help: 'Értékelés másolása',label:'Másolás' },
     {cls: 'deleted',        icon: 'delete',         help: 'Értékelés törlése',                         action: 'delete', label:'Törlés'},    
     {cls: 'share',          icon: 'share',          help: 'Értékelés megosztása',                      action: 'share', label:'Megosztás'},
-    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AIGenerálás'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ],
   szerkeszto: [
     {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
-    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AI Generálás'},
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AIGenerálás'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Letöltés PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
@@ -50,6 +50,8 @@ export const BUTTONS2 = {
   tulaj: [
     {cls: 'audit1',          icon: 'calendar_add_on',          help: 'Határidő beállítása',                      action: 'date', label:'Határidő'},   
     {cls: 'audit2',          icon: 'error',          help: 'Küldés auditációra',                      action: 'audit', label:'Auditáció'},   
+        {cls: 'audit2',          icon: 'check_circle',          help: 'Értékelés jóváhagyása',                      action: 'approve', label:'Jóváhagyás'},   
+    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AIGeneráció'},
 
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Értékelés mentése PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
@@ -270,6 +272,7 @@ try { initLetrehoz({ userId, modulId }); } catch(e) { console.warn(e); }  })
             felbukkano2.style.display = "none";
         }, 400);
     })
+const fw = document.getElementById('floating-audit-warning');
 
 //Oldalső lapozó sáv aktív classa
 // Konfiguráció: melyik gomb (osztály) mit mutasson/rejtsen
@@ -283,7 +286,6 @@ const sections = {
     'uj-ful-2': document.getElementById('uj-ful-2') // Új szekció
 };
 
-const fw = document.getElementById('floating-audit-warning');
 
 lapozo.addEventListener('click', (e) => {
     const btn = e.target.closest('button'); // Biztosítja, hogy akkor is működjön, ha ikon van a gombban
@@ -295,13 +297,19 @@ lapozo.addEventListener('click', (e) => {
     [...lapozo.children].forEach(child => child.classList.remove('aktiv'));
     btn.classList.add('aktiv');
 
-    // 2. Megjelenítés/Elrejtés logika (Iteratív megközelítés)
+    // 2. Megjelenítés/Elrejtés logika
     Object.keys(sections).forEach(id => {
         const section = sections[id];
         if (section) {
-            section.style.display = (id === targetId) ? (id === 'gyik' ? 'flex' : 'flex') : 'none';
+            section.style.display = (id === targetId) ? 'flex' : 'none';
         }
     });
+
+    // +++ ÚJ: Határidő lista betöltése, ha a listára kattintunk +++
+    if (targetId === 'lista') {
+        renderHataridoLista();
+    }
+    // +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     // 3. Speciális elemek kezelése (pl. a lebegő figyelmeztetés)
     if (fw) {
@@ -352,14 +360,161 @@ if(toggleSwitch){
     });
 }
 
-document.addEventListener('click', (e) => {
-    // Ha a user rákattint a "Javaslatok / Engedélyek" gombra
+// --- KÖZÖS DOKUMENTUM KATTINTÁS FIGYELŐ (EVENT DELEGATION) ---
+document.addEventListener('click', async (e) => {
+    
+    // 1. JAVASLATOK / ENGEDÉLYEK GOMB (Szinkron logika)
     if (e.target.closest('#hozzaj') || e.target.closest('#hozzaj0')) {
         setTimeout(() => {
             if (window.userAuditKitoltesek) {
-                // Átadjuk a SZŰRT listát a függvénynek!
                 initAuditLista(window.userAuditKitoltesek);
             }
         }, 150);
+        return; // Ha ez volt a célpont, itt meg is állíthatjuk a futást
+    }
+
+    // 2. FELHASZNÁLÓI ÜZENETKÜLDÉS GOMB (Aszinkron logika)
+    if (e.target.id === 'audit-msg-send2') {
+        
+        // Védelem a duplázódás ellen
+        if (e.target.disabled) return;
+        e.stopImmediatePropagation(); 
+
+        const inputField = document.getElementById('audit-msg-input');
+        const message = inputField.value.trim();
+        
+        if (!message) {
+            alert("Kérjük, írjon be egy üzenetet küldés előtt!");
+            return;
+        }
+
+        const activeRow = document.querySelector('.inner-div-notok .meglevok.kijelolt, .inner-div-ok .meglevok.kijelolt');
+        if (!activeRow) {
+            alert('Nincs kiválasztva értékelés az üzenetküldéshez!');
+            return;
+        }
+
+        const auditId = activeRow.dataset.kitoltesId || activeRow.dataset.id;
+        const sendBtn = e.target;
+        sendBtn.disabled = true;
+        sendBtn.textContent = 'Küldés...';
+
+        try {
+            const currentUserName = userName || 'Értékelés szerzője'; 
+            
+            const response = await fetch('/api/add-audit-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    audit_ids: [auditId],
+                    sender_name: currentUserName,
+                    message: message,
+                    sender_type: 'user'
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                inputField.value = ''; 
+                const messengerDiv = document.querySelector('.messengerdiv');
+                
+                if (messengerDiv.querySelector('p')) {
+                    messengerDiv.innerHTML = '';
+                }
+                
+                const now = new Date();
+                const idoHover = now.toLocaleString('hu-HU');
+                const isoIdo = now.toISOString();
+
+                const ujUzenetHtml = `
+                <div class="uzenet1" title="${idoHover}" data-ido="${isoIdo}">
+                    <div class="nev2">${currentUserName}</div>
+                    <div class="audit-messages2">${message}</div>
+                </div>`;
+                
+               messengerDiv.insertAdjacentHTML('beforeend', ujUzenetHtml);
+                messengerDiv.scrollTop = messengerDiv.scrollHeight; 
+
+                // --- ÚJ RÉSZ: E-mail küldése az elemzőnek a háttérben ---
+                const currNev = activeRow.dataset.nev || 'Ismeretlen';
+                const currIdoszak = activeRow.dataset.periodus || '';
+                const currTipus = activeRow.dataset.megnev || '';
+                const teljesNev = `${currNev} (${currIdoszak} - ${currTipus})`;
+
+                fetch('/api/notify-auditor-reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        audit_id: auditId,
+                        uzenet: message,
+                        user_name: currentUserName,
+                        assessment_name: teljesNev // <-- Ezt küldjük át pluszban!
+                    })
+                }).catch(err => console.error('Hiba az auditor értesítésekor:', err));
+            } else {
+                alert('Hiba történt: ' + data.message);
+            }
+        } catch (err) {
+            console.error('Fetch hiba:', err);
+            alert('Szerver hiba történt az üzenet küldésekor!');
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.textContent = 'Küldés';
+        }
     }
 });
+// ÚJ: Határidő lista generálása a "Lista" fülre
+function renderHataridoLista() {
+    const listaDiv = document.getElementById('lista');
+    if (!listaDiv) return;
+
+    const isElemzo = window.location.pathname.includes('elemzo');
+    
+    // 1. Megfelelő adathalmaz kiválasztása
+    let data = [];
+    if (isElemzo) {
+        data = window.elemzoKitoltesek || [];
+    } else {
+        const nyersData = window.userAuditKitoltesek || [];
+        data = nyersData;
+    }
+
+    // 2. Szűrés: csak azok kellenek, amiknél audit == 1 és VAN határidő megadva
+    let hataridosok = data.filter(k => k.audit == 1 && k.hatarido);
+
+    // Rendezés: legközelebbi határidő legyen elöl (időrendben növekvő)
+    hataridosok.sort((a, b) => new Date(a.hatarido) - new Date(b.hatarido));
+
+    // 3. HTML generálása
+    if (hataridosok.length === 0) {
+        listaDiv.innerHTML = '<div class="hatarido-ures">Nincsenek közelgő határidők a rendszerben.</div>';
+        return;
+    }
+
+    let html = '<div class="hatarido-tarolo">';
+    html += '<h3 class="hatarido-cim">Közelgő határidők</h3>';
+    html += '<ul class="hatarido-lista">';
+
+    hataridosok.forEach(k => {
+        const dateObj = new Date(k.hatarido);
+        const formatDatum = dateObj.toLocaleDateString('hu-HU', { year: 'numeric', month: '2-digit', day: '2-digit' }).replace(/-/g, '.');
+        
+        const nev = k.vizsgalt_nev || 'Ismeretlen';
+        const tipus = (k.kitoltes_neve || '').replace(/~/g, ' - ');
+        
+        const owner = isElemzo ? ` <span class="hatarido-owner">(Értékelő: ${k.creator_name || k.felhasznalo_nev || 'Ismeretlen'})</span>` : '';
+
+        html += `<li class="hatarido-elem">
+            <strong class="hatarido-datum">${formatDatum}</strong> 
+            <span class="hatarido-nev">${nev}</span> 
+            <span class="hatarido-tipus">- ${tipus}</span>
+            ${owner}
+        </li>`;
+    });
+
+    html += '</ul></div>';
+    
+    // Tartalom beillesztése a DIV-be
+    listaDiv.innerHTML = html;
+}

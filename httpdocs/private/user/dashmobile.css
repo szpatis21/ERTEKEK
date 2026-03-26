@@ -5,7 +5,7 @@
     "c"
     "a"
     "b";
-    margin: 1vh;
+    margin: 0vh;
     gap: 1vh;
   }
   #egyik, #masik{font-size: smaller;}
@@ -177,7 +177,7 @@ align-items: center; width: 96%;
     width: 3px;}
     .outer-div{height: 100%;}
 
-.gomb .cim {padding: 0px; font-size: x-small !important; border-radius: 5px;}
+.gomb .cim {padding: 0px; font-size:small !important; border-radius: 5px;}
 .sta{    text-align: center;
 }
       #pergo-container{  font-size: small;
@@ -186,9 +186,22 @@ align-items: center; width: 96%;
 #szumm-chart-container div{display: flex; gap: 16px;align-items: stretch;}
 #magyarazat{flex-direction: column !important;}
 .savos{     
-display: flex;
-gap:2vh;height: fit-content; padding: 0px;
+        display: flex;
+        gap: 1vh;
+        height: fit-content;
+        padding: 0px;
+        background: #ff825766;
+        position: sticky;
+        top: 60px;
+        padding-top: 2%;
+        z-index: 50;
+        backdrop-filter: blur(7px);
+
 }
+.gomb .cim.dobaktiv {
+    
+    background-color: #ff9800;}
+    .gomb .cim{        border: 2px solid #ffffff;}
 #ertekek, #accunt2 {
     flex-direction: row; justify-content: space-evenly;}
     #triggerText {display: none;}
@@ -204,4 +217,70 @@ display: none};
 
 #accunt0{display: none;}
 .arrow{ color: #ffeede;}
+ .description2 span{font-size: small;}   .grid-layout {
+      padding: 3vh;
+        grid-template-columns: 1fr 1fr;
+    }
+    .narancsinfo{width: 20%;}
+    .narancsinfo svg{scale: 2 !important;}
+    .feherinfo{width: 90%;}
+    .main-title {
+            height: 100%;
+    margin-right: 0vh;
+        grid-column: 1 / 4;
+        font-size: 3rem;
+        text-align: center;
+    }
+    .main-title span {
+    font-size: 75%;
+}
+    .description {
+        grid-column: 1 / 4;
+        grid-row: auto;
+    }
+    .card{font-size: xx-large; display: flex; flex-direction: row; justify-content: space-evenly;}
+    .card-text-container {width: 50% !important;}
+    .description ul{font-size: small;}
+    .growth { 
+        grid-column: 1 / 4;
+        grid-row: auto;
+    }
+    .cta-container {
+        grid-column: 1 / 3;
+        grid-row: auto;
+    }
+    .analysis{    grid-column: 1 / 4;
+}
+    .goals{grid-row:6;grid-column: 1 / 4;} 
+    .dashboards{    grid-column: 3 / 3;
+    grid-row: 7 / 8;
+}
+.growth2 {
+        grid-row: 3 / 4;
+    grid-column: 1 / 5;
+
+}
+.card .default-text{font-size: medium !important;}
+.dashboards2 {
+    grid-column: 1 / 5;
+    grid-row: 4 / 5;
+}  
+.goals2 {
+          grid-column: 1 / 5;
+        grid-row: 5 / 5;
+}
+.card .icon {
+    scale: 1.5;}
+}
+
+@media screen and (min-width: 905px) and (max-width: 1180px) {
+ .description, .description2 {
+    grid-column: 1 / 5;}
+.growth{display: none;}
+.goals{
+    grid-column: 3 / 5;
+    grid-row: 3;
+}
+.goals .icon, .dashboards .icon, .dashboards2 .icon{margin-bottom: 8px;}
+.goals2{        grid-column: 2 / 4;}
 }

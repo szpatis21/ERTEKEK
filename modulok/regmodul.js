@@ -25,10 +25,10 @@ async function sendEmail(recipient, subject, htmlContent) {
 
     try {
         let info = await transporter.sendMail(mailOptions);
-        console.log('Email elküldve:', info.response);
-    } catch (error) {
-        console.error('Hiba az e-mail elküldése közben:', error);
-    }
+/*         console.log('Email elküldve:', info.response);
+ */    } catch (error) {
+/*         console.error('Hiba az e-mail elküldése közben:', error);
+ */    }
 }
 
 
@@ -313,7 +313,7 @@ function regi(db)
                             <br>
                             <p>Jó munkát és szép napot kíván:</p>
                             <p><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <p><i>www.ertekek.com</i></p>
+                            <a href="https://www.ertekek.com" style="color: #0056b3; text-decoration: none;">www.ertekek.com</a>
                             
                         </div>
                     `;
@@ -340,7 +340,239 @@ function regi(db)
       res.json(rows);
     });
   });
+// --- ÚJ ENDPOINT: Csoportos határidő értesítő ---
+router.post('/api/notify-deadlines', async (req, res) => {
+    try {
+        const { ertesitesek, hatarido } = req.body; 
+        // ertesitesek: [{ email: 'a@a.hu', alkoto: '...', nev: '...', tipus: '...' }, ...]
 
+        // 1. Csoportosítás e-mail címek alapján
+        const groupedByEmail = {};
+        
+        for (const item of ertesitesek) {
+            // Ha nincs email (bár elvileg kéne lennie az adatbázisodból), kihagyjuk
+            if (!item.email) continue; 
+            
+            if (!groupedByEmail[item.email]) {
+                groupedByEmail[item.email] = [];
+            }
+            groupedByEmail[item.email].push(item);
+        }
+
+        // 2. E-mailek elküldése ciklusonként (mindenkinek 1 db levél)
+        const emailPromises = Object.keys(groupedByEmail).map(async (userEmail) => {
+            const userItems = groupedByEmail[userEmail];
+            
+            // HTML lista generálása a levélbe
+            let listHtml = '<ul style="padding-left: 20px;">';
+            userItems.forEach(i => {
+                listHtml += `<li><strong>${i.nev}</strong> (${i.tipus})</li>`;
+            });
+            listHtml += '</ul>';
+
+       // Feltételezve, hogy a userItems tartalmazza az adott e-mail címhez tartozó adatokat
+        const addresseeName = userItems[0].alkoto || 'Felhasználó';
+
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+                <h2 style="color: #ffbd16;">Értékek határidő</h2>
+                <h2>Kedves ${addresseeName}!</h2>
+                <p>Az alábbi értékelés(ek)hez új leadási határidőt állítottak be a rendszerben:</p>
+                
+                ${listHtml}
+                
+                <p><strong>A megadott határidő: <span style="color: #d9534f; font-size: 1.2em;">${hatarido}</span></strong></p>
+                <br>
+                <p>Jó munkát kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                <a href="www.ertekek.com">www.ertekek.com</a>
+            </div>
+        `;
+
+            return sendEmail(userEmail, "Új határidő beállítva - ÉRTÉKEK", htmlContent);
+        });
+
+        await Promise.all(emailPromises);
+        res.json({ success: true, message: 'Értesítések elküldve.' });
+
+    } catch (error) {
+        console.error("Hiba az e-mail küldésnél:", error);
+        res.status(500).json({ success: false, message: 'E-mail küldési hiba!' });
+    }
+});
+// Értesítés auditációra jelölésről
+        router.post('/api/notify-audit-init', async (req, res) => {
+            const { email, userName, assessmentName, auditorName, message, deadline } = req.body;
+
+            if (!email) {
+                return res.status(400).json({ success: false, message: 'Nincs e-mail cím megadva.' });
+            }
+
+            let deadlineHtml = '';
+            if (deadline) {
+                deadlineHtml = `<p><strong>Az értékeléshez tartozó határidő: <span style="color: #d9534f;">${deadline}</span></strong></p>`;
+            }
+
+            const htmlContent = `
+                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+                    <h2 style="color: #ffbd16;">Értékelés auditációra jelölve</h2>
+                    <h2>Kedves ${userName}!</h2>
+                    <p>A(z) <strong>${assessmentName}</strong> nevű értékelését <strong>${auditorName}</strong> módosításra jelölte meg és a következő üzenetet küldte:</p>
+                    
+                    <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #ffbd16; margin: 15px 0; font-style: italic;">
+                        "${message}"
+                    </div>
+                    
+                    ${deadlineHtml}
+                    
+                    <p>További információkat a "Javaslatok" fülön talál, és az üzenetre is itt tud válaszolni. Fiókjába belépve a javaslatok fülön tekintheti meg a részleteket.</p>
+                    <br>
+                    <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                    <a href="www.ertekek.com">www.ertekek.com</a>
+                </div>
+            `;
+
+            try {
+                await sendEmail(email, "Értékelés auditációra jelölve - ÉRTÉKEK", htmlContent);
+                res.json({ success: true, message: 'Audit e-mail sikeresen elküldve.' });
+            } catch (error) {
+                console.error("Hiba az audit e-mail küldésekor:", error);
+                res.status(500).json({ success: false, message: 'Hiba az e-mail küldésekor.' });
+            }
+        });
+        // --- ÚJ VÉGPONT: Új audit üzenet e-mail értesítés ---
+        router.post('/api/notify-audit-message', async (req, res) => {
+            const { ertesitesek, uzenet, sender_name } = req.body;
+
+            if (!ertesitesek || !Array.isArray(ertesitesek) || ertesitesek.length === 0) {
+                return res.status(400).json({ success: false, message: 'Nincsenek megadva értesítendő adatok.' });
+            }
+
+            try {
+                // Végigmegyünk a kapott tömbön, és mindenkinek elküldjük a saját e-mailjét
+                const emailPromises = ertesitesek.map(async (ertek) => {
+                    if (!ertek.email) return Promise.resolve(); // Ha nincs e-mail, ugrunk a következőre
+
+                    const htmlContent = `
+                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h2 style="color: #0056b3;">Új üzenet érkezett az értékeléséhez</h2>
+                            <h2>Kedves ${ertek.alkoto}!</h2>
+                            <p>A(z) <strong>${ertek.nev} (${ertek.tipus})</strong> nevű értékeléséhez <strong>${sender_name}</strong> új üzenetet küldött:</p>
+                            
+                            <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #0056b3; margin: 15px 0; font-style: italic;">
+                                "${uzenet}"
+                            </div>
+                            
+                            <p>Fiókjába belépve a javaslatok fülön tekintheti meg a teljes beszélgetést, és itt is tud válaszolni rá.</p>
+                            <br>
+                            <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                            <a href="https://www.ertekek.com" style="color: #0056b3; text-decoration: none;">www.ertekek.com</a>
+                        </div>
+                    `;
+
+                    // Az existing sendEmail függvény használata
+                    return sendEmail(ertek.email, "Új üzenet az értékeléséhez - ÉRTÉKEK", htmlContent);
+                });
+
+                // Megvárjuk, amíg az összes levél kimegy
+                await Promise.all(emailPromises);
+
+                res.json({ success: true, message: 'Új üzenet e-mailek sikeresen elküldve.' });
+            } catch (error) {
+                console.error("Hiba az új üzenet e-mail küldésekor:", error);
+                res.status(500).json({ success: false, message: 'Szerverhiba az e-mail küldésekor.' });
+            }
+        });
+        // --- ÚJ VÉGPONT: Értesítés az elemzőnek (auditornak), ha a user válaszol ---
+        router.post('/api/notify-auditor-reply', (req, res) => {
+            // Itt már várjuk az assessment_name-et is a frontendtől
+            const { audit_id, uzenet, user_name, assessment_name } = req.body;
+
+            if (!audit_id || !uzenet) {
+                return res.status(400).json({ success: false, message: 'Hiányzó adatok' });
+            }
+
+            // Egyszerűsített lekérdezés: csak az auditor e-mail címét és nevét kérjük le
+            const query = `
+                SELECT u.mail AS auditor_email, u.vez AS auditor_nev
+                FROM audit a
+                JOIN felhasznalok u ON a.user_audit = u.id
+                WHERE a.audit_id = ?
+                LIMIT 1
+            `;
+
+            db.query(query, [audit_id], async (err, results) => {
+                if (err) {
+                    console.error("Adatbázis hiba az auditor keresésekor:", err);
+                    return res.status(500).json({ success: false, message: 'Adatbázis hiba' });
+                }
+
+                if (results.length > 0) {
+                    const row = results[0];
+                    const biztonsagiNev = assessment_name || 'Értékelés';
+
+                    const htmlContent = `
+                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h2 style="color: #28a745;">Új válasz érkezett egy auditált értékeléshez!</h2>
+                            <h2>Kedves ${row.auditor_nev}!</h2>
+                            <p>A(z) <strong>${biztonsagiNev}</strong> nevű értékeléshez <strong>${user_name}</strong> új üzenetet küldött:</p>
+                            
+                            <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; font-style: italic;">
+                                "${uzenet}"
+                            </div>
+                            
+                            <p>Fiókjába belépve a "Javaslatok" fülön tekintheti meg a teljes beszélgetést, és ott tud válaszolni vagy jóváhagyni az értékelést.</p>
+                            <br>
+                            <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                            <a href="https://www.ertekek.com" style="color: #28a745; text-decoration: none;">www.ertekek.com</a>
+                        </div>
+                    `;
+
+                    try {
+                        await sendEmail(row.auditor_email, "Új válasz érkezett (Auditáció) - ÉRTÉKEK", htmlContent);
+                        res.json({ success: true, message: 'Auditor értesítve.' });
+                    } catch (emailErr) {
+                        console.error("E-mail küldési hiba (auditor):", emailErr);
+                        res.status(500).json({ success: false, message: 'E-mail küldési hiba' });
+                    }
+                } else {
+                    res.status(404).json({ success: false, message: 'Nem található az auditor' });
+                }
+            });
+        });
+        // --- ÚJ VÉGPONT: Értesítés a jóváhagyásról ---
+        router.post('/api/notify-audit-approved', async (req, res) => {
+            const { ertesitesek } = req.body;
+
+            if (!ertesitesek || !Array.isArray(ertesitesek) || ertesitesek.length === 0) {
+                return res.status(400).json({ success: false, message: 'Nincsenek adatok.' });
+            }
+
+            try {
+                const emailPromises = ertesitesek.map(async (ertek) => {
+                    if (!ertek.email) return Promise.resolve();
+
+                    const htmlContent = `
+                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                            <h2 style="color: #28a745;">Értékelés Jóváhagyva! 🎉</h2>
+                            <h2>Kedves ${ertek.alkoto}!</h2>
+                            <p>Örömmel értesítjük, hogy a(z) <strong>${ertek.nev} (${ertek.tipus})</strong> nevű értékelését az auditor sikeresen jóváhagyta.</p>
+                            
+                            <p>Az értékelés ezzel lezárásra került, további teendője jelenleg nincs vele.</p>
+                            <br>
+                            <p>További jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                            <a href="https://www.ertekek.com" style="color: #2e2ee1; text-decoration: none;">www.ertekek.com</a>
+                        </div>
+                    `;
+                    return sendEmail(ertek.email, "Értékelés Jóváhagyva - ÉRTÉKEK", htmlContent);
+                });
+
+                await Promise.all(emailPromises);
+                res.json({ success: true, message: 'Jóváhagyás e-mailek elküldve.' });
+            } catch (error) {
+                console.error("Hiba a jóváhagyás e-mail küldésekor:", error);
+                res.status(500).json({ success: false, message: 'Szerverhiba.' });
+            }
+        });
     return router;
 }
 

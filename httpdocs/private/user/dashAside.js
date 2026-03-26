@@ -1,6 +1,43 @@
 import{showAlert} from "/both/alert.js"
-let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve,intkapmail;
+let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve,intkapmail, modul_leiras;
+// ÚJ: Statisztika változók
+let azonosIntezmenyRegisztraltak = 0;
+let osszesKitoltese = 0;
+let sajatLetrehozasuAdmin = 0;
+let mastolKapottEditor = 0;
+let megosztottMasokkal = 0;
+let auditKerelemKitolteseknel = 0;
+let auditFigyelmeztetesek = 0;
+let auditHataridok = 0;
+let globalEditorCount = 0;
+// Új változók a kibővített statisztikákhoz
+// --- ÚJ STATISZTIKA VÁLTOZÓK ---
 
+// Szerepkörök száma az intézményben (adott modulhoz)
+let azonosIntezmenyElemzok = 0;
+let azonosIntezmenyErtekelok = 0;
+
+// Intézményi összesített statisztikák az adott modulban
+let legtobbetErtekeltNev = 'Nincs adat';
+let legtobbetErtekeltDarab = 0;
+let globalHataridoUserCount =0;
+let globalWarmCount = 0;
+let globalHataridoCount = 0;
+let globalAdminCount = 0;
+let globalWarmEvalCount = 0;
+let globalAudit2Count = 0;
+let globalWarmUserCount = 0;
+let globalHataridoEvalCount = 0;
+let legtobbetMegosztottNev = 'Nincs adat';
+let legtobbetMegosztottDarab = 0;
+// Kedvenc kategória al-változói
+    let aktualisSzerep = ''; // <-- TEDD BE HELYETTE EZT
+                let legjobbErtekelesNev = 'Nincs kitöltött értékelés';
+                let legjobbErtekelesSzazalek = 0;
+                
+let kedvencKategoriaNev = 'Nincs adat';
+let kedvencKategoriaDarab = 0;
+let kedvencKategoriaAtlag = 0;
 // 2. Egy jelző, hogy ne töltsük le az adatokat feleslegesen többször
 let adatokBetoltve = false;
 
@@ -13,18 +50,68 @@ async function loadAsideData() {
     const data = await response.json();
 
     if (data.success) {
-      // Feltöltjük a modul helyi változóit a kapott adatokkal
+        leiras = data.leiras;
+      // ÚJ: A leírás első szavának kinyerése (pl. "Vezető (Admin)" -> "Vezető")
+aktualisSzerep = data.stats ? data.stats.aktualisSzerep : '';      // Feltöltjük a modul helyi változóit a kapott adatokkal
       userName = data.username;
       fullname = data.fullname;
       intezmeny = data.intezmeny;
       leiras = data.leiras;
+      modul_leiras = data.modul_leiras
       hozzaferhetoModulok = data.hozzaferhetoModulok;
       mailname = data.mailname;
       intkapmail = data.intkapmail;
       tel = data.tel;
+        modul_leiras  = data.modul_leiras;
+      
       int_fin = data.intfin;
       fizetve = data.fizetve;
+if (data.stats) {
+    globalEditorCount = data.stats.globalEditorCount || 0; // <--- EZT ADD HOZZÁ
+            azonosIntezmenyRegisztraltak = data.stats.azonosIntezmenyRegisztraltak;
+            osszesKitoltese = data.stats.osszesKitoltese;
+            sajatLetrehozasuAdmin = data.stats.sajatLetrehozasuAdmin;
+            mastolKapottEditor = data.stats.mastolKapottEditor;
+            megosztottMasokkal = data.stats.megosztottMasokkal;
+            auditKerelemKitolteseknel = data.stats.auditKerelemKitolteseknel;
+            auditFigyelmeztetesek = data.stats.auditFigyelmeztetesek;
+            globalWarmUserCount = data.stats.globalWarmUserCount;
+           globalHataridoEvalCount = data.stats.globalHataridoEvalCount;
+           globalHataridoUserCount = data.stats.globalHataridoUserCount;
+            auditHataridok = data.stats.auditHataridok;
+            globalWarmEvalCount = data.stats.globalWarmEvalCount;
+azonosIntezmenyElemzok = data.stats.azonosIntezmenyElemzok || 0;
+    azonosIntezmenyErtekelok = data.stats.azonosIntezmenyErtekelok || 0;
+            // Mivel a kedvenc kategória lehet null (ha még nincs kitöltése), ezt külön ellenőrizzük:
+            if (data.stats.legjobbErtekeles) {
+            legjobbErtekelesNev = data.stats.legjobbErtekeles.nev;
+            legjobbErtekelesSzazalek = Number(data.stats.legjobbErtekeles.atlag);
+        }
 
+        if (data.stats.kedvencKategoria) {
+            kedvencKategoriaNev = data.stats.kedvencKategoria.nev;
+            kedvencKategoriaDarab = data.stats.kedvencKategoria.darab;
+            // Biztosítjuk, hogy szám legyen, a "45y" elkerülése végett
+            kedvencKategoriaAtlag = Number(data.stats.kedvencKategoria.atlag); 
+        }
+      
+        // ÚJ ÉRTÉKEK BEOLVASÁSA
+        if (data.stats.legtobbetErtekelt) {
+            legtobbetErtekeltNev = data.stats.legtobbetErtekelt.nev;
+            legtobbetErtekeltDarab = data.stats.legtobbetErtekelt.darab;
+        }
+        
+        globalWarmCount = data.stats.globalWarmCount || 0;
+        globalHataridoCount = data.stats.globalHataridoCount || 0;
+        globalAdminCount = data.stats.globalAdminCount || 0;
+        
+        if (data.stats.legtobbetMegosztott) {
+            legtobbetMegosztottNev = data.stats.legtobbetMegosztott.nev;
+            legtobbetMegosztottDarab = data.stats.legtobbetMegosztott.darab;
+        }
+        
+        globalAudit2Count = data.stats.globalAudit2Count || 0;
+    }
       adatokBetoltve = true; // Jelezzük, hogy a betöltés sikeres volt
       console.log(hozzaferhetoModulok)
     } else {
@@ -37,8 +124,13 @@ async function loadAsideData() {
 }
 export async function initAside() {
  await loadAsideData();
-        
-        // Elemek összegyűjtése
+ let intosszhatarido = parseInt(globalHataridoCount, 10) + parseInt(globalWarmCount, 10);        
+
+let osszhatarido = parseInt(auditFigyelmeztetesek, 10) + parseInt(auditHataridok, 10);        
+let osszert = parseInt(mastolKapottEditor, 10) + parseInt(sajatLetrehozasuAdmin, 10);        
+let osszoszt = parseInt(mastolKapottEditor, 10) + parseInt(megosztottMasokkal, 10);        
+      
+// Elemek összegyűjtése
         const gombok = document.querySelectorAll('.gomb .cim');
         const layoutContainer = document.querySelector('.layout');
         const ujTartalmak = {
@@ -121,230 +213,529 @@ export async function initAside() {
         </div>                            
             `
             },
-            'accunt':{ main: () => {
-        // --- Kezdőértékek, ha valamiért hiányozna az adat ---
-        let licenszLejarat = 'Nincs adat';
-        let napokInfo = 'N/A';
+        'accunt':{ main: () => {
+        // --- 1. URL VIZSGÁLATA (Melyik felületen vagyunk?) ---
+        const isAdmin = window.location.pathname.includes('/admin/');
+        const isElemzo = window.location.pathname.includes('/elemzo/');
+        const isUser = window.location.pathname.includes('/user/'); // vagy alapértelmezett
 
-        // --- Dátumkezelő logika ---
-        // Ellenőrizzük, hogy a szükséges adatok (fizetve, int_fin) léteznek-e
+        // --- 2. KÖZÖS VÁLTOZÓK ÉS LOGIKA ---
+        // (Ezeket mindegyik layout használhatja, pl. licensz számítás)
+        let altNapokInfo = 'N/A';
+
         if (fizetve && int_fin) {
             try {
-                // 1. Dátum objektumok létrehozása
                 const fizetesDatuma = new Date(fizetve);
                 const ma = new Date();
-                
-                // A lejárat dátumát a fizetés dátumából kiindulva számoljuk
                 const lejaratDatuma = new Date(fizetesDatuma);
-
-                // 2. Lejárati dátum kiszámítása: a fizetés dátumához hozzáadjuk a hónapokat
                 lejaratDatuma.setMonth(lejaratDatuma.getMonth() + parseInt(int_fin, 10));
 
-                // 3. Lejárati dátum formázása (ÉÉÉÉ.HH.NN)
-                const ev = lejaratDatuma.getFullYear();
-                const honap = String(lejaratDatuma.getMonth() + 1).padStart(2, '0');
-                const nap = String(lejaratDatuma.getDate()).padStart(2, '0');
-                licenszLejarat = `${ev}.${honap}.${nap}`;
-
-                // 4. A hátralévő napok kiszámítása (az időpontokat levágjuk a pontosságért)
                 const maNormalizalt = new Date(ma.getFullYear(), ma.getMonth(), ma.getDate());
                 const lejaratNormalizalt = new Date(lejaratDatuma.getFullYear(), lejaratDatuma.getMonth(), lejaratDatuma.getDate());
                 
                 const idokulonbseg = lejaratNormalizalt.getTime() - maNormalizalt.getTime();
                 const napokSzama = Math.ceil(idokulonbseg / (1000 * 3600 * 24));
 
-                // 5. Az üzenet összeállítása a hátralévő napok alapján
                 if (napokSzama < 0) {
-                    napokInfo = 'Lejárt';
+                    altNapokInfo = 'Az előfizetés lejárt';
                 } else if (napokSzama === 0) {
-                    napokInfo = 'Ma jár le';
+                    altNapokInfo = 'Az előfizetés ma jár le';
                 } else {
-                    napokInfo = `${napokSzama} nap van hátra`;
+                    altNapokInfo = `Még ${napokSzama} nap az előfizetésből`;
                 }
-
             } catch (error) {
                 console.error("Hiba a licensz dátumának feldolgozása közben:", error);
-             
             }
         }
-
+if (isUser) {
         return `      
-                <div class="grid">
-                        <div class="elso">
-                        <h1>${fullname}</h1>
-                            <p> <b>Felhasználónév: </b>${userName}</p>
-                           
-                        
-                            <p><b>Értékelhető idő (licensz lejárta):</b> <br>${licenszLejarat} - még ${napokInfo}</p>
-                        </div>
-                    </div>
-            
-    <div class="info-strip">
-            
-            <div class="infocard" id="changepass">
-                Jelszó megváltoztatása
-            </div>
-        
-            <div class="infocard" id="remove">
-                Hozzájárulás visszavonása
-            </div>
-            <div class="infocard" id="plussj">
-                Kérelem jogosultságok bővítésére
-            </div>
-            <div class="infocard" id="deleteacc">
-                Profil Törlése
-            </div>
+        <div class="kontainer">
+                            <div class="grid-layout">
+                                <div class="main-title card">
+                                    <span>Jó újra látni ${userName}!</span>
+                                </div>
+                                <div class="description card">
+                                   <div class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
+                                    </div>
+                                 <span>
+                                 <ul>
+                                    <li>${aktualisSzerep}</li>
+                                    <li>${intezmeny}</li>
+                                    <li>${modul_leiras}</li>
+                                 </ul>
+                                  
+                                            </span>
+                                </div>
+                                
+                                <div class="card growth">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m312-751-40-120 56-18 40 119-56 19Zm138-49v-120h60v120h-60Zm198 49-56-19 40-119 56 19-40 119ZM86-40l-12-79 211-32q11-2 19.5-9.5T317-179l34-106q5-14 0-27t-18-20l-33 104-76-24 88-278q2-6 2-13t-2-13L178-304q-16 29-44.5 46.5T72-240H40v-80h32q11 0 20.5-5.5T107-341l177-334 50 28q37 21 52.5 60.5T389-506l-31 98q44 17 63.5 60t5.5 88l-34 106q-11 32-36.5 54.5T297-72L86-40Zm788 0L663-72q-34-5-59.5-27.5T567-154l-34-106q-14-45 5.5-88t63.5-60l-31-98q-13-41 2.5-80.5T626-647l50-28 177 334q5 10 14.5 15.5T888-320h32v80h-32q-33 0-61.5-17.5T782-304L648-556q-2 6-2 13t2 13l88 278-76 24-33-104q-13 7-18 20t0 27l34 106q4 11 12.5 18.5T675-151l211 32-12 79ZM224-252Zm512 0Zm-76 24-58-180 58 180ZM358-408l-58 180 58-180Z"/></svg></div>
+                                    <div class="card-text-container">
+                                              <span class="default-text">CSAPAT</span>
+                                        <span class="alt-text">${azonosIntezmenyRegisztraltak} kolléga</span>
+                                        
+                                    </div>
+                                </div>
 
-        </div>
-        </div>
-            
-            </div>`;
+                                <div class="card analysis">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M80-120v-80h800v80H80Zm40-120v-280h120v280H120Zm200 0v-480h120v480H320Zm200 0v-360h120v360H520Zm200 0v-600h120v600H720Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">STATISZTIKA</span>
+                                            <div class="alt-text" style="text-align:left">
+                                                        Legjobban sikerült értékelés:
+                                                            <ul style=list-style-type: square;">
+                                                                <li>${legjobbErtekelesNev} - ${legjobbErtekelesSzazalek} %</li>
+                                                            </ul>
+                                                            Legjobb témakör:
+                                                            <ul style=list-style-type: square;">
+                                                            <li>${kedvencKategoriaNev} (Átlag: ${kedvencKategoriaAtlag}%)</li>                                                            </ul>
+                                                        </ul>
+                                            </div>                                    
+                                    </div>
+                                </div>
+                                
+                                <div class="card goals">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">Licensz</span>
+                                        <span class="alt-text">${altNapokInfo}</span>
+                                    </div>
+                                </div>
+                                <div class="card dashboards">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
+                                    <div class="card-text-container">
+                              <span class="default-text">ÉRTÉKELÉSEK</span>
+                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    `;
+    }
+    else if (isElemzo) {
+        return `
+                  <div class="kontainer">
+                            <div class="grid-layout">
+                                <div class="main-title card">
+                                    <span>Jó újra látni ${userName}!</span>
+                                </div>
+                                <div class="description card">
+                                   <div class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
+                                    </div>
+                                 <span>
+                                 <ul>
+                                    <li>${aktualisSzerep}</li>
+                                    <li>${intezmeny}</li>
+                                    <li>${modul_leiras}</li>
+                                 </ul>
+                                  
+                                            </span>
+                                </div>
+                                
+                                <div class="card growth">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m312-751-40-120 56-18 40 119-56 19Zm138-49v-120h60v120h-60Zm198 49-56-19 40-119 56 19-40 119ZM86-40l-12-79 211-32q11-2 19.5-9.5T317-179l34-106q5-14 0-27t-18-20l-33 104-76-24 88-278q2-6 2-13t-2-13L178-304q-16 29-44.5 46.5T72-240H40v-80h32q11 0 20.5-5.5T107-341l177-334 50 28q37 21 52.5 60.5T389-506l-31 98q44 17 63.5 60t5.5 88l-34 106q-11 32-36.5 54.5T297-72L86-40Zm788 0L663-72q-34-5-59.5-27.5T567-154l-34-106q-14-45 5.5-88t63.5-60l-31-98q-13-41 2.5-80.5T626-647l50-28 177 334q5 10 14.5 15.5T888-320h32v80h-32q-33 0-61.5-17.5T782-304L648-556q-2 6-2 13t2 13l88 278-76 24-33-104q-13 7-18 20t0 27l34 106q4 11 12.5 18.5T675-151l211 32-12 79ZM224-252Zm512 0Zm-76 24-58-180 58 180ZM358-408l-58 180 58-180Z"/></svg></div>
+                                    <div class="card-text-container">
+                                              <span class="default-text">${azonosIntezmenyRegisztraltak} fős CSAPAT</span>
+                                        <span class="alt-text">${azonosIntezmenyElemzok} - elemző, ${azonosIntezmenyErtekelok} - értékelő</span>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="card analysis">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M80-120v-80h800v80H80Zm40-120v-280h120v280H120Zm200 0v-480h120v480H320Zm200 0v-360h120v360H520Zm200 0v-600h120v600H720Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">STATISZTIKA</span>
+                                            <div class="alt-text" style="text-align:left">
+                                                        Legtöbb értékelést létrehozó:
+                                                            <ul style=list-style-type: square;">
+                                                                <li>${legtobbetErtekeltNev} - ${legtobbetErtekeltDarab} db</li>
+                                                            </ul>
+                                                            Legtöbbet megosztott létrehozó:
+                                                            <ul style=list-style-type: square;">
+                                                            <li>${legtobbetMegosztottNev} -  ${legtobbetMegosztottDarab} db</li>                                                            </ul>
+                                                        </ul>
+                                            </div>                                    
+                                    </div>
+                                </div>
+                                
+                                <div class="card goals">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">Licensz</span>
+                                        <span class="alt-text">${altNapokInfo}</span>
+                                    </div>
+                                </div>
+                                <div class="card dashboards">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
+                                    <div class="card-text-container">
+                              <span class="default-text">ÉRTÉKELÉSEK</span>
+                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            `;
+        }
+    else if (isAdmin) {
+            return `
+                <div class="kontainer">
+                            <div class="grid-layout">
+                                <div class="main-title card">
+                                    <span>Jó újra látni ${userName}!</span>
+                                </div>
+                                <div class="description card">
+                                   <div class="icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
+                                    </div>
+                                 <span>
+                                 <ul>
+                                    <li>${aktualisSzerep}</li>
+                                    <li>${intezmeny}</li>
+                                    <li>${modul_leiras}</li>
+                                 </ul>
+                                  
+                                            </span>
+                                </div>
+                                
+                                <div class="card growth">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m312-751-40-120 56-18 40 119-56 19Zm138-49v-120h60v120h-60Zm198 49-56-19 40-119 56 19-40 119ZM86-40l-12-79 211-32q11-2 19.5-9.5T317-179l34-106q5-14 0-27t-18-20l-33 104-76-24 88-278q2-6 2-13t-2-13L178-304q-16 29-44.5 46.5T72-240H40v-80h32q11 0 20.5-5.5T107-341l177-334 50 28q37 21 52.5 60.5T389-506l-31 98q44 17 63.5 60t5.5 88l-34 106q-11 32-36.5 54.5T297-72L86-40Zm788 0L663-72q-34-5-59.5-27.5T567-154l-34-106q-14-45 5.5-88t63.5-60l-31-98q-13-41 2.5-80.5T626-647l50-28 177 334q5 10 14.5 15.5T888-320h32v80h-32q-33 0-61.5-17.5T782-304L648-556q-2 6-2 13t2 13l88 278-76 24-33-104q-13 7-18 20t0 27l34 106q4 11 12.5 18.5T675-151l211 32-12 79ZM224-252Zm512 0Zm-76 24-58-180 58 180ZM358-408l-58 180 58-180Z"/></svg></div>
+                                    <div class="card-text-container">
+                                              <span class="default-text">CSAPAT</span>
+                                        <span class="alt-text">${azonosIntezmenyRegisztraltak} kolléga</span>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="card analysis">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M80-120v-80h800v80H80Zm40-120v-280h120v280H120Zm200 0v-480h120v480H320Zm200 0v-360h120v360H520Zm200 0v-600h120v600H720Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">STATISZTIKA</span>
+                                            <div class="alt-text" style="text-align:left">
+                                                        Legjobban sikerült értékelés:
+                                                            <ul style=list-style-type: square;">
+                                                                <li>${legjobbErtekelesNev} - ${legjobbErtekelesSzazalek} %</li>
+                                                            </ul>
+                                                            Legjobb témakör:
+                                                            <ul style=list-style-type: square;">
+                                                            <li>${kedvencKategoriaNev} (Átlag: ${kedvencKategoriaAtlag}%)</li>                                                            </ul>
+                                                        </ul>
+                                            </div>                                    
+                                    </div>
+                                </div>
+                                
+                                <div class="card goals">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">Licensz</span>
+                                        <span class="alt-text">${altNapokInfo}</span>
+                                    </div>
+                                </div>
+                                <div class="card dashboards">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
+                                    <div class="card-text-container">
+                              <span class="default-text">ÉRTÉKELÉSEK</span>
+                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+            `;
+        }
     },
 
-               lapok: () => {
-        // 1. Ellenőrizzük, hogy a tömb létezik-e és tényleg tömb-e
-        const modulNevek = hozzaferhetoModulok && Array.isArray(hozzaferhetoModulok)
-  ? `<ul>${
-hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>$1</strong>')}</li>`).join('')
-    }</ul>`: 'Nincs szakmai modul hozzárendelve';
+          lapok: () => {
+                // --- 1. URL VIZSGÁLATA (Ugyanaz a logika, mint a main-nél) ---
+                const isAdmin = window.location.pathname.includes('/admin/');
+                const isElemzo = window.location.pathname.includes('/elemzo/');
 
-        // Visszaadjuk a generált HTML-t a helyes adatokkal
-        return `        
-        <div class="info-strip">
-            <div class="infocard">
-            <h3>Intézmény</h3>
-            <p><b>${intezmeny}</b> - ${intkapmail}</p>
-            </div>
+                // --- 2. KÖZÖS VÁLTOZÓK ---
+                // Ellenőrizzük, hogy a tömb létezik-e és tényleg tömb-e
+                const modulNevek = hozzaferhetoModulok && Array.isArray(hozzaferhetoModulok)
+                    ? `<ul>${hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>$1</strong>')}</li>`).join('')}</ul>`
+                    : 'Nincs szakmai modul hozzárendelve';
 
-            <div class="infocard">
-            <h3>Szerepkör</h3>
-            <p> ${leiras.replace(/^(\S+)/, '<strong>$1</strong>')}</p>
-            </div>
+                // --- 3. LAYOUTOK GENERÁLÁSA AZ URL ALAPJÁN ---
 
-            <div class="infocard">
-            <h3>Szakmai modulok</h3>
-            <p> ${modulNevek}</p>
-            </div>
-
-            <div class="infocard">
-            <h3>Elérhetőség</h3>
-            <p><b>E-mail: </b>- ${mailname} <br> 
-                <b>Telefonszám: </b>- ${tel} <br></p>
-            </div>
-
-        </div>`
-            }},
-         'hozzaj': {
-                main: () => {
-                    const isElemzo = window.location.pathname.includes('/elemzo/');
-
-                    if (isElemzo) {
-                        return `
-                         <div class="audit-tab-container">
-                            <div class="audit0">
-                                <div class="audit-tabs">
-                                    <div class="audit-tab-slider-bg"></div>
-                                    <button class="audit-tab-btn activex" data-index="0">Jóváhagyásra váró értékelések</button>
-                                    <button class="audit-tab-btn" data-index="1">Jóváhagyott értékelések</button>
-                                </div>
-                                <div id="tomlo">
-                                <div class="search-bar">
-                                    <span class="material-symbols-rounded search-icon">search</span>
-                                    <div class="belsosearch">
-                                        <select id="kereso-tipus" class="search-select">
-                                            <option value="nev">Név</option>
-                                            <option value="idoszak">Időszak</option>
-                                            <option value="megnevezes">Típus</option>
-                                            <option value="all">Mind</option>
-                                        </select>
-                                        <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                // A) ADMIN LAYOUT (Jobb oldali / Alsó sáv)
+                if (isAdmin) {
+                    return `
+                           <div class="kontainer2">
+                            <div class="grid-layout">
+                                <div class="description2 card">
+                                    <div class="narancsinfo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M160-120v-375l-72 55-48-64 120-92v-124h80v63l240-183 440 336-48 63-72-54v375H160Zm80-80h200v-160h80v160h200v-356L480-739 240-556v356Zm-80-560q0-50 35-85t85-35q17 0 28.5-11.5T320-920h80q0 50-35 85t-85 35q-17 0-28.5 11.5T240-760h-80Zm80 560h480-480Z"/></svg>
                                     </div>
-                                </div>
-                             </div>
-
-
-                            </div>
-                            
-                            <div id="tartalom2" class="audit-content-wrapper">
-                                <div class="audit-content-slider">
-                                    
-                                    <div class="audit-slide">
-                                        <div class="audit-lista">
-                                            <div class="audit-list-container">
-                                                <div class="inner-div-notok">
-                                                    </div>
-                                            </div>
+                                    <div class="feherinfo">
+                                        <div class="tipp-blokk delay-1">
+                                            <span class="mozog-jobbra">... Meglévő Értékeléseit az "ÉRTÉKEIM" menüpont alatt találja! </span>
+                                            <span class="mozog-balra">... Új értékeléseket az "ÚJ ÉRTÉKELÉS" menüpont alatt indíthat! </span>
+                                        </div>
+                                        <div class="tipp-blokk delay-2">
+                                            <span class="mozog-jobbra">... Módosításra jelölt értékeléseit keresse a "JAVASLATOK" menü alatt!</span>
+                                            <span class="mozog-balra">... Együtt könyebb! Ossza meg munkáit kollegáival!</span>
+                                        </div>
+                                         <div class="tipp-blokk delay-3">
+                                            <span class="mozog-balra">... Figyeljen az értékeléseken a naptár ikonra! Leadási határidőt rejtenek!</span>
+                                            <span class="mozog-jobbra">... A diagrammok ki-be kapcsolhatók, a diagramm menüben!</span>
                                         </div>
                                     </div>
-
-                                    <div class="audit-slide">
-                                        <div class="audit-lista">
-                                            <div class="audit-list-container">
-                                                <div class="inner-div-ok">
-                                                    </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
                                 </div>
-                            </div>
-                        </div>`;
-                    } else {
-                        // --- Y: NORMÁL FELHASZNÁLÓI NÉZET ---
-                        return `
-                        <div id="tartalom2">
-                            <div class="audit-slider-controls audit0">
-                             <div class="audit-tabs">
-                                <button class="audit-tab-btn activex" data-slide="0">
-                                    Jóváhagyásra váró értékelések
-                                </button>
-                                <button class="audit-tab-btn" data-slide="1">
-                                    Jóváhagyott értékelések
-                                </button>
-                                 </div>
-
-                                <div id="tomlo">
-                                <div class="search-bar">
-                                    <span class="material-symbols-rounded search-icon">search</span>
-                                    <div class="belsosearch">
-                                        <select id="kereso-tipus" class="search-select">
-                                            <option value="nev">Név</option>
-                                            <option value="idoszak">Időszak</option>
-                                            <option value="megnevezes">Típus</option>
-                                            <option value="all">Mind</option>
-                                        </select>
-                                        <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                                
+                                <div class="card growth2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m424-318 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">${osszert} értékelés</span>
+                                        <span class="alt-text">${mastolKapottEditor} megosztott, ${sajatLetrehozasuAdmin} saját értékelés</span>
                                     </div>
                                 </div>
-                             </div>
-                            </div>
-
-                            <div class="audit-slider-viewport">
-                                <div class="audit-slider-container" id="auditSlider">
-                                    
-                                    <div class="audit-slider-panel">
-                                        <div class="audit-lista">
-                                            <div class="audit-list-container outer-div">
-                                                <div class="inner-div inner-div-notok">
-                                                    </div>
-                                            </div>
-                                        </div>
+                                
+                                <div class="card goals2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M580-360q33 0 56.5-23.5T660-440q0-33-23.5-56.5T580-520q-15 0-28.5 5.5T527-500l-107-54v-12l107-54q11 9 24.5 14.5T580-600q33 0 56.5-23.5T660-680q0-33-23.5-56.5T580-760q-33 0-56.5 23.5T500-680v6l-107 54q-11-9-24.5-14.5T340-640q-33 0-56.5 23.5T260-560q0 33 23.5 56.5T340-480q15 0 28.5-5.5T393-500l107 54v6q0 33 23.5 56.5T580-360ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">${osszoszt} megosztás</span>
+                                        <span class="alt-text">${mastolKapottEditor} önnel, ${megosztottMasokkal} ön által megosztott értékelés</span>
                                     </div>
-
-                                    <div class="audit-slider-panel">
-                                        <div class="audit-lista">
-                                            <div class="audit-list-container outer-div">
-                                                <div class="inner-div inner-div-ok">
-                                                    </div>
-                                            </div>
-                                        </div>
+                                </div>
+                                
+                                <div class="card dashboards2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M339.5-108.5q-65.5-28.5-114-77t-77-114Q120-365 120-440t28.5-140.5q28.5-65.5 77-114t114-77Q405-800 480-800t140.5 28.5q65.5 28.5 114 77t77 114Q840-515 840-440t-28.5 140.5q-28.5 65.5-77 114t-114 77Q555-80 480-80t-140.5-28.5ZM480-440Zm112 168 56-56-128-128v-184h-80v216l152 152ZM224-866l56 56-170 170-56-56 170-170Zm512 0 170 170-56 56-170-170 56-56ZM480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text"> ${osszhatarido} határidő</span>
+                                        <span class="alt-text">${auditHataridok} határidő, ${auditFigyelmeztetesek} javaslat</span>
                                     </div>
-
                                 </div>
                             </div>
-                        </div>`;
-                    }
-                },
+                        </div>
+                    `;
+                }
+
+                // B) ELEMZŐ LAYOUT (Jobb oldali / Alsó sáv)
+                else if (isElemzo) {
+                    return `
+                           <div class="kontainer2">
+                            <div class="grid-layout">
+                                <div class="description2 card">
+                                    <div class="narancsinfo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M160-120v-375l-72 55-48-64 120-92v-124h80v63l240-183 440 336-48 63-72-54v375H160Zm80-80h200v-160h80v160h200v-356L480-739 240-556v356Zm-80-560q0-50 35-85t85-35q17 0 28.5-11.5T320-920h80q0 50-35 85t-85 35q-17 0-28.5 11.5T240-760h-80Zm80 560h480-480Z"/></svg>
+                                    </div>
+                                    <div class="feherinfo">
+                                        <div class="tipp-blokk delay-1">
+                                            <span class="mozog-jobbra">... Kollegái Értékeléseit az "INTÉZMÉNY" menüpont alatt találja! </span>
+                                            <span class="mozog-balra">... A meglévő moderálásokat az "AUDIT" menüpont alatt, állapot függően találja! </span>
+                                        </div>
+                                        <div class="tipp-blokk delay-2">
+                                            <span class="mozog-jobbra">... Auditációra kijelölhet egyénileg vagy csoportosan!</span>
+                                            <span class="mozog-balra">... Jóváhagyásról és auditációról automatikus e-mailt küldünk!</span>
+                                        </div>
+                                         <div class="tipp-blokk delay-3">
+                                            <span class="mozog-balra">... Az értékelő saját értékelésénél látja az ön utoló üzenetét!</span>
+                                            <span class="mozog-jobbra">... A diagrammok ki-be kapcsolhatók, a diagramm menüben!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card growth2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m424-318 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">Összesen ${globalAdminCount} értékelés</span>
+                                        <span class="alt-text">Összesen ${globalEditorCount} megosztás </span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card goals2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M580-360q33 0 56.5-23.5T660-440q0-33-23.5-56.5T580-520q-15 0-28.5 5.5T527-500l-107-54v-12l107-54q11 9 24.5 14.5T580-600q33 0 56.5-23.5T660-680q0-33-23.5-56.5T580-760q-33 0-56.5 23.5T500-680v6l-107 54q-11-9-24.5-14.5T340-640q-33 0-56.5 23.5T260-560q0 33 23.5 56.5T340-480q15 0 28.5-5.5T393-500l107 54v6q0 33 23.5 56.5T580-360ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">Értékelők audit</span>
+                                        <span class="alt-text">${globalWarmUserCount} Értékelő értékelése vár jóváhagyásra, ${globalHataridoUserCount} Értékelőnek kiosztott határidő</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card dashboards2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M339.5-108.5q-65.5-28.5-114-77t-77-114Q120-365 120-440t28.5-140.5q28.5-65.5 77-114t114-77Q405-800 480-800t140.5 28.5q65.5 28.5 114 77t77 114Q840-515 840-440t-28.5 140.5q-28.5 65.5-77 114t-114 77Q555-80 480-80t-140.5-28.5ZM480-440Zm112 168 56-56-128-128v-184h-80v216l152 152ZM224-866l56 56-170 170-56-56 170-170Zm512 0 170 170-56 56-170-170 56-56ZM480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text"> Értékelések audit</span>
+                                        <span class="alt-text">${globalHataridoEvalCount} határidő, ${globalWarmEvalCount} javaslat, ${globalAudit2Count} jóváhagyás</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // C) USER (ÉRTÉKELŐ) LAYOUT - EZ A TE JELENLEGI MEGLÉVŐ KÓDOD!
+                else {
+                    return `        
+                        <div class="kontainer2">
+                            <div class="grid-layout">
+                                <div class="description2 card">
+                                    <div class="narancsinfo">
+                                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M160-120v-375l-72 55-48-64 120-92v-124h80v63l240-183 440 336-48 63-72-54v375H160Zm80-80h200v-160h80v160h200v-356L480-739 240-556v356Zm-80-560q0-50 35-85t85-35q17 0 28.5-11.5T320-920h80q0 50-35 85t-85 35q-17 0-28.5 11.5T240-760h-80Zm80 560h480-480Z"/></svg>
+                                    </div>
+                                    <div class="feherinfo">
+                                        <div class="tipp-blokk delay-1">
+                                            <span class="mozog-jobbra">... Meglévő Értékeléseit az "ÉRTÉKEIM" menüpont alatt találja! </span>
+                                            <span class="mozog-balra">... Új értékeléseket az "ÚJ ÉRTÉKELÉS" menüpont alatt indíthat! </span>
+                                        </div>
+                                        <div class="tipp-blokk delay-2">
+                                            <span class="mozog-jobbra">... Módosításra jelölt értékeléseit keresse a "JAVASLATOK" menü alatt!</span>
+                                            <span class="mozog-balra">... Együtt könyebb! Ossza meg munkáit kollegáival!</span>
+                                        </div>
+                                         <div class="tipp-blokk delay-3">
+                                            <span class="mozog-balra">... Figyeljen az értékeléseken a naptár ikonra! Leadási határidőt rejtenek!</span>
+                                            <span class="mozog-jobbra">... A diagrammok ki-be kapcsolhatók, a diagramm menüben!</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card growth2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="m424-318 282-282-56-56-226 226-114-114-56 56 170 170ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h168q13-36 43.5-58t68.5-22q38 0 68.5 22t43.5 58h168q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm301.5-598.5Q510-807 510-820t-8.5-21.5Q493-850 480-850t-21.5 8.5Q450-833 450-820t8.5 21.5Q467-790 480-790t21.5-8.5ZM200-200v-560 560Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">${osszert} értékelés</span>
+                                        <span class="alt-text">${mastolKapottEditor} megosztott, ${sajatLetrehozasuAdmin} saját értékelés</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card goals2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M580-360q33 0 56.5-23.5T660-440q0-33-23.5-56.5T580-520q-15 0-28.5 5.5T527-500l-107-54v-12l107-54q11 9 24.5 14.5T580-600q33 0 56.5-23.5T660-680q0-33-23.5-56.5T580-760q-33 0-56.5 23.5T500-680v6l-107 54q-11-9-24.5-14.5T340-640q-33 0-56.5 23.5T260-560q0 33 23.5 56.5T340-480q15 0 28.5-5.5T393-500l107 54v6q0 33 23.5 56.5T580-360ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text">${osszoszt} megosztás</span>
+                                        <span class="alt-text">${mastolKapottEditor} önnel, ${megosztottMasokkal} ön által megosztott értékelés</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="card dashboards2">
+                                    <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M339.5-108.5q-65.5-28.5-114-77t-77-114Q120-365 120-440t28.5-140.5q28.5-65.5 77-114t114-77Q405-800 480-800t140.5 28.5q65.5 28.5 114 77t77 114Q840-515 840-440t-28.5 140.5q-28.5 65.5-77 114t-114 77Q555-80 480-80t-140.5-28.5ZM480-440Zm112 168 56-56-128-128v-184h-80v216l152 152ZM224-866l56 56-170 170-56-56 170-170Zm512 0 170 170-56 56-170-170 56-56ZM480-160q117 0 198.5-81.5T760-440q0-117-81.5-198.5T480-720q-117 0-198.5 81.5T200-440q0 117 81.5 198.5T480-160Z"/></svg></div>
+                                    <div class="card-text-container">
+                                        <span class="default-text"> ${osszhatarido} határidő</span>
+                                        <span class="alt-text">${auditHataridok} határidő, ${auditFigyelmeztetesek} javaslat</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+        },
+       'hozzaj': {
+    main: () => {
+        const isElemzo = window.location.pathname.includes('/elemzo/');
+
+        if (isElemzo) {
+            return `
+             <div class="audit-tab-container">
+                <div class="audit0">
+                    <div class="audit-tabs">
+                        <div class="audit-tab-slider-bg"></div>
+                        <button class="audit-tab-btn activex" data-index="0" data-slide="0">Jóváhagyásra váró</button>
+                        <button class="audit-tab-btn" data-index="1" data-slide="1">Határidős értékelések</button>
+                        <button class="audit-tab-btn" data-index="2" data-slide="2">Jóváhagyott</button>
+                    </div>
+                    <div id="tomlo">
+                        <div class="search-bar">
+                            <span class="material-symbols-rounded search-icon">search</span>
+                            <div class="belsosearch">
+                                <select id="kereso-tipus" class="search-select">
+                                    <option value="nev">Név</option>
+                                    <option value="idoszak">Időszak</option>
+                                    <option value="megnevezes">Típus</option>
+                                    <option value="all">Mind</option>
+                                </select>
+                                <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="tartalom2" class="audit-content-wrapper">
+                    <div class="audit-content-slider" id="auditSlider">
+                        
+                        <div class="audit-slide audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container">
+                                    <div class="inner-div-notok"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="audit-slide audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container">
+                                    <div class="inner-div-hatarido"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="audit-slide audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container">
+                                    <div class="inner-div-ok"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            // NORMÁL FELHASZNÁLÓI NÉZET
+            return `
+            <div id="tartalom2">
+                <div class="audit-slider-controls audit0">
+                 <div class="audit-tabs">
+                    <button class="audit-tab-btn activex" data-slide="0">Jóváhagyásra váró</button>
+                    <button class="audit-tab-btn" data-slide="1">Határidős értékelések</button>
+                    <button class="audit-tab-btn" data-slide="2">Jóváhagyott</button>
+                 </div>
+
+                    <div id="tomlo">
+                    <div class="search-bar">
+                        <span class="material-symbols-rounded search-icon">search</span>
+                        <div class="belsosearch">
+                            <select id="kereso-tipus" class="search-select">
+                                <option value="nev">Név</option>
+                                <option value="idoszak">Időszak</option>
+                                <option value="megnevezes">Típus</option>
+                                <option value="all">Mind</option>
+                            </select>
+                            <input type="text" id="kereso" class="search-input" placeholder="Keresés...">
+                        </div>
+                    </div>
+                 </div>
+                </div>
+
+                <div class="audit-slider-viewport">
+                    <div class="audit-slider-container" id="auditSlider">
+                        
+                        <div class="audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container outer-div">
+                                    <div class="inner-div inner-div-notok"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container outer-div">
+                                    <div class="inner-div inner-div-hatarido"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="audit-slider-panel">
+                            <div class="audit-lista">
+                                <div class="audit-list-container outer-div">
+                                    <div class="inner-div inner-div-ok"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>`;
+        }
+    },
                 lapok: () => {
                     const isElemzo = window.location.pathname.includes('/elemzo/');
                     
@@ -404,7 +795,7 @@ hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>
                                 <div class="audit-input-area">
                                     <input type="text" id="audit-msg-input" placeholder="Üzenet írása...">
                                     <div>   
-                                        <button id="audit-msg-send">Küldés</button>
+                                        <button id="audit-msg-send2">Küldés</button>
                                     </div>
                                 </div>
                                 <div class="audit-input-area">
@@ -615,183 +1006,11 @@ function initAuditSlider(container) {
     });
 }
 
-        const initialMain = layoutContainer.querySelector('.main');
+const initialMain = layoutContainer.querySelector('.main');
         const initialLapok = layoutContainer.querySelector('#lapok');
         
         initialMain.dataset.contentId = 'ertekek';
         initialLapok.dataset.contentId = 'ertekek';
-        initialMain.classList.add('aktiv-tartalom');
-        initialLapok.classList.add('aktiv-tartalom');
-
-        
-        // Eseménykezelők a gombokhoz
- const infoPanelekTartalma = {
-      'changepass': {
-    title: 'Jelszó Megváltoztatása',
-    content: 
-    `<p> Kérjük, adja meg jelenlegi és új jelszavát.</p>
-    <div style="flex-direction: row">
-        <div style="width:60%">
-            
-            <span class="jelszo-wrapper">
-                <input id="old" type="password" placeholder="Régi jelszó">
-                <span class="material-symbols-rounded toggle-jelszo">visibility</span>
-            </span>
-
-            <span class="jelszo-wrapper">
-                <input id="new" type="password" placeholder="Új jelszó">
-                <span class="material-symbols-rounded toggle-jelszo">visibility</span>
-            </span>
-
-            <span class="jelszo-wrapper">
-                <input id="newtwo" type="password" placeholder="Új jelszó mégegyszer">
-                <span class="material-symbols-rounded toggle-jelszo">visibility</span>
-            </span>
-
-        </div>
-        <span class="gobut6" style="width:40%">Új jelszó beállítása</span>
-    </div>
-            `
-        },
-        'remove': {
-            title: 'Hozzájárulás Visszavonása',
-            content: '<p>Biztosan visszavonja a hozzájárulását? Ez a művelet nem vonható vissza.</p><button>Visszavonás</button>'
-        },
-        'plussj': {
-            title: 'Jogosultságok Bővítése',
-            content: '<p>Jellezze az intézményi adminisztrátornak, milen szerepkört szeretne kérni. Jelenlegi szerepköreit jobb oldali sávban láthatja </p><textarea></textarea><button>Küldés</button>'
-        },
-        'deleteacc': {
-            title: 'Profil Törlése',
-            content: '<p>Figyelem! ÉRTÉKEK profilja törlésére készül. Ezzel visszavonthatatlanul törlődnek a létrehozott és megosztott értékelései is. Amennyiben biztos benne, hogy ezt szeretné, kattintson a "Profil végleleges törlése gombra"</p><button style="background-color: red; color: white;">Profil Végleges Törlése</button>'
-        }
-
-        
-    };
-
-function setupAccountInfoListeners(mainElement) {
-    const elsoDiv = mainElement.querySelector('.elso');
-    const infoCards = mainElement.querySelectorAll('.infocard');
-
-    if (!elsoDiv || infoCards.length === 0) return;
-
-function addPasswordValidationLogic(panel) {
-    const newPassInput = panel.querySelector('#new');
-    const newTwoPassInput = panel.querySelector('#newtwo');
-    const submitButton = panel.querySelector('.gobut6');
-
-    // --- Vizuális visszajelzés gépelés közben (változatlan) ---
-    function updateVisualFeedback() {
-        const pass1 = newPassInput.value;
-        const pass2 = newTwoPassInput.value;
-
-        if (pass2 === '') {
-            newTwoPassInput.classList.remove('jelszo-jo', 'jelszo-rossz');
-            return;
-        }
-        if (pass1 === pass2) {
-            newTwoPassInput.classList.remove('jelszo-rossz');
-            newTwoPassInput.classList.add('jelszo-jo');
-        } else {
-            newTwoPassInput.classList.remove('jelszo-jo');
-            newTwoPassInput.classList.add('jelszo-rossz');
-        }
-    }
-    newPassInput.addEventListener('input', updateVisualFeedback);
-    newTwoPassInput.addEventListener('input', updateVisualFeedback);
-
-    // --- Jelszó megjelenítése/elrejtése logika (változatlan) ---
-    const toggleIcons = panel.querySelectorAll('.toggle-jelszo');
-    toggleIcons.forEach(icon => {
-        icon.addEventListener('click', function() {
-            const input = this.previousElementSibling;
-            const isPassword = input.getAttribute('type') === 'password';
-            input.setAttribute('type', isPassword ? 'text' : 'password');
-            this.textContent = isPassword ? 'visibility_off' : 'visibility';
-        });
-    });
-
-    // --- A gomb kattintás eseményének kezelése (EZ A RÉSZ VÁLTOZIK) ---
-    submitButton.addEventListener('click', function() {
-        const pass1 = newPassInput.value;
-        const pass2 = newTwoPassInput.value;
-        const oldPass = panel.querySelector('#old').value;
-
-        // A validációs lánc: sorban ellenőrizzük a szabályokat
-        
-        // 1. Üres mezők ellenőrzése (marad a régi)
-        if (pass1 === '' || pass2 === '' || oldPass === '') {
-            showAlert('Minden jelszómező kitöltése kötelező!');
-        
-        // 2. Jelszó egyezés ellenőrzése (marad a régi)
-        } else if (pass1 !== pass2) {
-            showAlert('A két új jelszó nem egyezik meg!');
-        
-        // 3. ÚJ SZABÁLY: Hossz ellenőrzése
-        } else if (pass1.length < 8) {
-            showAlert('Az új jelszónak legalább 8 karakter hosszúnak kell lennie!');
-
-        // 4. ÚJ SZABÁLY: Régi és új jelszó összehasonlítása
-        } else if (pass1 === oldPass) {
-            showAlert('Az új jelszó nem egyezhet meg a régivel!');
-
-        // 5. ÚJ SZABÁLY: Kis- és nagybetű ellenőrzése (reguláris kifejezéssel)
-        } else if (!/[a-z]/.test(pass1) || !/[A-Z]/.test(pass1)) {
-            showAlert('Az új jelszónak tartalmaznia kell legalább egy kis- és egy nagybetűt!');
-        
-        // SIKERES ESET: Minden ellenőrzésen átment
-        } else {
-            showAlert('Jelszó sikeresen megváltoztatva!');
-            console.log('Minden validáció sikeres. Régi jelszó:', oldPass, 'Új jelszó:', pass1);
-            // Ide jön a tényleges jelszóküldés a szerver felé (fetch, axios, stb.).
-        }
-    });
-}
-    // --- ÚJ RÉSZ VÉGE ---
-
-    infoCards.forEach(card => {
-        card.addEventListener('click', function() {
-            const cardId = this.id;
-            const tartalom = infoPanelekTartalma[cardId];
-
-            const letezikPanel = elsoDiv.querySelector('.info-panel');
-            if (letezikPanel) {
-                letezikPanel.remove();
-            }
-
-            if (tartalom) {
-                const infoPanel = document.createElement('div');
-                infoPanel.className = 'info-panel';
-                infoPanel.innerHTML = `
-                    <span class="bezaras">&times;</span>
-                    <h3>${tartalom.title}</h3>
-                    <div>${tartalom.content}</div>
-                `;
-
-                elsoDiv.appendChild(infoPanel);
-
-                // --- MÓDOSÍTÁS: Itt hívjuk meg az új függvényünket, de csak a jelszó panelnél ---
-                if (cardId === 'changepass') {
-                    addPasswordValidationLogic(infoPanel);
-                }
-
-                setTimeout(() => {
-                    infoPanel.classList.add('aktivp');
-                }, 10);
-
-                infoPanel.querySelector('.bezaras').addEventListener('click', () => {
-                    infoPanel.classList.remove('aktivp');
-                    infoPanel.addEventListener('transitionend', () => {
-                        infoPanel.remove();
-                    }, { once: true });
-                });
-            }
-        });
-    });
-}
-
-
-   
 
 gombok.forEach(gomb => {
     gomb.addEventListener('click', function() {
@@ -822,8 +1041,6 @@ gombok.forEach(gomb => {
             newMain.className = 'main';
             newMain.dataset.contentId = aktivGombId;
 
-            // --- INNENTŐL VÁLTOZIK ---
-            // Ellenőrizzük, hogy a 'main' egy függvény-e. Ha igen, meghívjuk.
             newMain.innerHTML = typeof tartalomForras.main === 'function' 
                 ? tartalomForras.main() 
                 : tartalomForras.main;
@@ -832,11 +1049,9 @@ gombok.forEach(gomb => {
             newLapok.className = 'lapok';
             newLapok.dataset.contentId = aktivGombId;
 
-            // Ugyanezt megcsináljuk a 'lapok'-kal is a biztonság kedvéért.
             newLapok.innerHTML = typeof tartalomForras.lapok === 'function'
                 ? tartalomForras.lapok()
                 : tartalomForras.lapok;
-            // --- EDDIG VÁLTOZIK ---
 
             layoutContainer.appendChild(newMain);
             layoutContainer.appendChild(newLapok);
@@ -845,12 +1060,16 @@ gombok.forEach(gomb => {
         } else {
              newMain = document.querySelector(`.main[data-content-id="${aktivGombId}"]`);
         }
-if (aktivGombId === 'accunt' && newMain) {
-            setupAccountInfoListeners(newMain);
-        }
         
         if (aktivGombId === 'hozzaj' && newMain) {
             initAuditSlider(newMain);
+            setTimeout(() => {
+                if (typeof window.renderAuditListaDOM === 'function') {
+                    window.renderAuditListaDOM();
+                } else {
+                    console.warn("Hiba: window.renderAuditListaDOM nem található!");
+                }
+            }, 50);
         }
 
         setTimeout(() => {
@@ -860,4 +1079,87 @@ if (aktivGombId === 'accunt' && newMain) {
     });
 });
 
+// 2. ÚJ SOROK: A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
+// 2. A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
+const accuntGomb = document.getElementById('accunt');
+if (accuntGomb) {
+    accuntGomb.click();
+}
+
+// 3. A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
+const loadingOverlay = document.getElementById('loading-overlay');
+if (loadingOverlay) {
+    // 150ms késleltetés, hogy a rács biztosan felépüljön a háttérben a DOM-ban
+    setTimeout(() => {
+        loadingOverlay.style.opacity = '0'; // Elindítja a CSS fade-out animációt
+        
+        // Ha az animáció (0.4s) lejárt, teljesen levesszük az útból
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 400); 
+    }, 1050);
+}
+}// A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
+const accuntGomb = document.getElementById('accunt');
+if (accuntGomb) {
+    accuntGomb.click();
+    
+    // Elindítjuk a szekvenciát, miután a töltőképernyő biztosan levonult (800ms)
+    setTimeout(() => {
+        playIntroSequence();
+    }, 800);
+}
+
+// A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
+const loadingOverlay = document.getElementById('loading-overlay');
+if (loadingOverlay) {
+    setTimeout(() => {
+        loadingOverlay.style.opacity = '0';
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 400); 
+    }, 150);
+}
+
+// --- AZ AUTOMATIKUS ANIMÁCIÓ LOGIKÁJA ---
+// --- AZ AUTOMATIKUS ANIMÁCIÓ LOGIKÁJA ---
+function playIntroSequence() {
+    // A kártyákat párokba (tömbökbe) szervezzük
+    // Mivel 7 kártya van, az utolsó (dashboards2) egyedül marad egy párban
+    const pairs = [
+        ['.analysis', '.growth2'],
+        ['.growth', '.goals2'],
+        ['.goals', '.dashboards2'],
+        ['.dashboards'] 
+    ];
+
+    let delay = 0; // Kezdeti késleltetés
+    const interval = 1500; // 1 másodperc (1000ms) a párok felvillanása között
+
+    pairs.forEach((pair, index) => {
+        setTimeout(() => {
+            // 1. Rátesszük a hovert az aktuális pár minden elemére
+            pair.forEach(selector => {
+                const card = document.querySelector(selector);
+                if (card) {
+                    card.classList.add('simulated-hover');
+                }
+            });
+
+            // 2. Ha ez volt a legutolsó kör (a legutolsó elem a tömbben)
+            if (index === pairs.length - 1) {
+                // Várunk 2 másodpercet, hogy a legutolsót is el lehessen olvasni...
+                setTimeout(() => {
+                    // ...majd egyetlen lépésben az összesről levesszük a hovert!
+                    document.querySelectorAll('.simulated-hover').forEach(card => {
+                        card.classList.remove('simulated-hover');
+                    });
+                }, 2000); 
+            }
+
+        }, delay);
+        
+        // A következő pár 1 másodperccel (1000ms) később indul
+        delay += interval; 
+    });
 }

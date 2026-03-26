@@ -165,28 +165,31 @@ export function initChekingToggle() {
     if (infoBox) infoBox.style.display = show ? 'flex' : 'none';
 
     document.querySelectorAll('.cheking').forEach(el => {
-      el.style.display = show ? 'flex' : 'none';
+      // A flex helyett a checkboxoknak általában a block vagy inline-block a jobb
+      el.style.display = show ? 'block' : 'none'; 
     });
     
     updateCounter();
   };
 
-  // Csak egyszer kötjük be a figyelőket
-  if (!chekingInitialized) {
+  // 1. Csúszka eseménykezelője (közvetlenül az elemen vizsgáljuk, hogy be van-e kötve)
+  if (!master.__bound) {
       master.addEventListener('change', apply);
-      
-      const innerDiv = document.querySelector('.inner-div');
-      if (innerDiv) {
-          innerDiv.addEventListener('change', (e) => {
-              if (e.target.matches('.cheking')) {
-                  updateCounter();
-              }
-          });
-      }
-      chekingInitialized = true;
+      master.__bound = true;
   }
 
-  // A jelenlegi állapot érvényesítése minden híváskor lefut
+  // 2. Event delegation az innerDiv-en a számlálóhoz
+  const innerDiv = document.querySelector('.inner-div');
+  if (innerDiv && !innerDiv.__boundCheking) {
+      innerDiv.addEventListener('change', (e) => {
+          if (e.target.matches('.cheking')) {
+              updateCounter();
+          }
+      });
+      innerDiv.__boundCheking = true;
+  }
+
+  // Azonnali állapot-érvényesítés
   apply();
 }
 //CSOPORTOSÍTÁS LOGIKA

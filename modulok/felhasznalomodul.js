@@ -432,6 +432,7 @@ router.get('/get-kitoltesek', (req, res) => {
       a.warm, -- <-- BEKÉRJÜK A WARM OSZLOPOT
       a.hatarido,
       f.vez                                           AS creator_name,
+      f.mail                                  AS creator_mail,  
       CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS vizsgalt_nev
     FROM kitoltesek k
     JOIN felhasznalok f ON k.felhasznalo_id = f.id

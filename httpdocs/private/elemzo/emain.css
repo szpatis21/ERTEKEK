@@ -1,6 +1,6 @@
   .leiras{font-weight:normal !important;  font-size: small !important; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;}
 .szazalek{padding: 2px 4px; width: 100%; border-radius: 8px; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); white-space: normal; border: 1px solid rgba(255,255,255,0.2);}
-.meglevok{width: 28vh; display: flex; flex-direction: column;justify-content:  center; border: 1px solid grey;flex-wrap: nowrap;
+.meglevok{width: 28vh;height: fit-content; display: flex; flex-direction: column;justify-content:  center; border: 1px solid grey;flex-wrap: nowrap;
     min-height: fit-content; max-height: 45vh; padding: 5px;}  
     .warmnote,.warmnote2{ display: none;
         background: #000000bf;
@@ -30,12 +30,6 @@
     border: 1px solid grey;
     box-shadow: inset 1px 2px 4px 0px #80808066;}
     #akthat{color: #ff6500; font-style: italic;}
-    .helyicsopgomb{margin-left: 50%;
-    padding: 10px;
-    font-family: system-ui;
-    font-size: smaller;
-    background: #ff7207;
-    color: white;}
     .warm{
  position: absolute;
     bottom: 5%;
@@ -164,23 +158,21 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
         .creator-head{    text-transform: uppercase;font-weight: bolder;     color: #666; transition: all 0.3s;
     text-shadow: 0px 0px 5px #808080cc; font-family: Arial, Helvetica, sans-serif;  padding: 10px; height: 8vh;}
         .modules{        grid-template-columns: repeat(4, 1fr);}
-        .csopigomb:hover{color: black; }
-        .csopigomb{
+        .csopigomb:hover, .helyicsopgomb:hover{color: rgb(45, 45, 45); text-shadow: 0px 0px 4px grey !important; }
+        .csopigomb, .helyicsopgomb{
     z-index: 80;
     top: 0%;
+    text-shadow: none;
     right: 0%;
     font-weight: bold;
     position: absolute;
     text-align: center;
-    text-shadow: 0px 0px 5px;
     transition: all 0.3s;
-    background: #ffaa00;
+    background: #ffffff;
     padding: 3px;
-    border-radius: 3px;
     font-size: 80%;
-    /* margin: 0px 15px; */
     font-family: system-ui;
-    border: 2px solid #ff9800;
+    border: 2px solid #ff8000 !important;
     cursor: pointer;
     height: 8vh;
     display: flex;
@@ -189,13 +181,14 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     align-content: center;
     justify-content: center;
     align-items: center;
-    color: white;}
+    border-radius: 12px;
+    color: rgb(77, 77, 77);}
+    .helyicsopgomb{border-radius: 12px;}
     .split-charts{
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
   align-items:stretch;
-  /* fontos: a gyerekek ne növesszék a sort */
   grid-auto-rows:minmax(0, auto);
 }
 .split-charts .split-half{ min-width:0; min-height:0; }
@@ -205,7 +198,10 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
   height:45vh !important;   /* fix doboz a „nem mászkál” magassághoz */
   display:flex;
 }
- 
+ .helyi-szuro{
+    background: transparent;
+    color: orangered;
+    cursor: pointer;}
     canvas {max-width: 100% !important;} 
     .kozepc{z-index: 90;}
     .temak-container {  display: grid;
@@ -218,7 +214,10 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     box-shadow: none !important;}
     #tema-valaszto-container h4{margin-bottom: 0px;    font-size: small !important;
     font-family: system-ui;}
-    .creator-wrapper{position: relative; width: 100%;}
+    .creator-wrapper{position: relative;
+    width: 100%;
+    box-shadow: 5px 4px 3px 2px #00000094;
+    border-radius: 16px;}
     .tema-checkbox {font-size: small;
     font-family: system-ui;
     display: flex;
@@ -245,8 +244,8 @@ filter: invert(67%) sepia(61%) saturate(5148%) hue-rotate(352deg) brightness(104
     border: 2px solid #ff650082;
     border-radius: 8px;}
     .inner-div-ok .meglevok,.inner-div-notok .meglevok{
-height: 15vh;
-    width: 15vh;
+height: 17vh;
+    width: 17vh;
     font-size: x-small;
         
     }
@@ -255,8 +254,7 @@ height: 15vh;
     border: 2px solid green;
     box-shadow: 0px 0px 5px 0px green;
     color: green;}
-.inner-div-notok .meglevok{ height: 15vh;
-    
+.inner-div-notok .meglevok{ 
     border: 2px solid crimson;
     box-shadow: 0px 0px 5px 0px crimson;
     color: crimson;
@@ -335,9 +333,7 @@ display: flex;
     width: 100%;
 }
 #audit-msg-input {width: 60%;padding: 8px; border-radius: 4px; border: 1px solid #ccc;}
-.audit-list-container{
-    font-size: small; color: gray;
-}
+
 #tartalom2{
         background-color: white;
     padding: 3vh;
@@ -345,14 +341,17 @@ display: flex;
     height: 100%;
     width: 100%;
     gap: 15px;}
+   
 @media (max-width: 900px){
   .split-charts{ grid-template-columns: 1fr; }
   #polarAreaChart, #multiPieChart{ height:300px; }
 }
-#lista{    width: 100%;
+#lista{   width: 100%;
     background: white;
     height: 100%;
-    border-radius: 12px;}
+    border-radius: 12px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;}
 
     /* --- TARTALOM 2 CSÚSZKA RENDSZER --- */
 
@@ -438,3 +437,128 @@ display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;}
+.uzenet1, .uzenet2 {
+    max-width: 80%; /* Ne érjenek teljesen végig, maradjon egy kis "levegő" a másik oldalon */
+    width: fit-content; /* A doboz csak akkora legyen, amekkora a benne lévő szöveg */
+    margin-bottom: 15px; /* Pici térköz az üzenetek között */
+}
+
+/* Tegyük fel, hogy az uzenet1 a saját üzenet (jobb oldal) */
+.uzenet1 {
+    align-self: flex-end; /* Jobbra húzza a flex konténerben */
+}
+
+/* Az uzenet2 a másik fél üzenete (bal oldal) */
+.uzenet2 {
+    align-self: flex-start; /* Balra húzza a flex konténerben */
+}
+/* =======================================================
+   LEJÁRÓ HATÁRIDŐK MODAL (1 NAPOS)
+   ======================================================= */
+.expiring-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.expiring-modal-content {
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    max-width: 600px;
+    width: 90%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    font-family: Arial, sans-serif;
+}
+
+.expiring-modal-title {
+    color: #ff6500;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.expiring-modal-title .material-symbols-outlined {
+    font-size: 1.5em;
+}
+
+.expiring-modal-desc {
+    color: #555;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.expiring-modal-list {
+    max-height: 250px;
+    overflow-y: auto;
+    margin-bottom: 25px;
+    padding-right: 10px;
+}
+
+/* A JS-ben generált listaelemek dizájnja */
+.expiring-modal-item {
+  display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background: #f4f4f4;
+    padding: 5px;
+    border: 1px solid #ff72078a;
+    border-radius: 4px;
+    /* border: 1px solid #ddd; */
+    transition: background 0.2s;
+}
+
+.expiring-modal-item:hover {
+    background: #e9e9e9;
+}
+
+.expiring-modal-item input[type="checkbox"] {
+    margin-right: 15px;
+    transform: scale(1);
+}
+
+.expiring-modal-item strong {
+    color: #333;
+    font-size: x-small;
+}
+
+.expiring-modal-item span {
+    margin-left: 8px;
+    font-size: x-small;
+    color: #666;
+}
+
+.expiring-modal-actions {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+}
+
+.expiring-btn {
+    font-family: system-ui;
+       font-size: x-small;
+    color: #ff7207;
+    border: 1px solid #ff65009c;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+   box-shadow: 1px 1px 1px 1px #00000094;
+    transition: background 0.2s;
+}
+.expiring-btn:hover {background-color:#ff7207;color: white;}
+#btn-exp-approve{box-shadow: 1px 1px 1px 1px #194614b3;}
+#btn-exp-cancel{box-shadow: 1px 1px 1px 1px #461414b3;}
+/* Gombok egyedi színei és hover effektjei */
+
+
+

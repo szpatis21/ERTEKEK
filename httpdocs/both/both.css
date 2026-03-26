@@ -380,7 +380,8 @@ form{display: flex;justify-content:center}
 }
         
     
-    
+     .meglevok.hatarido {    
+    border: 2px solid peachpuff;}
     .nav{width: 100%; top:0; z-index:5000;
   position:sticky;}
     .hero-bg{position:fixed; inset:0 -20vw auto -20vw; height:70vh; z-index:-1;    transition: all 0.3s;  background-image: url('media/dragon-scales.svg'); }    
@@ -400,7 +401,7 @@ header{position:relative;
   backdrop-filter:saturate(130%) blur(8px); 
   align-items: center;
   justify-content:center;
-   background:rgba(8,14,36,.35); border-bottom:1px solid rgba(255,255,255,.06)
+   background:rgba(167, 186, 255, 0); border-bottom:1px solid rgba(255,255,255,.06)
 
 }
 .navbar .motto a{ display: none;     font-family: "Montserrat Subrayada", sans-serif;
@@ -509,3 +510,5 @@ svg{    width: 30px;
 
 
 }
+
+

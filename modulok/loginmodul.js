@@ -173,78 +173,7 @@ router.get('/get-username', (req, res) => {
     });
   });
 });
-// A loginmodul.js vagy hasonló router fájlodban
 
-// ... a többi útvonalad (pl. /login, /get-username) után ...
-
-// ÚJ VÉGPONT: Csak az oldalsávhoz szükséges felhasználói adatok lekérdezése
-// loginmodul.js - Optimalizált /api/user-brief
-
-router.get('/api/user-brief', (req, res) => {
-  if (!req.session.userId) {
-    return res.json({ success: false, message: 'Nincs bejelentkezve' });
-  }
-
-  // Egyetlen lekérdezés: Felhasználó + Intézmény + Szerepkör + Modulok
-  const sql = `
-    SELECT 
-        f.fnev AS username, 
-        f.vez AS fullname, 
-        f.mail, 
-        f.tel,
-        i.fizetve,
-        i.intfin,
-        i.intnev,
-        i.intkapmail,
-        r.leiras AS role_leiras,
-        m.id AS modul_id,
-        m.nev AS modul_nev,
-        m.leiras AS modul_leiras
-    FROM felhasznalok f
-    LEFT JOIN intezmeny i ON f.int_id = i.id
-    LEFT JOIN roles r ON f.role_id = r.id
-    LEFT JOIN jogosultsagok j ON f.id = j.user_id
-    LEFT JOIN modulok m ON j.modul_id = m.id
-    WHERE f.id = ?
-  `;
-
-  db.query(sql, [req.session.userId], (err, rows) => {
-    if (err) {
-      console.error('Adatbázis hiba (/api/user-brief):', err);
-      return res.json({ success: false, message: 'Adatbázis hiba történt' });
-    }
-    if (rows.length === 0) {
-      return res.json({ success: false, message: 'Felhasználó nem található' });
-    }
-
-    // Az első sorból vesszük az alapadatokat
-    const userBase = rows[0];
-    
-    // A modulokat kigyűjtjük a sorokból (mivel a JOIN miatt többszöröződnek a user adatok)
-    const hozzaferhetoModulok = rows
-        .filter(row => row.modul_id !== null) // Csak ahol van modul
-        .map(row => ({
-            id: row.modul_id,
-            nev: row.modul_nev,
-            leiras: row.modul_leiras
-        }));
-
-    // Válasz összeállítása
-    res.json({
-      success: true,
-      username: userBase.username,
-      fullname: userBase.fullname,
-      mailname: userBase.mail,
-      tel: userBase.tel,
-      intkapmail: userBase.intkapmail,
-      intfin: userBase.intfin,
-      fizetve: userBase.fizetve,
-      intezmeny: userBase.intnev,
-      leiras: userBase.role_leiras,
-      hozzaferhetoModulok: hozzaferhetoModulok
-    });
-  });
-});
 
    function formatUser(u) {
   return {

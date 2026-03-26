@@ -5,7 +5,7 @@ import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
 import { generatePdfMakePDF } from '../main/main_pdf.js';
 import {initSzuro,initChekingToggle,initSearch  } from './dashSort.js';
-import {showAlert,showMissingChecklist, customConfirm,customPrompt3,customDatePrompt } from "/both/alert.js"
+import {showAlert,showMissingChecklist, customConfirm,customPrompt3,customDatePrompt,customAuditPrompt } from "/both/alert.js"
 import { triggerIndividualAiAnalysis } from './dashAI.js';
 import { initMegosztas } from './dashsShare.js'; //Megosztás
 import { loadColorMaps } from './dashStatic.js';
@@ -174,6 +174,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
 
                       <select name="szuro" id="szuro">
                               <option value="role2" selected disabled hidden>Rendezés...</option>
+                              <option value="hatarido">Határidő szerint</option>
                                   <option value="role">Tulaj szerint</option>
                                   <option value="nev">Név szerint</option>
                                   <option value="periodus">Dátum szerint</option>
@@ -191,14 +192,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                             <span class="swicsi">Értékelések kijelölése csoportos statisztikára</span>
     
                           </div>
-                          <div id="mozgo2">
-                         
-
-                            <span class="swicsi2">Kijelöltek megjelölése auditációra</span>
-                            <span class="swicsi3">Kijelöltek határidejének megadása</span>
-
-    
-                          </div>
+                     
                           <div id="stat-info-box">
                               <span id="sel-count">0 </span> értékelés kijelölve.
                           </div>
@@ -210,7 +204,6 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
           ` ;
                           
   innerDiv.appendChild(kozep);
-  initChekingToggle();   
   
   // --- SEGÉDFÜGGVÉNYEK A GOMBOKHOZ ---
   function renderButtons(role, kit) {
@@ -310,6 +303,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
               <span class="material-symbols-rounded sort-icon">sort</span>
               <select class="helyi-szuro">
                   <option value="alap" selected disabled hidden>Csoportosítás...</option>
+                  <option value="hatarido">Határidő szerint</option>
                   <option value="nev">Név szerint</option>
                   <option value="periodus">Dátum szerint</option>
                   <option value="megnev">Típus szerint</option>
@@ -428,7 +422,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     
     let warning = '';
     if (role === 'szerkeszto') {
-        warning = `<div class="savdiv" style="background:#ff6500">Megosztva…</div>`;
+        warning = `<div class="savdiv">Megosztva…</div>`;
         getOriginalAdminName(kitoltes.idk).then(ownerName => {
             const savdiv = kitoltesDiv.querySelector('.savdiv');
             if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
@@ -440,31 +434,21 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     }</div>`;
 
  // --- ÚJ WARM (WARNING) ÉS HATÁRIDŐ LOGIKA (EGYESÍTETT BUBORÉK) ---
-    let warmHtml = '';
+ let warmHtml = '';
     const auditStatus = Number(kitoltes.audit); 
 
     if (auditStatus === 1) {
-        // SZIGORÍTOTT VIZSGÁLAT: Kiszűrjük a "null" sztringet és a csak szóközöket is
         let hasMessage = kitoltes.warm && kitoltes.warm !== 'null' && kitoltes.warm.trim() !== '';
-        
         let hasDeadline = !!kitoltes.hatarido;
         
         let combinedText = "";
         let iconsHtml = "";
 
-        // 1. Üzenet rész összerakása
         if (hasMessage) {
             combinedText += kitoltes.warm.trim();
             iconsHtml += `<div class="warm-icon" style="font-weight: bold;">!</div>`;
-        } else if (!hasDeadline) {
-            // Nincs se üzenet, se határidő, de auditálásra van jelölve
-            // Itt beállítjuk a default szöveget, de NEM írjuk felül a hasMessage-t, 
-            // hogy később is tudjuk, ez csak egy "üres" figyelmeztetés.
-            combinedText += 'Értékelését egy auditor vizsgálatra jelölte ki.';
-            iconsHtml += `<div class="warm-icon" style="font-weight: bold;">!</div>`;
         }
 
-        // 2. Határidő rész összerakása
         if (hasDeadline) {
             const hDatum = new Date(kitoltes.hatarido);
             const ma = new Date();
@@ -485,29 +469,30 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
             iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
         }
 
-        warmHtml = `
-          <div class="warm warm-item" style="display: flex; align-items: center;">
-            <span class="warmnote">${combinedText}</span>
-            ${iconsHtml}
-          </div>
-        `;
+        // 3. Buborék HTML generálása (CSAK HA VAN VALAMI)
+        if (hasMessage || hasDeadline) {
+            warmHtml = `
+              <div class="warm warm-item" style="display: flex; align-items: center;">
+                <span class="warmnote">${combinedText}</span>
+                ${iconsHtml}
+              </div>
+            `;
+        } else {
+            // Nincs mit mutatni
+            warmHtml = `<div class="warm" style="display: none;"></div>`;
+        }
 
-        // 3. Osztályok kiosztása a tiszta logika alapján
+        // 4. Osztályok kiosztása (NINCS "Else" ág, ami mindenkire rárakná!)
         if (hasMessage) {
-            // Van valós, backendből jövő üzenet (határidővel vagy anélkül)
             kitoltesDiv.classList.add("figyelmeztetve");
         } else if (hasDeadline) {
-            // CSAK határidő van, üzenet nincs (hasMessage itt biztosan false)
             kitoltesDiv.classList.add("hatarido");
-        } else {
-            // Nincs se üzenet, se határidő, de audit=1 (az 1. pont else if ága futott le)
-            kitoltesDiv.classList.add("figyelmeztetve");
         }
 
     } else {
         warmHtml = `<div class="warm" style="display: none;"></div>`;
     }
-    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText + warmHtml;    
+    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText + warmHtml;
     
     // Dataset beállítás
     kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
@@ -522,6 +507,15 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     kitoltesDiv.dataset.nev       = kitoltes.vizsgalt_nev; 
     kitoltesDiv.dataset.periodus  = periodus;
     kitoltesDiv.dataset.megnev    = megnev;
+    kitoltesDiv.dataset.fnev = kitoltes.creator_name || 'Felhasználó';
+kitoltesDiv.dataset.mail = kitoltes.creator_mail;
+
+    if (kitoltes.hatarido) {
+                const hDatum = new Date(kitoltes.hatarido);
+                kitoltesDiv.dataset.hatarido = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+            } else {
+                kitoltesDiv.dataset.hatarido = 'Nincs határidő'; // Ide fogja gyűjteni azokat, amiknek még nem adtak
+            }
 
     // --- KATTINTÁS ESEMÉNY (SOR KIVÁLASZTÁSA) ---
     kitoltesDiv.addEventListener('click', async (event) => {
@@ -535,7 +529,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
 
         const auditStatus = Number(kitoltes.audit);
 
-        if (auditStatus === 1) {
+     if (auditStatus === 1) {
             // 1. SZIGORÍTOTT VIZSGÁLAT ITT IS
             let hasMessage = false;
             if (kitoltes.warm) {
@@ -550,56 +544,104 @@ let floatingWarn = document.getElementById('floating-audit-warning');
             }
             let hasDeadline = !!kitoltes.hatarido;
 
-            // 2. SZÖVEG MEGHATÁROZÁSA
-            let warmText = '';
-            if (hasMessage) {
-                warmText = kitoltes.warm.trim();
-            } else if (hasDeadline) {
-                warmText = 'Ehhez az értékeléshez leadási határidő lett beállítva.';
+            // --- ÚJ RÉSZ: Ha nincs se üzenet, se határidő, rejtse el a popupot ---
+            if (!hasMessage && !hasDeadline) {
+                floatingWarn.style.display = 'none';
             } else {
-                warmText = 'Értékelését egy auditor vizsgálatra jelölte ki.';
-            }
-            
-            // 3. HATÁRIDŐ MEGJELENÍTÉSE
-            let hataridoHtml = '';
-            if (hasDeadline) {
-                const hDatum = new Date(kitoltes.hatarido);
-                const ma = new Date();
-                ma.setHours(0,0,0,0); hDatum.setHours(0,0,0,0);
+                // ==========================================
+                // INNENTŐL JÖN AZ ELSE ÁG: HA VAN MIT MUTATNI
+                // ==========================================
+
+                // 2. SZÖVEG MEGHATÁROZÁSA
+                let warmText = '';
+                if (hasMessage) {
+                    warmText = kitoltes.warm.trim();
+                } else if (hasDeadline) {
+                    warmText = 'Ehhez az értékeléshez leadási határidő lett beállítva.';
+                }
                 
-                const diffDays = Math.ceil((hDatum.getTime() - ma.getTime()) / (1000 * 60 * 60 * 24));
-                let napSzoveg = diffDays > 0 ? `(még ${diffDays} nap)` : (diffDays === 0 ? `(ma jár le!)` : `(lejárt ${Math.abs(diffDays)} napja)`);
-                const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                
-                hataridoHtml = `
-                    <div class="f-warn-date" style="margin-top: 10px;">
-                        <span class="material-symbols-outlined" style="font-size:1.2em; vertical-align: middle;">calendar_clock</span>
-                        Határidő: ${formatDatum} <span style="color:white; font-weight:normal;">${napSzoveg}</span>
+                // 3. HATÁRIDŐ MEGJELENÍTÉSE
+                let hataridoHtml = '';
+                if (hasDeadline) {
+                    const hDatum = new Date(kitoltes.hatarido);
+                    const ma = new Date();
+                    ma.setHours(0,0,0,0); hDatum.setHours(0,0,0,0);
+                    
+                    const diffDays = Math.ceil((hDatum.getTime() - ma.getTime()) / (1000 * 60 * 60 * 24));
+                    let napSzoveg = diffDays > 0 ? `(még ${diffDays} nap)` : (diffDays === 0 ? `(ma jár le!)` : `(lejárt ${Math.abs(diffDays)} napja)`);
+                    const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+                    
+                    hataridoHtml = `
+                        <div class="f-warn-date" style="margin-top: 10px;">
+                            <span class="material-symbols-outlined" style="font-size:1.2em; vertical-align: middle;">calendar_clock</span>
+                            Határidő: ${formatDatum} <span style="color:white; font-weight:normal;">${napSzoveg}</span>
+                        </div>
+                    `;
+                }
+
+                // 4. A LEBEGŐ ABLAK HTML TARTALMÁNAK ÖSSZEÁLLÍTÁSA
+                floatingWarn.innerHTML = `
+                    <div class="f-warn-header">
+                        <div class="title-area">
+                            <span class="material-symbols-outlined">warning</span>
+                            Értékelési információ
+                        </div>
+                        <span class="f-warn-close" onclick="document.getElementById('floating-audit-warning').style.display='none'">&times;</span>
+                    </div>
+                    <div class="f-warn-body">
+                        ${warmText}
+                        ${hataridoHtml}
+                        <br><br>
+                        <i class="rovidut" data-id="${kitoltes.idk}" style="cursor: pointer; text-decoration: underline; color: #ffbd16;">Kattintson ide a részletekért</i>
+                        <br>  <br>
+                        <i style="font-size: 0.9em; opacity: 0.8;">Jóváhagyásra váró és határidős értékeléseit a "javaslatok" fülön találja</i>
                     </div>
                 `;
-            }
 
-            // 4. A LEBEGŐ ABLAK HTML TARTALMÁNAK ÖSSZEÁLLÍTÁSA
-            floatingWarn.innerHTML = `
-                <div class="f-warn-header">
-                    <div class="title-area">
-                        <span class="material-symbols-outlined">warning</span>
-                        Értékelési információ
-                    </div>
-                    <span class="f-warn-close" onclick="document.getElementById('floating-audit-warning').style.display='none'">&times;</span>
-                </div>
-                <div class="f-warn-body">
-                    ${warmText}
-                    ${hataridoHtml}
-                    <br><br>
-                    <i>További információt a "Javaslatok" fülön talál a "Jóváhagyásra váró értékelések" közt.</i>
-                </div>
-            `;
-            
-            // Megjelenítjük
-            floatingWarn.style.display = 'block';
+                // --- ÚJ LOGIKA: Ugrás a Javaslatok fülre és a kártya kijelölése ---
+                const rovidutBtn = floatingWarn.querySelector('.rovidut');
+                if (rovidutBtn) {
+                    rovidutBtn.addEventListener('click', () => {
+                        const targetId = rovidutBtn.dataset.id;
+                        
+                        // 1. Lebegő ablak bezárása
+                        floatingWarn.style.display = 'none';
+
+                        // 2. Átváltás a "Javaslatok" fülre
+                        const javaslatokTabBtn = document.getElementById('hozzaj'); 
+                        if (javaslatokTabBtn) {
+                            javaslatokTabBtn.click();
+                        }
+
+                        // 3. Egy pici késleltetéssel rákattintunk a kártyára (A JAVÍTOTT verzió!)
+                        setTimeout(() => {
+                            const targetCard = document.querySelector(`.inner-div-notok .meglevok[data-kitoltes-id="${targetId}"], .inner-div-ok .meglevok[data-kitoltes-id="${targetId}"]`);
+                            if (targetCard) {
+                                // Ha le van csukva a harmonika, lenyitjuk
+                                const hiddenParent = targetCard.closest('.creator-list');
+                                if (hiddenParent && hiddenParent.style.display === 'none') {
+                                    hiddenParent.style.display = 'flex';
+                                    const header = hiddenParent.previousElementSibling;
+                                    if (header && header.classList.contains('creator-head')) {
+                                        header.style.height = '45px';
+                                        const icon = header.querySelector('.toggle-icon');
+                                        if (icon) icon.style.transform = 'rotate(180deg)';
+                                        const csopiGomb = header.querySelector('.helyicsopgomb') || header.nextElementSibling?.querySelector('.helyicsopgomb');
+                                        if (csopiGomb) csopiGomb.style.height = '5vh';
+                                    }
+                                }
+                                targetCard.click(); 
+                                targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }, 500);
+                    });
+                }
+                
+                // 5. Mivel volt mit mutatni, megjelenítjük az ablakot!
+                floatingWarn.style.display = 'block';
+            }
         } else {
-            // Ha nem 1-es az audit, biztosan elrejtjük
+            // Ha egyáltalán nem 1-es az audit, biztosan elrejtjük
             floatingWarn.style.display = 'none';
         }
         // 1. Kijelölés vizuális kezelése
@@ -915,51 +957,238 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                       })
                   });
                   
-              // ... a megerősítő ablak és a fetch hívás után ...
-                const data = await response.json();
+                  const data = await response.json();
                   
-                if (data.success) {
-                    showAlert('Határidő sikeresen beállítva!');
-                    
-                    // --- 1. PONT: AZONNALI VIZUÁLIS FRISSÍTÉS A JELENLEGI KÁRTYÁN ---
-                    meglevok.classList.add("hatarido");
-                    meglevok.dataset.auditId = "1"; // Frissítjük az audit státuszt a kártyán
-
-                    // Dátum formázása a buborékhoz (hogy azonnal látszódjon újratöltés nélkül is)
-                    const hDatum = new Date(valasztottDatum);
-                    const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                    
-                    let warmDiv = meglevok.querySelector('.warm');
-                    if (warmDiv) {
-                        warmDiv.style.display = 'flex';
-                        warmDiv.classList.add('warm-item');
-                        warmDiv.innerHTML = `
-                            <span class="warmnote">Határidő lett beállítva ehhez az értékeléshez:<br>
-                            <span style="color: #ffbd16;">Határidő:</span> ${formatDatum}</span>
-                            <span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>
-                        `;
-                    }
-
-                    // --- 2. PONT: AUDIT LISTA BIZTONSÁGOS FRISSÍTÉSE ---
-                    // Meghívjuk a dashMain.js-ben definiált globális frissítőt.
-                    // Adunk neki 1,5 másodperc késleltetést, hogy a felhasználó 
-                    // lássa az imént besárgult kártyát, mielőtt a lista újrarendeződik.
-                    if (typeof window.frissitKitoltesek === 'function') {
-                        setTimeout(() => {
-                            window.frissitKitoltesek();
-                        }, 1500);
-                    }
-                } else {
-                    showAlert('Hiba történt: ' + data.message);
-                }
+                  if (data.success) {
+                      showAlert('Határidő sikeresen beállítva!');
+                      if (typeof window.sendDeadlineEmails === 'function') {
+                          const ertesitesekTomb = [{
+                              email: meglevok.dataset.mail,
+                              alkoto: meglevok.dataset.fnev,
+                              nev: meglevok.dataset.nev,
+                              tipus: `${meglevok.dataset.periodus} - ${meglevok.dataset.megnev}`
+                          }];
+                          window.sendDeadlineEmails(ertesitesekTomb, valasztottDatum);
+                      }
+                      // Hogy azonnal látszódjon az eredmény, rátesszük a classt a UI-on
+                      meglevok.classList.add("hatarido");
+                      const hDatum = new Date(valasztottDatum);
+                      const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+                      
+                      let warmDiv = meglevok.querySelector('.warm');
+                      if (warmDiv) {
+                          warmDiv.style.display = 'flex';
+                          warmDiv.classList.add('warm-item');
+                          warmDiv.innerHTML = `
+                              <span class="warmnote">Határidő lett beállítva ehhez az értékeléshez:<br>
+                              <span style="color: #ffbd16;">Határidő:</span> ${formatDatum}</span>
+                              <span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>
+                          `;
+                      }
+                      // Ha van globális listatárat frissítő függvényed, azt itt meghívhatod:
+                      // setTimeout(() => window.frissitKitoltesek(), 1000);
+                  } else {
+                      showAlert('Hiba történt: ' + data.message);
+                  }
               } catch (error) {
                   console.error('Fetch hiba:', error);
                   showAlert('Szerver hiba történt a határidő mentése során.');
               }
           }
+        else if (action === "audit") {
+              const auditStatus = Number(meglevok.dataset.auditId);
+              const hasWarm = meglevok.classList.contains('figyelmeztetve');
+              const hasHatarido = meglevok.classList.contains('hatarido');
+              
+              const isJovahagyva = auditStatus === 2;
+              const isAuditAlatt = auditStatus === 1 && (hasWarm || hasHatarido);
+              
+              if (isJovahagyva || isAuditAlatt) {
+                  // Átnavigálunk az Audit/Javaslatok fülre és megnyitjuk a kártyát
+                  const javaslatokTabBtn = document.getElementById('hozzaj'); 
+                  if (javaslatokTabBtn) {
+                      javaslatokTabBtn.click();
+                  }
+
+                  setTimeout(() => {
+                      // Itt már a három tárolóban keressük a kártyát, beleértve az új határidőst is!
+                      const targetCard = document.querySelector(`.inner-div-notok .meglevok[data-kitoltes-id="${kitoltesId}"], .inner-div-ok .meglevok[data-kitoltes-id="${kitoltesId}"], .inner-div-hatarido .meglevok[data-kitoltes-id="${kitoltesId}"]`);
+                      
+                      if (targetCard) {
+                          // Ha le van csukva a harmonika, lenyitjuk
+                          const hiddenParent = targetCard.closest('.creator-list');
+                          if (hiddenParent && hiddenParent.style.display === 'none') {
+                              hiddenParent.style.display = 'flex';
+                              const header = hiddenParent.previousElementSibling;
+                              if (header && header.classList.contains('creator-head')) {
+                                  header.style.height = '45px';
+                                  const icon = header.querySelector('.toggle-icon');
+                                  if (icon) icon.style.transform = 'rotate(180deg)';
+                                  const csopiGomb = header.querySelector('.helyicsopgomb') || header.nextElementSibling?.querySelector('.helyicsopgomb');
+                                  if (csopiGomb) csopiGomb.style.height = '5vh';
+                              }
+                          }
+                          
+                          // Szimuláljuk a kattintást és odagörgetünk
+                          targetCard.click(); 
+                          targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      } else {
+                          // Ha valamiért eltűnt a DOM-ból, kiírjuk a megfelelő üzenetet
+                          showAlert('Ez az értékelés már folyamatban van vagy jóvá lett hagyva, kérjük, keresse a "Javaslatok" fülön!');
+                      }
+                  }, 500);
+                  
+                  return; // Kilépünk a függvényből, nem engedjük újra beküldeni!
+              }
+
+              const currNev = meglevok.dataset.nev || 'Ismeretlen';
+              const currIdoszak = meglevok.dataset.periodus || '';
+              const currTipus = meglevok.dataset.megnev || '';
+              const teljesNev = `${currNev} (${currIdoszak} - ${currTipus})`;
+
+              // 1. Audit felugró ablak meghívása
+              const auditData = await customAuditPrompt(teljesNev);
+              if (!auditData) return; // Ha a Mégsemre nyomott
+
+              // 2. Megerősítés
+              const megerosites = await customConfirm(`Biztosan kijelöli a(z) <b>${teljesNev}</b> értékelést auditációra?`);
+              if (!megerosites) return;
+
+              // 3. Backend hívás
+              try {
+                  const response = await fetch('/api/set-audit-init', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                          audit_id: kitoltesId,           
+                          user_audit: userId,
+                          audit_int_id: intezmeny_id,             
+                          audit_modul_id: modulId,        
+                          sender_name: userName, // Az aktuálisan bejelentkezett felhasználó neve (aki küldi)
+                          uzenet: auditData.message,
+                          hatarido: auditData.deadline    // null, ha nem kértek
+                      })
+                  });
+                  
+                  const data = await response.json();
+                  
+              if (data.success) {
+                      showAlert(`${teljesNev} nevű értékelés auditációra kijelölve. További műveleteket az "auditáció" fülön tud végezni.`);
+                      
+                      // --- ÚJ E-MAIL KÜLDÉSE AZ AUDITÁCIÓRÓL (MINDIG LEFUT) ---
+                      if (typeof window.sendAuditInitEmail === 'function') {
+                          const emailAdat = {
+                              email: meglevok.dataset.mail,
+                              userName: meglevok.dataset.fnev, // Az értékelés alkotójának neve
+                              assessmentName: teljesNev,
+                              auditorName: userName, // Te, mint auditor
+                              message: auditData.message,
+                              deadline: auditData.deadline // Lehet null is, a backend kezeli
+                          };
+                          window.sendAuditInitEmail(emailAdat);
+                      }
+                      // ---------------------------------------------------
+
+                      // 4. UI Vizuális Frissítése
+                      meglevok.classList.add("figyelmeztetve");
+                      if (auditData.deadline) meglevok.classList.add("hatarido");
+
+                      let warmDiv = meglevok.querySelector('.warm');
+                      if (warmDiv) {
+                          warmDiv.style.display = 'flex';
+                          warmDiv.classList.add('warm-item');
+                          
+                          let warmText = auditData.message;
+                          let iconsHtml = `<div class="warm-icon" style="font-weight: bold;">!</div>`;
+
+                          if (auditData.deadline) {
+                              const hDatum = new Date(auditData.deadline);
+                              const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+                              warmText += `<br><br><span style="color: #ffbd16;">Határidő:</span> ${formatDatum}`;
+                              iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
+                          }
+
+                          warmDiv.innerHTML = `
+                              <span class="warmnote">${warmText}</span>
+                              ${iconsHtml}
+                          `;
+                      }
+                  } else {
+                      showAlert('Hiba történt: ' + data.message);
+                  }
+              } catch (error) {
+                  console.error('Fetch hiba:', error);
+                  showAlert('Szerver hiba történt az auditáció mentése során.');
+              }
+          }
+          else if (action === "approve") {
+              const auditStatus = Number(meglevok.dataset.auditId);
+              
+              // Opcionális biztonsági ellenőrzés: ha már jóvá van hagyva
+              if (auditStatus === 2) {
+                  showAlert('Ez az értékelés már jóvá van hagyva!');
+                  return;
+              }
+
+              const currNev = meglevok.dataset.nev || 'Ismeretlen';
+              const currIdoszak = meglevok.dataset.periodus || '';
+              const currTipus = meglevok.dataset.megnev || '';
+              const teljesNev = `${currNev} (${currIdoszak} - ${currTipus})`;
+
+              // 1. Megerősítés kérése
+              const megerosites = await customConfirm(`Biztosan jóváhagyja a(z) <b>${teljesNev}</b> értékelést?`);
+              if (!megerosites) return;
+
+              // 2. Gomb inaktiválása a dupla kattintás ellen
+              btnDiv.style.pointerEvents = 'none';
+              btnDiv.style.opacity = '0.5';
+
+              try {
+                  // 3. API hívás (Ugyanaz a végpont, amit az Audit fülön is használunk)
+                  const response = await fetch('/api/set-audit-status', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({ 
+                          audit_ids: [kitoltesId], // Tömbben várja az ID-t
+                          new_status: 2 
+                      })
+                  });
+                  
+                  const data = await response.json();
+                  
+                  if (data.success) {
+                      showAlert(`${teljesNev} sikeresen jóváhagyva!`);
+                      
+                      // 4. Vizuális takarítás a kártyán
+                      meglevok.dataset.auditId = "2";
+                      meglevok.classList.remove("figyelmeztetve", "hatarido");
+                      
+                      let warmDiv = meglevok.querySelector('.warm');
+                      if (warmDiv) {
+                          warmDiv.style.display = 'none';
+                          warmDiv.innerHTML = '';
+                          warmDiv.classList.remove('warm-item');
+                      }
+
+                      // Opcionális: Ha akarod, le is frissítheted a teljes listát
+                      if (typeof window.renderAuditListaDOM === 'function') {
+                          setTimeout(() => window.renderAuditListaDOM(), 1000);
+                      }
+                  } else {
+                      showAlert('Hiba történt: ' + data.message);
+                  }
+              } catch (error) {
+                  console.error('Fetch hiba:', error);
+                  showAlert('Szerver hiba történt a jóváhagyás során.');
+              } finally {
+                  // Gomb visszaállítása
+                  btnDiv.style.pointerEvents = 'auto';
+                  btnDiv.style.opacity = '1';
+              }
+          }
       });
   });
-
+initChekingToggle(); // IDE TEDD BE!
   initSzuro();
   initSearch();
 }

@@ -5,18 +5,41 @@ export function initAuditLista(kitoltesek) {
     // 1. Megkeressük a konténereket a DOM-ban
     const okContainer = document.querySelector('.inner-div-ok');
     const notOkContainer = document.querySelector('.inner-div-notok');
+    const hataridoContainer = document.querySelector('.inner-div-hatarido'); // Új konténer
 
-    // Ha nincsenek a képernyőn (pl. nincs megnyitva az Engedélyek fül), kilépünk
-    if (!okContainer || !notOkContainer) return;
+    if (!okContainer || !notOkContainer || !hataridoContainer) return;
 
-    // 2. Kiürítjük az eddigi tartalmat, hogy ne duplikálódjon
+    // 2. Kiürítjük az eddigi tartalmat
     okContainer.innerHTML = '';
     notOkContainer.innerHTML = '';
+    hataridoContainer.innerHTML = '';
 
-    // 3. Szétválogatjuk az értékeléseket
-    // (A dupla == megengedőbb, ha esetleg stringként jönne az "1" vagy "2")
-    const pendingItems = kitoltesek.filter(k => k.audit == 1);
-    const approvedItems = kitoltesek.filter(k => k.audit == 2);
+    const isUserSide = window.location.pathname.includes('/user/');
+
+    // 3. USER OLDALI SZŰRÉS: Csak a saját értékeléseit lássa
+    let megjelenitendo = kitoltesek;
+    if (isUserSide) {
+        megjelenitendo = kitoltesek.filter(k => 
+            k.creator_name === window.userName || 
+            k.felhasznalo_nev === window.userName ||
+            k.fnev === window.userName
+        );
+    }
+
+    // 4. Szétválogatjuk az értékeléseket HÁROM felé
+// 4. Szétválogatjuk az értékeléseket HÁROM felé
+    const approvedItems = megjelenitendo.filter(k => k.audit == 2);
+
+    // Jóváhagyásra váró: audit 1, ÉS van üzenete (warm) - függetlenül attól, hogy van-e határideje!
+    const pendingItems = megjelenitendo.filter(k => {
+        if (k.audit != 1) return false;
+        const hasMessage = k.warm && String(k.warm).trim() !== '' && String(k.warm) !== 'null';
+        const hasNothing = !hasMessage && !k.hatarido;
+        return hasMessage || hasNothing;
+    });
+
+    // Határidős: audit 1, ÉS van határideje
+    const deadlineItems = megjelenitendo.filter(k => k.audit == 1 && k.hatarido);
 
   function renderGroupedList(items, container) {
         if (items.length === 0) {
@@ -39,6 +62,7 @@ export function initAuditLista(kitoltesek) {
                     <span class="material-symbols-rounded sort-icon">sort</span>
                     <select class="helyi-szuro">
                         <option value="alap" selected disabled hidden>Csoportosítás...</option>
+                        <option value="hatarido">Határidő szerint</option>
                         <option value="nev">Név szerint</option>
                         <option value="periodus">Dátum szerint</option>
                         <option value="megnev">Típus szerint</option>
@@ -137,20 +161,23 @@ export function initAuditLista(kitoltesek) {
 
                 const helyicsop = document.createElement("button");
                 helyicsop.classList.add("helyicsopgomb")
-                helyicsop.textContent = "Összes kijelölése";
+                helyicsop.textContent = "Csoport kijelölése";
                 header.appendChild(helyicsop);
 
-                toggle.addEventListener('click', () => {
+                header.addEventListener('click', () => {
                     const myTargetList = header.nextElementSibling;
                     const icon = header.querySelector('.toggle-icon');
                     
                     if (myTargetList.style.display === 'none') {
                         myTargetList.style.display = 'flex'; 
                         header.style.height = '45px';
+                        helyicsop.style.height ="5vh";
+
                         if (icon) icon.style.transform = 'rotate(180deg)';
                     } else {
                         myTargetList.style.display = 'none';
                         header.style.height = '8vh';
+                        helyicsop.style.height ="8vh";
                         if (icon) icon.style.transform = 'rotate(0deg)';
                     }
                 });
@@ -163,7 +190,7 @@ export function initAuditLista(kitoltesek) {
 
                     const allChecked = Array.from(checkboxes).every(cb => cb.checked);
                     checkboxes.forEach(cb => { cb.checked = !allChecked; });
-                    helyicsop.textContent = allChecked ? "Összes kijelölése" : "Kijelölés törlése";
+                    helyicsop.textContent = allChecked ? "Csoport kijelölése" : "Kijelölés törlése";
                     handleAuditBulkSelection();
                 });
 
@@ -200,18 +227,48 @@ export function initAuditLista(kitoltesek) {
             kitoltesDiv.dataset.nev = kitoltes.vizsgalt_nev || 'Ismeretlen Értékelés';
             kitoltesDiv.dataset.periodus = periodus || 'Egyéb';
             kitoltesDiv.dataset.megnev = megnev || 'Egyéb';
+            kitoltesDiv.dataset.mail = kitoltes.creator_mail;
+            kitoltesDiv.dataset.fnev = kitoltes.creator_name || 'Felhasználó';
             // --- HIÁNYZÓ RÉSZ VÉGE ---
-
+if (kitoltes.hatarido) {
+                const hDatum = new Date(kitoltes.hatarido);
+                kitoltesDiv.dataset.hatarido = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+            } else {
+                kitoltesDiv.dataset.hatarido = 'Nincs határidő'; // Ide fogja gyűjteni azokat, amiknek még nem adtak
+            }
             
-            // HTML tartalom összeállítása (Gombok és checkbox nélkül!)
-       const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen Értékelés';
+ 
+
+            // 1. A szöveges tartalom beállítása
+// HTML tartalom összeállítása (Gombok és checkbox nélkül!)
+            const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen Értékelés';
             const nameHtml = `<div class="vizsgalt-nev"><strong>${decryptedName}</strong></div>`;
             const formattedText = (kitoltes.kitoltes_neve || '').replace(/-/g, ' - <br>');
 
             // 1. A szöveges tartalom beállítása
             kitoltesDiv.innerHTML = nameHtml + formattedText;
 
-            // --- BIZTONSÁGI VÉDELEM: Megnézzük, hogy a user oldalon vagyunk-e ---
+            // --- ÚJ RÉSZ: HATÁRIDŐ DIV GENERÁLÁSA AZ AUDIT LISTÁBA ---
+            if (kitoltes.hatarido) {
+                kitoltesDiv.classList.add("hatarido"); // Adjuk hozzá a sárga keret stílust, ha van ilyen beállítva
+
+                const hDatum = new Date(kitoltes.hatarido);
+                const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+                
+                const auditHataridoDiv = document.createElement('div');
+                auditHataridoDiv.className = 'audit-hatarido-jelzo';
+                auditHataridoDiv.style.display = 'flex';
+                auditHataridoDiv.style.alignItems = 'center';
+                auditHataridoDiv.style.color = '#000000';
+                auditHataridoDiv.style.fontSize = '0.85em';
+                
+                auditHataridoDiv.innerHTML = `
+                    <span class="material-symbols-outlined" style="font-size: 1.2em; margin-right: 5px;">calendar_clock</span>
+                    Határidő: ${formatDatum}
+                `;
+                
+                kitoltesDiv.appendChild(auditHataridoDiv);
+            }
 
             // 2. A Checkbox csak akkor jön létre, ha NEM a user oldalon vagyunk
             if (!isUserSide) {
@@ -234,6 +291,8 @@ export function initAuditLista(kitoltesek) {
             // KATTINTÁS ESEMÉNY - Jelenleg csak vizuális kijelölés, később ide jön a chat betöltése
            // KATTINTÁS ESEMÉNY A CHAT MEGNYITÁSÁHOZ
            kitoltesDiv.addEventListener('click', async (event) => {
+                    const lapok = document.querySelector("#lapok")
+    lapok.scrollIntoView({ behavior: 'smooth', block: 'center' });
             document.querySelectorAll('.audit-cheking').forEach(cb => cb.checked = false);
                 // A címeket is visszaállítjuk az eredetire (opcionális, mert az if (db > 0) else ága is megcsinálná, de biztos ami biztos)
                 const h3Titles = document.querySelectorAll('.messageouter h3');
@@ -242,8 +301,7 @@ export function initAuditLista(kitoltesek) {
                     h3Titles[1].innerHTML = `<span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek`;
                 }
                 // Vizuális kijelölés a listában
-                document.querySelectorAll('.inner-div-ok .meglevok.kijelolt, .inner-div-notok .meglevok.kijelolt').forEach(el => el.classList.remove('kijelolt'));
-                kitoltesDiv.classList.add('kijelolt');
+document.querySelectorAll('.inner-div-ok .meglevok.kijelolt, .inner-div-notok .meglevok.kijelolt, .inner-div-hatarido .meglevok.kijelolt').forEach(el => el.classList.remove('kijelolt'));                kitoltesDiv.classList.add('kijelolt');
                 
                 // --- ÚJ RÉSZ: UI elemek elrejtése/módosítása a státusz alapján ---
                 const calendarBtn = document.getElementById('audit-chat-title');
@@ -326,13 +384,13 @@ export function initAuditLista(kitoltesek) {
 
                                 if (msg.sender_type === 'audit') {
                                     chatHtml += `
-                                    <div class="uzenet" title="${idoHover}" data-ido="${msg.timestamp}">
+                                    <div class="uzenet2" title="${idoHover}" data-ido="${msg.timestamp}">
                                         <div class="nev1">${megjelenitendoNev}</div>
                                         <div class="audit-messages1">${msg.text}</div>
                                     </div>`;
                                 } else {
                                     chatHtml += `
-                                    <div class="uzenet" title="${idoHover}" data-ido="${msg.timestamp}">
+                                    <div class="uzenet1" title="${idoHover}" data-ido="${msg.timestamp}">
                                         <div class="nev2">${megjelenitendoNev}</div>
                                         <div class="audit-messages2">${msg.text}</div>
                                     </div>`;
@@ -360,7 +418,8 @@ export function initAuditLista(kitoltesek) {
     }
 
     // Végrehajtjuk a renderelést mindkét listára
-    renderGroupedList(approvedItems, okContainer);
+renderGroupedList(approvedItems, okContainer);
+    renderGroupedList(deadlineItems, hataridoContainer);
     renderGroupedList(pendingItems, notOkContainer);
 }
 // --- CSOPORTOS MŰVELETEK VEZÉRLŐJE ---
