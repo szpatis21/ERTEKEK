@@ -12,6 +12,9 @@
   justify-content: center;
   align-items: center;
 }
+#deleteacc{    background: red;
+    color: white;
+}
 .inek .gyikcim {font-size: medium;    color: #ff9707;
 }
 .aktiv-tartalom h3{color: #ff9707;}
@@ -164,10 +167,10 @@
 
       #legordulo{margin: auto; height: 5%;} 
       #ertekek{position: relative;}
-      #szuro{
+      #szuro, #nezet{
            display: flex;
     background: #fff0de;
-    width: fit-content;
+    width: 100%;
     color: #ffa500;
     border: none;
     font-family: system-ui;
@@ -263,7 +266,7 @@
       #ertekelesek-container {
 padding: 15px}; 
       #belsosearch{flex-direction: row-reverse !important; height: 100%;}
-      #kereso-tipus{height: 100%;border-radius: 7px;width:fit-content; border-top-left-radius: 30px; border-bottom-left-radius: 30px; text-align: center;}
+      #kereso-tipus{height: 100%;width: 100%; border-radius: 7px;width:100%; border-top-left-radius: 30px; border-bottom-left-radius: 30px; text-align: center;}
       #kitneve {padding: 0px !important; margin: 30px 5px 5px 5px !important;}
       .outer-div {
           width: 100%;
@@ -302,11 +305,13 @@ padding: 15px};
       .meglevok{    
         
         display: flex;
-            margin: 8px;
+            margin: 1vh;
             width: 20vh;
             height: 20vh;
-            position: relative;
-            flex-wrap: wrap;
+transition: width 0.5s ease, height 0.5s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    position: relative;
+    perspective: 1000px;            flex-wrap: wrap;
             font-size: small;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
             font-weight: normal;
@@ -322,6 +327,32 @@ padding: 15px};
             justify-content: center;
             border: 1px solid transparent;
         }
+        .meglevok > *:not(.back-side) {
+    backface-visibility: hidden;
+}
+.back-side {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff; /* Válassz a témádhoz illő színt */
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px;
+    backface-visibility: hidden;
+    transform: rotateY(180deg); /* Alapból hátat fordít */
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Amikor megpördül */
+.meglevok.flipped {
+    transform: rotateY(180deg);
+}
 .meglevok strong {    color: #454545;}
 .meglevok:hover{color:#ff7b00; border: 1px solid #4c4a56}
 .savdiv{    
@@ -907,11 +938,11 @@ justify-content:space-around
     }
     #statisztika {flex-direction: row !important; padding: 0% 5%;}
     #tomlo { 
-    display: flex;
-    width: 90%;
-    justify-content: space-around;}
+    display: grid;
+grid-template-columns: 2fr 1fr 1fr;padding: 1vh;
+    gap:1vh}
     #endezo{height: 35px !important;   background-color: white;
-      width: 40%;
+      width: 100%;
     border: 1px solid #ff6500;
     justify-content: space-between;
     border-radius: 6px;
@@ -920,18 +951,20 @@ justify-content:space-around
     padding: 0px;
         flex-direction: row !important;
 height: 35px !important;
-width: 80% !important;
+width: 100%;
     background-color: white;
     border: 1px solid #ff6500;
     border-radius: 6px;
     box-shadow: white 0px 0px 8px 1px;
 }
-.search-icon {color: #ff7207;font-weight: bold;font-size: x-large;}
+.vizsgalt-nev{width: 100%;}
+.search-icon {color: #ff7207;font-weight: bold;font-size: x-large; width: 15%;}
 .search-input {
   border: none;
   outline: none;
   font-size: 16px;
   flex: 1;
+  width: 90px;
   height: 100%;
   font-style: italic;
   font-size: smaller;
@@ -1079,7 +1112,7 @@ input[type="checkbox"]:checked::after {
 #selection-info div{justify-content: center !important;}
   .kozepc select:hover {color: orange;}
   .kozepc select {    
-    width: 150px;
+    width: 100%;
     font-weight: bold;
     color: orange;
     transition: all 0.3s;
@@ -1583,6 +1616,7 @@ font-size: x-small;
     cursor: pointer;}
     .aktivp input{margin: 3px;}
 .info-panel.aktivp {
+  overflow: auto;
     transform: translateX(0);
     opacity: 1;
 }
@@ -1618,6 +1652,18 @@ font-size: x-small;
 }
     .kijelolt strong {color: rgb(246 247 255);}
     .kijelolt .savdiv{color: white;     box-shadow: 0px 0px 5px 1px #ffffff;
+}
+.meglevok .cheking {
+    z-index: 50; /* Legyen minden felett, a back-side felett is */
+    backface-visibility: visible !important;
+    position: absolute;
+    transition: transform 0.6s; /* Hogy a kártyával együtt mozogjon */
+}
+.meglevok.flipped.kijelolt{backdrop-filter: none; }
+/* Amikor a kártya megfordul, a checkboxot is megfordítjuk 
+   így a hátlapon is az "elejét" látjuk és nem lesz tükrözve */
+.meglevok.flipped .cheking {
+    transform: rotateY(180deg);
 }
 .toggle-jelszo:hover {
     color: #202124; /* Sötétebb szín, ha fölé visszük az egeret */
@@ -1730,7 +1776,7 @@ font-size: x-small;
     background-color: rgba(57, 57, 57, 0.541); /* Kicsit átlátszó sárgás */
     color: #ffffff;
     padding: 10px 15px;
-    width: fit-content;
+    width: fit-content !important;
     border-radius: 6px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 9999;

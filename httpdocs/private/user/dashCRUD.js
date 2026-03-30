@@ -133,15 +133,20 @@ export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false
   const auditData = await auditResponse.json();
   const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk) : [];
 
+let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includes(k.idk));
+  
+  // 1. Várjuk meg az összes aszinkron folyamatot
+  await Promise.all(items.map(async (k) => {
+      if (k.role === 'editor') {
+          k.ownerName = await getOriginalAdminName(k.idk);
+      }
+  }));
   const innerDiv = document.querySelector('.inner-div');
   innerDiv.innerHTML = '';
-let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includes(k.idk));
 
   if (groupByCreator) {
-    // ITT A JAVÍTÁS: kitoltesek.sort helyett items.sort
     items.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
-  }
- 
+  } 
 
   let currentWrapper   = null;
   let currentList      = null;
@@ -153,7 +158,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
   kozep.classList.add("kozep");
   kozep.classList.add("kozepc");
             
-  kozep.innerHTML= `
+  kozep.innerHTML= /*html*/`
        <div>
                   <div id="picik">
                       <div id="tomlo">
@@ -170,17 +175,26 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                           </div>
                         </div>
                         <div id="endezo">
-                        <span class="material-symbols-rounded sort-icon">sort</span>
+                            <span class="material-symbols-rounded sort-icon">sort</span>
+                                <select name="szuro" id="szuro">
+                                        <option value="role2" selected disabled hidden>Rendezés</option>
+                                        <option value="hatarido">Határidő szerint</option>
+                                        <option value="role">Tulaj szerint</option>
+                                        <option value="nev">Név szerint</option>
+                                        <option value="periodus">Dátum szerint</option>
+                                        <option value="megnev">Típus szerint</option>
+                                </select>
+                        </div>
+                        <div id="endezo">
+                            <span class="material-symbols-rounded sort-icon">eye_tracking</span>
+                            <select name="nezet" id="nezet">
+                                <option value="nezet2" selected disabled hidden>Nézet</option>    
+                                <option value="kompakt">Kompakt</option>
+                                <option value="reszletek">Százalékos</option>
+                                <option value="kivagy">Részletes</option>
 
-                      <select name="szuro" id="szuro">
-                              <option value="role2" selected disabled hidden>Rendezés...</option>
-                              <option value="hatarido">Határidő szerint</option>
-                                  <option value="role">Tulaj szerint</option>
-                                  <option value="nev">Név szerint</option>
-                                  <option value="periodus">Dátum szerint</option>
-                                  <option value="megnev">Típus szerint</option>
                             </select>
-                      </div>
+                        </div>
                     </div>
                         <div id="statisztika"> 
                           <div id="mozgo">
@@ -204,7 +218,135 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
           ` ;
                           
   innerDiv.appendChild(kozep);
+  // --- NÉZETVÁLTÓ LOGIKA ---
+  const nezetSelect = kozep.querySelector('#nezet');
   
+// --- 3D NÉZETVÁLTÓ LOGIKA ---
+  // --- STAGGERED (DOMINÓ) 3D NÉZETVÁLTÓ LOGIKA ---
+// --- 3D NÉZETVÁLTÓ LOGIKA ---
+  nezetSelect.addEventListener('change', (e) => {
+      const mod = e.target.value;
+      const mindenKartya = document.querySelectorAll('.meglevok');
+
+      mindenKartya.forEach((div, i) => {
+          const dominoDelay = i * 200; 
+
+          setTimeout(() => {
+              // Ha Százalékos (reszletek) VAGY Részletes (kivagy) nézetet választ
+              if (mod === 'reszletek' || mod === 'kivagy') {
+                  
+                  // MÉRET NÖVELÉSE CSAK A SZÁZALÉKOS NÉZETNÉL
+                  if (mod === 'reszletek') {
+                      div.style.width = '28vh';
+                      div.style.height = '40vh';
+                  } else {
+                      // Részletes nézetnél marad az eredeti méret (visszaállítjuk, ha esetleg előtte nagy volt)
+                      div.style.width = '';
+                      div.style.height = '';
+                  }
+                  
+                  let backSide = div.querySelector('.back-side');
+                  if (!backSide) {
+                      backSide = document.createElement('div');
+                      backSide.className = 'back-side';
+                      div.appendChild(backSide);
+                  }
+
+                  const kitoltesId = div.dataset.kitoltesId;
+
+                  // FLIP INDÍTÁSA
+                  setTimeout(() => {
+                      div.classList.add('flipped');
+        
+                      const nev = div.dataset.nev || 'Ismeretlen';
+                      const idoszak = div.dataset.periodus || '';
+                      const tipus = div.dataset.megnev || '';
+                      
+                      // Részletes nézetben kevesebb a hely (mivel nem növeljük a méretet), ezért picit kisebb betűket használunk
+                      const teljesNev = mod === 'reszletek' 
+                          ? `${nev} <br><span style="font-size: 0.8em; font-weight: normal; opacity: 0.9;">${idoszak} - ${tipus}</span>`
+                          : `${nev} <br><span style="font-size: 0.7em; font-weight: normal; opacity: 0.9;">${idoszak} - ${tipus}</span>`;
+
+                      // SZÁZALÉKOS NÉZET
+                      if (mod === 'reszletek') {
+                          backSide.innerHTML = `
+                              <strong style="color: #ff6500; margin-bottom: 12px; display: block; text-align:center; width:85%; line-height: 1.2;">
+                                  ${teljesNev}
+                              </strong>
+                              <div class="stats-container" style="width: 100%;">Adatok betöltése...</div>
+                          `;
+                          fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${kitoltesId}`)
+                              .then(res => res.json())
+                              .then(async data => {
+                                  if (data.szazalek) {
+                                      const raw = typeof data.szazalek === 'string' ? JSON.parse(data.szazalek) : data.szazalek;
+                                      const { chartMap } = await loadColorMaps(modulId);
+                                      
+                                      let badgesHtml = '<div style="display: flex; flex-wrap: wrap; flex-direction:column; gap: 5px; justify-content: center;">';
+                                      for (const [tema, obj] of Object.entries(raw || {})) {
+                                          if (obj && typeof obj['%'] === 'number') {
+                                              const baseColor = chartMap[tema] || 'rgba(160,160,160,0.8)';
+                                              badgesHtml += `
+                                                  <span style="background: ${baseColor}; padding: 3px 8px; border-radius: 4px; text-shadow:1px 1px 2px black; font-size: smaller; color: #ffffff; font-weight:bold; white-space: wrap;">
+                                                      ${tema}: ${obj['%']}%
+                                                  </span>`;
+                                          }
+                                      }
+                                      badgesHtml += '</div>';
+                                      backSide.querySelector('.stats-container').innerHTML = badgesHtml;
+                                  }
+                              });
+                      } 
+                      // ÚJ RÉSZLETES NÉZET (Megosztások és Dátum)
+                      else if (mod === 'kivagy') {
+                          const letrehozasDatuma = div.dataset.letrehozva || 'Ismeretlen';
+                          
+                          // Itt picit kisebbre vettem a margókat és a betűméreteket, hogy biztosan elférjen a normál méretű kártyán!
+                          backSide.innerHTML = `
+                              <strong style="color: #ff6500; margin-bottom: 5px; display: block; text-align:center; width:95%; line-height: 1.1; font-size: 0.9em;">
+                                  ${teljesNev}
+                              </strong>
+                              <div class="kivagy-container" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; font-size: 0.85em;">
+                                  <div style="background: #ff6500; padding: 4px 8px; border-radius: 6px; width: 90%;">
+                                      <span style="font-size: small; color: #ffffff; display:block;">Létrehozva:</span>
+                                      <span style="color: #fff; font-weight: bold;">${letrehozasDatuma}</span>
+                                  </div>
+                                  <div style="background: #ff6500; padding: 4px 8px; border-radius: 6px; width: 90%; flex-grow: 1; overflow-y: auto;height:fit-content;">
+                                      <span style="font-size: small; color: #ffffff; display:block; margin-bottom: 2px;">Megosztva velük:</span>
+                                      <div class="shared-users-list" style="color: #fff; font-size: small; text-align: left; line-height: 1.2;">
+                                          <span class="material-symbols-rounded" style="font-size:1em; animation: spin 1s linear infinite;">sync</span>...
+                                      </div>
+                                  </div>
+                              </div>
+                          `;
+
+                          fetch(`/api/get-shared-users?kitoltes_id=${kitoltesId}`)
+                              .then(res => res.json())
+                              .then(data => {
+                                  const listDiv = backSide.querySelector('.shared-users-list');
+                                  if (data.success && data.users && data.users.length > 0) {
+                                      listDiv.innerHTML = data.users.map(u => `• ${u}`).join('<br>');
+                                  } else {
+                                      listDiv.innerHTML = '<span style="opacity: 0.6; font-style: italic;">Nincs megosztva.</span>';
+                                  }
+                              })
+                              .catch(err => {
+                                  backSide.querySelector('.shared-users-list').innerHTML = '<span style="color:red;">Hiba...</span>';
+                              });
+                      }
+                  }, 10); 
+
+              } else {
+                  // VISSZAÁLLÍTÁS KOMPAKT MÓDRA
+                  div.classList.remove('flipped');
+                  setTimeout(() => {
+                      div.style.width = '';
+                      div.style.height = '';
+                  }, 300); 
+              }
+          }, dominoDelay);
+      });
+  });
   // --- SEGÉDFÜGGVÉNYEK A GOMBOKHOZ ---
   function renderButtons(role, kit) {
       return BUTTONS[role].map(btn => {
@@ -418,14 +560,24 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     checkbox.dataset.id = kitoltes.idk;
     checkbox.classList.add("cheking");
 
-    const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
+ const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
     
-    let warning = '';
+    // Alapértelmezetten beállítjuk az átmeneti értéket, amíg a fetch lefut
+kitoltesDiv.dataset.owner = role === 'szerkeszto' ? 'Ismeretlen megosztása' : 'Saját értékelések';
+
     if (role === 'szerkeszto') {
-        warning = `<div class="savdiv">Megosztva…</div>`;
         getOriginalAdminName(kitoltes.idk).then(ownerName => {
-            const savdiv = kitoltesDiv.querySelector('.savdiv');
-            if (savdiv) savdiv.textContent = `${ownerName} megosztása`;
+            // Amikor megjön a név, beírjuk a kártya dataset-jébe
+            kitoltesDiv.dataset.owner = `${ownerName} megosztása`;
+            
+            // Ha a felhasználó pont 'role' nézetben van, frissíthetjük a fejléc nevét is élőben (opcionális)
+            const parentCsopi = kitoltesDiv.closest('.csopi');
+            if (parentCsopi) {
+                const fejlec = parentCsopi.querySelector('.fejlec2');
+                if (fejlec && fejlec.textContent.includes('Ismeretlen')) {
+                    fejlec.textContent = `${ownerName} megosztása`;
+                }
+            }
         });
     }
 
@@ -492,8 +644,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     } else {
         warmHtml = `<div class="warm" style="display: none;"></div>`;
     }
-    kitoltesDiv.innerHTML = nameHtml + warning + modules + formattedText + warmHtml;
-    
+kitoltesDiv.innerHTML = nameHtml + modules + formattedText + warmHtml;    
     // Dataset beállítás
     kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
     kitoltesDiv.setAttribute('data-role', kitoltes.role);
@@ -509,6 +660,12 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     kitoltesDiv.dataset.megnev    = megnev;
     kitoltesDiv.dataset.fnev = kitoltes.creator_name || 'Felhasználó';
 kitoltesDiv.dataset.mail = kitoltes.creator_mail;
+if (kitoltes.letrehozva) {
+        // Ha van a DB-ből jövő formátum, magyarosítjuk
+        kitoltesDiv.dataset.letrehozva = new Date(kitoltes.letrehozva).toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
+    } else {
+        kitoltesDiv.dataset.letrehozva = 'Ismeretlen';
+    }
 
     if (kitoltes.hatarido) {
                 const hDatum = new Date(kitoltes.hatarido);
@@ -716,7 +873,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
         await KategoriaKezelo.loadValaszok();
         KategoriaKezelo.frissitErtekelesekContainer();
 
-        const aktualisSzazalekJSON = window.ertekelesJSON;
+  /*       const aktualisSzazalekJSON = window.ertekelesJSON;
         const aktualisKitoltesId = kitoltesDiv.dataset.kitoltesId;
         if (aktualisSzazalekJSON && aktualisKitoltesId) {
             fetch('/api/save-szazalek-json', {
@@ -724,7 +881,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ kitoltesId: aktualisKitoltesId, szazalek: aktualisSzazalekJSON })
             }).catch(err => { console.error('Mentési hiba:', err); });
-        }
+        } */
 
         const keszulo = document.getElementById("keszulo");
         if (keszulo) {

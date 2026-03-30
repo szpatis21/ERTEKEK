@@ -1,4 +1,5 @@
 import{showAlert} from "/both/alert.js"
+import { passwordPanelContent, addPasswordValidationLogic } from "/both/passwordChange.js";
 let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve,intkapmail, modul_leiras;
 // ÚJ: Statisztika változók
 let azonosIntezmenyRegisztraltak = 0;
@@ -617,6 +618,83 @@ if (isUser) {
                 }
             }
         },
+        'fiokom': {
+        main: () => {
+            // A régi old.js licensz számítási logikája
+            let licenszLejarat = 'Nincs adat';
+            let napokInfo = 'N/A';
+
+            if (fizetve && int_fin) {
+                try {
+                    const fizetesDatuma = new Date(fizetve);
+                    const ma = new Date();
+                    const lejaratDatuma = new Date(fizetesDatuma);
+                    lejaratDatuma.setMonth(lejaratDatuma.getMonth() + parseInt(int_fin, 10));
+
+                    const ev = lejaratDatuma.getFullYear();
+                    const honap = String(lejaratDatuma.getMonth() + 1).padStart(2, '0');
+                    const nap = String(lejaratDatuma.getDate()).padStart(2, '0');
+                    licenszLejarat = `${ev}.${honap}.${nap}`;
+
+                    const maNormalizalt = new Date(ma.getFullYear(), ma.getMonth(), ma.getDate());
+                    const lejaratNormalizalt = new Date(lejaratDatuma.getFullYear(), lejaratDatuma.getMonth(), lejaratDatuma.getDate());
+                    const idokulonbseg = lejaratNormalizalt.getTime() - maNormalizalt.getTime();
+                    const napokSzama = Math.ceil(idokulonbseg / (1000 * 3600 * 24));
+
+                    if (napokSzama < 0) {
+                        napokInfo = 'Lejárt';
+                    } else if (napokSzama === 0) {
+                        napokInfo = 'Ma jár le';
+                    } else {
+                        napokInfo = `${napokSzama} nap van hátra`;
+                    }
+                } catch (error) {
+                    console.error("Hiba a licensz dátumának feldolgozása közben:", error);
+                }
+            }
+
+            return `      
+                <div class="grid">
+                    <div class="elso">
+                        <h1>${fullname}</h1>
+                        <p> <b>Felhasználónév: </b>${userName}</p>
+                        <p><b>Értékelhető idő (licensz lejárta):</b> <br>${licenszLejarat} - még ${napokInfo}</p>
+                    </div>
+                </div>
+                <div class="info-strip">
+                    <div class="infocard" id="changepass">Jelszó megváltoztatása</div>
+                    <div class="infocard" id="remove">Adatvédelmi beállítások</div>
+                    <div class="infocard" id="plussj">Kérelem jogosultságok bővítésére</div>
+                    <div class="infocard" id="deleteacc">Profil Törlése</div>
+                </div>`;
+        },
+        lapok: () => {
+            const modulNevek = hozzaferhetoModulok && Array.isArray(hozzaferhetoModulok)
+                ? `<ul>${hozzaferhetoModulok.map(modul => `<li>${modul.leiras.replace(/^(\S+)/, '<strong>$1</strong>')}</li>`).join('')}</ul>`
+                : 'Nincs szakmai modul hozzárendelve';
+
+            return `        
+                <div class="info-strip">
+                    <div class="infocard">
+                        <h3>Intézmény</h3>
+                        <p><b>${intezmeny}</b> - ${intkapmail}</p>
+                    </div>
+                    <div class="infocard">
+                        <h3>Szerepkör</h3>
+                        <p> ${leiras.replace(/^(\S+)/, '<strong>$1</strong>')}</p>
+                    </div>
+                    <div class="infocard">
+                        <h3>Szakmai modulok</h3>
+                        <p> ${modulNevek}</p>
+                    </div>
+                    <div class="infocard">
+                        <h3>Elérhetőség</h3>
+                        <p><b>E-mail: </b>- ${mailname} <br> 
+                        <b>Telefonszám: </b>- ${tel} <br></p>
+                    </div>
+                </div>`;
+        }
+    },
        'hozzaj': {
     main: () => {
         const isElemzo = window.location.pathname.includes('/elemzo/');
@@ -1078,39 +1156,78 @@ gombok.forEach(gomb => {
   
     });
 });
+const fiokomGombok = document.querySelectorAll('#fiokom');
 
-// 2. ÚJ SOROK: A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
-// 2. A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
-const accuntGomb = document.getElementById('accunt');
-if (accuntGomb) {
-    accuntGomb.click();
-}
-
-// 3. A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
-const loadingOverlay = document.getElementById('loading-overlay');
-if (loadingOverlay) {
-    // 150ms késleltetés, hogy a rács biztosan felépüljön a háttérben a DOM-ban
-    setTimeout(() => {
-        loadingOverlay.style.opacity = '0'; // Elindítja a CSS fade-out animációt
+fiokomGombok.forEach(gomb => {
+    gomb.addEventListener('click', function(e) {
+        e.preventDefault(); 
         
-        // Ha az animáció (0.4s) lejárt, teljesen levesszük az útból
+        // Ha már ez az aktív, ne csináljon semmit
+        if (this.classList.contains('dobaktiv')) {
+            return;
+        }
+
+        const aktivGombId = 'fiokom'; 
+
+        // 1. Előző aktív gomb megkeresése és tartalmának eltüntetése
+        const elozoAktivGomb = document.querySelector('.dobaktiv');
+        if (elozoAktivGomb) {
+            elozoAktivGomb.classList.remove('dobaktiv');
+            const elozoGombId = elozoAktivGomb.id;
+            document.querySelectorAll(`[data-content-id="${elozoGombId}"]`).forEach(elem => {
+                elem.classList.remove('aktiv-tartalom');
+            });
+        }
+        
+        // 2. HIÁNYZÓ LÉPÉS: Rátesszük az aktív jelölést a most megnyomott gombra!
+        this.classList.add('dobaktiv');
+
+        let celTartalom = document.querySelectorAll(`[data-content-id="${aktivGombId}"]`);
+        let newMain;
+
+        if (celTartalom.length === 0) {
+            const tartalomForras = ujTartalmak[aktivGombId];
+            
+            newMain = document.createElement('article');
+            newMain.className = 'main';
+            newMain.dataset.contentId = aktivGombId;
+            newMain.innerHTML = typeof tartalomForras.main === 'function' ? tartalomForras.main() : tartalomForras.main;
+
+            const newLapok = document.createElement('article');
+            newLapok.className = 'lapok';
+            newLapok.dataset.contentId = aktivGombId;
+            newLapok.innerHTML = typeof tartalomForras.lapok === 'function' ? tartalomForras.lapok() : tartalomForras.lapok;
+
+            layoutContainer.appendChild(newMain);
+            layoutContainer.appendChild(newLapok);
+
+            celTartalom = [newMain, newLapok];
+        } else {
+             newMain = document.querySelector(`.main[data-content-id="${aktivGombId}"]`);
+        }
+
+        if (newMain) {
+            setupAccountInfoListeners(newMain);
+        }
+
         setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-        }, 400); 
-    }, 1050);
-}
-}// A gombok inicializálása után automatikusan megnyitjuk a Fiókom oldalt
+            celTartalom.forEach(elem => elem.classList.add('aktiv-tartalom'));
+        }, 10);
+    });
+});
 const accuntGomb = document.getElementById('accunt');
 if (accuntGomb) {
     accuntGomb.click();
     
     // Elindítjuk a szekvenciát, miután a töltőképernyő biztosan levonult (800ms)
     setTimeout(() => {
-        playIntroSequence();
+        if (typeof playIntroSequence === 'function') {
+            playIntroSequence();
+        }
     }, 800);
 }
 
-// A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
+// 3. A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
 const loadingOverlay = document.getElementById('loading-overlay');
 if (loadingOverlay) {
     setTimeout(() => {
@@ -1118,14 +1235,16 @@ if (loadingOverlay) {
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
         }, 400); 
-    }, 150);
+    }, 1050); 
 }
 
-// --- AZ AUTOMATIKUS ANIMÁCIÓ LOGIKÁJA ---
-// --- AZ AUTOMATIKUS ANIMÁCIÓ LOGIKÁJA ---
+} // <--- EZ A ZÁRÓJEL ZÁRJA LE VÉGLEG AZ initAside() FÜGGVÉNYT!
+
+// ==========================================
+// SEGÉDFÜGGVÉNYEK (Az initAside-on kívül!)
+// ==========================================
+
 function playIntroSequence() {
-    // A kártyákat párokba (tömbökbe) szervezzük
-    // Mivel 7 kártya van, az utolsó (dashboards2) egyedül marad egy párban
     const pairs = [
         ['.analysis', '.growth2'],
         ['.growth', '.goals2'],
@@ -1133,12 +1252,11 @@ function playIntroSequence() {
         ['.dashboards'] 
     ];
 
-    let delay = 0; // Kezdeti késleltetés
-    const interval = 1500; // 1 másodperc (1000ms) a párok felvillanása között
+    let delay = 0;
+    const interval = 1500;
 
     pairs.forEach((pair, index) => {
         setTimeout(() => {
-            // 1. Rátesszük a hovert az aktuális pár minden elemére
             pair.forEach(selector => {
                 const card = document.querySelector(selector);
                 if (card) {
@@ -1146,11 +1264,8 @@ function playIntroSequence() {
                 }
             });
 
-            // 2. Ha ez volt a legutolsó kör (a legutolsó elem a tömbben)
             if (index === pairs.length - 1) {
-                // Várunk 2 másodpercet, hogy a legutolsót is el lehessen olvasni...
                 setTimeout(() => {
-                    // ...majd egyetlen lépésben az összesről levesszük a hovert!
                     document.querySelectorAll('.simulated-hover').forEach(card => {
                         card.classList.remove('simulated-hover');
                     });
@@ -1158,8 +1273,239 @@ function playIntroSequence() {
             }
 
         }, delay);
-        
-        // A következő pár 1 másodperccel (1000ms) később indul
         delay += interval; 
+    });
+}
+
+const infoPanelekTartalma = {
+    'changepass': {
+        title: 'Jelszó Megváltoztatása',
+        content: passwordPanelContent
+    },
+    'remove': {
+        title: 'Hozzájárulás Visszavonása',
+        content: '<p>Biztosan visszavonja a hozzájárulását? Ez a művelet nem vonható vissza.</p><button>Visszavonás</button>'
+    },
+    'plussj': {
+        title: 'Jogosultságok Bővítése',
+        content: '<p>Jellezze az intézményi adminisztrátornak, milen szerepkört szeretne kérni. Jelenlegi szerepköreit jobb oldali sávban láthatja </p><textarea></textarea><button>Küldés</button>'
+    },
+    'deleteacc': {
+        title: 'Profil Törlése',
+        content: '<div id="delete-loader"><p>Fiók információk ellenőrzése...</p><div class="spinner"></div></div><div id="delete-content" style="display:none;"></div>'
+    }
+};
+async function fetchAccountDeletionInfo(infoPanel) {
+    try {
+        const response = await fetch('/api/delete-account-info');
+        const data = await response.json();
+
+        // 1. Amint megvannak az adatok, a kis oldalsó panelt azonnal bezárjuk
+        if (infoPanel) {
+            infoPanel.classList.remove('aktivp');
+            setTimeout(() => infoPanel.remove(), 300);
+        }
+
+        if (!data.success) {
+            showAlert('Hiba történt az adatok lekérésekor.');
+            return;
+        }
+
+        // SZABÁLY 1: Egyedüli ADMIN bizonyos modulokban (és vannak mások a cégben) -> ELZAVARJUK!
+       // SZABÁLY 1: Egyedüli ADMIN bizonyos modulokban (és vannak mások a cégben) -> ELZAVARJUK!
+        if (data.roleId === 1 && !data.isOnlyUser && data.soleRolesInModules.length > 0) {
+            const modulList = data.soleRolesInModules.map(m => `<li><b>${m.leiras || m.nev}</b></li>`).join('');
+            
+            // Saját modal felépítése a showAlert HELYETT
+            const blockHTML = `
+                <div style='text-align:left; padding: 15px; font-family: sans-serif; color: #333;'>
+                    <h3 style='color:red; text-align:center; margin-bottom: 15px;'>Jogosutság átadása szükséges!</h3>
+                    <p>Ön az <b>egyedüli Adminisztrátor</b> a következő modulokban, ezért jelenleg nem törölheti a fiókját:</p>
+                    <ul style='margin-top:10px; margin-bottom:15px; padding-left:20px; color:red;'>${modulList}</ul>
+                    <p>A felső menüsávban az "átjelentkezésre" kattintva váltson szerepkört, ha kell szakmai anyagot, és az Adminisztrátori felületen adjon adminisztrátori jogot egy kollégájának a profil törlése előtt!</p>
+                    <button id="btnElzavaroBezaras" style="margin-top:20px; width:100%; background-color: #555; color: white; padding: 12px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 1rem;">Bezárás</button>
+                </div>
+            `;
+
+            const overlay = document.createElement('div');
+            Object.assign(overlay.style, {
+                position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+                backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center',
+                alignItems: 'center', zIndex: '99999'
+            });
+
+            const modalBox = document.createElement('div');
+            Object.assign(modalBox.style, {
+                backgroundColor: '#fff', padding: '25px', borderRadius: '8px', 
+                maxWidth: '500px', width: '90%', boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+            });
+            
+            modalBox.innerHTML = blockHTML;
+            overlay.appendChild(modalBox);
+            document.body.appendChild(overlay);
+
+            // Eseménykezelő a Bezárás gombra
+            document.getElementById('btnElzavaroBezaras').addEventListener('click', () => {
+                overlay.remove();
+            });
+            
+            return; // Kilépünk a függvényből, nem fut tovább a törlés!
+        }
+
+        // --- 2. A HTML TARTALOM FELÉPÍTÉSE (Ha eljutott idáig, törölhet) ---
+        let warningHTML = "<div style='text-align:center; font-family: sans-serif;'>";
+        warningHTML += "<h3 style='color:red; margin-bottom: 10px;'>Biztosan törölni szeretné a profilját?</h3>";
+        warningHTML += "<p style='margin-bottom: 15px;'>Ez a művelet <b>nem vonható vissza</b>!</p>";
+
+        if (data.isOnlyUser) {
+            warningHTML += "<div style='margin-bottom:15px; padding:10px; background:rgba(255,0,0,0.1); border-left:4px solid red; text-align:left;'><b>FIGYELEM:</b> Ön az egyetlen regisztrált felhasználó az intézményben! A fiók törlésével a teljes intézményi adatbázis hozzáférhetetlenné válik.</div>";
+        } else if (data.roleId === 2 && data.soleRolesInModules.length > 0) {
+            // SZABÁLY 2: Egyedüli ELEMZŐ bizonyos modulokban -> FIGYELMEZTETÉS
+            const modulList = data.soleRolesInModules.map(m => m.leiras || m.nev).join(', ');
+            warningHTML += `<div style='margin-bottom:15px; padding:10px; background:rgba(255,165,0,0.2); border-left:4px solid orange; text-align:left;'><b>FIGYELEM:</b> Ön az egyetlen Elemző az alábbi modul(ok)ban: <b>${modulList}</b>. Kérjük a törlés után jelezze ezt az Adminnak.</div>`;
+        }
+
+        if (data.sharedUsers && data.sharedUsers.length > 0) {
+            warningHTML += "<div style='text-align:left; margin-bottom:15px; padding:10px; background:rgba(255,165,0,0.1); border-left:4px solid orange;'>";
+            warningHTML += "<b>Az alábbi megosztott értékelései fognak végleg eltűnni a kollégáitól:</b><ul style='margin-top:5px; padding-left: 20px;'>";
+            data.sharedUsers.forEach(u => {
+                const modulLeiras = u.modul_leiras ? `[${u.modul_leiras}]` : '[Ismeretlen modul]';
+                // ITT KAPJA MEG A TELJES NEVET (Cím + Személy neve)
+                const teljesNev = u.vizsgalt_nev ? `${u.kitoltes_neve} (${u.vizsgalt_nev})` : u.kitoltes_neve;
+                
+                warningHTML += `<li>${modulLeiras} <b>${teljesNev}</b> (Kolléga: ${u.vez})</li>`;
+            });
+            warningHTML += "</ul></div>";
+        }
+
+        // --- GOMBOK ---
+        warningHTML += `
+            <div id="alertDeleteButtons" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;">
+                <button id="btnMegertettem" style="background-color: red; color: white; padding: 12px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 1rem; transition: 0.3s;">
+                    Megértettem, mindenképp törlöm a fiókot
+                </button>
+                <button id="btnMegsem" style="background-color: #555; color: white; padding: 12px; border: none; cursor: pointer; border-radius: 5px; font-weight: bold; font-size: 1rem; transition: 0.3s;">
+                    Mégsem
+                </button>
+            </div>
+        </div>`;
+
+        // --- 3. SAJÁT MODAL (OVERLAY) LÉTREHOZÁSA ---
+        const overlay = document.createElement('div');
+        overlay.id = "customDeleteModal";
+        Object.assign(overlay.style, {
+            position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+            backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', justifyContent: 'center',
+            alignItems: 'center', zIndex: '99999'
+        });
+
+        const modalBox = document.createElement('div');
+        Object.assign(modalBox.style, {
+            backgroundColor: '#fff', padding: '25px', borderRadius: '8px', 
+            maxWidth: '500px', width: '90%', boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
+            color: '#333'
+        });
+        
+        modalBox.innerHTML = warningHTML;
+        overlay.appendChild(modalBox);
+        document.body.appendChild(overlay);
+
+        // --- 4. ESEMÉNYKEZELŐK RÁKÖTÉSE A GOMBOKRA ---
+        const btnMegertettem = document.getElementById('btnMegertettem');
+        const btnMegsem = document.getElementById('btnMegsem');
+        const btnContainer = document.getElementById('alertDeleteButtons');
+
+        if (btnMegsem) {
+            btnMegsem.addEventListener('click', () => {
+                overlay.remove(); 
+            });
+        }
+
+        if (btnMegertettem) {
+            btnMegertettem.addEventListener('click', async () => {
+                btnMegertettem.disabled = true;
+                btnMegertettem.innerText = "Törlés folyamatban...";
+                btnMegertettem.style.backgroundColor = "gray";
+                if (btnMegsem) btnMegsem.style.display = "none";
+
+                try {
+                    const delRes = await fetch('/api/delete-my-account', { method: 'DELETE' });
+                    const delData = await delRes.json();
+                    
+                    if (delData.success) {
+                        btnContainer.innerHTML = "<p style='color:green; font-weight:bold; font-size:1.1rem; padding:10px;'>Fiókja és minden adata sikeresen törölve. Kijelentkezés...</p>";
+                        setTimeout(() => {
+                            window.location.href = '/login.html'; 
+                        }, 3000);
+                    } else {
+                        alert('Hiba történt a törlés során!');
+                        btnMegertettem.disabled = false;
+                        btnMegertettem.innerText = "Megértettem, mindenképp törlöm a fiókot";
+                        btnMegertettem.style.backgroundColor = "red";
+                        if (btnMegsem) btnMegsem.style.display = "block";
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Hálózati hiba történt a törléskor.');
+                }
+            });
+        }
+
+    } catch (error) {
+        console.error(error);
+        showAlert('Hálózati hiba történt a törlés ellenőrzésekor.');
+    }
+}
+function setupAccountInfoListeners(mainElement) {
+    const elsoDiv = mainElement.querySelector('.elso');
+    const infoCards = mainElement.querySelectorAll('.infocard');
+
+    if (!elsoDiv || infoCards.length === 0) return;
+
+    infoCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const cardId = this.id;
+            const tartalom = infoPanelekTartalma[cardId];
+
+            // 1. Meglévő panel törlése
+            const letezikPanel = elsoDiv.querySelector('.info-panel');
+            if (letezikPanel) {
+                letezikPanel.remove();
+            }
+
+            // 2. Új panel létrehozása
+            if (tartalom) {
+                const infoPanel = document.createElement('div');
+                infoPanel.className = 'info-panel';
+                infoPanel.innerHTML = `
+                    <span class="bezaras">&times;</span>
+                    <h3>${tartalom.title}</h3>
+                    <div>${tartalom.content}</div>
+                `;
+
+                elsoDiv.appendChild(infoPanel);
+
+                // 3. EGYEDI LOGIKÁK HÍVÁSA (Itt már létezik az infoPanel!)
+                if (cardId === 'changepass') {
+                    addPasswordValidationLogic(infoPanel, userName);
+                }
+
+                if (cardId === 'deleteacc') {
+                    fetchAccountDeletionInfo(infoPanel); // <-- MOST MÁR JÓ HELYEN VAN!
+                }
+
+                // 4. Animáció és bezárás gomb
+                setTimeout(() => {
+                    infoPanel.classList.add('aktivp');
+                }, 10);
+
+                infoPanel.querySelector('.bezaras').addEventListener('click', () => {
+                    infoPanel.classList.remove('aktivp');
+                    infoPanel.addEventListener('transitionend', () => {
+                        infoPanel.remove();
+                    }, { once: true });
+                });
+            }
+        });
     });
 }

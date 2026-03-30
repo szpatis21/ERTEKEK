@@ -116,7 +116,19 @@ userLoaded
   });
  
 //Adatbázis százalékos frissítés  
-
+document.getElementById('ujraszamolas-gomb').addEventListener('click', () => {
+    fetch('/api/frissit-minden-ossz-ertek', {
+        method: 'POST'
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('ujraszamolas-eredmeny').innerText = data.message || 'Sikeres frissítés.';
+    })
+    .catch(err => {
+        document.getElementById('ujraszamolas-eredmeny').innerText = 'Hiba történt.';
+        console.error(err);
+    });
+});
 //Kategória + Menü
 const plusz = document.querySelector("#plussz")
 plusz.addEventListener('click', () => {

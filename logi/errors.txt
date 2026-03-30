@@ -141,3 +141,85 @@ Adatbázis: ertekek02
 [2026-03-24T08:51:22.685Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
 [2026-03-24T08:51:22.695Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
 [2026-03-24T08:57:11.039Z] UNHANDLED REJECTION: ReferenceError: roleId is not defined
+[2026-03-28T09:31:09.346Z] UNCAUGHT EXCEPTION: ReferenceError: app is not defined
+    at module.exports (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\felhasznalomodul.js:634:5)
+    at Object.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\app.js:146:21)
+    at Module._compile (node:internal/modules/cjs/loader:1546:14)
+    at Object..js (node:internal/modules/cjs/loader:1689:10)
+    at Module.load (node:internal/modules/cjs/loader:1318:32)
+    at Function._load (node:internal/modules/cjs/loader:1128:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:315:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:218:24)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:170:5)
+    at node:internal/main/run_main_module:36:49
+[2026-03-28T09:32:21.145Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-28T09:32:21.323Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-28T09:32:21.517Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-28T09:32:21.726Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-28T09:32:21.909Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-28T09:32:22.128Z] UNCAUGHT EXCEPTION: Error: Unknown column 'f.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-03-29T08:55:48.193Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\reset-password.html'
+[2026-03-29T09:01:14.443Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\reset-password.html'
+[2026-03-29T09:03:23.365Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\reset-password.html'
+[2026-03-29T09:05:55.982Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\reset-password.html'
+[2026-03-29T09:10:09.782Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\reset-password.html'

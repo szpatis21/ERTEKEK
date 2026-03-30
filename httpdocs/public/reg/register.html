@@ -39,8 +39,9 @@
                                         <div class="inputs">
                                             <input type="text" id="fnev" name="fnev" required placeholder="Felhasználónév" autocomplete="username">
                                         </div>
-                                        <div class="inputs">
+                                       <div class="inputs jelszo-wrapper">
                                             <input type="password" id="pass" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
+                                            <span class="material-symbols-rounded toggle-jelszo">visibility</span>
                                         </div>
                                          <div class="lehetosegek">
                            <select name="temakor" id="temakor" required>
@@ -69,9 +70,7 @@
                 <div>
                     <div class="kulso" >
                         <div id="regi0"  class="belso belso2">
-                            <div class="szoveg szoveg2"><span class="gold"><span class="material-symbols-outlined">
-person_add
-</span>R</span>egisztrálok</div>
+                            <div class="szoveg szoveg2"><span class="gold">R</span>egisztrálok</div>
                         </div>
                     </div>
                 </div>
@@ -121,20 +120,22 @@ person_add
                                 </div>
                                 <div class="err" id="felerr"></div>
                             </div>
-                            <div class="allabel">
-                                <div>
-                                    <label for="password">Jelszó:</label>
-                                    <input type="password" id="password" placeholder="min 8 karakter, kisbetű, nagybetű, szám" required autocomplete="new-password">
-                                </div>
-                                <div class="err" id="passerr"></div>
-                            </div>
-                            <div class="allabel">
-                                <div>
-                                    <label for="pass2">Jelszó megerősítése:</label>
-                                    <input type="password" id="pass2" required>
-                                </div>
-                                <div class="err" id="passerr2"></div>
-                            </div>
+ <div class="allabel">
+    <div style="position: relative;">
+        <label for="password">Jelszó:</label>
+        <input type="password" id="password" placeholder="min 8 karakter, kisbetű, nagybetű, szám" required autocomplete="new-password">
+        <span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
+    </div>
+    <div class="err" id="passerr"></div>
+</div>
+<div class="allabel">
+    <div style="position: relative;">
+        <label for="pass2">Jelszó megerősítése:</label>
+        <input type="password" id="pass2" required>
+        <span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
+    </div>
+    <div class="err" id="passerr2"></div>
+</div>
                             <legend>Kapcsolattartó adatok</legend>
 
                             <div class="allabel">

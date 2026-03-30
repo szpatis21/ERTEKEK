@@ -317,8 +317,26 @@ border: none;
     align-items: center;}
    
     }
+    @media screen and (min-width: 900px) and (max-width: 995px) { 
+.toggle-jelszo{    top: 50%;
+   }}
+.toggle-jelszo{    top: 25%;
+    position: absolute;
+    cursor: pointer;;
+    left: 65%;
+     color: #ff6e01;}
+  
+    @media(max-width:900px){
+  .toggle-jelszo{
+    top: 23%;
+    left: 70%;
+    }
+  
+    }
  #fo{width: 250px !important; margin: auto !important;}
-
+  .elegemvan{
+    top: 35%;
+    left: 85%;}
 article{margin: auto;}
         #llog, #whbutt {font-size: small; width: fit-content;height: fit-content;}
         #whbutt{font-size: small; margin-top: 0px; padding: 4px;}

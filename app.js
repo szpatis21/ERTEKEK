@@ -132,7 +132,10 @@ app.use((err, req, res, next) => {
 //Audit modul    
     const audit = require('./modulok/auditmodul');    
     app.use('/', audit(db));
-//Időzítős leveles modul
+//Jelszó modul
+    const jelszo = require('./modulok/jelszomodul');
+    app.use('/', jelszo(db));
+    //Időzítős leveles modul
     const auditCron = require('./modulok/auditcronmodul');
     auditCron(db);
  //Statisztika modul
@@ -176,6 +179,7 @@ app.use(express.static(path.join(__dirname, 'httpdocs'), {
         }
     }
 }));
+
 app.use(express.static(path.join(__dirname, 'httpdocs', 'public')));
 app.use('/both', express.static(path.join(__dirname, 'httpdocs', 'both')));
 
@@ -195,7 +199,7 @@ app.use('/main', authMiddleware, express.static(path.join(__dirname, 'httpdocs',
 const routes = [
     // Public
     { path: '/register.html', file: 'public/reg/register.html', auth: [] },
-    
+    { path: '/reset-password.html', file: 'public/reset-password.html', auth: [] },
     // Private - Itt adjuk hozzá az ellenőrzéseket
     { 
         path: '/admin/dashboard.html', // Teljes útvonal használata ajánlott

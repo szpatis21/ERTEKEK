@@ -6,11 +6,10 @@
         background: #000000bf;
     backdrop-filter: blur(2px);
     color: white;
-    position: relative;
+    position: absolute;
     font-size: 65%;
     font-weight: normal;
-    min-width: 25vh;
-    top: 50%;
+    min-width: 15vh;
     border-radius: 10px;
     font-style: italic;
     flex-direction: column;
@@ -31,9 +30,8 @@
     box-shadow: inset 1px 2px 4px 0px #80808066;}
     #akthat{color: #ff6500; font-style: italic;}
     .warm{
- position: absolute;
-    bottom: 5%;
-    left: 5%;
+ position: relative;
+    bottom: -10%;
     background: #ffffff00;
     justify-content: space-evenly;
     width: 90%;

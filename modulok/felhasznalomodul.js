@@ -429,7 +429,8 @@ router.get('/get-kitoltesek', (req, res) => {
       k.role,
       k.vizsgalt_id,
       k.audit,
-      a.warm, -- <-- BEKÉRJÜK A WARM OSZLOPOT
+      k.letrehozva,
+      a.warm, 
       a.hatarido,
       f.vez                                           AS creator_name,
       f.mail                                  AS creator_mail,  
@@ -631,6 +632,34 @@ router.post('/save-valaszok', (req, res) => {
             });
         });
     });
+router.get('/get-shared-users', async (req, res) => {
+    const kitoltesId = req.query.kitoltes_id;
+    
+    if (!kitoltesId) {
+        return res.json({ success: false, message: 'Hiányzó kitöltés ID' });
+    }
+
+    try {
+        // MÓDOSÍTÁS: f.vez-t kérjük le f.nev helyett, és átnevezzük nev-re a kimenetben
+        const sql = `
+            SELECT f.vez AS nev 
+            FROM kitoltesek k 
+            JOIN felhasznalok f ON k.felhasznalo_id = f.id 
+            WHERE k.idk = ? AND k.role = 'editor'
+        `;
+        
+        db.query(sql, [kitoltesId], (err, results) => {
+            if (err) throw err;
+            
+            // Így most már biztosan a helyes adatot olvassa ki, nem lesz null
+            const users = results.map(row => row.nev);
+            res.json({ success: true, users: users });
+        });
+    } catch (error) {
+        console.error('Hiba a megosztások lekérdezésekor:', error);
+        res.status(500).json({ success: false, message: 'Szerver hiba' });
+    }
+});
     router.post('/save-szazalek-json', (req, res) => {
     const { kitoltesId, szazalek } = req.body;
 
@@ -648,6 +677,132 @@ router.post('/save-valaszok', (req, res) => {
         res.json({ success: true });
     });
     });
+    // 1. Végpont: Törlési feltételek ellenőrzése
+// 1. Végpont: Törlési feltételek ellenőrzése (MODUL SZINTŰ ELLENŐRZÉSSEL)
+router.get('/delete-account-info', (req, res) => {
+    const userId = req.session?.userId || req.query.user_id;
+    if (!userId) return res.status(400).json({ success: false, message: 'Nincs bejelentkezve!' });
 
+    db.query('SELECT int_id, role_id FROM felhasznalok WHERE id = ?', [userId], (err, userRows) => {
+        if (err || userRows.length === 0) return res.status(500).json({ success: false });
+        
+        const intId = userRows[0].int_id;
+        const roleId = Number(userRows[0].role_id); // Admin: 1, Elemző: 2
+
+        // Megosztott kitöltések lekérése MODUL leírással ÉS a Vizsgált Személy nevével!
+        const sharedQuery = `
+            SELECT DISTINCT f.vez, k.kitoltes_neve, m.leiras AS modul_leiras,
+                   CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS vizsgalt_nev
+            FROM kitoltesek k
+            JOIN felhasznalok f ON k.felhasznalo_id = f.id
+            LEFT JOIN modulok m ON k.modul_id = m.id
+            LEFT JOIN vizsgaltak v ON k.vizsgalt_id = v.vizsgalt_id
+            WHERE k.idk IN (SELECT idk FROM kitoltesek WHERE felhasznalo_id = ? AND role = 'admin')
+              AND k.felhasznalo_id != ?
+        `;
+
+        db.query(sharedQuery, [userId, userId], (err, sharedRows) => {
+            if (err) return res.status(500).json({ success: false });
+
+            // Intézményi munkatársak felmérése (Hányan vannak a cégben?)
+            const roleQuery = `SELECT id FROM felhasznalok WHERE int_id = ?`;
+            db.query(roleQuery, [intId], (err, rolesRows) => {
+                if (err) return res.status(500).json({ success: false });
+
+                const isOnlyUser = rolesRows.length === 1; // "One-man show" vizsgálat
+
+                // Ha ő az egyedüli felhasználó, nincs értelme a modulokat vizsgálni
+                if (isOnlyUser) {
+                    return res.json({
+                        success: true,
+                        isOnlyUser: true,
+                        roleId: roleId,
+                        soleRolesInModules: [],
+                        sharedUsers: sharedRows
+                    });
+                }
+
+                // Megnézzük, hogy mely modulokban ő az EGYEDÜLI ember ezzel a szerepkörrel (admin/elemző)
+                const soleRoleModulesQuery = `
+                    SELECT m.nev, m.leiras, j.modul_id
+                    FROM jogosultsagok j
+                    JOIN modulok m ON j.modul_id = m.id
+                    WHERE j.user_id = ?
+                      AND NOT EXISTS (
+                          SELECT 1 FROM jogosultsagok j2
+                          JOIN felhasznalok f2 ON j2.user_id = f2.id
+                          WHERE j2.modul_id = j.modul_id
+                            AND f2.int_id = ?
+                            AND f2.role_id = ?
+                            AND f2.id != ?
+                      )
+                `;
+
+                db.query(soleRoleModulesQuery, [userId, intId, roleId, userId], (err, soleModules) => {
+                    if (err) return res.status(500).json({ success: false });
+
+                    res.json({
+                        success: true,
+                        isOnlyUser: false,
+                        roleId: roleId,
+                        soleRolesInModules: soleModules, // Ez a tömb listázza a kritikus modulokat
+                        sharedUsers: sharedRows
+                    });
+                });
+            });
+        });
+    });
+});
+
+// 2. Végpont: Fiók és adatok fizikai megsemmisítése
+router.delete('/delete-my-account', async (req, res) => {
+    const userId = req.session?.userId || req.body.user_id;
+    if (!userId) return res.status(400).json({ success: false });
+
+    // Segédfüggvény a szinkron-jellegű SQL futtatáshoz
+    const queryAsync = (sql, params) => {
+        return new Promise((resolve, reject) => {
+            db.query(sql, params, (err, results) => {
+                if (err) return reject(err);
+                resolve(results);
+            });
+        });
+    };
+
+    try {
+        // 1. Megkeressük azokat az idk-kat, amiknek a user az eredeti gazdája
+        const rows = await queryAsync("SELECT idk FROM kitoltesek WHERE felhasznalo_id = ? AND role = 'admin'", [userId]);
+        const idkList = rows.map(r => r.idk);
+
+        // 2. SORBARENDI TÖRLÉSEK (Nincs Deadlock)
+        if (idkList.length > 0) {
+            // A) Először a válaszokat töröljük, ami ezekhez az idk-khoz tartozik
+            await queryAsync("DELETE FROM valaszok WHERE kitoltes_id IN (SELECT id FROM kitoltesek WHERE idk IN (?))", [idkList]);
+            
+            // B) Aztán töröljük magukat a megosztott és saját kitöltéseket
+            await queryAsync("DELETE FROM kitoltesek WHERE idk IN (?)", [idkList]);
+        }
+
+        // C) Töröljük azokat a kitöltéseket is, amiket csak VELE osztottak meg
+        await queryAsync("DELETE FROM kitoltesek WHERE felhasznalo_id = ?", [userId]);
+
+        // D) Jogosultságok eltávolítása
+        await queryAsync("DELETE FROM jogosultsagok WHERE user_id = ?", [userId]);
+
+        // E) Végül a felhasználó kilövése a rendszerből
+        await queryAsync("DELETE FROM felhasznalok WHERE id = ?", [userId]);
+
+        // Session kilövése
+        if (req.session) {
+            req.session.destroy(); 
+        }
+
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error("Kaszkád törlési hiba:", err);
+        res.status(500).json({ success: false, message: 'Adatbázis hiba a törlés során' });
+    }
+});
     return router;
 };

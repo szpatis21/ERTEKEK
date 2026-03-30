@@ -42,10 +42,19 @@ router.get('/api/user-brief', async (req, res) => {
       LEFT JOIN modulok m ON j.modul_id = m.id
       WHERE f.id = ?
     `;
-    const userRows = await q(sqlUser, [userId]);
+ const userRows = await q(sqlUser, [userId]);
     if (userRows.length === 0) return res.json({ success: false, message: 'Felhasználó nem található' });
 
-    const userBase = userRows[0];
+    // --- JAVÍTÁS KEZDŐDIK ---
+    // Megkeressük azt a sort, ami az AKTUÁLISAN kiválasztott modulhoz tartozik
+    let userBase = userRows.find(row => row.modul_id == modulId);
+    
+    // Biztonsági háló: ha valamiért nem találná, csak akkor vegye az elsőt
+    if (!userBase) {
+        userBase = userRows[0];
+    }
+    // --- JAVÍTÁS VÉGE ---
+
     const intId = userBase.int_id;
 
     const hozzaferhetoModulok = userRows

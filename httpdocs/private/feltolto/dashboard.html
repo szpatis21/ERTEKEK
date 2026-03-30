@@ -24,10 +24,8 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
       crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
-    .felso, .kozep{display: none !important;}
-    .also{height: 87vh !important;}
   @media (max-width: 1024px) {
-   }
+    .felso{justify-content: center !important;padding-bottom: 0px !important;}}
     .modal-content button{    border: 1px solid #ff9707;}
     h1{text-shadow: 0px 0px 13px white;;}
 .modal-content p {
@@ -133,7 +131,12 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
                                 <div class="logo" style="font-size: small;"> Kedves <div id="sajatnev"> </div>! Üdv a adminisztrációs rendszerben! </div>
                             </div>    
                                    <div style="display: flex;flex-direction:row-reverse;">                         
-                           
+                            <div class="gomb" style="flex-direction: column-reverse; aspect-ratio: 0; width: fit-content;">
+                                <div id="ujraszamolas-gomb">
+                                    <div  >Százalék frissítés</div>
+                                    <div style="font-size: small; font-family: auto; text-align: center; color: red;" id="ujraszamolas-eredmeny"></div>
+                                </div>                     
+                            </div> 
                             <div class="holvagyok" style="color: #ffffff; font-size: small; font-family: auto;  text-align: center; margin: 5px;"></div>
 </div>          
                     </div>
@@ -178,8 +181,8 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
     </article>
     <article id="lapok">
                     <div id="lapozo">
-                     <button class="grap aktiv" data-target="maininf">Szerepkörök</button>
-    <button class="sta" data-target="osszesitett">Értékelés tulajdonságok</button>
+                     <button class="grap aktiv" data-target="maininf">Grafikonok</button>
+    <button class="sta" data-target="osszesitett">Statisztika</button>
     <button class="gyik" data-target="gyik">GYIK</button>
                     </div>
                     <div id="fulek">
@@ -267,24 +270,20 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
                     </div>
                 
     </article>   
-    <article class="savos"> 
-            <div class="gomb" id="accunt0">
-                <div class="cim" id="accunt">Infók</div>
-            </div>
-
+    <article class="savos">
             <div class="gomb" id="ertekek0">
-                <div class="cim dobaktiv" id="ertekek">Jogosultságok</div>
-            </div>
-
-            <div class="gomb" id="hozzaj0">                                
-                <div class="cim" id="plussz">Értékelők</div>
-            </div>
-
+                <div class="cim dobaktiv" id="ertekek">Felhasználók</div>
+            </div>  
+               <div class="gomb" id="hozzaj0">                                
+                <div class="cim" id="plussz">Kategóriák</div>
+            </div>    
             <div class="gomb" id="ujert0">
-                <div class="cim" id="ujany">Licensz</div>
+                <div class="cim" id="ujany">Feltöltés</div>
             </div>                    
             
-             
+            <div class="gomb" id="accunt0">
+                <div class="cim" id="accunt">Fiókom</div>
+            </div>       
            
     </article>  
 

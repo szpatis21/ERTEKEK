@@ -82,7 +82,7 @@ body::before {
 .menu div:hover::after {
     width: 100%;
 }
-
+  
 /* Linkek alapstílusa (ha nem inline alkalmaznád) */
 .menu div a {
     text-decoration: none;
@@ -203,7 +203,6 @@ ul {
 }      .modal {
     position: fixed;
     top: 50%;
-    left: 50%;
     transform: translate(-50%, -50%) scale(0.95);
     z-index: 1000;
 
@@ -226,6 +225,11 @@ ul {
     visibility: visible;
     transform: translate(0%, 0%) scale(1);
   width: 100%;
+}
+#fiokom.dobaktiv{background-color: transparent;}
+.modal-content{
+    display: flex;
+    flex-direction: column;
 }
      @keyframes rotateClock {
                 0% {transform: rotate(0deg);border-color: gold;}
@@ -473,6 +477,7 @@ svg{    width: 30px;
     justify-content: center;
 }
 .kozepd{display: none !important;}
+
 @media(max-width:992px){
     #ertnone{display: none;}
   .navbar{
@@ -496,7 +501,7 @@ svg{    width: 30px;
     backdrop-filter:none}
     .navbar .toggle_btn{display: block;}
     .dropdown_menu {display: flex;}
-    
+  
 
 }
 @media(max-width:567px){
@@ -507,8 +512,4 @@ svg{    width: 30px;
     .dropdown_menu.open {height: 500px}
     .mobillogo{display: flex;height: 35vh;}
     
-
-
 }
-
-

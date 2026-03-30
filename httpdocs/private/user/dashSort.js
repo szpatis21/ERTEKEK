@@ -197,16 +197,20 @@ function groupBySelect(type = 'role') {
   const innerDiv = document.querySelector('.inner-div');
   if (!innerDiv) return;
   const tartok = [...innerDiv.querySelectorAll('.tart')];
+  
+  // DOM letisztítása
   innerDiv.querySelectorAll('.csopi').forEach(e => e.remove());
   tartok.forEach(t => t.remove());
 
+  // --- ÚJ LOGIKA A TULAJDONOS SZERINTI RENDEZÉSHEZ ---
   if (type === 'role' || type === 'role2') {
-    const ROLE_TITLE = { admin : 'Saját Értékelések', editor: 'Velem megosztott értékelések' };
-    const ROLE_ORDER = ['admin', 'editor'];
     const groups = new Map();
+    
     tartok.forEach(tart => {
-      const role = (tart.querySelector('.meglevok').dataset.role || 'other').trim();
-      if (!groups.has(role)) {
+      // Itt a role helyett az owner-t kérjük le (amit a dashCRUD.js-ben beállítottunk)
+      const owner = (tart.querySelector('.meglevok').dataset.owner || 'Ismeretlen').trim();
+      
+      if (!groups.has(owner)) {
         const csopi  = document.createElement('div');
         csopi.classList.add('csopi');
         const fejlec = document.createElement('div');
@@ -214,18 +218,35 @@ function groupBySelect(type = 'role') {
         const doboz  = document.createElement('div');
         doboz.classList.add('doboztart');
         csopi.append(fejlec, doboz);
-        groups.set(role, { csopi, doboz, fejlec, count: 0, title: ROLE_TITLE[role] || 'Egyéb megosztások' });
+        
+        // A title maga a tulajdonos neve lesz (pl: "Saját értékelések" vagy "Gipsz Jakab megosztása")
+        groups.set(owner, { csopi, doboz, fejlec, count: 0, title: owner });
       }
-      const g = groups.get(role);
+      
+      const g = groups.get(owner);
       g.doboz.appendChild(tart);
       g.count += 1;
     });
-    ROLE_ORDER.concat([...groups.keys()].filter(k => !ROLE_ORDER.includes(k))).forEach(k => {
+
+    // Rendezzük a kulcsokat: "Saját értékelések" legyen legelöl, a többi megosztó ABC sorrendben
+    const sortedKeys = [...groups.keys()].sort((a, b) => {
+        if (a === 'Saját értékelések') return -1;
+        if (b === 'Saját értékelések') return 1;
+        return a.localeCompare(b);
+    });
+
+    // HTML elemek DOM-ba fűzése a rendezett sorrend alapján
+    sortedKeys.forEach(k => {
         const g = groups.get(k);
-        if (g) { g.fejlec.textContent = `${g.title} (${g.count})`; innerDiv.appendChild(g.csopi); }
+        if (g) { 
+            g.fejlec.textContent = `${g.title} (${g.count})`; 
+            innerDiv.appendChild(g.csopi); 
+        }
     });
     return;
   }
+
+  // --- AZ EREDETI LOGIKA A TÖBBI RENDEZÉSHEZ (pl. megnevezés, időszak) ---
   const groups = new Map();
   tartok.forEach(tart => {
     const key = (tart.querySelector('.meglevok').dataset[type] || 'Ismeretlen').trim();
@@ -243,7 +264,11 @@ function groupBySelect(type = 'role') {
     g.doboz.appendChild(tart);
     g.count += 1;
   });
-  groups.forEach(g => { g.fejlec.textContent = `${g.title} (${g.count})`; innerDiv.appendChild(g.csopi); });
+  
+  groups.forEach(g => { 
+      g.fejlec.textContent = `${g.title} (${g.count})`; 
+      innerDiv.appendChild(g.csopi); 
+  });
 }
 //Szűrő
 export function initSzuro() {

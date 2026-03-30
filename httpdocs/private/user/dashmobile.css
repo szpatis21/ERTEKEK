@@ -7,13 +7,19 @@
     "b";
     margin: 0vh;
     gap: 1vh;
+    min-height: 100vh; /* height: 100vh helyett! */
+        width: calc(100% - 2vh);
   }
+/*   html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+} */
   #egyik, #masik{font-size: smaller;}
   .savdiv{height: fit-content;}
     #men{margin: auto;}
-    .meglevok{width: 18vh; height: 18vh;     font-size: 80%;
+    .meglevok{width: 20vh; height: 20vh;     font-size: 80%;
       font-family: auto;}
-    .savdiv{width: 18vh; height: 4vh;}
+    .savdiv{width: 20vh; height: 5vh;}
     .sharing .inek {height: 50%;
       width: 100%;flex-direction: column;     justify-content: space-around !important;}
       #kuldendo {        width: 90%;
@@ -57,7 +63,6 @@
     #tomlo{margin-bottom: 1vh;}
     .szin-kocka{    width: 19px;
     height: 19px;}
-        #szuro, #kereso-tipus{width: fit-content; font-weight: normal; font-size: smaller;border-radius: 7px; }
     #go button {height: 30px; margin: auto; font-size: small};
     .meglevok{width: 15vh;
       height: 15vh;}
@@ -139,7 +144,7 @@ justify-content: space-evenly !important}
 .kozep{height: fit-content !important;}
 .kozepc{height: fit-content !important;
         padding: 2% 0%; margin-right: 0px;}
-        .kozepc div{justify-content: flex-start;}
+        .kozepc div{justify-content: flex-start; width: 100% !important;}
     .sidebar .sidebar-header{margin-top: 0px;}
     .picik{flex-direction: column;}
 .gomb{width: 16vh; height:5vh;margin: auto; font-size: smaller;}
@@ -158,11 +163,11 @@ justify-content: space-evenly !important}
 align-items: center; width: 96%;
 }
 #lapozo{margin-top: 50px;}
-.search-bar{height: 25px !important; width: 60% !important; font-weight: normal; font-size: smaller;
+.search-bar{height: 35px !important; font-weight: normal; font-size: smaller;
    }.modulebutt{font-size: small;padding: 2px;
 }
-#endezo{height: 25px !important; width: 35% !important;  }
-
+.search-input
+{width: 65px;}
 .logo{margin: 10px; font-size: small; font-weight: normal;}
 .modulebutt .material-symbols-rounded {font-size: 80%;}
 #lapok{width: 100%; margin-top: -3vh;}
@@ -221,6 +226,7 @@ display: none};
       padding: 3vh;
         grid-template-columns: 1fr 1fr;
     }
+    
     .narancsinfo{width: 20%;}
     .narancsinfo svg{scale: 2 !important;}
     .feherinfo{width: 90%;}
@@ -251,6 +257,7 @@ display: none};
     }
     .analysis{    grid-column: 1 / 4;
 }
+.also{margin: 2%;}
     .goals{grid-row:6;grid-column: 1 / 4;} 
     .dashboards{    grid-column: 3 / 3;
     grid-row: 7 / 8;
@@ -271,6 +278,8 @@ display: none};
 }
 .card .icon {
     scale: 1.5;}
+
+    #gykerdesek{width: 100%;}
 }
 
 @media screen and (min-width: 905px) and (max-width: 1180px) {

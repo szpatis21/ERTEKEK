@@ -363,6 +363,7 @@ main{width: 100% !important;}
     z-index: -1;
     will-change: transform;
 } 
+
     html,body{height:100%}
     body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
         color: #111; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}

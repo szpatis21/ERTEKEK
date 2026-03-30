@@ -22,6 +22,26 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
       crossorigin="anonymous" referrerpolicy="no-referrer">
 
+      <style>
+            @media screen and (min-width: 900px) and (max-width: 995px) { 
+.toggle-jelszo{    top: 50%;
+   }}
+
+.toggle-jelszo{    top: 50%;
+    position: absolute;
+    cursor: pointer;
+    left: 80%; color: #ff6e01;}
+    
+    @media(max-width:900px){
+  .toggle-jelszo{
+    top: 30%;
+    left: 70%;
+    }
+    }
+    .modal.open {
+ 
+    width: fit-content;}
+      </style>
 </head>
 <body>
  
@@ -65,31 +85,33 @@
     align-items: center;">
           <div id="logokulso" ></div>
           <div id="logobelso">   <div class="szoveg">
-                    <div id="log">
-                        <div class="inputs">
-                            <input id="fnev" type="text" name="fnev" required placeholder="Felhasználónév" autocomplete="username">
-                        </div>
-                        <div class="inputs"> 
-                            <input id="pass" type="password" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
-                        </div>
-                        <div class="lehetosegek">
-                            <select name="temakor" id="temakor" required>
-                                <option value="" disabled selected>Kérem válasszon témakört</option>
-                                <option value="1">Fejlesztő-nevelő oktatás</option>
-                                <option value="2">Tanulásban akadályozottak</option>
-                                <option value="3">Értelmileg akadályoztatottak</option>
-                            </select>
-                            <select name="szerepkor" id="szerepkor" required>
-                                <option value="3">Értékelő</option>
-                                <option value="2">Elemző</option>
-                                <option value="1">Adminisztrátor</option>
-                            </select>
-                        </div>
-                    
-                        <button id="llog">Bejelentkezek</button>     
-                                
-                        <button id="whbutt">Mi is a jelszavam...?</button>    
-                    </div>
+                   <div id="log">
+    <div class="inputs">
+        <input id="fnev" type="text" name="fnev" required placeholder="Felhasználónév" autocomplete="username">
+    </div>
+    
+    <div class="inputs jelszo-wrapper" style="position: relative;"> 
+        <input id="pass" type="password" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
+        <span class="material-symbols-rounded toggle-jelszo">visibility</span>
+    </div>
+    <div class="lehetosegek">
+        <select name="temakor" id="temakor" required>
+            <option value="" disabled selected>Kérem válasszon témakört</option>
+            <option value="1">Fejlesztő-nevelő oktatás</option>
+            <option value="2">Tanulásban akadályozottak</option>
+            <option value="3">Értelmileg akadályoztatottak</option>
+        </select>
+        <select name="szerepkor" id="szerepkor" required>
+            <option value="3">Értékelő</option>
+            <option value="2">Elemző</option>
+            <option value="1">Adminisztrátor</option>
+        </select>
+    </div>
+
+    <button id="llog">Bejelentkezek</button>     
+            
+    <button id="whbutt">Mi is a jelszavam...?</button>    
+</div>
                     <div id="error-message" class="error hidden"></div>
                 </div><span class="gold">É</span>RTÉKEK</div>
         </div>          

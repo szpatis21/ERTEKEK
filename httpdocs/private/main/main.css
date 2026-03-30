@@ -642,7 +642,7 @@ align-items: center;
     justify-content: center;
     align-items: center;
   transition: all 1.5s;}
-  
+
     .utolso{
     text-align: center;
     color: #474747;
@@ -942,6 +942,7 @@ transition:opacity 1s ease-in-out}
 .dobozment p {font-size: smaller; margin: 0%;}  .logokulso {
     width: 55vh !important;
     height: 55vh !important;}
+  
     .osszefoglalo {
         max-height: 15vh;
     padding: 5px;

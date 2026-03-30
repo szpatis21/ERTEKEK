@@ -1,0 +1,477 @@
+
+
+a:visited{color: white;}
+
+  nav button{    border: none;
+    color: white;
+    background: transparent;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: medium;
+    cursor:pointer;
+}
+#szerkcim{
+    text-decoration-line: underline;
+}
+#szerkcim::first-letter{color: pink;}
+#szovegesdiv, .szovegesdiv,#maxidiv{       
+       background-color: #ffffff;
+    border: 1px solid white;
+    padding: 7px;
+    border-radius: 5px;
+    width: 170px;
+    height: 22px;
+    color: black;
+        border: 2px solid gold;
+
+}
+.tomb{    display: flex;
+    align-items: center;
+width: 100%;}
+.szamok{width: 10%;font-family: 'Montserrat Subrayada'; text-shadow: #ff9800 0px 0px 15px;  font-size: larger; }
+.lebomlo{
+    font-weight: bold;
+    height: 15px;
+    font-family: auto;
+    font-size: small;
+    width: 95%;
+    border: 1px solid rgb(255, 140, 0);
+    box-shadow: 0px 0px 5px 1px orange}
+.szerkdiv{  font-family: 'Times New Roman', Times, serif;
+    font-weight: bold;
+    color: #000000;
+    width: 100%;
+    background-color: whitesmoke;
+    transition: all 0.3s;
+
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    align-items: center;
+    height: 70px;
+    box-shadow: 0px 0px 5px 1px rgb(229 126 0 / 66%);
+    border: 3px solid rgb(255, 140, 0); 
+    padding: 0px 0px 0px 0px;
+     border-radius: 5px;
+    margin: 5px;
+}
+div {
+    display: block;
+    unicode-bidi: isolate;
+}
+.cimer, .cimer2{font-size: larger;
+    border-bottom: 6px solid #ff650099;
+    font-weight: bold; border-radius: 8px;  font-family: 'Montserrat Subrayada'; padding: 5px;    display: flex;
+    justify-content: center; text-align: center;
+}
+.alkerdcimer, .fokerdcimer{display: none;    align-items: flex-end; text-align: center;
+    justify-content: space-around;}
+    .fokerdcimer{display: flex;align-items: center;}
+.ujertek2{border: none;box-shadow: #ff650069 0px 0px 10px 0px inset;border-radius: 0px; color: black; font-weight: bold; background: whitesmoke; font-size: smaller; font-family: 'Times New Roman', Times, serif; margin: 0px; width: 100%;border-radius: 0px; display: flex; align-items: center; text-align: center;justify-content: space-evenly; padding: 4px;}
+
+#negaltkerdesdiv, .szovege{margin: 0px;width: 50%; border: none; border-radius: 0px; background: whitesmoke; height: 130px;box-shadow: #ed143d85  0px 0px 10px 0px inset;}
+.szovege{   
+    box-shadow: #00800078 0px 0px 10px 0px inset;
+
+}
+
+#alKategoria,#ertek, #altTema, #kerdesSzoveg, #negaltKerdesSzoveg {  
+    /* border-radius: 30px; */
+    
+    background: #ffffffe5;
+    color: rgb(0, 0, 0);
+    height: 180px;
+    width: 97%;
+}
+#ertek, #kindex, #ertekmin{width: 30px; height: 20px; border-radius: 10px;} 
+.aprok{padding: 10px;
+    border-right: 4px solid #ffd8bd;
+    border-radius: 20px;
+    margin: 10px;
+    display: flex
+;font-size: smaller;
+    font-family: 'Times New Roman', Times, serif;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    flex-direction: column;}
+    .nagyok{    padding: 5px;
+        display: flex;
+        width: 100%;
+        height: fit-content;
+        justify-content: space-evenly;
+        flex-wrap: wrap;
+        flex-direction: row;
+        align-content: center;
+    }
+    textarea{font-family: 'Times New Roman', Times, serif;}
+    select{
+    border: 1px solid white;
+    height: 25px;
+    font-size: medium;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+    border-color: #ffffff7d;
+ 
+    text-align: center;}
+    .apraja{display: flex;
+    flex-direction: row;}
+    .szerkdiv0{    margin: 5px auto;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: space-between;}
+        .alkerdesek select,#alkerdesek select {    font-family: times;
+            margin: auto 2px;
+            font-size: 85%;
+            height: 25px;
+            width: 35%;
+            border: 1px solid rgb(255, 140, 0);
+            border-radius: 5px;
+            text-transform: uppercase;}
+        .al_kerdesSzoveg,.al_negaltKerdesSzoveg,#al_negaltKerdesSzoveg,.al_ertek,.al_kindex{background-color: #ffffff52;; color: rgb(0, 0, 0); border: #ff6500 1px solid;;
+            border-radius: 7px;font-family: 'Times New Roman', Times, serif; width: 100%; height: 16px;}
+ .al_kerdesSzoveg{border: 1px solid #00d900;} 
+ #al_negaltKerdesSzoveg,.al_negaltKerdesSzoveg{border: crimson 1px solid;}
+            .alkerdesek,#alkerdesek {color: black;
+    background: white;}
+            .alize{display: flex;
+                width: 100%;
+                flex-direction: row;
+                align-items: center;
+                margin: 2px;
+                align-content: center;
+                justify-content: space-around;}
+                .kuka,.kuka2{    border: 2px solid rgb(255, 140, 0);
+                        position: absolute;
+                        border-radius: 6px;
+                        right: -12px;
+                        top: -12px;
+                        box-shadow: 0px 0px 2px 1px #ff6500;
+                        font-size: 215%;
+                        background: rgb(255, 140, 0);
+                        cursor: pointer;
+                        color: white; transition: all 0.3s;
+                }
+                .kuka2{  background: white;
+                        color: rgb(255, 140, 0); transition: all 0.3s;}
+
+
+            .kuka:hover{color: orangered; background-color: whitesmoke;}
+            .kuka:hover{color: whitesmoke; background-color: orangered;}
+
+                #alkerdesek div{display: flex;}
+            .al_ertek,.al_kindex{width: 40px;margin: 5px auto;}
+            .rows{flex-direction: column;}
+            .valszaliz{display: flex; flex-direction: column;}
+            .valszaliz select{    font-family: 'Montserrat Subrayada';
+                font-size: 85%;
+                height: fit-content;
+                height: 20px !important;
+                border-radius: 5px !important;}
+.alkerdbox{display: flex; flex-direction: column; align-items: center;    justify-content: space-between;}
+.alkerdbox div{ display: flex; align-items: center;}
+                .nagyok2{   
+                    width: 100%;
+                    position: relative;
+                    display: flex;
+                    align-content: center;
+                    justify-content: center;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    flex-direction: row;
+                    border-radius: 10px;}
+
+                    #main-container{flex-direction: row;}
+                    .alok{display: none; position: relative;}
+                    #kerdes_form {
+                        margin: 5px;
+                        display: flex;
+                        flex-direction: column;
+                        margin: auto;
+                        margin-bottom: 10px;
+                        border: solid 2px black;
+                     background-color:#33140094;
+
+                        color: white;
+                        border-radius: 30px;
+                        border-color: rgba(255, 255, 255, 0.59);
+                    }
+                    .alkerdesek, #alkerdesek{    
+                        width: 200px;
+                        align-items: center;
+                        border-radius: 10px;
+                        border: #ff6500 2px solid;
+                        box-shadow: 0px 0px 5px 1px orange;
+                        padding: 8px;
+                        display: flex;
+                        flex-direction: column;
+                        font-size: smaller;}
+                    #alkerdesek_from {
+                        display: none;
+                        flex-wrap: wrap;
+                        flex-direction: row;
+                        align-content: stretch;
+                        justify-content: center;
+                        align-items: center;
+                    }
+                    
+                    .alok {
+                        display: flex;
+                        font-family: 'Times New Roman', Times, serif;
+                        flex-direction: column;
+                        margin: 10px;
+                    }
+                    
+                    #hozzad {
+                           transition: 0.5s all;
+    display: flex
+;
+    border: 2px solid rgb(255, 140, 0);
+    background: white;
+    width: 20px;
+    cursor: pointer;
+    border-radius: 140px;
+    justify-content: center;
+    align-items: center;
+    font-size: large;
+    color: orangered;
+    font-weight: bolder;
+    margin: auto 20px;
+    box-shadow: 0px 0px 6px 3px #ffffff;
+                    }
+                    #hozzad:hover{
+                        border: 2px solid gold;
+                        transform: scale(1.2);
+                    
+                    }
+                    
+                    .delete-kerdes-button, .delete-alkerdes-button { margin-left: auto;}
+                    
+                    #gomb-container {
+           
+                        margin: 0%;
+                        display: flex;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                        align-items: center;
+                        align-content: center;
+                    }
+                    #main-container{margin-top: 60px !important;}
+                    #editdiv {
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: center;
+                    }
+                    .azon,.info-tartaly .azon , #parent_from {display: none;}
+                    #szerkeszto {
+                        opacity: 1;
+                        margin: 60px 10px 20px 10px;
+ overflow: hidden;
+  max-height: fit-content;           /* elég nagy, hogy beférjen */
+  opacity: 1;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+
+                    }
+
+            
+              
+                    .menu{align-content: center;}
+                    .menu div::first-letter{color: rgb(255, 191, 0);}
+                    .menu div::first-letter{color: rgb(255, 191, 0);}
+
+                    #nyil.forditott {
+                        transform: rotate(270deg);
+                    }
+                    .szerkesztolec{display: flex;
+                        justify-content: space-evenly;
+                        align-items: center;}
+                        .szerkesztogomb{cursor: pointer;}
+                    .szerkesztogomb, .ertek, #ment {
+                        margin: auto 2px;
+                        border-radius: 6px;
+                        border: none;
+                        padding: 2px;
+                        font-family: "Montserrat Subrayada", sans-serif;
+                        font-size: 65%;
+                        text-align: center;
+                     
+                        transition: all 0.3s;
+                        }
+                        .szerkesztogomb:hover, #ment:hover{
+                            background-color: white;
+                            color: black;
+                        }
+                       #sablon {display: flex;  
+;
+    align-items: center;
+    justify-content: center;}
+    #sablon label{    border-bottom: 2px solid rgb(255, 140, 0);
+    width: 30%;
+    border-radius: 5px;}
+                        #altTema, #alKategoria { 
+                            border-bottom-left-radius: 0px; 
+                            border-bottom-right-radius: 0px; 
+                            width: 97%;
+                        }
+                        #alKategoriaSelect,#altTemaSelect {
+                            height: 40px;
+                            font-family: 'Times New Roman', Times, serif;
+                            font-size: small;
+                        }
+                        textarea::placeholder {
+                            color: rgba(0, 0, 0, 0.658) !important; /* A kívánt szín */
+                            font-weight: normal !important;
+                        }
+                        #loading-overlay {
+                            position: fixed;
+                            top: 0;
+                            left: 0;
+                            width: 100%;
+                            height: 100%;
+                            background: rgba(0, 0, 0, 0.5);
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            z-index: 1000;
+                          }
+                          
+                          .loading-spinner {
+                            border: 4px solid rgba(255, 255, 255, 0.3);
+                            border-top: 4px solid #fff;
+                            border-radius: 50%;
+                            width: 50px;
+                            height: 50px;
+                            animation: spin 1s linear infinite;
+                          }
+                          
+                          @keyframes spin {
+                            from {
+                              transform: rotate(0deg);
+                            }
+                            to {
+                              transform: rotate(360deg);
+                            }
+                          }
+                          
+                          .gold {color: black;}
+                          #kont{ height: 400px;
+                          margin: auto;
+                          display: flex;
+                          flex-direction: row;
+                          justify-content: center;
+                          align-items: center;}
+                  
+                          #logokulso {
+                              border-radius: 30px;
+                              border: 2px solid grey;
+                              width: 220px;
+                              height: 220px;
+                              display: flex;
+                              justify-content: center;
+                              align-items: center;
+                              animation: rotateClock 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+                              position: absolute;
+                              z-index: 2;
+                          }
+                          #logobelso { z-index: 1;
+                              animation: shine 3s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+                              display: flex;
+                              background: white;
+                              border-radius: 30px;
+                              border: 2px solid gold;
+                              width: 200px;
+                              height: 200px;
+                              justify-content: center;
+                              align-items: center;
+                              font-family: "Montserrat Subrayada", sans-serif;
+                              font-size: xx-large;
+                              transition: all 0.5s ease-in-out; /* Animáció az összes stílusváltozásra */
+                              opacity: 1; /* Kezdő állapot */
+                          }
+                     
+                              @keyframes shine {
+                                  0%, 50%, 100% { box-shadow: 0px 0px 4px 1px gold; }
+                                  12.5%, 25%, 37.5%, 62.5%, 75%, 87.5% { background-color: white; box-shadow: none;}
+                              }
+                              @keyframes rotateClock {
+                                  0% {transform: rotate(0deg);}
+                                  12.5% {transform: rotate(45deg);}
+                                  25% {transform: rotate(45deg);}
+                                  37.5% {transform: rotate(90deg);}
+                                  50% {transform: rotate(90deg);}
+                                  62.5% {transform: rotate(135deg);}
+                                  75% {transform: rotate(135deg);}
+                                  87.5% {transform: rotate(180deg);}
+                                  100% {transform: rotate(180deg);}
+                              }
+                       
+                            #logobelso.fade-out {
+                                opacity: 0; /* Áttetszővé válás */
+                            }
+                            #logobelso.fade-in {
+                                opacity: 1; /* Újra láthatóvá válás */
+                            }
+                            .menthely{
+                                    width: 100%;
+    font-family: auto;
+    font-size: large;
+    text-align: center;
+    display: flex
+;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: column;
+    color: black;
+    /* background: orange; */
+                            }
+                                #ment{    box-shadow: white 0px 0px 5px 1px;
+    border: 2px solid white;
+    cursor: pointer;
+    background-color: #ff6500;
+    height: 37px;
+    color: white;
+    font-weight: bold;
+    padding: 10px;}
+                                    select option {
+                                        background-color: #f0f0f0; /* Szürke háttér */
+                                        color: #333; /* Sötétszürke szöveg */
+                                    }
+                                    .index {display: none;}
+                                    body::before{ background-image: url("../../../both/media/dragon-sclales2.svg") !important;}
+                                    /* 1. elem */
+  .chart-wrapper { position: relative; width:400px; height:200px; }
+  .placeholder {
+    position: absolute; top:50%; left:50%;
+    transform: translate(-50%,-50%); color:#000000; font-style: italic; font-family: 'Times New Roman', Times, serif;
+  }
+  .chart-wrapper.loaded .placeholder { display:none; }
+                              .ujertek{display: flex;
+    justify-content: space-between;
+    align-items: center; border: none; height: 15px; margin: 0px; font-size: small; font-weight: normal; width: 92%; padding: 6px;}
+.mittom2{display: flex; flex-direction: column; justify-content: space-between}
+.mittom3{border: 3px solid rgb(255, 140, 0); border-radius: 5px; margin: 5px;}
+      @media (max-width: 900px) {
+      
+    
+    .apraja {flex-direction: column;}
+    .aprok{border-right: none;
+        flex-wrap: nowrap;
+    flex-direction: row-reverse;
+    }
+    .nagyok{justify-content:center}
+    .menthely{font-size: small;}
+    .fokerdcimer,.alkerdcimer {font-size: x-small;}
+    .cimer2{display: none;}
+    .mittomen{width: 90%;}
+.alkerdbox{width: 50%  !important;}
+#sablon{width: 50% !important;}
+.alkerdesek, #alkerdesek{width: 150px;}
+.alize {flex-direction: column;font-weight: normal; font-size: small; } 
+.mainartdiv {flex-direction: column}   
+#keszulo{margin-top: 0px!important;}
+.szerkdiv{font-weight: normal;}
+.lebomlo, .mittom2{width: 90%;}
+.mittom3{margin: 0px;}
+}
