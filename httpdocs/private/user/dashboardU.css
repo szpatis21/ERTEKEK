@@ -1620,6 +1620,50 @@ font-size: x-small;
     transform: translateX(0);
     opacity: 1;
 }
+.ai-type-btn{    width: 16vh;
+    height: 16vh;
+    /* display: flex; */
+    background: #ff7207c5;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    text-align: center;
+    color: white;
+    transition: all 0.2s;
+    align-content: center;
+        box-shadow: 1px 1px 3px 1px #4b55638f;
+    justify-content: center;
+    align-items: center;}
+    .ai-type-btn strong{font-size: medium;
+    font-family: system-ui;
+    text-shadow: 2px 2px 2px #4b556357;
+    text-transform: uppercase;}
+            .ai-type-btn:hover { background: #ffffff !important; border-color: #ff8400 !important;color:#ff8400 ; }
+#ai-modal-header{
+background: #fff3e0;
+    padding: 15px;
+    border-bottom: 3px solid #ff9800;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    flex-direction: column;}
+    .tit{    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;}
+    #ai-btn-close{
+      background:transparent;border:none;color:#ff6500;font-weight:bold;font-size:2.2rem;cursor:pointer;line-height:1;width: fit-content;
+    }
+    .ai-tab-btn{width: 30%; font-family: system-ui;
+      padding:10px 20px;border:none;border-radius:6px;font-weight:600;cursor:pointer;margin:0 3px;background:transparent;color:#333;
+    }
+    .ai-tab-btn.active { background: #ff9800 !important; color: white !important;width:30%;margin: 0px;}
+.ai{background:#f8f9fa; padding:15px 20px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:center;}
+#ai-type-tabs{
+  display:flex;background:#fff;border-radius:8px;padding:4px;box-shadow:0 2px 8px rgba(0,0,0,0.1); width: 100%;justify-content: center;
+}
 .jelszo-wrapper {
     position: relative; /* Ez a szülő elem a pozicionáláshoz */
     display: flex;

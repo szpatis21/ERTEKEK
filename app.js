@@ -6,7 +6,7 @@ const session = require('express-session');
 const db = require('./modulok/dbmodul');
 
 require('dotenv').config();
-if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY hiányzik');
+if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY hiányzik');
 if (!process.env.SECRET_KEY) throw new Error('SECRET_KEY hiányzik');
 const app = express();
 const port = 3000;
@@ -104,9 +104,9 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
     logError(`UNHANDLED REJECTION: ${reason}`);
 });
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-if (!OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY hiányzik a környezetből');
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  throw new Error('GEMINI_API_KEY hiányzik a környezetből');
 }
 // Express error middleware
 app.use((err, req, res, next) => {

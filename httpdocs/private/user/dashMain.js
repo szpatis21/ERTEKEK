@@ -41,7 +41,6 @@ export const BUTTONS = {
   ],
   szerkeszto: [
     {cls: 'fo_edit',        icon: 'edit',           help: 'Folytassa értékelését', label:'Folytatás'},
-    {cls: 'lightbulb_2',    icon: 'lightbulb_2',    help: 'Meglévő értékelés átalakítása szabadszavas esszévé',         action: 'generate_ai', label:'AIGenerálás'},
     {cls: 'picture_as_pdf', icon: 'picture_as_pdf', help: 'Letöltés PDF formátumba',                  action: 'picture_as_pdf', label:'Letöltés'},    
     {cls: 'print',          icon: 'print',          help: 'Értékelés nyomtatása',                      action: 'print', label:'Nyomtatás'},   
   ]
@@ -83,6 +82,17 @@ function addHelpToButtons() {
                 btn.appendChild(span);
             }
         }
+        if (config.id === 'ai-generate-btn') {
+                btn.addEventListener('mouseenter', () => {
+                    const helpSpan = btn.querySelector('.help');
+                    const elsoKartya = document.querySelector('.meglevok');
+                    
+                    if (helpSpan && elsoKartya) {
+                        const globalLimit = elsoKartya.dataset.aiOsszMax !== undefined ? elsoKartya.dataset.aiOsszMax : 100;
+                        helpSpan.textContent = `Csoportos elemzés (Hátralévő teljes intézményi keret: ${globalLimit})`;
+                    }
+                });
+            }
     });
 }
 

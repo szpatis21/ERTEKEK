@@ -6,8 +6,7 @@ import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
 import { generatePdfMakePDF } from '../main/main_pdf.js';
 import {initSzuro,initChekingToggle,initSearch  } from './dashSort.js';
 import {showAlert,showMissingChecklist, customConfirm,customPrompt3,customDatePrompt,customAuditPrompt } from "/both/alert.js"
-import { triggerIndividualAiAnalysis } from './dashAI.js';
-import { initMegosztas } from './dashsShare.js'; //Megosztás
+import { openAiSelector } from './dashAI.js';import { initMegosztas } from './dashsShare.js'; //Megosztás
 import { loadColorMaps } from './dashStatic.js';
 
 const grap = document.querySelector(".grap");
@@ -141,7 +140,12 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
           k.ownerName = await getOriginalAdminName(k.idk);
       }
   }));
-  const innerDiv = document.querySelector('.inner-div');
+
+  // --- MÓDOSÍTOTT RÉSZ KEZDETE ---
+  // Megkeressük az éppen aktív (látható) fülön lévő inner-div-et
+  const innerDiv = document.querySelector('.main.aktiv-tartalom .inner-div') || document.querySelector('.inner-div');
+  if (!innerDiv) return; // Ha egyáltalán nincs tároló, kilépünk
+  
   innerDiv.innerHTML = '';
 
   if (groupByCreator) {
@@ -152,8 +156,10 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
   let currentList      = null;
   let lastCreatorName  = null;
   
-  if (!document.getElementById('ujert')) return;
-  
+  // EZT A SORT TÖRÖLD VAGY KOMMENTELD KI:
+  // if (!document.getElementById('ujert')) return;
+  // --- MÓDOSÍTOTT RÉSZ VÉGE ---
+
   const kozep = document.createElement("div");
   kozep.classList.add("kozep");
   kozep.classList.add("kozepc");
@@ -647,9 +653,14 @@ kitoltesDiv.dataset.owner = role === 'szerkeszto' ? 'Ismeretlen megosztása' : '
 kitoltesDiv.innerHTML = nameHtml + modules + formattedText + warmHtml;    
     // Dataset beállítás
     kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
+    kitoltesDiv.dataset.aiText = kitoltes.AI || '';
+    kitoltesDiv.dataset.aiJellemzes = kitoltes.ai_jellemzes || '';
+    kitoltesDiv.dataset.aiErtekeles = kitoltes.ai_ertekeles || '';
     kitoltesDiv.setAttribute('data-role', kitoltes.role);
     kitoltesDiv.setAttribute('data-user', kitoltes.creator_name);
     kitoltesDiv.dataset.undo = kitoltes.vizsgalt_id;
+    kitoltesDiv.dataset.aiKitMax = kitoltes.ai_kit_max != null ? kitoltes.ai_kit_max : 10;
+    kitoltesDiv.dataset.aiOsszMax = kitoltes.ai_ossz_max != null ? kitoltes.ai_ossz_max : 100;
     kitoltesDiv.appendChild(checkbox);
     kitoltesDiv.dataset.modulId = modulId;
     kitoltesDiv.dataset.auditId = kitoltes.audit || '0';
@@ -988,6 +999,28 @@ let floatingWarn = document.getElementById('floating-audit-warning');
 
   // 3. Általános funkciógombok (Share, Print, PDF, Duplicate, AI)
   document.querySelectorAll('.modulebutt[data-action]').forEach(btnDiv => {
+    btnDiv.addEventListener('mouseenter', (e) => {
+          if (btnDiv.dataset.action === 'generate_ai') {
+              // 1. Megkeressük a gombhoz tartozó kártyát
+              let meglevok = e.target.closest('.meglevok'); 
+              if (!meglevok) {
+                  const wrapper = e.target.closest('.modules');
+                  if (wrapper && wrapper._originalRow) meglevok = wrapper._originalRow;
+              }
+              
+              // 2. Ha megvan a kártya, kiolvassuk a lokális kvótát
+              if (meglevok) {
+                  const hatralevo = meglevok.dataset.aiKitMax !== undefined ? meglevok.dataset.aiKitMax : 10;
+                  
+                  // 3. Megkeressük a tooltip (help) elemet a gombon belül
+                  const helpSpan = btnDiv.querySelector('.help');
+                  if (helpSpan) {
+                      // 4. Frissítjük a szöveget
+                      helpSpan.textContent = `Mesterséges intelligencia elemzés (Még ${hatralevo} alkalommal)`;
+                  }
+              }
+          }
+      });
       btnDiv.addEventListener('click', async (e) => {
           e.stopPropagation();
           
@@ -1079,8 +1112,9 @@ let floatingWarn = document.getElementById('floating-audit-warning');
           else if (action === "picture_as_pdf") {
               generatePdfMakePDF(false, meglevok);
           }
-          else if (action === "generate_ai") {
-              await triggerIndividualAiAnalysis(e.target);
+    else if (action === "generate_ai") {
+              // Meghívjuk a dashAI.js-ben lévő új függvényünket
+              openAiSelector(e.target);
           }
           else if (action === "date") {
               // Adatok kinyerése a megjelenítéshez

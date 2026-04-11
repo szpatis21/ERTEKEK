@@ -57,12 +57,40 @@ export async function renderRoles(userState) {
       wrapper.appendChild(section);
     });
 
-    data.users.forEach(user => {
+data.users.forEach(user => {
       const roleKey = user.role;
       const target = wrapper.querySelector(`section[data-role="${roleKey}"] .role-list`);
 
       const card = document.createElement('div');
       card.className = 'user-card';
+
+      // HTML lista generálása a NÉV + DÁTUM adatokkal
+   // dashAroles.js -> card.innerHTML generáló része
+
+      let ertekelesekHtml = '';
+      if (user.ertekelesek && user.ertekelesek.length > 0) {
+          ertekelesekHtml = `<div style="margin-top: 10px; font-size: 0.85em; background: #f0f4f8; padding: 8px; border-radius: 6px;">
+              <strong style="display:block; margin-bottom:4px; color:#333;">Értékelései:</strong>
+              <ul style="margin: 0; padding-left: 15px; list-style-type: circle; color: #555;">`;
+          
+          user.ertekelesek.forEach(ert => {
+              // Ha meg van osztva, készítünk egy extra sort neki
+              let megosztvaSzoveg = '';
+              if (ert.megosztva && ert.megosztva.length > 0) {
+                  megosztvaSzoveg = `<br><span style="color: #d97706; font-size: 0.9em;">(Megosztva: <b>${ert.megosztva.join(', ')}</b>)</span>`;
+              }
+
+              ertekelesekHtml += `<li style="margin-bottom: 6px;">
+                <b style="color: #2c3e50;">${ert.nev}</b> 
+                <span style="color: #7f8c8d; margin-left: 5px;">(${ert.datum})</span>
+                ${megosztvaSzoveg}
+              </li>`;
+          });
+          
+          ertekelesekHtml += `</ul></div>`;
+      } else {
+          ertekelesekHtml = `<div style="margin-top: 10px; font-size: 0.85em; color: #9ca3af; font-style: italic;">Nincs még értékelése.</div>`;
+      }
 
       card.innerHTML = `
         <div class="dob">
@@ -78,7 +106,8 @@ export async function renderRoles(userState) {
           </div>
 
           <div class="kitoltes-db">
-            ${user.kitoltes_db} darab értékelés a fiókjában
+            <b>${user.kitoltes_db} darab</b> értékelés a fiókjában
+            ${ertekelesekHtml}
           </div>
 
           <div class="role-radio">

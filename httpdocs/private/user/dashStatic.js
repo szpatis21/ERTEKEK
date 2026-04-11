@@ -1011,12 +1011,13 @@ const pie   = document.getElementById('szummRadarChart');
 const radar = document.getElementById('pieWrap');
 const btn   = document.getElementById('toggleBtn');
 
+if(btn){
 btn.addEventListener('click', () => {
   const pieVisible = pie.style.display !== 'none';
   pie.style.display   = pieVisible ? 'none' : 'block';
   radar.style.display = pieVisible ? 'block' : 'none';
   btn.textContent     = pieVisible ? 'Váltás kördiagramra' : 'Váltás radar-diagramra';
-});
+});}
 
 function _round1(v){ return Math.round(v*10)/10; }
 

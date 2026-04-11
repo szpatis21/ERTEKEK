@@ -29,11 +29,11 @@ router.post('/add-kitoltes', (req, res) => {
     }
 
     const insertOrUseVizsgalt = () => {
-      const insertSql = `
-        INSERT INTO kitoltesek
-          (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id)
-        VALUES (?, ?, ?, ?, ?, ?)
-      `;
+     const insertSql = `
+  INSERT INTO kitoltesek
+    (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, ai_kit_max)
+  VALUES (?, ?, ?, ?, ?, ?, 10)
+`;
       db.query(
         insertSql,
         [felhasznalo_id, letrehozva, kitoltes_neve, 'admin', modul_id, vizsgaltId],
@@ -299,7 +299,6 @@ router.get('/original-admin', (req, res) => {
 // modulok/felhasznalomodul.js
 
 // Kitöltés duplikálása
-// Kitöltés duplikálása
 router.post('/duplicate-kitoltes', (req, res) => {
     // 1. MÓDOSÍTÁS: Fogadjuk az "ujVizsgaltNev" paramétert is!
     const { originalIdk, ujNev, ujVizsgaltNev, userId } = req.body;
@@ -350,11 +349,11 @@ router.post('/duplicate-kitoltes', (req, res) => {
             const maiDatum = new Date().toISOString().split('T')[0];
 
             // 4. Új kitöltés beszúrása az ÚJ vizsgalt_id-val és ÚJ kitoltes_neve-vel
-            const insertKitoltes = `
-                INSERT INTO kitoltesek 
-                (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, szazalek)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            `;
+        const insertKitoltes = `
+    INSERT INTO kitoltesek 
+    (felhasznalo_id, letrehozva, kitoltes_neve, role, modul_id, vizsgalt_id, szazalek, ai_kit_max)
+    VALUES (?, ?, ?, ?, ?, ?, ?, 10)
+`;
 
             db.query(insertKitoltes, [
                 userId,
@@ -430,10 +429,15 @@ router.get('/get-kitoltesek', (req, res) => {
       k.vizsgalt_id,
       k.audit,
       k.letrehozva,
+      k.AI, 
+      k.ai_kit_max,          
+      f.ai_ossz_max,    
+      k.ai_ertekeles,
+      k.ai_jellemzes,    
       a.warm, 
       a.hatarido,
-      f.vez                                           AS creator_name,
-      f.mail                                  AS creator_mail,  
+      f.vez AS creator_name,
+      f.mail AS creator_mail,  
       CAST(AES_DECRYPT(v.nev_enc, @aes_key) AS CHAR(255)) AS vizsgalt_nev
     FROM kitoltesek k
     JOIN felhasznalok f ON k.felhasznalo_id = f.id
@@ -803,6 +807,72 @@ router.delete('/delete-my-account', async (req, res) => {
         console.error("Kaszkád törlési hiba:", err);
         res.status(500).json({ success: false, message: 'Adatbázis hiba a törlés során' });
     }
+});
+router.post('/save-ai-text', (req, res) => {
+    const { kitoltesId, aiText, userId, type } = req.body;   // ← type a kulcs
+
+    if (!kitoltesId || !aiText || !userId || !type) {
+        return res.status(400).json({ success: false, message: 'Hiányzó adatok!' });
+    }
+
+    let targetColumn;
+    switch (type) {
+        case 'fejlesztesi':   targetColumn = 'AI';            break;
+        case 'jellemzes':     targetColumn = 'ai_jellemzes';  break;
+        case 'ertekeles':     targetColumn = 'ai_ertekeles';  break;
+        default:
+            return res.status(400).json({ success: false, message: 'Érvénytelen AI típus!' });
+    }
+
+    const queryKitoltes = `
+        UPDATE kitoltesek 
+        SET ${targetColumn} = ?, 
+            ai_kit_max = GREATEST(ai_kit_max - 1, 0) 
+        WHERE idk = ?
+    `;
+
+    db.query(queryKitoltes, [aiText, kitoltesId], (err) => {
+        if (err) {
+            console.error('AI szöveg mentési hiba:', err);
+            return res.status(500).json({ success: false, message: 'Mentési hiba!' });
+        }
+
+        const queryFelhasznalo = `
+            UPDATE felhasznalok 
+            SET ai_ossz_max = GREATEST(ai_ossz_max - 1, 0) 
+            WHERE id = ?
+        `;
+
+        db.query(queryFelhasznalo, [userId], (errUser) => {
+            if (errUser) {
+                console.error('Globális kvóta frissítési hiba:', errUser);
+                return res.status(500).json({ success: false, message: 'Szöveg elmentve, de kvóta levonása sikertelen.' });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+router.post('/decrease-global-quota', (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ success: false, message: 'Hiányzó userId!' });
+    }
+
+    const query = `
+        UPDATE felhasznalok 
+        SET ai_ossz_max = GREATEST(ai_ossz_max - 1, 0) 
+        WHERE id = ?
+    `;
+    
+    db.query(query, [userId], (err) => {
+        if (err) {
+            console.error('Globális kvóta levonási hiba:', err);
+            return res.status(500).json({ success: false });
+        }
+        res.json({ success: true });
+    });
 });
     return router;
 };

@@ -795,6 +795,7 @@ font-size: x-small;
     align-content: center;
     justify-content: center;    font-family: auto;
     border-left: 14px solid #ff6500;
+    z-index: 9999;
 }
 
 .modal-content button {font-family: 'Montserrat Subrayada';
@@ -810,6 +811,7 @@ font-size: x-small;
 .modal-content button:hover{color: white; background-color:#ff9707 ;}
  .modal.open {
     display: flex;
+    z-index: 9999999;
 /*     backdrop-filter: blur(2px);
  */  }
  .missing-item{    display: flex

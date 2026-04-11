@@ -29,8 +29,9 @@ router.get('/api/user-brief', async (req, res) => {
 
   try {
     // 1. Alapadatok, Intézmény, Szerepkör és Modulok
-    const sqlUser = `
+const sqlUser = `
       SELECT 
+          f.ai_ossz_max, /* <--- EZT ADD HOZZÁ A SELECT-HEZ */
           f.int_id, f.fnev AS username, f.vez AS fullname, f.mail, f.tel,
           i.fizetve, i.intfin, i.intnev, i.intkapmail,
           r.leiras AS role_leiras,
@@ -317,6 +318,7 @@ const sqlLegtobbetMegosztott = `
       modul_leiras: userBase.modul_leiras,
       
       stats: {
+        aiOsszMax: userBase.ai_ossz_max, // <--- EZT ADD HOZZÁ A STATS BLOKKBA
         aktualisSzerep: aktualisSzerepNeve,
         globalWarmUserCount: globalWarmUserCount,
         globalWarmEvalCount: globalWarmEvalCount,

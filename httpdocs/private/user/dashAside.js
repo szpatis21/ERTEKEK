@@ -39,6 +39,7 @@ let legtobbetMegosztottDarab = 0;
 let kedvencKategoriaNev = 'Nincs adat';
 let kedvencKategoriaDarab = 0;
 let kedvencKategoriaAtlag = 0;
+let aiOsszMax = 0;
 // 2. Egy jelző, hogy ne töltsük le az adatokat feleslegesen többször
 let adatokBetoltve = false;
 
@@ -112,6 +113,7 @@ azonosIntezmenyElemzok = data.stats.azonosIntezmenyElemzok || 0;
         }
         
         globalAudit2Count = data.stats.globalAudit2Count || 0;
+        aiOsszMax = data.stats.aiOsszMax !== undefined ? data.stats.aiOsszMax : 0;
     }
       adatokBetoltve = true; // Jelezzük, hogy a betöltés sikeres volt
       console.log(hozzaferhetoModulok)
@@ -135,7 +137,7 @@ let osszoszt = parseInt(mastolKapottEditor, 10) + parseInt(megosztottMasokkal, 1
         const gombok = document.querySelectorAll('.gomb .cim');
         const layoutContainer = document.querySelector('.layout');
         const ujTartalmak = {
-            'ujert': {
+        'ujert': {
                 main: ` <div id="tartalom2">
                             <div id="uj" class="tartdob">
                                 <div id="ujinek">
@@ -213,8 +215,9 @@ let osszoszt = parseInt(mastolKapottEditor, 10) + parseInt(megosztottMasokkal, 1
             </div>
         </div>                            
             `
-            },
-        'accunt':{ main: () => {
+        },
+        'accunt':{ 
+        main: () => {
         // --- 1. URL VIZSGÁLATA (Melyik felületen vagyunk?) ---
         const isAdmin = window.location.pathname.includes('/admin/');
         const isElemzo = window.location.pathname.includes('/elemzo/');
@@ -304,9 +307,9 @@ if (isUser) {
                                 </div>
                                 <div class="card dashboards">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
-                                    <div class="card-text-container">
-                              <span class="default-text">ÉRTÉKELÉSEK</span>
-                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                   <div class="card-text-container">
+                                        <span class="default-text">GENERÁCIÓK</span>
+                                        <span class="alt-text">Még ${aiOsszMax} darab ai-generáció</span>
                                     </div>
                                 </div>
                             </div>
@@ -370,8 +373,8 @@ if (isUser) {
                                 <div class="card dashboards">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
                                     <div class="card-text-container">
-                              <span class="default-text">ÉRTÉKELÉSEK</span>
-                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                        <span class="default-text">GENERÁCIÓK</span>
+                                        <span class="alt-text">Még ${aiOsszMax} darab ai-generáció</span>
                                     </div>
                                 </div>
                             </div>
@@ -435,15 +438,15 @@ if (isUser) {
                                 <div class="card dashboards">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M280-160v-441q0-33 24-56t57-23h439q33 0 56.5 23.5T880-600v320L680-80H360q-33 0-56.5-23.5T280-160ZM81-710q-6-33 13-59.5t52-32.5l434-77q33-6 59.5 13t32.5 52l10 54h-82l-7-40-433 77 40 226v279q-16-9-27.5-24T158-276L81-710Zm279 110v440h280l160-160v-280H360Zm220 220Zm-40 160h80v-120h120v-80H620v-120h-80v120H420v80h120v120Z"/></svg></div>
                                     <div class="card-text-container">
-                              <span class="default-text">ÉRTÉKELÉSEK</span>
-                                        <span class="alt-text">Még 15 létrehozható értékelés</span>
+                                        <span class="default-text">GENERÁCIÓK</span>
+                                        <span class="alt-text">Még ${aiOsszMax} darab ai-generáció</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
             `;
         }
-    },
+        },
 
           lapok: () => {
                 // --- 1. URL VIZSGÁLATA (Ugyanaz a logika, mint a main-nél) ---
@@ -694,8 +697,8 @@ if (isUser) {
                     </div>
                 </div>`;
         }
-    },
-       'hozzaj': {
+        },
+        'hozzaj': {
     main: () => {
         const isElemzo = window.location.pathname.includes('/elemzo/');
 
@@ -882,8 +885,8 @@ if (isUser) {
                         </div>`;
                     }
                 }
-            },
-            'ujany': {
+        },
+        'ujany': {
                 main: ` <div id="tartalom2">
                                 <div id="ujinek">
                                     <div class="info-strip">
@@ -963,8 +966,8 @@ if (isUser) {
             </div>
         </div>                            
             `
-            },
-             'plussz': {
+        },
+        'plussz': {
                 main: ` <div id="tartalom2">
                             <div id="uj" class="tartdob">
                                 <div id="ujak">
@@ -1038,7 +1041,7 @@ if (isUser) {
                                     </div>
         </div>                            
             `
-            }
+        }
         };
 function initAuditSlider(container) {
     const wrapper = container || document;
@@ -1238,11 +1241,8 @@ if (loadingOverlay) {
     }, 1050); 
 }
 
-} // <--- EZ A ZÁRÓJEL ZÁRJA LE VÉGLEG AZ initAside() FÜGGVÉNYT!
-
-// ==========================================
+}
 // SEGÉDFÜGGVÉNYEK (Az initAside-on kívül!)
-// ==========================================
 
 function playIntroSequence() {
     const pairs = [
@@ -1312,7 +1312,6 @@ async function fetchAccountDeletionInfo(infoPanel) {
         }
 
         // SZABÁLY 1: Egyedüli ADMIN bizonyos modulokban (és vannak mások a cégben) -> ELZAVARJUK!
-       // SZABÁLY 1: Egyedüli ADMIN bizonyos modulokban (és vannak mások a cégben) -> ELZAVARJUK!
         if (data.roleId === 1 && !data.isOnlyUser && data.soleRolesInModules.length > 0) {
             const modulList = data.soleRolesInModules.map(m => `<li><b>${m.leiras || m.nev}</b></li>`).join('');
             

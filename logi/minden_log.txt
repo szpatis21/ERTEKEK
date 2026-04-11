@@ -336,3 +336,516 @@
 [2026-03-29T16:41:31.624Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-03-29T16:41:49.798Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-03-29T16:52:02.136Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T08:54:21.907Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T10:08:22.927Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T10:09:55.725Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T10:48:43.507Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T12:17:16.795Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T16:09:36.017Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T16:35:58.313Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T16:37:15.324Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T17:18:57.050Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T17:50:02.932Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T17:56:36.431Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T18:00:53.637Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T18:10:55.042Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-03-30T18:16:15.975Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:27:46.957Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:29:38.721Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:32:48.242Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:40:07.843Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:40:44.371Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:43:07.366Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T05:49:21.801Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:05:09.130Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:17:10.345Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:18:49.326Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:20:01.413Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:22:07.790Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:23:22.116Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:26:44.356Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:42:11.225Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:42:43.066Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T08:49:42.094Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T09:21:46.941Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T09:33:18.778Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-03T09:45:20.080Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-04T06:19:12.250Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-04T06:19:36.445Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:02:00.541Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:03:46.248Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:05:06.834Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:05:51.775Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:31:19.248Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T07:49:33.144Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:05:36.964Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:06:13.386Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:07:16.603Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:17:19.119Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:27:04.036Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:31:19.725Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:42:23.025Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:44:41.499Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:47:43.345Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-04T08:52:00.111Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-07T18:01:11.908Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-07T18:02:57.852Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:11:06.603Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:25:28.164Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:30:38.008Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:31:21.879Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:32:27.566Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:34:13.573Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T05:37:34.948Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T05:51:26.860Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T05:52:17.610Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T05:55:17.885Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T09:22:13.101Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T09:23:10.073Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T09:23:44.740Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T09:25:13.285Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T09:25:40.838Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:23:35.223Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T10:23:59.420Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:24:58.944Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:25:55.752Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T10:27:20.690Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:29:25.511Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:37:06.745Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T10:37:26.826Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:38:30.095Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:45:45.658Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T10:47:32.943Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T10:49:26.172Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T10:49:46.218Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T11:07:57.818Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T11:17:10.917Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T11:17:27.788Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T11:26:42.439Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T11:32:06.232Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T11:57:39.194Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T12:14:41.658Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T12:59:01.796Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:18:46.293Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T13:20:51.903Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T13:21:12.689Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:22:18.070Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:29:03.772Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:29:27.475Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T13:36:41.906Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T13:37:01.790Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:38:01.249Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T13:38:20.080Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:40:18.722Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:48:58.485Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T13:49:15.356Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T13:50:33.499Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T14:04:22.381Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:05:05.199Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:05:22.464Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:06:41.160Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:07:55.365Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:10:11.619Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:10:24.104Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:10:42.404Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T14:11:52.183Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:15:00.514Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:15:17.054Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:15:56.108Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:16:37.975Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:17:36.391Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:17:57.261Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:20:49.051Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:25:01.240Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:25:18.338Z] [LOG]: [AI Modul] Szakmai anyag beolvasva és cache-elve: fejleszto.txt
+[2026-04-09T14:32:13.938Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:32:41.980Z] [LOG]: [AI Modul] Szakmai anyag beolvasva és cache-elve: fejleszto.txt
+[2026-04-09T14:33:01.812Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:33:30.444Z] [LOG]: [AI Modul] Szakmai anyag beolvasva és cache-elve: fejleszto.txt
+[2026-04-09T14:37:17.351Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:37:37.555Z] [LOG]: [AI Modul] Szakmai anyag beolvasva és cache-elve: fejleszto.txt
+[2026-04-09T14:38:08.388Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:38:29.331Z] [LOG]: [AI Modul] Szakmai anyag beolvasva és cache-elve: fejleszto.txt
+[2026-04-09T14:39:23.603Z] [LOG]: [AI Modul] Cache találat: fejleszto.txt
+[2026-04-09T14:46:48.217Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:51:54.796Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T14:52:35.642Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T14:53:01.628Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T14:58:32.716Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:02:54.197Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T15:03:20.063Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:04:15.330Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:12:18.120Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:13:21.634Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:18:42.072Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:24:56.824Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T15:25:19.464Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:26:15.994Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:27:27.123Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T15:27:41.385Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:28:29.021Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T15:41:32.576Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T15:50:07.002Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T16:01:17.631Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T16:01:36.587Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T16:02:04.828Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T16:04:45.072Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T16:15:14.503Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T16:15:29.983Z] [LOG]: [AI Modul] Próbálkozás: Gemini 3.1 Flash-Lite (10s limit)
+[2026-04-09T19:46:26.754Z] [LOG]: [AI Modul] Próbálkozás: Gemini 3.1 Flash-Lite (10s limit)
+[2026-04-09T19:47:14.098Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T19:47:31.901Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T19:48:03.303Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T19:49:41.406Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T19:49:57.319Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T19:51:47.761Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T19:52:02.887Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T19:52:31.995Z] [LOG]: [AI Modul] Szakmai anyag beolvasva (egyéni): fejleszto.txt
+[2026-04-09T19:53:02.382Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T19:53:20.480Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T19:59:03.566Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T19:59:21.448Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:00:14.213Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:01:31.965Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T20:01:49.469Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:02:26.632Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:03:43.925Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:04:40.948Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T20:05:11.090Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:18:27.175Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T20:18:58.087Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:18:58.091Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:19:08.173Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-09T20:19:33.723Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:19:33.724Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:19:46.738Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-09T20:20:43.790Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:20:43.791Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:20:56.797Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-09T20:25:58.814Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:25:58.815Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:28:58.026Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:28:58.028Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:30:01.187Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:30:01.189Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:30:44.035Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:30:44.036Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:45:43.114Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-09T20:45:59.257Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:45:59.261Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:46:15.361Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:46:15.363Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:50:33.535Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:50:33.537Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T20:50:46.556Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-09T20:56:52.884Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T20:56:52.886Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T21:01:00.729Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-09T21:01:00.732Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-09T21:01:13.740Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-10T05:31:40.399Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T05:31:40.401Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:15:52.394Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T07:18:02.476Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:18:02.477Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:19:07.879Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:19:07.880Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:20:48.734Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:20:48.735Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:21:50.196Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:21:50.197Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:22:41.445Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:22:41.446Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:22:53.735Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:22:53.737Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:23:10.534Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:23:10.535Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:29:11.457Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:29:11.464Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:29:29.454Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:29:29.455Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:31:24.563Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:31:24.563Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:31:37.572Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-flash-lite, Próbálkozás: 1
+[2026-04-10T07:36:16.785Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:36:16.785Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:36:31.252Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:36:31.252Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:39:42.473Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T07:46:11.980Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:46:11.982Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T07:49:25.628Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-10T07:49:25.630Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-10T08:18:06.198Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T11:42:07.021Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T14:01:29.482Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T14:38:25.604Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T15:35:02.897Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T15:44:29.485Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T15:55:02.402Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T16:00:08.597Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T16:58:06.969Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T20:25:43.347Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T20:29:08.113Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T20:29:34.694Z] [LOG]: Érkező jsonData objektum: {
+  "statisztika": {
+    "Önkiszolgálásra nevelés": {
+      "pct": 61,
+      "al": {
+        "Étkezés": {
+          "pct": 76,
+          "reszletek": {
+            "Ivás": 50,
+            "Szalvéta használat": 100
+          }
+        },
+        "Szobatisztaság": {
+          "pct": 90,
+          "reszletek": {}
+        },
+        "Öltözködés": {
+          "pct": 44,
+          "reszletek": {
+            "Öltözködésben való együttműködése": 100,
+            "Önállósága az öltözködésben": 33,
+            "Hőérzet": 0
+          }
+        },
+        "Testápolás": {
+          "pct": 33,
+          "reszletek": {
+            "Mosakodás": 100,
+            "Fogmosás": 30,
+            "Fürdés": 0,
+            "Orrfúvás": 0
+          }
+        }
+      }
+    },
+    "Általános jellemzők": {
+      "pct": 71,
+      "al": {
+        "Külső megjelenés": {
+          "pct": 67,
+          "reszletek": {
+            "Testalkat": 100,
+            "Ápoltság": 100,
+            "Gyógyászati segédeszköz": 0
+          }
+        },
+        "Magatartás": {
+          "pct": 69,
+          "reszletek": {
+            "Beilleszkedés": 100,
+            "Egyéni sajátos jellemzők": 30
+          }
+        },
+        "Szociális kapcsolatok-figyelem": {
+          "pct": 87,
+          "reszletek": {
+            "Csoporttevékenysége": 100
+          }
+        },
+        "Érzékszervi funkciók": {
+          "pct": 60,
+          "reszletek": {
+            "Hallás": 0,
+            "Taktilis-tapintási észlelés": 100,
+            "Szaglás, ízlelés": 50
+          }
+        }
+      }
+    },
+    "Kommunikáció és beszéd": {
+      "pct": 96,
+      "al": {
+        "Kommunikációs készségek, képességek, jellegzetességek": {
+          "pct": 88,
+          "reszletek": {}
+        },
+        "Kommunikációs motiváltság ": {
+          "pct": 100,
+          "reszletek": {
+            "Kommunikációs késztetése": 100
+          }
+        },
+        "Beszédértés": {
+          "pct": 100,
+          "reszletek": {
+            "Beszédértési képességek": 100
+          }
+        },
+        "Kommunikációs tartalmak ": {
+          "pct": 96,
+          "reszletek": {}
+        }
+      }
+    },
+    "Reggeli és búcsúkör": {
+      "pct": 93,
+      "al": {
+        "Általános ismeretek önmagáról, társairól": {
+          "pct": 93,
+          "reszletek": {
+            "Szemkontaktus": 100,
+            "Nevek ismerete": 100
+          }
+        },
+        "Kifejezés": {
+          "pct": 100,
+          "reszletek": {
+            "Igen-nem válaszadás": 100
+          }
+        },
+        "Általános tudnivalók": {
+          "pct": 96,
+          "reszletek": {
+            "Időjárás": 100
+          }
+        },
+        "Közös éneklés, zenélés, mondókázás": {
+          "pct": 83,
+          "reszletek": {
+            "Versek": 100
+          }
+        }
+      }
+    },
+    "Szűkebb-tágabb környezet": {
+      "pct": 71,
+      "al": {
+        "Gondolkodás": {
+          "pct": 56,
+          "reszletek": {
+            "Általános jellemzők": 30,
+            "Analízis-szintézis": 100,
+            "Összehasonlítás": 43,
+            "Általánosítás-konkretizálás": 50
+          }
+        },
+        "Témakörök": {
+          "pct": 86,
+          "reszletek": {
+            "Család-iskola és annak környezete": 100,
+            "Időjárás-évszakok": 100,
+            "Testünk-öltözködésünk": 100,
+            "Foglalkozások": 60,
+            "Színismeret": 100,
+            "Formaismeret": 100,
+            "Ünnepek": 100
+          }
+        }
+      }
+    },
+    "Játék és szórakozás": {
+      "pct": 66,
+      "al": {
+        "Ábrázolás-alakítás": {
+          "pct": 55,
+          "reszletek": {
+            "Rajz": 53,
+            "Nyomatéka ": 40,
+            "Ceruzafogása": 50
+          }
+        },
+        "Zenehallgatás-ének": {
+          "pct": 78,
+          "reszletek": {
+            "Dalok-mondókák-versek": 55,
+            "Hangszerek": 100
+          }
+        },
+        "Munkatevékenység": {
+          "pct": 46,
+          "reszletek": {
+            "Anyagok ismerete": 27,
+            "Ház körüli munkák": 65
+          }
+        },
+        "Játékra nevelés": {
+          "pct": 85,
+          "reszletek": {
+            "A játék időtartama": 0,
+            "Részvétele az irányított játékban": 100
+          }
+        }
+      }
+    },
+    "Mozgásnevelés": {
+      "pct": 43,
+      "al": {
+        "Alapadatok ": {
+          "pct": 0,
+          "reszletek": {
+            "Személyes adatok": 0
+          }
+        },
+        "Nagymozgások": {
+          "pct": 63,
+          "reszletek": {
+            "Lépcsőn járás ": 53,
+            "Ugrálás": 0,
+            "Utánzógyakorlatok": 100,
+            "GMFCS skála szerinti besorolás ": 0
+          }
+        },
+        "Finommotorika": {
+          "pct": 66,
+          "reszletek": {
+            "Kezesség    ": 50,
+            "Szem-kéz koordináció": 67
+          }
+        }
+      }
+    }
+  },
+  "nyersValaszok": [],
+  "megjegyzesek": {}
+}
+[2026-04-10T20:46:04.096Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T20:47:09.870Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T21:13:43.047Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T21:22:35.391Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T21:24:24.986Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T21:27:04.922Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-10T21:27:28.319Z] [LOG]: [AI Modul] API Válasz kód: 503
+[2026-04-10T21:53:59.119Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T05:27:42.594Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T05:28:11.047Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-11T05:28:11.048Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T05:29:16.667Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T05:29:39.325Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-11T05:29:39.327Z] [LOG]: [AI Modul] Indítás: gemini-2.5-pro
+[2026-04-11T05:29:52.344Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-pro, Próbálkozás: 1
+[2026-04-11T05:55:19.740Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-11T05:55:19.742Z] [LOG]: [AI Modul] Indítás: gemini-2.5-pro
+[2026-04-11T05:55:32.744Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-pro, Próbálkozás: 1
+[2026-04-11T05:57:07.547Z] [LOG]: [AI Modul] Szakmai anyag beolvasva: fejleszto.txt
+[2026-04-11T05:57:07.549Z] [LOG]: [AI Modul] Indítás: gemini-2.5-pro
+[2026-04-11T05:57:20.557Z] [LOG]: [AI Modul] Indítás (Fallback): gemini-2.5-pro, Próbálkozás: 1
+[2026-04-11T05:58:35.553Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T06:22:46.538Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T06:28:18.741Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T06:30:53.735Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T06:32:01.247Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T06:33:31.674Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T06:33:49.490Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T06:33:52.504Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T06:34:37.332Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T06:34:39.864Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T06:35:05.641Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T06:35:09.841Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T07:25:57.530Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T07:26:19.500Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T07:26:24.877Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T07:27:45.963Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T07:28:11.165Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T07:28:12.554Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T07:28:38.288Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T07:28:40.566Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T07:28:54.796Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T07:28:56.383Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T07:52:21.908Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T07:53:25.587Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T07:53:27.625Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T08:00:41.767Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
