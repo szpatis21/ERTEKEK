@@ -6,7 +6,7 @@ const session = require('express-session');
 const db = require('./modulok/dbmodul');
 const util = require('util');
 
-if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY hiányzik');
+if (!process.env.GEMINI_API_KEY) throw new Error('GEMINI_API_KEY hiányzik');
 if (!process.env.SECRET_KEY) throw new Error('SECRET_KEY hiányzik');
 const app = express();
 const port = 3000;
@@ -96,9 +96,9 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
     logError(`UNHANDLED REJECTION: ${reason}`);
 });
-const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-if (!OPENAI_API_KEY) {
-  throw new Error('OPENAI_API_KEY hiányzik a környezetből');
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_API_KEY) {
+  throw new Error('GEMINI_API_KEY hiányzik a környezetből');
 }
 // Express error middleware
 app.use((err, req, res, next) => {
@@ -124,9 +124,21 @@ app.use((err, req, res, next) => {
 // Kijelentkező modul
     const logout = require('./modulok/logoutmodul');
     app.use('/logout', logout(db)); 
+//Jelszó modul
+    const jelszo = require('./modulok/jelszomodul');
+    app.use('/', jelszo(db));
 // Felhasznalo modul
 const addKitoltesRoute = require('./modulok/felhasznalomodul');
     app.use('/api', addKitoltesRoute(db));
+//Audit modul    
+    const audit = require('./modulok/auditmodul');    
+    app.use('/', audit(db));
+//Időzítős leveles modul
+    const auditCron = require('./modulok/auditcronmodul');
+    auditCron(db);
+//Statisztika modul
+    const statisztika = require('./modulok/statisztikaModul');
+    app.use('/', statisztika(db));
 // Autentikációs Middleware (bejelentkezés ellenőrzése)
 const aiJellemzes = require('./modulok/aiJellemzesModul');// csak bejelentkezve:
 app.use('/api', authMiddleware, aiJellemzes(db)); // <<< ÁT KELL ADNI A 'db' VÁLTOZÓT!
@@ -136,7 +148,7 @@ function authMiddleware(req, res, next) {
     if (req.session && req.session.userId) {
         return next(); // Ha be van jelentkezve, továbbengedjük
     } else {
-        return res.redirect('/login.html'); // Átirányítás a bejelentkezési oldalra
+        return res.redirect('/index.html'); // Átirányítás a bejelentkezési oldalra
     }
 }
 // Admin jogosultság ellenőrzés (csak adminok érhetik el az admin oldalt)
@@ -149,7 +161,7 @@ function adminAuthMiddleware(req, res, next) {
 }
 //KISZOLGÁLÁS
 // Statikus fájlok kezelése (public)
-app.use(express.static(path.join(__dirname, 'httpdocs'), {
+/* app.use(express.static(path.join(__dirname, 'httpdocs'), {
     etag: false,
     setHeaders: (res, path) => {
         if (path.endsWith('.css') || path.endsWith('.js')) {
@@ -158,7 +170,9 @@ app.use(express.static(path.join(__dirname, 'httpdocs'), {
             res.setHeader('Pragma', 'no-cache');
         }
     }
-}));
+})); */
+
+
 app.use(express.static(path.join(__dirname, 'httpdocs', 'public')));
 app.use('/both', express.static(path.join(__dirname, 'httpdocs', 'both')));
 
@@ -173,6 +187,8 @@ res.sendFile(path.join(__dirname, 'httpdocs', 'public', 'index.html'));
 
 const routes = [
     { path: '/register.html', file: 'public/reg/register.html', auth: [] },
+	{ path: '/reset-password.html', file: 'public/reset-password.html', auth: [] },
+
     { 
         path: '/admin/dashboard.html', 
         file: 'private/admin/dashboard.html', 

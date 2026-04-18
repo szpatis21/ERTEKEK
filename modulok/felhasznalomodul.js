@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 module.exports = (db) => {
+const logger = require('./logmodul')(db);
 
 // új kitöltés
 router.post('/add-kitoltes', (req, res) => {
@@ -75,6 +76,7 @@ router.post('/add-kitoltes', (req, res) => {
                     }
 
                     res.json({ success: true, message: 'Sikeres mentés!', id: newId });
+                    logger(req, felhasznalo_id, 'új értékelés', { kitoltes_id: newId, nev: kitoltes_neve });
                   }
                 );
               } else {
@@ -290,7 +292,8 @@ router.get('/original-admin', (req, res) => {
                     if (results.affectedRows === 0) {
                         return res.status(404).json({ success: false, message: 'Nincs törölhető rekord!' });
                     }
-    
+                    const userId = req.session ? req.session.userId : null;
+                    logger(req, userId, 'törlés', { torolt_idk: idk });
                     res.json({ success: true, message: 'Sikeres törlés! Minden megosztott példány eltávolítva.' });
                 });
             });
@@ -394,7 +397,7 @@ router.post('/duplicate-kitoltes', (req, res) => {
                             console.error('Hiba a válaszok másolásakor:', copyErr);
                             return res.status(500).json({ success: false, message: 'Hiba a válaszok másolásakor!' });
                         }
-
+logger(req, userId, 'másolás', { eredeti_idk: originalIdk, uj_id: newId });
                         res.json({ 
                             success: true, 
                             message: 'Sikeres duplikálás!', 
@@ -872,6 +875,75 @@ router.post('/decrease-global-quota', (req, res) => {
             return res.status(500).json({ success: false });
         }
         res.json({ success: true });
+    });
+});
+
+router.post('/submit-survey', (req, res) => {
+    const userId = req.session.userId; 
+    
+    if (!userId) {
+        return res.status(401).json({ success: false, message: 'Nincs bejelentkezve!' });
+    }
+
+    // 1. LÉPÉS: ELLENŐRIZZÜK A FLAG-ET A FELHASZNÁLÓ TÁBLÁBAN
+    const checkSQL = 'SELECT kerdoiv_kitoltve, int_id FROM felhasznalok WHERE id = ? LIMIT 1';
+    
+    db.query(checkSQL, [userId], (errCheck, rowsCheck) => {
+        if (errCheck || rowsCheck.length === 0) {
+            console.error('Hiba a jogosultság ellenőrzésekor:', errCheck);
+            return res.status(500).json({ success: false, message: 'Adatbázis hiba.' });
+        }
+
+        // Ha a flag 1, akkor már kitöltötte
+        if (rowsCheck[0].kerdoiv_kitoltve) {
+            return res.json({ 
+                success: false, 
+                message: 'Ezt a kérdőívet már kitöltötte, köszönjük!' 
+            });
+        }
+
+       const intId = rowsCheck[0].int_id;
+        // Bővítettük az új mezőkkel a bejövő adatok listáját
+        const { hasznossag, szakmai, jovobeni, funkciok, hiba, hianyolt, tetszett, ar, sajat_feltoltes, magan_hasznalat, magan_anyag, magan_ar } = req.body;
+        const parseNum = (val) => (val && val.toString().trim() !== "") ? parseInt(val, 10) : null;
+
+        // 2. LÉPÉS: VAK MENTÉS A PIACKUTATÁS TÁBLÁBA (Új oszlopokkal)
+        const insertSQL = `
+            INSERT INTO piackutatas 
+            (hasznossag, szakmai, jovobeni, funkciok, hiba, hianyolt, tetszett, ar_kategoria, sajat_feltoltes, magan_hasznalat, magan_anyag, magan_ar) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        
+        const insertVals = [
+            parseNum(hasznossag), parseNum(szakmai), 
+            parseNum(jovobeni), funkciok || null, hiba || null, 
+            hianyolt || null, tetszett || null, ar || null,
+            sajat_feltoltes || null, magan_hasznalat || null, magan_anyag || null, magan_ar || null
+        ];
+
+        db.query(insertSQL, insertVals, (errInsert) => {
+            if (errInsert) {
+                console.error('❌ Hiba a kérdőív mentésekor:', errInsert.message);
+                return res.status(500).json({ success: false, message: 'Adatbázis hiba a mentésnél.' });
+            }
+
+            // 3. LÉPÉS: USER FLAG BEÁLLÍTÁSA (TÖBBÉ NEM TÖLTHETI KI)
+            const updateUserSQL = `UPDATE felhasznalok SET kerdoiv_kitoltve = 1 WHERE id = ?`;
+            db.query(updateUserSQL, [userId], (errUserUpd) => {
+                if (errUserUpd) console.error('Hiba a user flag mentésekor:', errUserUpd);
+
+                // 4. LÉPÉS: INTÉZMÉNY JUTALMAZÁSA (+15 nap és teszt_ext státusz)
+                const updateIntSQL = `UPDATE intezmeny SET fizetve = NOW(), intfin = 15, idoszak = 'teszt_ext' WHERE id = ?`;
+                db.query(updateIntSQL, [intId], (errUpdate) => {
+                    if (errUpdate) {
+                        console.error('❌ Hiba a jutalom jóváírásakor:', errUpdate.message);
+                        return res.status(500).json({ success: false, message: 'Hiba a jutalom jóváírásakor.' });
+                    }
+                    
+                    res.json({ success: true, message: 'Kérdőív elmentve, jutalom jóváírva!' });
+                });
+            });
+        });
     });
 });
     return router;

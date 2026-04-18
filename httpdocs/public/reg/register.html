@@ -20,7 +20,10 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
       crossorigin="anonymous" referrerpolicy="no-referrer">
 </head>
-
+<style>
+    .navbar {background: #ff7c00a6;
+    }
+</style>
 <body>
        <input type="hidden" id="menu-type" value="public">
 
@@ -47,13 +50,13 @@
                            <select name="temakor" id="temakor" required>
                                 <option value="" disabled selected>Kérem válasszon témakört</option>
                                 <option value="1">Fejlesztő-nevelő oktatás</option>
-                                <option value="2">Tanulásban akadályozottak</option>
-                                <option value="3">Értelmileg akadályoztatottak</option>
+                                 <option value="2">Tanulásban akadályozottak</option>
+                                <option value="3">Értelmileg akadályoztatottak</option> 
                             </select>
                             <select name="szerepkor" id="szerepkor" required>
                                 <option value="3">Értékelő</option>
-                                <option value="2">Elemző</option>
-                                <option value="1">Adminisztrátor</option>
+                                 <option value="2">Elemző</option>
+                                <option value="1">Adminisztrátor</option> 
                             </select>
                         </div>
                         <div id="error-message" style="color: whitesmoke; font-family: 'Times New Roman', Times, serif; font-size: x-small; text-align: center;"></div>
@@ -86,27 +89,27 @@
                             <input type="radio" id="contactChoice1" name="contact" value="felh" />
                             <label for="contactChoice1">Felhasználói regisztráció</label>
 
-                            <input type="hidden" id="contactChoice2" name="contact" value="ceg" />
-                            <label for="contactChoice2" style="opacity: 0.5;">Intézményi regisztráció</label>
+                            <input type="radio" id="contactChoice2" name="contact" value="ceg" />
+                            <label for="contactChoice2">Intézményi regisztráció</label>
                         </div>
                     </div>
                 <form id="userRegi">
                     <div id="magan">
                           <div>
-                                <legend>Finanszírozás</legend>
+                                <legend>Intézményi e-mailben kapott kód</legend>
                                 <div id="choicelabel">
-                                    <div>
+                                    <!-- <div>
                                         <input type="hidden" id="szamlaChoice2" name="szamlaz" value="yesszamla" required/>
                                         <label style="opacity: 0.5; margin: auto;" for="szamlaChoice2">Nem rendelkezem előfizetéssel</label>    
-                                    </div>
-                                    <div>
+                                    </div> -->
+                                   <!--  <div>
                                         <input type="radio" id="szamlaChoice1" name="szamlaz" value="noszamla" required/>
                                         <label for="szamlaChoice1">Intézményi regisztrációm van, csak fiókot szeretnék.</label>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
                               <div id="regcode">
-                                <label for="regmail" >Adja meg az intézménynek küldött levélben szereplő kódot:</label>
+                                <label for="regmail">Adja meg az intézményi kódot:</label>
                                 <input type="text" id="regmail">
                                 <div class="err" id="ragmailerr"></div>
                                 <div id="szakmaiuser"></div>
@@ -120,6 +123,34 @@
                                 </div>
                                 <div class="err" id="felerr"></div>
                             </div>
+                            <legend>Válassza ki a szerepkörét a rendszerben:</legend>
+<div id="roles-wrapper" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px;">
+    <div class="editbut2">
+        <div>
+            <input type="radio" id="role3" name="szerepkor_reg" value="3" checked>
+            <label for="role3" style="color: #ff7c00; font-style: italic;">Értékelő</label>
+        </div>
+        <div class="rolebox">
+            Értékeléseket hozhat létre, oszthat meg kollágáival és elemezheti azok eredményeit. 
+        </div>
+    </div>
+    <div class="editbut2">
+        <div>
+            <input type="radio" id="role2" name="szerepkor_reg" value="2">
+            <label for="role2" style="color: #ff7c00; font-style: italic;">Elemző</label>
+        </div>
+        <div class="rolebox">
+
+            Nem hozhat létre értékeléseket de elemezheti az intézményben lévő összes már kész értékelést.
+            Határidőket oszthat ki és mentorálhat kollégákat.
+
+        </div>
+    </div>
+<!--     <div class="editbut">
+        <input type="radio" id="role1" name="szerepkor_reg" value="1">
+        <label for="role1">Adminisztrátor</label>
+    </div> -->
+</div>
  <div class="allabel">
     <div style="position: relative;">
         <label for="password">Jelszó:</label>
@@ -192,33 +223,35 @@
                         <div id="szakmaiceg">
                            
                         </div> 
-                        <legend>Intézményi/cég adatok:</legend>
-                        <div id="labels">
+<!--                         <legend>Intézményi/cég adatok:</legend>
+ -->                        <div id="labels" style="display: none;">
                             <div class="allabel">
-                                <div>
-                                    <label for="int">Intézmény/cég neve:</label>
-                                    <input type="text" id="int" required>
-                                </div>
+                             
                                 <div class="err" id="interr"></div>
                             </div>
                             <div class="allabel">
                                 <div>
                                     <label for="mailCeg">Intézmény/cég e-mail címe:</label>
-                                    <input type="email" id="mailCeg"  required>
+                                    <input type="email" id="mailCeg">
                                 </div>
                                 <div class="err" id="malilcegerr"></div>
                             </div>
                             <div class="allabel">
                                 <div>
                                     <label for="telCeg">Intézmény/cég telefonszáma:</label>
-                                    <input type="tel" id="telCeg" required placeholder="+36001234567 /+06001234567 "> 
+                                    <input type="tel" id="telCeg" placeholder="+36001234567 /+06001234567 "> 
                                 </div>
                                 <div class="err" id="telcegerr"></div>
                             </div>
                         </div>
-                        <legend>Számlázási adatok</legend>
+                        <legend>Intézményi alapadatok:</legend>
                         <div id="labels">
+                             <div>
+                                    <label for="int">Intézmény/cég neve:</label>
+                                    <input type="text" id="int" required>
+                                </div>
                             <div class="allabel">
+                               
                                 <div>
                                     <label for="orsz2">Ország:</label>
                                     <input type="text" id="orsz2" required>
@@ -270,7 +303,7 @@
                             <div class="allabel">
                                 <div>
                                     <label for="mail2">E-mail cím:</label>
-                                    <input type="email" id="mail2" required>
+                                    <input type="email" id="mail2">
                                 </div>
                                 <div class="err" id="mailceg2err"></div>
                             </div>
@@ -283,15 +316,15 @@
                             </div>
                         </div>
                         <div id="kotelezo">
-                            <legend>Finanszírozás</legend>
-
+<!--                             <legend>Finanszírozás</legend>
+ -->
                             <div id="szamla2"> 
                                 <div id="alszamla2">
-                                    <legend>Számlázási időszak</legend>
+                                    <legend>Regisztrációs alapadatok:</legend>
                                     <div>
-                                        <div class="editbut"><input type="radio" id="ihoi" value="1" name="elofizI" required> <label for="1ho">Havi<span> - x0000 forint/1 hó/fő</span> </label></div>
-                                        <div class="editbut"><input type="radio" id="vihoi" value="6" name="elofizI" required> <label for="6ho">Fél éves<span> - x0000 forint/6 hó/fő</span></label></div>
-                                        <div class="editbut"><input type="radio" id="x12hoi" value="12" name="elofizI" required> <label for="12ho">Éves<span> - x0000 forint/12 hó/fő</span></label></div>
+                                        <div class="editbut"><input type="radio" id="ihoi" value="1" name="elofizI"> <label for="1ho">Havi<span> - x0000 forint/1 hó/fő</span> </label></div>
+                                        <div class="editbut"><input type="radio" id="vihoi" value="6" name="elofizI"> <label for="6ho">Fél éves<span> - x0000 forint/6 hó/fő</span></label></div>
+                                        <div class="editbut"><input type="radio" id="x12hoi" value="12" name="elofizI"> <label for="12ho">Éves<span> - x0000 forint/12 hó/fő</span></label></div>
                                     </div>
                                 
 
@@ -469,53 +502,54 @@
         <h2 class="features-title">Miért pont <span class="gold">É</span>rtékek?</h2>
         
         <div class="cards-container">
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">account_tree</span>
-                </div>
-                <h3>Intelligens Kérdésfa</h3>
-                <p>Nincs több felesleges adminisztráció! Az 3-szintű, dinamikus hierarchia biztosítja, hogy csak a releváns ágak és kérdések jelenjenek meg a kitöltés során.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">manage_accounts</span>
-                </div>
-                <h3>Rugalmas Szerepkörök</h3>
-                <p>Értékelő, Elemző vagy Adminisztrátor? A rendszer többszintű jogosultságkezeléssel működik, így a feladatkörök tökéletesen elszeparálhatók intézményen belül.</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">picture_as_pdf</span>
-                </div>
-                <h3>Azonnali PDF Jelentés</h3>
-                <p>Amint a végére ér, a rendszer a válaszokból automatikusan felépít egy professzionális, nyomdakész és egy gombnyomással letölthető értékelést.</p>
-            </div>
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">model_training</span>
-                </div>
-                <h3>Mesterséges Intelligencia</h3>
-                <p>A nagy szakértelemmel összeállított szakmai anyagból az MI villámgyorsan készít szabadszabas esszéket!</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">share</span>
-                </div>
-                <h3>Megosztás</h3>
-                <p>Miért dolgozna egyedül, ha kollégái segíthetnek? Ossza meg munkatársaival a feladatokat és legyenek együtt hatékonyak!</p>
-            </div>
-
-            <div class="feature-card">
-                <div class="card-icon">
-                    <span class="material-symbols-outlined">chart_data</span>
-                </div>
-                <h3>Diagrammok</h3>
-                <p>Lássa a haladást! A szembetűnő és informatív diagrammok, elsőre megmutatják a fejlődést</p>
-            </div>
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">vpn_key</span>
         </div>
+        <h3>1. Intézményi Kód</h3>
+        <p>A csatlakozás zártkörű. A regisztráció megkezdéséhez csupán arra az egyedi azonosító kódra lesz szüksége, amelyet az intézményétől kapott e-mailben.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">person_add</span>
+        </div>
+        <h3>2. Egyszerű Fiókalkotás</h3>
+        <p>Adja meg alapvető adatait és egy biztonságos jelszót. Felesleges körök nincsenek, a folyamat letisztult és mindössze egyetlen percet vesz igénybe.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">assignment_ind</span>
+        </div>
+        <h3>3. Szerepkör Választása</h3>
+        <p>Döntse el, hogy Értékelőként (aki létrehozza az anyagokat) vagy Elemzőként csatlakozik. Így garantáljuk, hogy pontosan azt a felületet kapja, amire a munkájához szüksége van.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">security</span>
+        </div>
+        <h3>4. Biztonságos Belépés</h3>
+        <p>Fiókja elkészülte után felhasználónevével és jelszavával bármikor biztonságosan beléphet. Rendszerünk a legszigorúbb adatvédelmi elvek (GDPR) szerint védi az Ön adatait.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">menu_book</span>
+        </div>
+        <h3>5. Szakmai Anyagok</h3>
+        <p>Már a bejelentkezés pillanatában kiválaszthatja, hogy melyik intézményi modullal (pl. Fejlesztő-nevelő oktatás) kíván dolgozni az adott munkamenetben.</p>
+    </div>
+
+    <div class="feature-card">
+        <div class="card-icon">
+            <span class="material-symbols-outlined">speed</span>
+        </div>
+        <h3>6. Azonnali Munkakezdés</h3>
+        <p>Sikeres belépés után azonnal a műszerfalán (dashboard) találja magát. Nincs várakozás: egy kattintással indíthatja is az új értékelések elkészítését vagy elemzését!</p>
+    </div>
+</div>
     </section>
     <article class="kulso" id="regifin">
         <div>

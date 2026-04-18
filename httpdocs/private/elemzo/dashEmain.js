@@ -48,9 +48,15 @@ async function loadAllKitoltesek() {
         const kitoltesek = data.kitoltesek;
 
         if (!kitoltesek.length) {
-            document.querySelector(".inner-div").innerHTML =
-                '<p style="font-family: auto; color: white; font-style: italic;">' + 
-                'Még nincsenek intézményi értékelések ebben a modulban.</p>';
+            document.querySelector(".inner-div").innerHTML =`
+                <div class="empty-state-wrapper">
+            <div class="empty-icon-box">
+                <span class="material-symbols-rounded">note_stack_add</span>
+            </div>
+            <h2 class="empty-title">Üres a munkaterület</h2>
+            <p class="empty-subtitle">Az intézményben még senki nem hozott létre egyetlen értékelést sem. Amint valaki megteszi, itt megjelenik!</p>
+         
+        </div>`
             return;
         }
 

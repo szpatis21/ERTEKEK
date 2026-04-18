@@ -138,6 +138,7 @@ app.use((err, req, res, next) => {
     //Időzítős leveles modul
     const auditCron = require('./modulok/auditcronmodul');
     auditCron(db);
+
  //Statisztika modul
     const statisztika = require('./modulok/statisztikaModul');
     app.use('/', statisztika(db));
@@ -156,7 +157,7 @@ function authMiddleware(req, res, next) {
     if (req.session && req.session.userId) {
         return next(); // Ha be van jelentkezve, továbbengedjük
     } else {
-        return res.redirect('/login.html'); // Átirányítás a bejelentkezési oldalra
+        return res.redirect('/index.html'); // Átirányítás a bejelentkezési oldalra
     }
 }
 // Admin jogosultság ellenőrzés (csak adminok érhetik el az admin oldalt)

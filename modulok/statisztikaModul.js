@@ -33,7 +33,7 @@ const sqlUser = `
       SELECT 
           f.ai_ossz_max, /* <--- EZT ADD HOZZÁ A SELECT-HEZ */
           f.int_id, f.fnev AS username, f.vez AS fullname, f.mail, f.tel,
-          i.fizetve, i.intfin, i.intnev, i.intkapmail,
+          i.fizetve, i.intfin, i.intnev, i.intkapmail, i.idoszak,
           r.leiras AS role_leiras,
           m.id AS modul_id, m.nev AS modul_nev, m.leiras AS modul_leiras
       FROM felhasznalok f
@@ -312,6 +312,7 @@ const sqlLegtobbetMegosztott = `
       intkapmail: userBase.intkapmail,
       intfin: userBase.intfin,
       fizetve: userBase.fizetve,
+      idoszak: userBase.idoszak,
       intezmeny: userBase.intnev,
       leiras: userBase.role_leiras,
       hozzaferhetoModulok: hozzaferhetoModulok,

@@ -1,7 +1,6 @@
 import{showAlert} from "/both/alert.js"
 import { passwordPanelContent, addPasswordValidationLogic } from "/both/passwordChange.js";
-let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve,intkapmail, modul_leiras;
-// ÚJ: Statisztika változók
+let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve, intkapmail, modul_leiras, idoszak;
 let azonosIntezmenyRegisztraltak = 0;
 let osszesKitoltese = 0;
 let sajatLetrehozasuAdmin = 0;
@@ -68,6 +67,7 @@ aktualisSzerep = data.stats ? data.stats.aktualisSzerep : '';      // Feltöltj�
       
       int_fin = data.intfin;
       fizetve = data.fizetve;
+      idoszak = data.idoszak;
 if (data.stats) {
     globalEditorCount = data.stats.globalEditorCount || 0; // <--- EZT ADD HOZZÁ
             azonosIntezmenyRegisztraltak = data.stats.azonosIntezmenyRegisztraltak;
@@ -224,15 +224,19 @@ let osszoszt = parseInt(mastolKapottEditor, 10) + parseInt(megosztottMasokkal, 1
         const isUser = window.location.pathname.includes('/user/'); // vagy alapértelmezett
 
         // --- 2. KÖZÖS VÁLTOZÓK ÉS LOGIKA ---
-        // (Ezeket mindegyik layout használhatja, pl. licensz számítás)
+    // --- 2. KÖZÖS VÁLTOZÓK ÉS LOGIKA ---
         let altNapokInfo = 'N/A';
-
+let licenszTipus = 'Aktív licensz'; // Alapértelmezett (éles) állapot
+        if (idoszak === 'teszt') licenszTipus = 'Teszt időszak';
+        if (idoszak === 'trial') licenszTipus = 'Próbaverzió';
         if (fizetve && int_fin) {
             try {
                 const fizetesDatuma = new Date(fizetve);
                 const ma = new Date();
                 const lejaratDatuma = new Date(fizetesDatuma);
-                lejaratDatuma.setMonth(lejaratDatuma.getMonth() + parseInt(int_fin, 10));
+                
+                // JAVÍTÁS: setMonth helyett setDate (Napokat adunk hozzá!)
+                lejaratDatuma.setDate(lejaratDatuma.getDate() + parseInt(int_fin, 10));
 
                 const maNormalizalt = new Date(ma.getFullYear(), ma.getMonth(), ma.getDate());
                 const lejaratNormalizalt = new Date(lejaratDatuma.getFullYear(), lejaratDatuma.getMonth(), lejaratDatuma.getDate());
@@ -301,8 +305,7 @@ if (isUser) {
                                 <div class="card goals">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
                                     <div class="card-text-container">
-                                        <span class="default-text">Licensz</span>
-                                        <span class="alt-text">${altNapokInfo}</span>
+<span class="default-text" style="color: #ffffff;">${licenszTipus}</span>                                        <span class="alt-text">${altNapokInfo}</span>
                                     </div>
                                 </div>
                                 <div class="card dashboards">
@@ -366,8 +369,7 @@ if (isUser) {
                                 <div class="card goals">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
                                     <div class="card-text-container">
-                                        <span class="default-text">Licensz</span>
-                                        <span class="alt-text">${altNapokInfo}</span>
+<span class="default-text" style="color: #ffffff;">${licenszTipus}</span>                                        <span class="alt-text">${altNapokInfo}</span>
                                     </div>
                                 </div>
                                 <div class="card dashboards">
@@ -431,8 +433,7 @@ if (isUser) {
                                 <div class="card goals">
                                     <div class="icon"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M480-40q-112 0-206-51T120-227v107H40v-240h240v80h-99q48 72 126.5 116T480-120q75 0 140.5-28.5t114-77q48.5-48.5 77-114T840-480h80q0 91-34.5 171T791-169q-60 60-140 94.5T480-40Zm-36-160v-52q-47-11-76.5-40.5T324-370l66-26q12 41 37.5 61.5T486-314q33 0 56.5-15.5T566-378q0-29-24.5-47T454-466q-59-21-86.5-50T340-592q0-41 28.5-74.5T446-710v-50h70v50q36 3 65.5 29t40.5 61l-64 26q-8-23-26-38.5T482-648q-35 0-53.5 15T410-592q0 26 23 41t83 35q72 26 96 61t24 77q0 29-10 51t-26.5 37.5Q583-274 561-264.5T514-250v50h-70ZM40-480q0-91 34.5-171T169-791q60-60 140-94.5T480-920q112 0 206 51t154 136v-107h80v240H680v-80h99q-48-72-126.5-116T480-840q-75 0-140.5 28.5t-114 77q-48.5 48.5-77 114T120-480H40Z"/></svg></div>
                                     <div class="card-text-container">
-                                        <span class="default-text">Licensz</span>
-                                        <span class="alt-text">${altNapokInfo}</span>
+<span class="default-text" style="color: #ffffff;">${licenszTipus}</span>                                        <span class="alt-text">${altNapokInfo}</span>
                                     </div>
                                 </div>
                                 <div class="card dashboards">
@@ -621,29 +622,39 @@ if (isUser) {
                 }
             }
         },
-        'fiokom': {
-        main: () => {
-            // A régi old.js licensz számítási logikája
+  'fiokom': {
+     main: () => {
             let licenszLejarat = 'Nincs adat';
             let napokInfo = 'N/A';
+            
+            // 🌟 ÚJ: Státusz fordítása itt is
+            let licenszTipus = 'Aktív licensz';
+            if (idoszak === 'teszt') licenszTipus = 'Teszt időszak';
+            if (idoszak === 'trial') licenszTipus = 'Próbaverzió';
 
-            if (fizetve && int_fin) {
+            if (fizetve && int_fin !== undefined && int_fin !== null) {
                 try {
                     const fizetesDatuma = new Date(fizetve);
                     const ma = new Date();
                     const lejaratDatuma = new Date(fizetesDatuma);
-                    lejaratDatuma.setMonth(lejaratDatuma.getMonth() + parseInt(int_fin, 10));
 
+                    // Napok hozzáadása
+                    const pluszNapok = parseInt(int_fin, 10);
+                    lejaratDatuma.setDate(lejaratDatuma.getDate() + pluszNapok);
+
+                    // ÚJ: Kiszámoljuk és megformázzuk a pontos lejárati dátumot (Pl: 2024.05.12)
                     const ev = lejaratDatuma.getFullYear();
-                    const honap = String(lejaratDatuma.getMonth() + 1).padStart(2, '0');
+                    const ho = String(lejaratDatuma.getMonth() + 1).padStart(2, '0');
                     const nap = String(lejaratDatuma.getDate()).padStart(2, '0');
-                    licenszLejarat = `${ev}.${honap}.${nap}`;
+                    licenszLejarat = `${ev}.${ho}.${nap}.`;
 
                     const maNormalizalt = new Date(ma.getFullYear(), ma.getMonth(), ma.getDate());
                     const lejaratNormalizalt = new Date(lejaratDatuma.getFullYear(), lejaratDatuma.getMonth(), lejaratDatuma.getDate());
+                    
                     const idokulonbseg = lejaratNormalizalt.getTime() - maNormalizalt.getTime();
                     const napokSzama = Math.ceil(idokulonbseg / (1000 * 3600 * 24));
 
+                    // JAVÍTÁS: Itt a napokInfo változót módosítjuk az altNapokInfo helyett!
                     if (napokSzama < 0) {
                         napokInfo = 'Lejárt';
                     } else if (napokSzama === 0) {
@@ -656,17 +667,19 @@ if (isUser) {
                 }
             }
 
-            return `      
+       return `      
                 <div class="grid">
                     <div class="elso">
                         <h1>${fullname}</h1>
                         <p> <b>Felhasználónév: </b>${userName}</p>
-                        <p><b>Értékelhető idő (licensz lejárta):</b> <br>${licenszLejarat} - még ${napokInfo}</p>
+                        <p><b>Fiók státusza: </b><span style="color: #000000; font-weight: bold;">${licenszTipus}</span></p>
+                        
+                        <p><b>Értékelhető idő (licensz lejárta):</b> <br>${licenszLejarat} - ${napokInfo}</p>
                     </div>
                 </div>
                 <div class="info-strip">
                     <div class="infocard" id="changepass">Jelszó megváltoztatása</div>
-                    <div class="infocard" id="remove">Adatvédelmi beállítások</div>
+                    <div style ="display:none" class="infocard" id="remove">Adatvédelmi beállítások</div>
                     <div class="infocard" id="plussj">Kérelem jogosultságok bővítésére</div>
                     <div class="infocard" id="deleteacc">Profil Törlése</div>
                 </div>`;
@@ -1094,8 +1107,20 @@ const initialMain = layoutContainer.querySelector('.main');
         initialLapok.dataset.contentId = 'ertekek';
 
 gombok.forEach(gomb => {
-    gomb.addEventListener('click', function() {
+    gomb.addEventListener('click', function(e) { // <-- Figyeld az 'e' betűt a zárójelben!
         const aktivGombId = this.id;
+
+        // 🌟 ÚJ: TESZTIDŐSZAK KVÓTA ELLENŐRZÉSE (SOFT LOCK)
+   // 🌟 FRISSÍTVE: 3-ról 2-re módosítva a limit
+   // 🌟 ÚJ: TESZTIDŐSZAK KVÓTA ELLENŐRZÉSE (SOFT LOCK)
+// 🌟 ÚJ: TESZTIDŐSZAK KVÓTA ELLENŐRZÉSE (SOFT LOCK)
+if (aktivGombId === 'ujert') {
+    if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+        e.preventDefault();
+        window.mutasdPiackutatoAblakot();
+        return;
+    }
+}
 
         if (this.classList.contains('dobaktiv')) {
             return;
@@ -1220,15 +1245,21 @@ fiokomGombok.forEach(gomb => {
 });
 const accuntGomb = document.getElementById('accunt');
 if (accuntGomb) {
-    accuntGomb.click();
-    
-    // Elindítjuk a szekvenciát, miután a töltőképernyő biztosan levonult (800ms)
-    setTimeout(() => {
-        if (typeof playIntroSequence === 'function') {
-            playIntroSequence();
-        }
-    }, 800);
-}
+        accuntGomb.click();
+        
+        // 🌟 ÚJ: Automatikus teszt-státusz ellenőrzés belépéskor
+        // Várunk egy kicsit (1.5 mp), hogy a dashboard animációk lefussanak, 
+        // és csak utána dobjuk be a kérdőívet, ha kell.
+        setTimeout(() => {
+            ellenorizTesztStatusz();
+        }, 1500);
+
+        setTimeout(() => {
+            if (typeof playIntroSequence === 'function') {
+                playIntroSequence();
+            }
+        }, 800);
+    }
 
 // 3. A TÖLTŐKÉPERNYŐ ELTÜNTETÉSE
 const loadingOverlay = document.getElementById('loading-overlay');
@@ -1434,7 +1465,7 @@ async function fetchAccountDeletionInfo(infoPanel) {
                     if (delData.success) {
                         btnContainer.innerHTML = "<p style='color:green; font-weight:bold; font-size:1.1rem; padding:10px;'>Fiókja és minden adata sikeresen törölve. Kijelentkezés...</p>";
                         setTimeout(() => {
-                            window.location.href = '/login.html'; 
+                            window.location.href = '/index.html'; 
                         }, 3000);
                     } else {
                         alert('Hiba történt a törlés során!');
@@ -1507,4 +1538,140 @@ function setupAccountInfoListeners(mainElement) {
             }
         });
     });
+}
+
+// 🌟 1. A felugró ablakot "globálissá" (window) tesszük, hogy a dashCRUD is elérje
+window.mutasdPiackutatoAblakot = function() {
+    if (document.getElementById('teszt-modal')) return;
+    
+    // Megnézzük, hogy a kérdőív utáni extra időszakban vagyunk-e
+    const isExt = (idoszak === 'teszt_ext');
+    
+    let modalHTML = `
+       <div class="modal-container">
+    <div class="modal-icon-wrapper">
+        <span class="material-symbols-rounded icon-orange">${isExt ? 'lock' : 'volunteer_activism'}</span>
+    </div>
+    
+    <h2 class="modal-title">${isExt ? 'A tesztidőszak véget ért!' : 'Elérte a tesztelési limitet!'}</h2>
+    
+    <p class="modal-text">Már létrehozta a maximálisan engedélyezett értékeléseket, vagy letelt a meghosszabított 15 nap.</p>
+    <p class="modal-text">A meglévő értékeléseit továbbra is megnézheti, letöltheti és generálhat belőlük dokumentumokat!</p>
+    `;
+
+    // Ha még NINCS kitöltve a kérdőív, felkínáljuk a lehetőséget
+    if (!isExt) {
+        modalHTML += `
+        <p class="modal-subtext">Tetszik a munkánk? Ahhoz, hogy a jövőben még jobbá tehessük az ÉRTÉKEK-et, kérjük, szánjon 1 percet a tapasztalatai megosztására.</p>
+        
+        <div class="modal-info-box">
+            <b>Értékeljük az idejét:</b>
+            <p>A kérdőív kitöltése után <b>újabb 2 értékelést hozhat létre még 15 napig!</b></p>
+        </div>
+
+        <div class="modal-actions">
+            <button id="btnKardiov" class="btn4 btn-primary">
+                <span class="material-symbols-rounded">edit_document</span> Kitöltöm a kérdőívet
+            </button>
+            <button id="btnModalZar" class="btn4 btn-secondary">
+                ...Inkább később
+            </button>
+        </div>`;
+    } 
+    // Ha MÁR kitöltötte, és ez az extra idő is lejárt, elküldjük előfizetni
+    else {
+        modalHTML += `
+        <div class="modal-info-box">
+            <p>A rendszer további használati feltételeiről hamarosan e-mailben tájékoztatjuk.</p>
+                        <p>Köszönjük, hogy részt vett a tesztelési időszakban! Tapasztalatai felbecsülhetetlenek számunkra!.</p>
+
+        </div>
+        <div class="modal-actions">
+            <button id="btnModalZar" class="btn4 btn-secondary" style="    width: fit-content !important;background: orange;">
+                Bezárás
+            </button>
+        </div>`;
+    }
+    
+    modalHTML += `</div>`;
+    
+    // Háttér és felugró létrehozása... (a logika innentől marad ugyanaz)
+    const overlay = document.createElement('div');
+    overlay.id = 'teszt-modal';
+    Object.assign(overlay.style, {
+        position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+        backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center',
+        alignItems: 'center', zIndex: '999999', backdropFilter: 'blur(5px)',
+        opacity: '0', transition: 'opacity 0.3s ease'
+    });
+
+    const modalBox = document.createElement('div');
+    Object.assign(modalBox.style, {
+        backgroundColor: '#fff', padding: '40px', borderRadius: '15px', 
+        maxWidth: '550px', width: '90%', boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+        transform: 'translateY(50px)', transition: 'transform 0.3s ease'
+    });
+    
+    modalBox.innerHTML = modalHTML;
+    overlay.appendChild(modalBox);
+    document.body.appendChild(overlay);
+
+    // Animáció
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+        modalBox.style.transform = 'translateY(0)';
+    }, 10);
+
+    // Eseménykezelők
+    document.getElementById('btnModalZar').addEventListener('click', () => {
+        overlay.style.opacity = '0';
+        modalBox.style.transform = 'translateY(50px)';
+        setTimeout(() => overlay.remove(), 300);
+    });
+
+    // Kérdőív gomb eseménykezelője (csak ha létezik a gomb!)
+    const btnKardiov = document.getElementById('btnKardiov');
+    if (btnKardiov) {
+        btnKardiov.addEventListener('click', () => {
+            window.location.href = '/private/kerdoiv.html';        
+        });
+    }
+};
+
+window.isTesztLejart = function() {
+    // Csak a 'teszt' és a 'teszt_ext' (meghosszabbított teszt) esetén blokkolunk
+    if (idoszak !== 'teszt' && idoszak !== 'teszt_ext') return false;
+
+    // Ha 'teszt', akkor 2 a limit. Ha 'teszt_ext' (kérdőív után), akkor már 4 (2 eredeti + 2 jutalom).
+    const maxErtekeles = (idoszak === 'teszt') ? 2 : 4; 
+    let lejart = false;
+
+    // 1. Időkorlát ellenőrzése
+    if (fizetve && int_fin) {
+        const fizetesDatuma = new Date(fizetve);
+        const ma = new Date();
+        const lejaratDatuma = new Date(fizetesDatuma);
+        lejaratDatuma.setDate(lejaratDatuma.getDate() + parseInt(int_fin, 10));
+        
+        const maNormalizalt = new Date(ma.getFullYear(), ma.getMonth(), ma.getDate());
+        const lejaratNormalizalt = new Date(lejaratDatuma.getFullYear(), lejaratDatuma.getMonth(), lejaratDatuma.getDate());
+        const idokulonbseg = lejaratNormalizalt.getTime() - maNormalizalt.getTime();
+        const napokSzama = Math.ceil(idokulonbseg / (1000 * 3600 * 24));
+        
+        if (napokSzama <= 0) lejart = true;
+    }
+
+    // 2. Darabszám ellenőrzése a megfelelő limit alapján
+    if (sajatLetrehozasuAdmin >= maxErtekeles) {
+        lejart = true;
+    }
+
+    return lejart;
+};
+
+// 🌟 3. A belépéskori ellenőrző már csak a fenti globális függvényeket hívja meg
+function ellenorizTesztStatusz() {
+    if (window.isTesztLejart()) {
+        window.mutasdPiackutatoAblakot();
+    }
 }

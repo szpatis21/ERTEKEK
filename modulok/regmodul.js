@@ -16,6 +16,11 @@ let transporter = nodemailer.createTransport({
 });
 
 async function sendEmail(recipient, subject, htmlContent) {
+    if (!recipient) {
+        console.error('Hiba: Nincs megadva címzett (a recipient értéke undefined vagy üres)!');
+        return;
+    }
+
     let mailOptions = {
         from: process.env.EMAIL_USER,
         to: recipient,
@@ -25,132 +30,177 @@ async function sendEmail(recipient, subject, htmlContent) {
 
     try {
         let info = await transporter.sendMail(mailOptions);
-/*         console.log('Email elküldve:', info.response);
- */    } catch (error) {
-/*         console.error('Hiba az e-mail elküldése közben:', error);
- */    }
+        console.log('Email elküldve:', info.response);
+    } catch (error) {
+        console.error('Hiba az e-mail elküldése közben:', error);
+    }
 }
 
 
 function regi(db) 
 {   //Regisztráció fajták
+    const logger = require('./logmodul')(db); // Ezt a sort kell beszúrni
         // Intézmény regisztráció
-        router.post('/register/institution', (req, res) => {
-            const { intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, mail2v, tel2v, intfinv, infov, intmod} = req.body;
+router.post('/register/institution', (req, res) => {
+    // 1. A felületről érkező adatok beolvasása
+    const { intv, intirv, orszv, szekhelyv, adoszv, cimv, vez2v, mail2v, tel2v, intfinv, infov, intmod } = req.body;
 
-            const checkQuery = 'SELECT * FROM intezmeny WHERE intnev = ? OR intado = ?';
-            db.query(checkQuery, [intv, adoszv], (err) => {
-                if (err) {
-                    console.error('Ellenőrzési hiba:', err);
-                    return res.status(500).json({ message: 'Hiba történt az ellenőrzés során. Kérjük, próbálja újra később.' });
-                }
+    const mailCegv = mail2v;  
+    const telCegv = tel2v;  
+      
+    // 2. --- ÁLLAPOTMENTÉS (Audit log) ADATOK KINYERÉSE ---
+    const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'] || 'Ismeretlen';
 
-                const date = new Date();
-                const year = date.getFullYear();
-                const month = (date.getMonth() + 1).toString().padStart(2, '0');
-                const intreg = `${intv.substring(0, 3)}${adoszv.substring(0, 3)}${year}${month}`;
-
-                const query = ` INSERT INTO intezmeny (intnev, intir, intor, intszek, intado, intcim, intmail, inttel, intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg, validalva, fizetve) 
-                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, false);`;
-                    const data = {intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, mail2v, tel2v, intfinv, infov, intmod};
-                    const values = [intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, mail2v, tel2v, intfinv, infov,intmod, intreg];
-
-                db.query(query, values, (err) => {
-                    if (err) {
-                        console.error('Regisztrációs hiba:', err);
-
-
-
-                        return res.status(500).json({ message: 'Adatbázis hiba történt a regisztráció során. Kérjük, próbálja újra később.' });
-                    }
-
-                    const htmlContent = `
-                    <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
-                <h2 ><span style="color: #ff7c00;">K</span>edves ${intv},</h2>
-                <p>Örömmel értesítjük, hogy intézményi regisztrációja sikeresen megtörtént. Kollégáink hamarosan kiállítják az előlegszámlát és elküldik ugyanerra az email címre.</p>
-                <p>Előlegbekérdő adatok:
-                    <ul>
-                        <li>Kifizetése váró összeg: ....... Ft</li>
-                        <li>Kedvezményezett bankjának neve: Raiffaisen bank</li>
-                        <li>Kedvezményezett számlaszáma: .......-.......-........</li>
-                        <li>Kedvezményezett neve: ertekek.com</li>
-                        <li>Közlemény rovat: ${intreg}</li>
-                    </ul>
-                </p>
-                <p><strong>A közlemény rovatban feltüntetett kód, egyben a regisztrációs kódja is:</strong> <span style="color: #ff7c00;">${intreg}</span>
-                <br> Ezt a kódot őrizze meg, a továbbiakban ezzel fognak tudni regisztálni megbízottjai/alkalmazottai felhasználóként.
-                A <span style="font-style: italic;">"Nincs fiókom, regisztálok"</span>  menüpont alatt, válassza ki a <span style="font-style: italic;">"Felhasználói regisztráció"</span>  menüpontot, majd az általános adatok kitöltése után a <span style="font-style: italic;">Intézményi előfizetésem van..."</span> " opciót választva, másolja be a kapott kódot. 
-                </p>
-        
-                <p></p>
-            
-                <p style="margin-top: 20px;">Ha bármilyen kérdése van, kérjük, ne habozzon kapcsolatba lépni velünk.</p>
-                <a href="ertekek.com">www.ertekek.com</a>
-                <p style="color: #888;">Köszönjük, hogy minket választott!</p>
-                <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
-            </div>
-                `;
-                    sendEmail(mailCegv, 'Regisztráció sikeres', htmlContent);
-                    res.status(201).json({ message: 'Intézményi regisztráció sikeres', intreg });
-                });
-            });
-        });
-        // User regisztráció kezelése
-     router.post('/register/user', (req, res) => {
-  const {
-    userv, jelszomezov, vezeteknevv, mailv, telv,
-    finv, sznevv, szcimv, intIdv,
-    usermods = []            
-  } = req.body;            
-
-  // Jelszó hash
-  bcrypt.hash(jelszomezov, 10, (err, hashedPassword) => {
-    if (err) return res.status(500).json({ message: 'Jelszó-hash hiba.' });
-
-    /* -------- 1) FELHASZNÁLÓ BESZÚRÁSA -------- */
-    const userSQL = `
-      INSERT INTO felhasznalok
-        (fnev, pass, vez, mail, tel, fin, sznev, szcim, int_id, role_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 3)          -- role_id mindig 3(értékelő)
-    `;
-    const userVals = [
-      userv, hashedPassword, vezeteknevv,
-      mailv, telv, finv, sznevv, szcimv, intIdv
-    ];
-
-    db.query(userSQL, userVals, (err, result) => {
-      if (err) {
-        console.error('User-INSERT hiba:', err);
-        return res.status(500).json({ message: 'Felhasználó mentése sikertelen.' });
-      }
-
-      const newUserId = result.insertId;
-
-      /* -------- 2) JOGOSULTSÁGOK -------- */
-      let modsTomb = Array.isArray(usermods) ? usermods : String(usermods).split(',');
-      modsTomb = modsTomb.map(s => s.trim()).filter(s => s.length);
-
-      if (!modsTomb.length) {
-        // nincs modul, kész
-        return res.status(201).json({ success: true, message: 'Regisztráció sikeres (modul nélkül).' });
-      }
-
-      const rightsVals = modsTomb.map(mid => [newUserId, mid, 1]);   // aktiv mindig 1
-      const rightsSQL  = 'INSERT INTO jogosultsagok (user_id, modul_id, aktiv) VALUES ?';
-
-      db.query(rightsSQL, [rightsVals], (err2) => {
-        if (err2) {
-          console.error('Jogosultság-INSERT hiba:', err2);
-          return res.status(500).json({
-            success: false,
-            message: 'Felhasználó létrejött, de jogosultságok mentése bukott.'
-          });
+    // 🌟 ÚJ LÉPÉS 1: Aktív időszak lekérdezése az új táblából
+    const sqlActivePeriod = "SELECT idoszak FROM idoszak WHERE aktiv = 1 LIMIT 1";
+    
+    db.query(sqlActivePeriod, (errPeriod, periodResults) => {
+        if (errPeriod) {
+            console.error('Időszak lekérdezési hiba:', errPeriod);
+            return res.status(500).json({ message: 'Szerver hiba az időszak ellenőrzésekor.' });
         }
 
-        res.status(201).json({ success: true, message: 'Regisztráció sikeres' });
-      });
+        // Ha nincs aktív jelölve, legyen a biztonsági fallback "teszt"
+        const aktualisIdoszak = periodResults.length > 0 ? periodResults[0].idoszak : 'teszt';
+
+        // 🌟 LÉPÉS 2: Eredeti ellenőrzés (Létezik-e már a cég?)
+        const checkQuery = 'SELECT * FROM intezmeny WHERE intnev = ? OR intado = ?';
+        db.query(checkQuery, [intv, adoszv], (err, results) => {
+            if (err) {
+                console.error('Adatbázis hiba ellenőrzéskor:', err);
+                return res.status(500).json({ message: 'Adatbázis hiba történt.' });
+            }
+            if (results.length > 0) {
+                return res.status(400).json({ message: 'Ezzel az intézmény névvel vagy adószámmal már regisztráltak.' });
+            }
+
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const intreg = `${intv.substring(0, 3)}${adoszv.substring(0, 3)}${year}${month}`;
+
+            // 🌟 LÉPÉS 3: ÚJ MENTÉS - Bekerült az "idoszak" oszlop is!
+            // A fizetve oszlop értéke mostantól NULL regisztrációkor
+const query = ` 
+    INSERT INTO intezmeny 
+    (intnev, intir, intor, intszek, intado, intcim, intmail, inttel, intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg, validalva, fizetve, ip_cim, user_agent, idoszak) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NULL, ?, ?, ?);
+`;
+            
+            // Az "aktualisIdoszak" bekerült a values végére
+            const values = [intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, mail2v, tel2v, intfinv, infov, intmod, intreg, ipCim, userAgent, aktualisIdoszak];
+
+            db.query(query, values, (err) => {
+                if (err) {
+                    console.error('Hiba az intézmény mentésekor:', err);
+                    return res.status(500).json({ message: 'Hiba a regisztráció során.' });
+                }
+
+                // --- E-MAIL KÜLDÉS ---
+                const htmlContent = `
+                   <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
+    <h2><span style="color: #ff7c00;">K</span>edves ${intv},</h2>
+    <p>Örömmel értesítjük, hogy tesztregisztrációja sikeresen megtörtént. Köszönjük, hogy részt vesz a próbaidőszakban!</p>
+    
+    <p><strong>Regisztrációs kódja:</strong> <span style="color: #ff7c00;">${intreg}</span><br>
+    Kérjük, őrizze meg ezt a kódot! A továbbiakban ezzel tudnak majd regisztrálni munkatársai a <a href="https://ertekek.com/register.html">regisztrációs oldalon</a>.</p>
+    
+    <p>Utolsó lépésként már csak a saját felhasználói regisztrációját kell elvégeznie, ami mindössze egy percet vesz igénybe.</p>
+    <p style="margin-top: 20px;">A regisztráció gombra kattintva válassza a „Felhasználói regisztráció” lehetőséget, és egyszerűen másolja be a fenti kódot.</p>
+
+    <p style="margin-top: 20px;">Ha bármilyen kérdése van, kérjük, ne habozzon kapcsolatba lépni velünk.</p>
+    <a href="https://www.ertekek.com">www.ertekek.com</a>
+    
+    <p style="color: #888; margin-top: 15px;">Köszönjük, hogy minket választott!</p>
+    <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
+</div>
+                `;
+                sendEmail(mail2v, 'Regisztráció sikeres - ÉRTÉKEK', htmlContent);
+                
+                res.status(201).json({ message: 'Intézményi regisztráció sikeres', intreg });
+            }); 
+        }); 
+    }); 
+});
+        // User regisztráció kezelése
+// regmodul.js
+// regmodul.js - Felhasználói regisztráció e-mail küldéssel
+router.post('/register/user', (req, res) => {
+    const {
+        userv, jelszomezov, vezeteknevv, mailv, telv,
+        intIdv, szerepv, 
+        usermods = []            
+    } = req.body;            
+
+    // Audit adatok kinyerése
+    const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'] || 'Ismeretlen';
+
+    bcrypt.hash(jelszomezov, 10, (err, hashedPassword) => {
+        if (err) return res.status(500).json({ message: 'Jelszó-hash hiba.' });
+
+        // Felhasználó mentése (a szerepv-vel, ip_cim-mel és user_agent-tel együtt)
+        const userSQL = `
+            INSERT INTO felhasznalok
+            (fnev, pass, vez, mail, tel, int_id, role_id, ip_cim, user_agent)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const userVals = [userv, hashedPassword, vezeteknevv, mailv, telv, intIdv, szerepv, ipCim, userAgent];
+
+        db.query(userSQL, userVals, (err, result) => {
+            if (err) {
+                console.error('User-INSERT hiba:', err);
+                return res.status(500).json({ message: 'Felhasználó mentése sikertelen.' });
+            }
+
+            const newUserId = result.insertId;
+
+            // Jogosultságok mentése
+            let modsTomb = Array.isArray(usermods) ? usermods : String(usermods).split(',');
+            modsTomb = modsTomb.map(s => s.trim()).filter(s => s.length);
+
+            // Szerepkör megnevezése az e-mailhez
+            const szerepNeve = szerepv == 1 ? "Adminisztrátor" : (szerepv == 2 ? "Elemző" : "Értékelő");
+
+            // --- VISSZAIGAZOLÓ E-MAIL ÖSSZEÁLLÍTÁSA ---
+            const htmlContent = `
+                <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                    <h2 style="color: #ff7c00;">Sikeres regisztráció az ÉRTÉKEK rendszerében!</h2>
+                    <p>Kedves <strong>${vezeteknevv}</strong>!</p>
+                    <p>Örömmel értesítjük, hogy felhasználói fiókját sikeresen létrehoztuk az intézményi kereteken belül.</p>
+                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #ff7c00;">
+                        <p><strong>Belépési adatok:</strong></p>
+                        <ul style="list-style: none; padding: 0;">
+                            <li><strong>Felhasználónév:</strong> ${userv}</li>
+                            <li><strong>Szerepkör:</strong> ${szerepNeve}</li>
+                        </ul>
+                    </div>
+                    <p>Mostantól bejelentkezhet a <a href="https://ertekek.com" style="color: #ff7c00; font-weight: bold;">www.ertekek.com</a> oldalon.</p>
+                    <p>Teremtsünk együtt Értékeket!</p>
+                    <br>
+                    <p>Üdvözlettel,<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                </div>
+            `;
+
+            // Jogosultságok beszúrása és e-mail küldése
+            if (modsTomb.length > 0) {
+                const rightsVals = modsTomb.map(mid => [newUserId, mid, 1]); 
+                const rightsSQL  = 'INSERT INTO jogosultsagok (user_id, modul_id, aktiv) VALUES ?';
+
+                db.query(rightsSQL, [rightsVals], (err2) => {
+                    if (err2) console.error('Jogosultság-INSERT hiba:', err2);
+                    
+                    // E-mail küldése sikeres regisztráció után
+                    sendEmail(mailv, 'Sikeres regisztráció - ÉRTÉKEK', htmlContent);
+                    res.status(201).json({ success: true, message: 'Regisztráció sikeres' });
+                });
+            } else {
+                sendEmail(mailv, 'Sikeres regisztráció - ÉRTÉKEK', htmlContent);
+                res.status(201).json({ success: true, message: 'Regisztráció sikeres' });
+            }
+        });
     });
-  });
 });
 
 
@@ -319,10 +369,14 @@ function regi(db)
                     `;
         
                     return sendEmail(entry.data_mail, "Új értékelés megosztása", htmlContent);
+                    
+
                 }));
         
-                res.json({ success: true });
-        
+const megoszto_id = req.session ? req.session.userId : null;
+        logger(req, megoszto_id, 'megosztás', { megosztott_szemelyek_szama: kitoltesek.length });
+
+        res.json({ success: true });        
             } catch (error) {
                 console.error("Hiba történt:", error);
                 res.status(500).json({ success: false, message: 'Adatbázis vagy e-mail küldési hiba!' });

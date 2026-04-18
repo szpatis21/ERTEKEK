@@ -1,0 +1,623 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kérdőív – ÉRTÉKEK – Modern & Impresszív</title>
+  <meta name="description" content="Visszajelzés az ÉRTÉKEK program használatáról – lenyűgöző formában!" />
+  <link rel="stylesheet" href="../both/both.css">
+  <link rel="stylesheet" href="/public/stylei.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <style>
+    :root {
+      --primary: #ff6500;
+      --secondary: #ffaa00;
+      --accent: #f7b42e;
+      --cta-grad: linear-gradient(135deg, #f7b42e 0%, #ffaa00 100%);
+      --bg-base: #fffdfb;
+      --card-bg: rgba(255, 255, 255, 0.94);
+      --shadow-soft: 0 10px 30px rgba(0,0,0,0.06);
+      --shadow-md: 0 16px 40px rgba(0,0,0,0.12);
+      --shadow-inset: inset 0 2px 4px rgba(0,0,0,0.05);
+      --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* Dynamic, Animated Background */
+    .hero-bg {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 120%, rgba(255,170,0,0.2) 0%, rgba(255,253,251,0) 60%),
+                  radial-gradient(circle at 10% 20%, rgba(247,180,46,0.1) 0%, rgba(255,253,251,0) 40%),
+                  radial-gradient(circle at 90% 50%, rgba(255,101,0,0.08) 0%, rgba(255,253,251,0) 30%);
+      z-index: -2;
+      animation: bg-pulse 20s infinite alternate;
+    }
+    @keyframes bg-pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    .nav { position: relative; z-index: 10; }
+
+    /* --- Animations Definitions --- */
+    .fade-in { opacity: 0; transition: var(--transition-smooth); }
+    .fade-in.in { opacity: 1; }
+
+    .reveal-up { transform: translateY(40px); opacity: 0; transition: var(--transition-smooth); }
+    .reveal-up.in { transform: translateY(0); opacity: 1; }
+
+    .reveal-scale-in { transform: scale(0.9); opacity: 0; transition: var(--transition-smooth); }
+    .reveal-scale-in.in { transform: scale(1); opacity: 1; }
+
+    /* Staged Animations for sequential elements */
+    .staged-1, .staged-2, .staged-3 { transition-delay: 0.1s; }
+    .reveal-up.in .staged-1 { transition-delay: 0.2s; }
+    .reveal-up.in .staged-2 { transition-delay: 0.35s; }
+    .reveal-up.in .staged-3 { transition-delay: 0.5s; }
+
+    /* --- Form Styling --- */
+    .form-container {
+        flex-direction: column;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      border-radius: 40px;
+      padding: 60px 50px;
+      box-shadow: var(--shadow-soft);
+      max-width: 920px;
+      margin: 3vh auto;
+      border: 1px solid rgba(255,170,0,0.15);
+      position: relative;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .form-container::before {
+      content:''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+      background: radial-gradient(circle at 50% -20%, rgba(255,170,0,0.1) 0%, rgba(255,255,255,0) 50%);
+      z-index: -1; pointer-events: none;
+    }
+    .form-container:hover { box-shadow: var(--shadow-md); }
+
+    .question {
+      position: relative;
+    }
+    .question:last-child { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+    .question::after {
+      content: ''; position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, transparent 0%, #ffe2d9 50%, transparent 100%);
+    }
+    .question:last-child::after { display: none; }
+
+    h3 {
+      font-family: system-ui;
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+      opacity: 0; transform: translateX(-20px); transition: var(--transition-smooth);
+    }
+    .question.in h3 { opacity: 1; transform: translateX(0); transition-delay: 0.1s; }
+
+    /* --- Enhanced Star Rating --- */
+    .star-rating {
+      display: flex;
+      flex-direction: row-reverse;
+      font-size: 3.2rem;
+      gap: 6px;
+      justify-content: flex-end;
+      margin: 16px 0 28px;
+    }
+    .star-rating input { display: none; }
+    .star-rating label {
+      color: #e0e0e0;
+      cursor: pointer;
+      transition: color 0.3s, transform 0.3s ease-out, text-shadow 0.3s;
+      position: relative;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+      color: var(--accent);
+      transform: scale(1.15) translateY(-3px);
+      text-shadow: 0 4px 10px rgba(247,180,46,0.3);
+    }
+    .star-rating label:active { transform: scale(1.3); transition: transform 0.1s; }
+
+    /* --- Custom Checkboxes (Functions) --- */
+    .funkcio-grid label {
+      cursor: pointer; position: relative; padding-left: 36px;
+      font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 10px;
+      transition: color 0.3s;
+    }
+    .funkcio-grid input[type="checkbox"] { display: none; }
+    .funkcio-grid label::before {
+      content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+      width: 24px; height: 24px; border: 2px solid #ccc; border-radius: 6px;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .funkcio-grid label::after {
+      content: '\e876'; font-family: 'Material Symbols Rounded';
+      position: absolute; left: 4px; top: 50%; transform: translateY(-50%) scale(0);
+      color: #fff; font-size: 1.2rem; transition: transform 0.2s ease-out;
+    }
+    .funkcio-grid input[type="checkbox"]:checked + label { color: var(--primary); }
+    .funkcio-grid input[type="checkbox"]:checked + label::before {
+      border-color: var(--primary); background: var(--cta-grad);
+    }
+    .funkcio-grid input[type="checkbox"]:checked + label::after { transform: translateY(-50%) scale(1); }
+    .funkcio-grid label:hover::before { border-color: var(--secondary); }
+
+    /* --- Input Styles --- */
+    textarea {
+      width: 100%; min-height: 160px; padding: 20px;
+      border-radius: 16px; border: 2px solid rgba(255,183,0,0.3);
+      background: rgba(255,253,251,0.7);
+      font-family: inherit; font-size: 1.1rem; resize: vertical;
+      box-shadow: var(--shadow-inset); transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    textarea:focus {
+      outline: none; border-color: var(--secondary);
+      box-shadow: 0 0 0 4px rgba(255,170,0,0.15), var(--shadow-inset);
+    }
+
+    /* --- Price Options (Radio Cards) --- */
+    .ar-opciok { gap: 18px; display: flex; flex-direction: column; }
+    .ar-opciok label {
+      position: relative; display: flex; align-items: center; gap: 14px;
+      background: var(--card-bg); padding: 20px 24px; border-radius: 16px;
+      border: 1px solid rgba(255,183,0,0.15); cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      box-shadow: var(--shadow-soft);
+    }
+    .ar-opciok input { display: none; }
+    .ar-opciok label::before {
+      content: ''; position: absolute; left: 24px; width: 22px; height: 22px;
+      border: 2px solid #ccc; border-radius: 50%; transition: border-color 0.3s, background 0.3s;
+    }
+    .ar-opciok input:checked + label::before { border-color: var(--primary); background: var(--cta-grad); }
+    .ar-opciok label span { padding-left: 36px; font-weight: 600; font-size: 1.1rem; transition: color 0.3s; }
+    .ar-opciok input:checked + label span { color: var(--primary); }
+    .ar-opciok label:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--secondary); }
+
+    /* --- Submit Button & Footer --- */
+    .submit-btn-wrap { text-align: center; margin: 50px auto 20px; position: relative; }
+    .submit-btn {
+      width: 100%;
+    font-family: system-ui;
+    background: var(--cta-grad);
+    color: #fff;
+    font-size: 1.4rem;
+    padding: 20px 70px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft)
+0 10px 30px rgba(0,0,0,0.06)
+;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    }
+    .submit-btn::before {
+      content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.6s;
+    }
+    .submit-btn:hover {
+      transform: scale(1.06) translateY(-3px); box-shadow: var(--shadow-md);
+    }
+    .submit-btn:hover::before { left: 100%; }
+    .submit-btn:active { transform: scale(1); transition: transform 0.1s; }
+
+    footer { position: relative; text-align: center; padding: 40px 0; z-index: 5; opacity: 0; transition: opacity 0.6s; }
+    footer.in { opacity: 1; }
+    small { color: #888; letter-spacing: 0.5px; }
+
+    /* --- Form Success Message --- */
+    #success-message {
+      text-align: center; display: none; flex-direction: column; align-items: center;
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(20px);
+      justify-content: center; z-index: 20; border-radius: inherit;
+    }
+    #success-message .icon { font-size: 6rem; color: #2ecc71; margin-bottom: 20px; animation: pop-in 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    #success-message h2 { font-family: "Montserrat Subrayada", sans-serif; color: var(--primary); }
+    #success-message p { color: #555; font-size: 1.1rem; margin-top: 10px; }
+    @keyframes pop-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+    /* --- Responsive Fixes --- */
+    @media (max-width: 900px) {
+      .form-container { margin: 30px 20px; padding: 40px 30px; border-radius: 30px; }
+      .star-rating { font-size: 2.6rem; margin: 12px 0 24px; }
+      .question { margin-bottom: 40px; padding-bottom: 30px; }
+      .funkcio-grid { grid-template-columns: 1fr !important; gap: 15px; }
+      .hero .grid { padding: 0 20px; }
+      h1 { font-size: 2.8rem; }
+      h3 { font-size: 1.3rem; }
+      .submit-btn { padding: 18px 55px; font-size: 1.25rem; }
+      .ar-opciok label { padding: 16px 20px; }
+    }
+    @media (max-width: 600px) {
+      .form-container { padding: 30px 20px; border-radius: 22px; }
+      .star-rating { font-size: 2.2rem; gap: 4px; }
+      .submit-btn { width: 100%; border-radius: 12px; }
+      textarea { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <header class="nav">
+    <input type="hidden" id="menu-type" value="private">
+    <men id="men"></men>
+  </header>
+
+  <main>
+    <section class="hero container reveal-up">
+      <div class="grid" style="grid-template-columns: 1fr; text-align: center;">
+        <div class="elso">
+          <h1 class="reveal-scale-in staged-1" style="font-size: clamp(2.4rem, 6vw, 3.8rem); text-shadow: 0 4px 10px rgba(0,0,0,0.05);">Értékek</h1>
+          <p class="reveal-scale-in staged-2" style="font-size: 1.4rem; max-width: 760px; margin: 15px auto 16px; color: #5a4b4b; line-height: 1.5;">
+            Segíts nekünk fejlődni, és teremtsünk együtt <strong>ÉRTÉKEKET</strong>
+          </p>
+          <p class="reveal-scale-in staged-3" style="color: #2d1515; font-size: 1.1rem; opacity: 0.8;">
+            Válaszai felbecsülhetetlen értékűek számunkra. Köszönjük!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="container" style="position: relative;">
+      <form id="kerdoiv-form" class="form-container reveal-up staged-2">
+        
+        <div id="success-message">
+          <div class="icon material-symbols-rounded">check_circle</div>
+          <h2>Sikeres beküldés!</h2>
+          <p>Hálásak vagyunk a visszajelzésedért.<br>Az ÉRTÉKEK csapata</p>
+        </div>
+<div class="question fade-in staged-1" style="background: rgba(46, 204, 113, 0.1); border-left: 4px solid #2ecc71; padding: 15px; border-radius: 12px; margin-bottom: 30px;">
+            <p style="color: #27ae60; margin: 0; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-rounded">shield_lock</span>
+                Ez a kérdőív 100%-ban anonim! 
+            </p>
+            <p style="color: #2d1515; margin: 5px 0 0 32px; font-size: 0.95rem; opacity: 0.8;">
+                A válaszait titkosítva kezeljük, és technológiailag sem kapcsoljuk össze a felhasználói fiókjával vagy az intézményével.
+            </p>
+        </div>
+        <div class="question fade-in staged-1">
+          <h3>1. Mennyire volt könnyű az ÉRTÉKEK használata?</h3>
+          <p style="color:#777; margin: -5px 0 10px;">(1 - Nagyon nehéz, 5 - Nagyon könnyű)</p>
+          <div class="star-rating">
+            <input type="radio" id="haszn1-5" name="hasznossag" value="5" required><label for="haszn1-5">★</label>
+            <input type="radio" id="haszn1-4" name="hasznossag" value="4" required><label for="haszn1-4">★</label>
+            <input type="radio" id="haszn1-3" name="hasznossag" value="3" required><label for="haszn1-3">★</label>
+            <input type="radio" id="haszn1-2" name="hasznossag" value="2" required><label for="haszn1-2">★</label>
+            <input type="radio" id="haszn1-1" name="hasznossag" value="1" required><label for="haszn1-1">★</label>
+          </div>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>2. Mennyire elégedett a szakmai anyaggal?</h3>
+          <div class="star-rating">
+            <input type="radio" id="szakmai-5" name="szakmai" value="5" required><label for="szakmai-5">★</label>
+            <input type="radio" id="szakmai-4" name="szakmai" value="4" required><label for="szakmai-4">★</label>
+            <input type="radio" id="szakmai-3" name="szakmai" value="3" required><label for="szakmai-3">★</label>
+            <input type="radio" id="szakmai-2" name="szakmai" value="2" required><label for="szakmai-2">★</label>
+            <input type="radio" id="szakmai-1" name="szakmai" value="1" required><label for="szakmai-1">★</label>
+          </div>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>3. A jövőben használná adminisztráció könnyítésre a programot?</h3>
+          <div class="star-rating">
+            <input type="radio" id="jovobeni-5" name="jovobeni" value="5" required><label for="jovobeni-5">★</label>
+            <input type="radio" id="jovobeni-4" name="jovobeni" value="4" required><label for="jovobeni-4">★</label>
+            <input type="radio" id="jovobeni-3" name="jovobeni" value="3" required><label for="jovobeni-3">★</label>
+            <input type="radio" id="jovobeni-2" name="jovobeni" value="2" required><label for="jovobeni-2">★</label>
+            <input type="radio" id="jovobeni-1" name="jovobeni" value="1" required><label for="jovobeni-1">★</label>
+          </div>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>4. Mely funkciókat használta a programban?</h3>
+          <p style="color:#777; margin: -5px 0 20px;">(több válasz is jelölhető)</p>
+          <div class="funkcio-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px;">
+            <div class="reveal-scale-in staged-1">
+              <input type="checkbox" id="funk-megosztas" name="funkciok[]" value="megosztas">
+              <label for="funk-megosztas">Megosztás</label>
+            </div>
+            <div class="reveal-scale-in staged-1">
+              <input type="checkbox" id="funk-ai" name="funkciok[]" value="ai_ertekeles">
+              <label for="funk-ai">AI értékelés generálás</label>
+            </div>
+            <div class="reveal-scale-in staged-1">
+              <input type="checkbox" id="funk-statisztika" name="funkciok[]" value="csoportos_statisztika">
+              <label for="funk-statisztika">Csoportos statisztika</label>
+            </div>
+            <div class="reveal-scale-in staged-1">
+              <input type="checkbox" id="funk-hataridok" name="funkciok[]" value="hataridok">
+              <label for="funk-hataridok">Elemző mód: Határidők</label>
+            </div>
+            <div class="reveal-scale-in staged-1">
+              <input type="checkbox" id="funk-auditacio" name="funkciok[]" value="auditacio">
+              <label for="funk-auditacio">Elemző mód: Auditáció</label>
+            </div>
+          </div>
+        </div>
+         <div class="question fade-in staged-1">
+          <h3>5. Tapasztalt hibát a program működése közben? Ha igen, mit?</h3>
+          <textarea name="hiba" placeholder="Ossza meg velünk javaslatait vagy ötleteit..." required></textarea>
+        </div>
+        <div class="question fade-in staged-1">
+          <h3>6. Mi az, amit hiányolt a programban?</h3>
+          <textarea name="hianyolt" placeholder="Ossza meg velünk javaslatait vagy ötleteit..." required></textarea>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>7. Mi az, ami különösen tetszett benne?</h3>
+          <textarea name="tetszett" placeholder="Mondja el, mi volt a legjobb élménye..." required></textarea>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>8. Mennyit áldozna Ön vagy az intézménye az ÉRTÉKEK programra felhasználó / hó?</h3>
+          <div class="ar-opciok" style="margin-top: 25px;">
+            <div class="reveal-up staged-1">
+                <input type="radio" id="ar1" name="ar" value="2500-3500" required>
+                <label for="ar1"><span>2500 – 3500 forint között</span></label>
+            </div>
+            <div class="reveal-up staged-1">
+                <input type="radio" id="ar2" name="ar" value="3500-4500" required>
+                <label for="ar2"><span>3500 – 4500 forint között</span></label>
+            </div>
+            <div class="reveal-up staged-1">
+                <input type="radio" id="ar3" name="ar" value="4500-5000" required>
+                <label for="ar3"><span>4500 – 4500 forint között</span></label>
+            </div>
+          </div>
+        </div>
+<div class="question fade-in staged-1">
+          <h3>9. Szívesen feltöltene saját szakmai anyagot az ÉRTÉKEK-be intézményi/céges használatra?</h3>
+          <div class="ar-opciok" style="margin-top: 25px;">
+            <div class="reveal-up staged-1">
+                <input type="radio" id="sajat_feltoltes_igen" name="sajat_feltoltes" value="Igen" required>
+                <label for="sajat_feltoltes_igen"><span>Igen</span></label>
+            </div>
+            <div class="reveal-up staged-1">
+                <input type="radio" id="sajat_feltoltes_nem" name="sajat_feltoltes" value="Nem" required>
+                <label for="sajat_feltoltes_nem"><span>Nem</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="question fade-in staged-1">
+          <h3>10. Intézményi kereteken kívül (magánszemélyként) is használná a programot?</h3>
+          <div class="ar-opciok" style="margin-top: 25px;">
+            <div class="reveal-up staged-1">
+                <input type="radio" id="magan_igen" name="magan_hasznalat" value="Igen" required>
+                <label for="magan_igen"><span>Igen</span></label>
+            </div>
+            <div class="reveal-up staged-1">
+                <input type="radio" id="magan_nem" name="magan_hasznalat" value="Nem" required>
+                <label for="magan_nem"><span>Nem</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div id="magan_extra_blokk" style="display: none;">
+            <div class="question fade-in staged-1">
+              <h3>11. Magánszemélyként saját szakmai anyaggal, vagy a meglévővel használná?</h3>
+              <div class="ar-opciok" style="margin-top: 25px;">
+                <div class="reveal-up staged-1">
+                    <input type="radio" id="anyag_sajat" name="magan_anyag" value="Saját szakmai anyaggal">
+                    <label for="anyag_sajat"><span>Saját szakmai anyaggal</span></label>
+                </div>
+                <div class="reveal-up staged-1">
+                    <input type="radio" id="anyag_meglevo" name="magan_anyag" value="Meglévővel">
+                    <label for="anyag_meglevo"><span>Meglévővel</span></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="question fade-in staged-1" style="border-bottom: none; margin-bottom: 0;">
+              <h3>12. Mennyit áldozna rá magánszemélyként havi szinten?</h3>
+              <div class="ar-opciok" style="margin-top: 25px;">
+                <div class="reveal-up staged-1">
+                    <input type="radio" id="magan_ar1" name="magan_ar" value="1000-2000">
+                    <label for="magan_ar1"><span>1000 – 2000 forint között</span></label>
+                </div>
+                <div class="reveal-up staged-1">
+                    <input type="radio" id="magan_ar2" name="magan_ar" value="2000-3000">
+                    <label for="magan_ar2"><span>2000 – 3000 forint között</span></label>
+                </div>
+                <div class="reveal-up staged-1">
+                    <input type="radio" id="magan_ar3" name="magan_ar" value="3000-4000">
+                    <label for="magan_ar3"><span>3000 – 4000 forint között</span></label>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="submit-btn-wrap fade-in staged-2">
+            <button type="submit" class="submit-btn">Kérdőív beküldése</button>
+            <p style="text-align:center; color:#888; font-size:1rem; margin-top:15px; opacity: 0.7;">
+                Még egyszer köszönjük! ❤️
+            </p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <footer class="container reveal-up staged-3">
+    <small>© ÉRTÉKEK – Visszajelzés • 2026 • Minden jog fenntartva.</small>
+  </footer>
+
+<script>
+    // --- Advanced Reveal-on-scroll ---
+    const revealCallback = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          observer.unobserve(entry.target); // Csak egyszer animál
+        }
+      });
+    };
+
+    const revealObserver = new IntersectionObserver(revealCallback, {
+      threshold: 0.05, // 15%-ról 5%-ra csökkentve, hogy hamarabb reagáljon
+      rootMargin: "0px 0px -20px 0px"
+    });
+
+    // Figyeljük az elemeket
+    document.querySelectorAll('.reveal-up, .reveal-scale-in, .fade-in, .question').forEach(el => {
+      revealObserver.observe(el);
+    });
+
+    // --- AZONNALI MEGJELENÍTÉS BETÖLTÉSKOR ---
+    // Hogy ne kelljen görgetni a legelső elemekhez, ezeket azonnal beúsztatjuk
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const hero = document.querySelector('.hero');
+        const formContainer = document.querySelector('.form-container');
+        if(hero) hero.classList.add('in');
+        if(formContainer) formContainer.classList.add('in');
+      }, 100);
+    });
+
+    // --- Dinamikus form beküldés ---
+   // --- Dinamikus form beküldés ---
+    const form = document.getElementById('kerdoiv-form');
+    const successMessage = document.getElementById('success-message');
+    const submitBtn = form.querySelector('.submit-btn');
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Gomb vizuális visszajelzése
+      submitBtn.innerHTML = 'Küldés folyamatban...';
+      submitBtn.style.opacity = '0.7';
+      submitBtn.style.pointerEvents = 'none';
+
+      // 1. Adatok kinyerése az űrlapból
+      const formData = new FormData(form);
+      
+      // A checkboxok (funkciok[]) miatt tömböt kapunk, ezt vesszővel elválasztott szöveggé alakítjuk
+const funkciokTomb = formData.getAll('funkciok[]');
+      
+      // 🌟 ÚJ: Ellenőrizzük, hogy legalább egyet bepipált-e!
+      if (funkciokTomb.length === 0) {
+          alert('Kérjük, jelölje meg legalább egy funkciót a 4. kérdésnél, amit már használt!');
+          submitBtn.innerHTML = 'Kérdőív beküldése';
+          submitBtn.style.opacity = '1';
+          submitBtn.style.pointerEvents = 'auto';
+          return; // Megállítjuk a beküldést!
+      }
+      
+ const payload = {
+        hasznossag: formData.get('hasznossag'),
+        szakmai: formData.get('szakmai'),
+        jovobeni: formData.get('jovobeni'),
+        funkciok: funkciokTomb.length > 0 ? funkciokTomb.join(', ') : null,
+        hiba: formData.get('hiba'),
+        hianyolt: formData.get('hianyolt'),
+        tetszett: formData.get('tetszett'),
+        ar: formData.get('ar'),
+        sajat_feltoltes: formData.get('sajat_feltoltes'),
+        magan_hasznalat: formData.get('magan_hasznalat'),
+        magan_anyag: formData.get('magan_anyag'), 
+        magan_ar: formData.get('magan_ar')
+      };
+
+      try {
+        // 2. Adatok elküldése a backendnek (Ellenőrizd az útvonalat! Pl: '/api/submit-survey' vagy csak '/submit-survey')
+const response = await fetch('/api/submit-survey', {
+            method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // 3. Ha a mentés sikeres, jöhet a vizuális eltüntetés
+          const childrenToHide = Array.from(form.children).filter(child => child !== successMessage);
+          childrenToHide.forEach(child => {
+            child.style.transition = 'opacity 0.5s';
+            child.style.opacity = '0';
+          });
+
+          // Siker üzenet megjelenítése
+          setTimeout(() => {
+            childrenToHide.forEach(child => child.style.display = 'none');
+            successMessage.style.display = 'flex';
+            
+            window.scrollTo({
+              top: successMessage.closest('.container').offsetTop - 50,
+              behavior: 'smooth'
+            });
+
+            // Opcionális: Visszairányítás a dashboardra 3 másodperc múlva, hogy a jutalmat egyből lássa a user
+            setTimeout(() => {
+                window.location.href = '/user/dashboard.html'; 
+            }, 3000);
+
+          }, 500);
+
+        } else {
+          // Ha a backend hibát (pl. 401 Nincs bejelentkezve) dob
+          alert('Hiba történt a mentés során: ' + (result.message || 'Ismeretlen hiba'));
+          submitBtn.innerHTML = 'Kérdőív beküldése';
+          submitBtn.style.opacity = '1';
+          submitBtn.style.pointerEvents = 'auto';
+        }
+
+      } catch (error) {
+        console.error('Hálózati hiba:', error);
+        alert('Hálózati hiba történt a kérdőív beküldésekor.');
+        submitBtn.innerHTML = 'Kérdőív beküldése';
+        submitBtn.style.opacity = '1';
+        submitBtn.style.pointerEvents = 'auto';
+      }
+    });
+    // --- Csillagok animációja kattintáskor ---
+    document.querySelectorAll('.star-rating label').forEach(label => {
+        label.addEventListener('click', () => {
+            label.style.transform = 'scale(1.4)';
+            setTimeout(() => label.style.transform = '', 200);
+        });
+    });
+    // Feltételes kérdések megjelenítése/elrejtése
+    const maganRadios = document.querySelectorAll('input[name="magan_hasznalat"]');
+    const maganExtraBlokk = document.getElementById('magan_extra_blokk');
+    const maganAnyagRadios = document.querySelectorAll('input[name="magan_anyag"]');
+    const maganArRadios = document.querySelectorAll('input[name="magan_ar"]');
+
+    maganRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (e.target.value === 'Igen') {
+                maganExtraBlokk.style.display = 'block';
+                // Ha megjelenik, kötelezővé tesszük a kitöltésüket
+                maganAnyagRadios.forEach(r => r.required = true);
+                maganArRadios.forEach(r => r.required = true);
+            } else {
+                maganExtraBlokk.style.display = 'none';
+                // Ha elrejtjük, levesszük a kötelezőséget és töröljük az esetleges jelöléseket
+                maganAnyagRadios.forEach(r => { r.required = false; r.checked = false; });
+                maganArRadios.forEach(r => { r.required = false; r.checked = false; });
+            }
+        });
+    });
+  </script>
+
+</body>
+</html>

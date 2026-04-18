@@ -1,5 +1,6 @@
  #log label {display: flex; font-size: small;     justify-content: center;}
-a:link, a:visited {color: white;}
+a:link, a:visited {color: #ffffff;}
+
 #log{    flex-direction: column;display: none;     align-items: center;}
 #llog{ font-family: "Montserrat Subrayada"; height: 35px; width: 95%;}
 #whbutt{margin-top: 3px;
@@ -19,6 +20,7 @@ a:link, a:visited {color: white;}
     backdrop-filter: blur(4px);
     position: relative;
 }
+.eh{color: #FF5722 !important;}
 .inputs input {
     font-family: 'Times New Roman', Times, serif; 
     border: 1px solid gold ;border-radius: 5px; padding: 5px;}
@@ -56,8 +58,16 @@ transition: all 0.7s;}
     border: rgba(255, 217, 0, 0.567) 2px solid;
     border-radius: 30px;
 }
-
-#ceg, #magan{ display: none; flex-direction: column;}
+input {cursor: pointer;}
+#role2,#role3, #role1{box-shadow: none !important;}
+.editbut2{display: flex;}
+.rolebox{    font-size: small;
+    font-style: italic;
+    text-align: center;
+    width: 50%;
+    margin: auto;}
+#userRegi{width: 100%;}
+#ceg, #magan{ display: none; flex-direction: column; width: 50%;}
 #regi{    display: none;
     flex-direction: column;
     height: fit-content;
@@ -164,7 +174,7 @@ legend {font-style: italic;margin: 10px;
     font-weight: 500;
     font-weight: 500;
     box-shadow: 3px 2px 2px 0px #00000045;}
-    #regind, #regind2{margin: auto; display: flex; flex-direction: column;} 
+    #regind, #regind2{margin: auto; display: flex; flex-direction: row;} 
     #regind .editbut:hover{color: white;background-color: #ff7c00;}
     .afszp{font-size: medium;
         display: flex;
@@ -174,20 +184,39 @@ legend {font-style: italic;margin: 10px;
         text-align: left;
        
         margin: 10px;}
-    #regcode{margin: 10px;display: none; font-style: italic;flex-direction: column;}
+    #regcode{margin: 10px;display: flex; font-style: italic;flex-direction: column;}
     #errorlog,  .errorlog2{width: 50%; text-align: center; margin: auto; font-style: italic; font-size: small;}
     .errorlog2 {text-align: left;margin: 10px;}
-    .err{
-        font-style: normal;
-        align-items: center;
-        font-size: small;   
-        max-width: 290px;
-        color: red;
-    }
+  
     .kijelolt{     background: linear-gradient(0deg, #ff5722 0%, #f44336e3 100%);;color: white !important; }
 
-    .borderr{border-color: red !important;box-shadow: red 0px 0px 2px 0px;}
-    .borderr2{border: 2px solid #ff000075;border-radius: 8px;}
+/* --- HIBAÜZENET DOBOZ --- */
+.err, #aderr {
+    display: none; /* Alapértelmezetten rejtve van */
+    opacity: 0;    /* A JS fogja 1-re állítani a lágy megjelenéshez */
+    transition: opacity 0.5s ease-in-out; /* Lágy áttűnés */
+    
+    /* Kinézet */
+    color: #d32f2f; /* Elegáns, olvasható sötétpiros szöveg */
+    background-color: #fde0dc; /* Halvány piros háttér */
+    border: 1px solid #f5c2c7; /* Nagyon vékony pirosas keret */
+    padding: 8px 12px; /* Belső margó, hogy ne tapadjon a szöveg a széléhez */
+    margin-top: 5px; /* Távolság a felette lévő beviteli mezőtől */
+    border-radius: 4px; /* Finom kerekítés a sarkokon */
+    font-size: 0.9em; /* Kicsit kisebb, mint a normál szöveg */
+    font-weight: bold; /* Vastagítás a figyelemfelkeltésért */
+    
+    /* Ne lógjon ki a szülő konténerből */
+    width: fit-content !important;
+}
+
+/* --- HIBÁS BEVITELI MEZŐ (INPUT) KERETE --- */
+/* (Ezt kapja meg az az input, amit a JS bepirosít a .borderr hozzáadásával) */
+.borderr {
+    border: 2px solid #d32f2f !important; /* Vastagabb piros keret */
+    background-color: #fffafa !important; /* Nagyon halvány pirosas háttér a mezőnek is */
+    outline: none; /* Ne legyen kék fókusz keret a piros felett */
+}    .borderr2{border: 2px solid #ff000075;border-radius: 8px;}
     #regifin{    
         flex-direction: column;
         font-size: medium;
@@ -201,8 +230,22 @@ legend {font-style: italic;margin: 10px;
         justify-content: flex-start;
     
     }
-    #kalkulacioEredmeny{width: 100%; height: 20px;    font-weight: 800; text-align: center;
-        color: red;}
+    #kalkulacioEredmeny {
+    position: fixed;        /* Fix pozíció a képernyőhöz képest */
+    bottom: 10%;           /* 20px távolság alulról (lehet top: 20px is) */
+    right: 25%;            /* 20px távolság jobbról */
+    background-color: #ff7c00; /* Az Értékek narancssárga színe (vagy bármilyen) */
+    color: white;           /* Fehér szöveg */
+    padding: 15px 25px;     /* Belső margó */
+    border-radius: 8px;     /* Lekerekített sarkok */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Kis árnyék, hogy kiemelkedjen */
+    z-index: 9999;          /* Hogy biztosan minden más felett legyen */
+    
+    /* Animáció előkészítése */
+    display: none;          /* Alapból rejtve van */
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out; /* Lágy elhalványulás */
+}
     #regifin p,#segedlet p, #segedlet2 p{font-family: "Montserrat Subrayada", sans-serif;}
     #regifin span,#segedlet span, #segedlet2 span{color: #ff7c00; font-style: italic;}
     .serr{font-family: 'Times New Roman', Times, serif !important;
@@ -575,3 +618,5 @@ main{width: 100% !important;}
     line-height: 1.6;
     margin: 0;
 }
+#alszamla2{display: none;}
+#ceg{width: 100%;}

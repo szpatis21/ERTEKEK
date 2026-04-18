@@ -234,8 +234,21 @@ const url = `/api/get-kitoltesek?felhasznalo_id=${userId}&modul_id=${modulId}`;
 
   // LÉTREHOZÁS logika → mindig legyen elérhető
 
-  if (kitoltesek.length === 0) {
-    innerDiv.innerHTML = '<p style="font-family: auto; color: white; font-style: italic;" >Még nincsenek értékelései. Hozzon létre újakat!</p>';
+ if (kitoltesek.length === 0) {
+    innerDiv.innerHTML = `
+      
+        <div class="empty-state-wrapper">
+            <div class="empty-icon-box">
+                <span class="material-symbols-rounded">note_stack_add</span>
+            </div>
+            <h2 class="empty-title">Üres a munkaterület</h2>
+            <p class="empty-subtitle">Még nem hozott létre egyetlen értékelést sem. Ne várjon tovább, kezdje el a munkát az első dokumentum létrehozásával!</p>
+            <button class="empty-start-btn" onclick="document.querySelector('#ujert').click()">
+                <span class="material-symbols-rounded">add_circle</span>
+                Új értékelés indítása
+            </button>
+        </div>
+    `;
     return;
   }
             const selectElement = document.querySelector('#inner-div-select');

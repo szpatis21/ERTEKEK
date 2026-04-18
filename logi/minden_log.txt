@@ -849,3 +849,39 @@
 [2026-04-11T07:53:25.587Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
 [2026-04-11T07:53:27.625Z] [LOG]: [AI Modul] API Válasz kód: 200
 [2026-04-11T08:00:41.767Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T08:34:49.085Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T08:35:24.042Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T08:35:30.961Z] [LOG]: [AI Modul] API Válasz kód: 200
+[2026-04-11T08:49:43.022Z] [LOG]: [AI Modul] Indítás: gemini-3.1-flash-lite-preview
+[2026-04-11T08:49:46.519Z] [LOG]: [AI Modul] API Válasz kód: 503
+[2026-04-11T14:25:02.572Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-11T17:52:09.219Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-12T06:12:43.037Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-12T06:13:33.387Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-12T06:16:49.449Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-12T15:13:55.986Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T06:32:27.620Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T06:41:50.527Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T06:45:54.653Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T06:53:33.157Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T06:56:59.729Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T07:22:31.970Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T07:39:18.102Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T07:44:53.568Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T07:50:41.089Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T07:56:11.696Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T09:43:16.128Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T12:05:29.371Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-13T12:08:43.492Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-15T06:58:14.996Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:00:07.337Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:10:20.971Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:11:22.559Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:25:52.609Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:28:18.467Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T07:39:59.321Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T19:11:14.401Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T19:13:34.960Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-16T19:15:08.363Z] [LOG]: Email elküldve: 250 2.0.0 OK  1776366908 ffacd0b85a97d-43ead3d5fd6sm16915049f8f.24 - gsmtp
+[2026-04-16T19:27:32.597Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-04-17T04:53:07.697Z] [LOG]: Email elküldve: 250 2.0.0 OK  1776401587 ffacd0b85a97d-43fe4e3a7b4sm1394579f8f.22 - gsmtp

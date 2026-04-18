@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const router = express.Router();
 
 module.exports = (db) => {
+const logger = require('./logmodul')(db);
 
   function q(sql, params = []) {
     return new Promise((resolve, reject) =>
@@ -68,6 +69,7 @@ router.post('/login', async (req, res) => {
 
     // Admin mindig admin marad
     req.session.isAdmin = (user.role_id === 1);
+    logger(req, user.id, 'belépés', { modul: mod, szerepkor: requestedRoleId });
 
     // Redirect a választott szerepkör alapján
     switch (requestedRoleId) {

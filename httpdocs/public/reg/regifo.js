@@ -52,6 +52,36 @@ export const afsz4 = document.getElementById("afsz4");
                 return true;
             }
         }
+        export function showAndHideErrorMessages() {
+            const errorDivs = document.querySelectorAll('.err');
+
+            errorDivs.forEach(div => {
+                if (div.textContent.trim() !== "") { 
+                    // Visszaadjuk nekik a normál elrendezést (ne akarjanak kiszabadulni a konténerből)
+                    div.style.position = 'absolute'; // Vagy vedd ki ezt a sort teljesen, ha a CSS-ben jól be van állítva
+                    div.style.display = 'block';
+
+                    div.style.transition = 'opacity 0.5s ease-in-out';
+                    
+                    setTimeout(() => { div.style.opacity = '1'; }, 10);
+                    
+                    // 5 másodperc múlva elhalványul
+                    setTimeout(() => {
+                        div.style.opacity = '0';
+                        setTimeout(() => { 
+                            div.style.display = 'none'; 
+                        }, 500); 
+                    }, 5000); 
+                }
+            });
+
+            // 🌟 A VARÁZSLAT: Megkeressük az első hibás mezőt, és odagörgetünk!
+            const elsoHibasMezo = document.querySelector('.borderr');
+            if (elsoHibasMezo) {
+                // Finoman odagörget, úgy, hogy a hibás mező pontosan a képernyő KÖZEPÉRE kerüljön
+                elsoHibasMezo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
 
 //Törlés
 export function clearFields(...fields) {
@@ -154,10 +184,38 @@ bejelentkezesGombok.forEach(gomb => {
         rotateElements(log2, szoveg2);
     }
     //Beuúsztatás
+    function showKalkulacioEredmeny() {
+    const eredmenyElem = document.querySelector("#kalkulacioEredmeny");
+    
+    if (!eredmenyElem) return;
+
+    // 1. Megjelenítjük a lebegő dobozt
+    eredmenyElem.style.display = 'block';
+    // Biztosítjuk, hogy az átlátszóság 100% legyen (ha korábban el lett tüntetve)
+    setTimeout(() => { eredmenyElem.style.opacity = '1'; }, 10); 
+
+    // 2. Beállítunk egy 10 másodperces (10 000 milliszekundum) időzítőt
+    setTimeout(() => {
+        // Halványodás indítása (a CSS transition miatt ez 0.5 másodpercig tart)
+        eredmenyElem.style.opacity = '0'; 
+        
+        // Miután elhalványult, teljesen eltüntetjük a képernyőről (0.5 mp múlva)
+        setTimeout(() => {
+            eredmenyElem.style.display = 'none';
+        }, 500); 
+
+    }, 10000); // <-- Ez a 10 másodperc
+}
+
+
+// Ha a hibaüzenetek már az oldal betöltésekor ott vannak:
+
+// Ha te hozod létre őket dinamikusan JS-ből (pl. egy fetch hiba után), 
+// akkor a hibaüzenet létrehozása UTÁN hívd meg a hideErrorMessages() függvényt!
     export function handleRegistrationChange(isCompany) {
         if (isCompany) {
             // Céges regisztráció megjelenítése
-            csomagok.style.display = "flex";
+            csomagok.style.display = "none";
             csomagi.classList.add('fade');
             csomagII.classList.add('fade');
             csomagIII.classList.add('fade');
@@ -252,7 +310,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         render() {
             return `
-            <legend>Számlázási adatok</legend>
+            <legend>Intézményi adatok</legend>
             <div class="allabel">
                     <div>
                         <label for="szekhely"><b>Ország:</b> ${this.orszag}</label>
@@ -324,8 +382,8 @@ document.addEventListener("DOMContentLoaded", function() {
         render() {
             return `
                 <div id="kotelezo">
-                    <legend>Finanszírozás</legend>
-                    <p><b>${this.osszeg}</b> havi egyösszegű kifizetési időszakra, <b>${this.letszam}</b> fő részére</p>
+                    <legend>Regisztráció:</legend>
+                    <p><b>${this.letszam}</b> fő</p>
                 </div>
             `;
         }
@@ -335,21 +393,27 @@ document.addEventListener("DOMContentLoaded", function() {
         render() {
             return `
                 <legend>Hozzájárulás</legend>
-                <div class="afszp">
-                    <input type="checkbox" required id="afsz">
-                    A hozzájáruló nyilatkozat megtétele előtt áttanulmányoztam és annak tartalmát teljes körűen megismertem,
-                    mint adatkezeléssel érintett természetes személy jogaimmal tisztában vagyok,
-                    azok gyakorlásának módjáról az Adatkezelőtől teljes körű tájékoztatást kaptam.
-                </div>
-                <div class="afszp">
-                    <input type="checkbox" required id="afsz3">
-                    A regisztráció gomb megnyomásával elfogadom az Általános szerződési feltételeket és az adatvédelmi nyilatkozat.
-                </div>
-                <div class="afszp">
-                    <input type="checkbox" required id="afsz4">
-                    A regisztráció gomb megnyomásával tudomásul veszem, hogy a megrendelésem fizetési kötelezettséggel jár.
-                </div>
-                <div class="err" id="afszerr2"></div>
+              <div class="checkbox-container">
+    <input type="checkbox" id="afsz" name="afsz" value="elfogadom">
+    <label for="afsz">
+        Kijelentem, hogy az <a class="eh" href="/aszf.html" target="_blank">Általános Felhasználási Feltételeket (ÁSZF)</a> megismertem és elfogadom.
+    </label>
+</div>
+
+<div class="checkbox-container">
+    <input type="checkbox" id="afsz3" name="afsz3" value="elfogadom">
+    <label for="afsz3">
+        Az <a class="eh" href="/adatkezeles.html" target="_blank">Adatkezelési Tájékoztatót</a> megismertem. Érintettként tisztában vagyok a jogaimmal, és hozzájárulok a személyes adataim kezeléséhez.
+    </label>
+</div>
+
+<div class="checkbox-container">
+    <input type="checkbox" id="afsz4" name="afsz4" value="elfogadom">
+    <label for="afsz4">
+Kijelentem, hogy az általam megadott adatok a valóságnak megfelelnek. Intézményi/céges regisztráció esetén jogosult vagyok a szervezet nevében eljárni; magánszemélyként pedig kizárólag olyan adatokkal dolgozom, amelyek kezelésére jogosultsággal rendelkezem.    </label>
+</div>
+
+<div id="afszerr2" class="err"></div>
             `;
         }
     }
@@ -368,18 +432,29 @@ document.addEventListener("DOMContentLoaded", function() {
     export class ElfogadasAdatokIntezmenyi {
         render() {
             return `
-                <legend>Hozzájárulás</legend>
-                <div class="afszp">
-                    <input type="checkbox" required id="afsz">
-                    A hozzájáruló nyilatkozat megtétele előtt áttanulmányoztam és annak tartalmát teljes körűen megismertem,
-                    mint adatkezeléssel érintett természetes személy jogaimmal tisztában vagyok,
-                    azok gyakorlásának módjáról az Adatkezelőtől teljes körű tájékoztatást kaptam.
-                </div>
-                <div class="afszp">
-                    <input type="checkbox" required id="afsz3">
-                    A regisztráció gomb megnyomásával elfogadom az Általános szerződési feltételeket és az adatvédelmi nyilatkozat.
-                </div>
-                <div class="err" id="afszerr2"></div>
+           <legend>Hozzájárulás</legend>
+            <div class="checkbox-container">
+                <input type="checkbox" id="afsz" name="afsz" value="elfogadom">
+                <label for="afsz">
+                    Kijelentem, hogy az <a class="eh" href="/aszf.html" target="_blank">Általános Felhasználási Feltételeket</a> megismertem és elfogadom.
+                </label>
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="afsz3" name="afsz3" value="elfogadom">
+                <label for="afsz3">
+                    Az <a class="eh" href="/adatkezeles.html" target="_blank">Adatkezelési Tájékoztatót</a> megismertem, és hozzájárulok a személyes adataim kezeléséhez.
+                </label>
+            </div>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="afsz4" name="afsz4" value="elfogadom">
+                <label for="afsz4">
+                    Kijelentem, hogy az általam megadott adatok a valóságnak megfelelnek.
+                </label>
+            </div>
+
+            <div id="afszerr2" class="err"></div>
             `;
         }
     }
@@ -441,22 +516,34 @@ document.addEventListener("DOMContentLoaded", function() {
         }
     }
        // Intézményi további adatok osztály
+   // Intézményi további adatok osztály
        export class FelhasznaloAdatok {
-        constructor(felhasznalonev) {
+        constructor(felhasznalonev, szerepNev, szerepLeiras) {
             this.felhasznalonev = felhasznalonev;
+            this.szerepNev = szerepNev;
+            this.szerepLeiras = szerepLeiras;
         }
 
         render() {
             return `
-            <legend>Felhasználónév</legend>
+            <legend>Alapadatok</legend>
             <div class="allabel">
                     <div>
                         <label for="szekhely"><b>Felhasználónév:</b> ${this.felhasznalonev}</label>
                     </div>
             </div>
-           `
+            
+            <legend>Választott Szerepkör</legend>
+            <div class="allabel">
+                <div>
+                    <label><b>${this.szerepNev}</b> <br> 
+                    <span style="font-size: 0.85em; font-weight: normal; color: #ccc;">${this.szerepLeiras}</span></label>
+                </div>
+            </div>
+           `;
         }
     }
+    
  // csak EGY ilyet hagyj bent!
 document.querySelector('#llog').addEventListener('click', async (event) => {
   event.preventDefault();

@@ -355,17 +355,29 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
   });
   // --- SEGÉDFÜGGVÉNYEK A GOMBOKHOZ ---
   function renderButtons(role, kit) {
+const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLejart();
+      const lockedKeywords = ['share', 'duplicate', 'fo_edit', 'edit', 'deleted'];
+
       return BUTTONS[role].map(btn => {
+          // Ha le van zárva a rendszer ÉS a gomb benne van a tiltólistában (akár action, akár class alapján)
+          const isRestricted = isLocked && (
+              (btn.action && lockedKeywords.includes(btn.action)) || 
+              (btn.cls && lockedKeywords.some(k => btn.cls.includes(k)))
+          );
+          
+          // Ha tiltott, halványítjuk és szürke lesz
+          const lockStyle = isRestricted ? 'opacity: 0.4; filter: grayscale(1);' : '';
+
           const dataAttributes = btn.action 
           ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
-          : `data-id="${kit.idk}"`; // Ha nincs action (pl. fo_edit), az ID akkor is kell
+          : `data-id="${kit.idk}"`; 
 
           const labelHtml = btn.label 
-              ? `<span style="pointer-events: none;">${btn.label}</span>` // pointer-events: none fontos!
+              ? `<span style="pointer-events: none;">${btn.label}</span>` 
               : '';
 
           return `
-          <div class="modulebutt ${btn.cls}" ${dataAttributes}">
+          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="${lockStyle}">
               <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
               ${labelHtml}
               <span class="help">${btn.help}</span>
@@ -374,7 +386,17 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
   }
 
   function renderButtons2(role, kit) {
+      const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLejart();
+      const lockedKeywords = ['share', 'duplicate', 'fo_edit', 'edit', 'deleted'];
+
       return BUTTONS2[role].map(btn => {
+          const isRestricted = isLocked && (
+              (btn.action && lockedKeywords.includes(btn.action)) || 
+              (btn.cls && lockedKeywords.some(k => btn.cls.includes(k)))
+          );
+          
+          const lockStyle = isRestricted ? 'opacity: 0.4; filter: grayscale(1);' : '';
+
           const dataAttributes = btn.action 
           ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
           : `data-id="${kit.idk}"`;
@@ -384,7 +406,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
               : '';
 
           return `
-          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="display: flex; align-items: center; padding: 5px; cursor: pointer;">
+          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="display: flex; align-items: center; padding: 5px; cursor: pointer; ${lockStyle}">
               <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
               ${labelHtml}
               <span class="help">${btn.help}</span>
@@ -446,13 +468,13 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
       const helyiRendezo = document.createElement('div');
       helyiRendezo.classList.add('helyi-endezo'); 
 
-      helyiRendezo.innerHTML = `
+  helyiRendezo.innerHTML = `
           <div class="nagyonhelyi">
               <span class="material-symbols-rounded sort-icon">sort</span>
               <select class="helyi-szuro">
                   <option value="alap" selected disabled hidden>Csoportosítás...</option>
                   <option value="hatarido">Határidő szerint</option>
-                  <option value="nev">Név szerint</option>
+                  <option value="owner">Tulaj szerint</option> <option value="nev">Név szerint</option>
                   <option value="periodus">Dátum szerint</option>
                   <option value="megnev">Típus szerint</option>
               </select>
@@ -566,25 +588,15 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
     checkbox.dataset.id = kitoltes.idk;
     checkbox.classList.add("cheking");
 
- const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
+const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
     
-    // Alapértelmezetten beállítjuk az átmeneti értéket, amíg a fetch lefut
-kitoltesDiv.dataset.owner = role === 'szerkeszto' ? 'Ismeretlen megosztása' : 'Saját értékelések';
-
+    // Mivel a függvény elején a Promise.all már letöltötte az ownerName-eket,
+    // itt már azonnal, várakozás (then) nélkül hozzárendelhetjük:
     if (role === 'szerkeszto') {
-        getOriginalAdminName(kitoltes.idk).then(ownerName => {
-            // Amikor megjön a név, beírjuk a kártya dataset-jébe
-            kitoltesDiv.dataset.owner = `${ownerName} megosztása`;
-            
-            // Ha a felhasználó pont 'role' nézetben van, frissíthetjük a fejléc nevét is élőben (opcionális)
-            const parentCsopi = kitoltesDiv.closest('.csopi');
-            if (parentCsopi) {
-                const fejlec = parentCsopi.querySelector('.fejlec2');
-                if (fejlec && fejlec.textContent.includes('Ismeretlen')) {
-                    fejlec.textContent = `${ownerName} megosztása`;
-                }
-            }
-        });
+        const owner = kitoltes.ownerName || 'Ismeretlen';
+        kitoltesDiv.dataset.owner = `${owner} megosztása`;
+    } else {
+        kitoltesDiv.dataset.owner = 'Saját értékelések';
     }
 
     const modules = `<div class="modules" data-kitoltes-id="${kitoltes.idk}">${
@@ -975,8 +987,15 @@ let floatingWarn = document.getElementById('floating-audit-warning');
   
   // 1. Folytatás gomb
   document.querySelectorAll('.modulebutt.fo_edit').forEach(button => {
-        button.addEventListener('click', (event) => {
+       button.addEventListener('click', (event) => {
             event.stopPropagation(); 
+
+            // 🌟 SOFT LOCK ELLENŐRZÉS
+            if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+                if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+                return; // Megakadályozzuk az oldalváltást!
+            }
+
             let kitoltesDiv = event.target.closest('.meglevok');
             if (!kitoltesDiv) {
                  const wrapper = event.target.closest('.modules');
@@ -1021,20 +1040,31 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               }
           }
       });
-      btnDiv.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          
+ btnDiv.addEventListener('click', async (e) => {
+          e.stopPropagation(); // Ne kattintson a mögötte lévő kártyára
+
+          // 1. ITT A JAVÍTÁS: Létrehozzuk a változót a kattintáson belül is!
           let meglevok = e.target.closest('.meglevok'); 
+          
           if (!meglevok) {
               const wrapper = e.target.closest('.modules');
               if (wrapper && wrapper._originalRow) meglevok = wrapper._originalRow;
           }
 
           const action = btnDiv.dataset.action;
+
+          // 🌟 2. ITT A JAVÍTÁS: A kimaradt SOFT LOCK ELLENŐRZÉS pótlása!
+          // Csak a megosztást és a másolást blokkoljuk, ha lejárt a teszt.
+          const blokkoltAktivitasok = ['share', 'duplicate']; 
+          if (blokkoltAktivitasok.includes(action) && typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+              if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+              return; // Megakadályozzuk a továbbhaladást!
+          }
+
           const kitoltesId = btnDiv.dataset.id;
           const kitoltesNev = btnDiv.dataset.name;
 
-          // Action logika
+          // Action logika (Innentől folytatódik az eredeti kódod)
           const newParams = new URLSearchParams(window.location.search);
           newParams.set("kitoltes_id", kitoltesId);
           newParams.set("megtekintes", "true");
@@ -1396,6 +1426,12 @@ export function initFrissites({ userId, letrehozva }) {
 
   editButtons.forEach(btn => {
     btn.addEventListener('click', (event) => {
+        // 🌟 SOFT LOCK ELLENŐRZÉS
+      if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+          event.stopPropagation();
+          if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+          return;
+      }
       let kitDiv = event.target.closest('.meglevok');
       if (!kitDiv) {
          const wrapper = event.target.closest('.modules');
@@ -1539,6 +1575,11 @@ export function initTorol() {
     deletedButtons.forEach(deleted => {
         // ASYNC kulcsszó hozzáadva a függvény elejéhez!
         deleted.addEventListener('click', async function(event) {
+            if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+                event.stopPropagation();
+                if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+                return;
+            }
             const wrapper = deleted.closest('.modules');
             let target = deleted.closest('.meglevok');
             
