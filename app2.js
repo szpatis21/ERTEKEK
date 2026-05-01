@@ -159,19 +159,6 @@ function adminAuthMiddleware(req, res, next) {
         return res.status(403).send('Nincs jogosultságod az admin oldalhoz!');
     }
 }
-//KISZOLGÁLÁS
-// Statikus fájlok kezelése (public)
-/* app.use(express.static(path.join(__dirname, 'httpdocs'), {
-    etag: false,
-    setHeaders: (res, path) => {
-        if (path.endsWith('.css') || path.endsWith('.js')) {
-            res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-            res.setHeader('Expires', '0');
-            res.setHeader('Pragma', 'no-cache');
-        }
-    }
-})); */
-
 
 app.use(express.static(path.join(__dirname, 'httpdocs', 'public')));
 app.use('/both', express.static(path.join(__dirname, 'httpdocs', 'both')));

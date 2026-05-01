@@ -353,20 +353,24 @@ export const menuTartalmak = {
             <ul class="links">
                 <li>
                     <span class="nav-icon material-symbols-rounded">${ikonok.home}</span>
-                    <a href="/user/dashboard.html">ÉRTÉKEIM</a>
+                    <a href="/admin/dashboard.html">Feltöltö felület</a>
                 </li>
                 <li id="ertnone">
-                    <span class="nav-icon material-symbols-rounded ertekelesek">${ikonok.preview}</span>
-                    <a class="ertekelesek">Nézet</a>
+                    <span class="nav-icon material-symbols-rounded ertekelesek2">${ikonok.preview}</span>
+                    <a class="ertekelesek2">Nézet</a>
                 </li>
              
-                <li class="pontok toggleButton">
+                <li class="pontok toggleButton" style="display:none">
                     <span class="nav-icon material-symbols-rounded">${ikonok.page_info}</span>
                     <a>Pontrendszer</a>
                 </li>
-                <li id="nyil">
-                    <span class="nav-icon material-symbols-rounded">${ikonok.edit}</span>
-                    <a>Menü</a>
+                   <li id="help">
+                    <span class="nav-icon material-symbols-rounded ertekelesek">${ikonok.page_info}</span>
+                    <a class="help">Pontrendszer</a>
+                </li>
+                  <li>
+                    <span class="nav-icon material-symbols-rounded">${ikonok.widgets}</span>
+                    <a>Videós segédanyag</a>
                 </li>
                 <li>
                     <span class="nav-icon material-symbols-rounded">${ikonok.quiz}</span>
@@ -387,20 +391,24 @@ export const menuTartalmak = {
         <div class="dropdown_menu">
                    <li>
                     <span class="nav-icon material-symbols-rounded">${ikonok.home}</span>
-                    <a href="/user/dashboard.html">ÉRtÉKEIM</a>
+                    <a href="/user/dashboard.html">Feltöltő felület</a>
                 </li>
                 <li id="ertnone">
                     <span class="nav-icon material-symbols-rounded ertekelesek">${ikonok.preview}</span>
                     <a class="ertekelesek">Nézet</a>
                 </li>
-              
+               <li id="help">
+                    <span class="nav-icon material-symbols-rounded ertekelesek">${ikonok.preview}</span>
+                    <a class="ertekelesek">Segítség a pontozáshoz</a>
+                </li>
                 <li class="pontok toggleButton">
                     <span class="nav-icon material-symbols-rounded">${ikonok.page_info}</span>
                     <a>Pontrendszer</a>
                 </li>
-                <li id="nyil">
-                    <span class="nav-icon material-symbols-rounded">${ikonok.edit}</span>
-                    <a>Menü</a>
+                
+                  <li>
+                    <span class="nav-icon material-symbols-rounded">${ikonok.widgets}</span>
+                    <a>Videós segédanyag</a>
                 </li>
                 <li>
                     <span class="nav-icon material-symbols-rounded">${ikonok.quiz}</span>

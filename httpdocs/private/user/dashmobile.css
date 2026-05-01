@@ -15,9 +15,13 @@
     width: fit-content;
 
   }
+  .description22,.description23{
+    flex-direction: column !important;}
+    .logi{    width: fit-content;}
   .ai{
     flex-wrap: wrap;
   }
+  #minden-log-container{width: 100%;}
   #ai-modal-title{font-size: medium;}
 /*   html, body {
     max-width: 100vw;

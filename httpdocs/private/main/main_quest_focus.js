@@ -151,12 +151,14 @@ static elrejtiAltTemaDiagram() {
 static frissitAltTemaDiagram() {
     const aktivAlKatElem = document.querySelector('.al.active');
     if (!aktivAlKatElem) return;
+const cimElem = aktivAlKatElem.querySelector('.cim');
+    const alKatNev = cimElem ? cimElem.textContent.trim() : aktivAlKatElem.textContent.trim();
 
-    const alKatNev = aktivAlKatElem.textContent.trim();
     const trElem = [...document.querySelectorAll('tr.al-kategoria')].find(tr => {
         const td = tr.querySelector('td.al-kategoria');
         return td && td.textContent.trim() === alKatNev;
     });
+    
 
     if (!trElem) return;
 

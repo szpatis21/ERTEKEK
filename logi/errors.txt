@@ -321,3 +321,36 @@ SyntaxError: Unexpected token ','
     at Module.require (node:internal/modules/cjs/loader:1340:12)
     at require (node:internal/modules/helpers:141:16)
     at Object.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\app.js:127:19)
+[2026-04-20T08:41:57.705Z] HTTP ERROR: ReferenceError: intmai is not defined
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\adminmodul.js:483:27
+    at Layer.handle [as handle_request] (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\layer.js:95:5)
+    at next (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\layer.js:95:5)
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:280:10)
+    at Function.handle (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:175:3)
+    at router (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:47:12)
+[2026-04-21T04:46:00.105Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-04-21T07:13:56.853Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-04-21T18:42:14.686Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-04-21T18:43:52.483Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-04-21T18:43:53.961Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-04-21T18:43:58.317Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\private\admin\upload\upload.html'
+[2026-05-01T02:36:51.440Z] UNCAUGHT EXCEPTION: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:699:11)
+    at ServerResponse.header (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:794:10)
+    at ServerResponse.send (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:174:12)
+    at ServerResponse.json (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:278:15)
+    at Query.onResult (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\feltoltomodul.js:405:29)
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\query.js:86:16
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)
+[2026-05-01T02:40:00.247Z] UNCAUGHT EXCEPTION: Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
+    at ServerResponse.setHeader (node:_http_outgoing:699:11)
+    at ServerResponse.header (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:794:10)
+    at ServerResponse.send (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:174:12)
+    at ServerResponse.json (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\response.js:278:15)
+    at Query.onResult (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\feltoltomodul.js:405:29)
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\query.js:86:16
+    at process.processTicksAndRejections (node:internal/process/task_queues:85:11)

@@ -26,11 +26,28 @@
             @media screen and (min-width: 900px) and (max-width: 995px) { 
 .toggle-jelszo{    top: 50%;
    }}
+body{
+      background: linear-gradient(293deg, #7d9b31f5 0%, #007e5e 100% 100%);
+}#logobelso{    border: 3px solid #006494;}
+.szoveg{    background: #dbffd9c7;
 
+}
+#llog{
+      background: #007e5e;
+}
+#fnev, #pass {
+    color: #0177a9;
+   
+    border: 1px solid #0070c9;}
+  
+    .gold {
+    color: #007e5e;
+    text-shadow: 0 1px 18px #007e5ead;
+}
 .toggle-jelszo{    top: 50%;
     position: absolute;
     cursor: pointer;
-    left: 80%; color: #ff6e01;}
+    left: 80%; color: #006494;}
     
     @media(max-width:900px){
   .toggle-jelszo{
@@ -61,19 +78,18 @@
       <div class="grid">
         <div class="elso">
           <h1 class="reveal">Intelligens értékelési és kérdöív rendszer <br> <br> <span style="font-family: Arial, Helvetica, sans-serif;">Lépésről-lépésre. Értékről-értékre</span> </h1>
-          <p class="reveal">Innovatív Értékelés rendszer: valódi adatok, érthető jelentések, vizuális áttekintés. A beállított stíluselemeket megtartva, modern élményre hangolva.</p>
+          <p class="reveal">ADMIN FELÜLET</p>
           <div class="reveal" style="display:flex; gap:12px; flex-wrap:wrap">
-            <a href="#jelentkezz" class="btn">Dolgozzunk együtt</a>
-            <a href="#features" class="btn btn--ghost">Értékeink</a>
+      
           </div>
-          <div class="badge-row reveal">
+         <!--  <div class="badge-row reveal">
             <span class="badge">Pdf generálás</span>
             <span class="badge">Diagrammok</span>
             <span class="badge">Elemző mód</span>
             <span class="badge">GDPR </span>
             <span class="badge">Szakmaiság</span>
 
-          </div>
+          </div> -->
         </div>
         <div class="mock reveal">
          <div style="position: relative;
@@ -94,23 +110,13 @@
         <input id="pass" type="password" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
         <span class="material-symbols-rounded toggle-jelszo">visibility</span>
     </div>
-    <div class="lehetosegek">
-        <select name="temakor" id="temakor" required>
-            <option value="" disabled selected>Kérem válasszon témakört</option>
-            <option value="1">Fejlesztő-nevelő oktatás</option>
-            <option value="2">Tanulásban akadályozottak</option>
-            <option value="3">Értelmileg akadályoztatottak</option>
-        </select>
-        <select name="szerepkor" id="szerepkor" required>
-            <option value="3">Értékelő</option>
-            <option value="2">Elemző</option>
-            <option value="1">Feltöltő</option>
-        </select>
+<div class="lehetosegek" style="display: none;">
+        <input type="hidden" id="szerepkor" name="szerepkor" value="4"> 
+        <input type="hidden" id="temakor" name="temakor" value="1"> 
     </div>
 
     <button id="llog">Bejelentkezek</button>     
             
-    <button id="whbutt">Mi is a jelszavam...?</button>    
 </div>
                     <div id="error-message" class="error hidden"></div>
                 </div><span class="gold">É</span>RTÉKEK</div>
@@ -120,8 +126,7 @@
       </div>
     </section>
 
-    <!-- value props strip -->
-    <section class="infostrip">
+    <!-- <section class="infostrip">
       <div class="container items reveal">
         <div class="infocard"><h3>Gyors indulás</h3><p>Szakmai anyagok, oktatásra hangolva. Évtizedes szakmai tapasztalattal. Értékekkel</p></div>
         <div class="infocard"><h3>Pontosság</h3><p>Egyedi pontrendszer és pontszámítás, stabil eredmények.</p></div>
@@ -129,7 +134,6 @@
       </div>
     </section>
 
-    <!-- FEATURES -->
     <section id="features" class="features container">
       <h2 class="reveal" style="font-family:'Montserrat Subrayada',sans-serif;">Hogyan segítünk skálázni?</h2>
       <div class="grid">
@@ -161,7 +165,6 @@
       </div>
     </section>
 
-    <!-- PLAN STEPS -->
     <section id="plan" class="steps">
       <div class="container">
         <h2 class="reveal" style="font-family:'Montserrat Subrayada',sans-serif; color:#fff">Minden kérdés fontos...</h2>
@@ -176,7 +179,6 @@
       </div>
     </section>
 
-    <!-- TESTIMONIALS (placeholder kártyák) -->
     <section class="testimonials">
       <div class="container">
         <h2 class="reveal" style="font-family:'Montserrat Subrayada',sans-serif;">Miért az Értékek?</h2>
@@ -189,7 +191,6 @@
       </div>
     </section>
 
-    <!-- FAQ -->
     <section id="faq" class="faq">
       <div class="container">
         <h2 class="reveal" style="color: orange;; font-family:'Montserrat Subrayada',sans-serif;">Gyakori kérdések</h2>
@@ -200,7 +201,6 @@
       </div>
     </section>
 
-    <!-- CTA FOOTER -->
     <section id="jelentkezz" class="cta-footer">
       <div class="container">
         <div class="cta-card reveal">
@@ -211,7 +211,7 @@
           <a class="btn" href="mailto:info@ertek.com?subject=Bemutat%C3%B3%20k%C3%A9r%C3%A9se">Ki szeretném próbálni</a>
         </div>
       </div>
-    </section>
+    </section> -->
   </main>
 
   <footer class="container">

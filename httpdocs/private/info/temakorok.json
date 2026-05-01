@@ -40,52 +40,39 @@
   "optionSets": {
     "1": [
       {
-        "value": "",
-        "text": "Válasszon egy témakört",
-        "disabled": true,
-        "selected": true
-      },
-      {
         "value": "Általános jellemzők",
         "text": "Általános jellemzők",
-        "leiras": "Alapadatok, egyedi jellemzők",
-        "szin": "rgb(255, 198, 21)",
-        "chart": "rgb(255, 193, 7, 0.5)"
+        "leiras": "Alapadatok, egyedi jellemzők2",
+        "szin": "#ff9500",
+        "chart": "#ff9500"
       },
       {
         "value": "Kommunikáció és beszéd",
         "text": "Kommunikáció és beszéd",
         "leiras": "Kommunikációs készségek és képességek",
-        "szin": "rgb(255, 17, 0)",
-        "chart": "rgb(255, 17, 0, 0.5)"
+        "szin": "#ff1100",
+        "chart": "#ff1100"
       },
       {
         "value": "Reggeli és búcsúkör",
         "text": "Reggeli és búcsúkör",
         "leiras": "Kötött foglalkozás alatti viselkedés, képességek.",
-        "szin": "rgb(156, 39, 176)",
-        "chart": "rgb(156, 39, 176, 0.5)"
-      },
-      {
-        "value": "Szűkebb-tágabb környezet",
-        "text": "Szűkebb-tágabb környezet",
-        "leiras": "Közvetlen és tágabb környezet felfedezése",
-        "szin": "rgb(233, 30, 99)",
-        "chart": "rgb(233, 30, 99, 0.5)"
+        "szin": "#c725e4",
+        "chart": "#c725e4"
       },
       {
         "value": "Játék és szórakozás",
         "text": "Játék és szórakozás",
         "leiras": "Kötetlen tevényenység alatti viselkedés",
-        "szin": "rgb(92, 0, 255)",
-        "chart": "rgb(92, 0, 255, 0.5)"
+        "szin": "#843dff",
+        "chart": "#843dff"
       },
       {
         "value": "Mozgásnevelés",
         "text": "Mozgásnevelés",
         "leiras": "Mozgásfejlesztési tevékenységek és gyakorlat.",
-        "szin": "rgb(33, 150, 243)",
-        "chart": "rgb(33, 150, 243, 0.5)"
+        "szin": "#20bef3",
+        "chart": "#20bef3"
       },
       {
         "value": "Önkiszolgálásra nevelés",
@@ -93,6 +80,13 @@
         "leiras": "Önkiszolgálási képességek",
         "szin": "rgb(24, 157, 0)",
         "chart": "rgba(24, 157, 0, 0.5)"
+      },
+      {
+        "value": "Teszt Témakör1",
+        "text": "Teszt Témakör1",
+        "leiras": "Teszt",
+        "szin": "#db33b7",
+        "chart": "#db33b7"
       }
     ],
     "2": [

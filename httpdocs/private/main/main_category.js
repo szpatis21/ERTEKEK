@@ -70,7 +70,22 @@ const response = await fetch('/api/check-nem-ag-batch', {
         const kerdesmodul = document.createElement("div");
         kerdesmodul.classList.add("kerdesmodul");
         kerdesmodul.setAttribute('data-kindex', this.kindex); 
+// --- ÚJ RÉSZ: Sorszám (kindex) megjelenítése szerkesztő módban a question div előtt ---
+        if (document.getElementById('szerkeszto')) {
+            const sorszamJelzo = document.createElement("div");
+            sorszamJelzo.classList.add("kerdes-sorszam-jelzo");
+            sorszamJelzo.textContent = `${this.kindex}.`;
+            
+            // Kis inline formázás, hogy szépen mutasson a kártya mellett
+       
 
+            // A befoglaló modult flex-re állítjuk, hogy a szám és a kártya egymás mellé kerüljön
+            kerdesmodul.style.display = "flex";
+            kerdesmodul.style.flexDirection = "row";
+
+            kerdesmodul.appendChild(sorszamJelzo);
+        }
+        // --- ÚJ RÉSZ VÉGE ---
         const div = document.createElement('div');
         div.textContent = this.szoveg;
         div.setAttribute('data-id', this.id);
@@ -350,26 +365,32 @@ inputMezo.addEventListener('input', (event) => {
         //Eltárolja a válasz id-jét a kerdesValaszok tömbben. vagy törli őket onnan
         //Megjeleníti vagy elrejte az adott főkérdésekhez tartozó alkérdéseket
         //Feltölti a nyomtatható konténert a szöveggel (ez maga az értékelés)
-    toggleValtozasKezeles(event) {
+   toggleValtozasKezeles(event) {
         const valasz = event.target.value; // Radio button értéke
         kerdesValaszok[this.id] = valasz; // Mentjük az állapotot
-       console.log(`Kérdés ID: ${this.id}, Állapot: ${valasz}`); // Állapot loggolása
-        console.log('Aktuális kérdés-válasz állapot:', kerdesValaszok); // Teljes állapot loggolása  */
+        console.log(`Kérdés ID: ${this.id}, Állapot: ${valasz}`); // Állapot loggolása
+        console.log('Aktuális kérdés-válasz állapot:', kerdesValaszok); // Teljes állapot loggolása
+        
         const gomboc = event.target.closest('.question').querySelector(".gomboc");
         const nemRadio = event.target.closest('.question').querySelector(".nem");
         let igenszoveg = event.target.closest('.question').querySelector('.igenszoveg');
         let nemszoveg = event.target.closest('.question').querySelector('.nemszoveg');
         let uresszoveg = event.target.closest('.question').querySelector('.uresszoveg');
         let kerdessav = event.target.closest(".question");
+
+        // --- 3 ÁLLÁSÚ KÉRDÉS (Igen / Üres / Nem) ---
         if (nemRadio) {
             if (valasz === 'ures') {
-                this.clearAlKerdesek(this.igenAg); // Törli az "igen" ág alkérdéseit
-                this.clearAlKerdesek(this.nemAg); // Törli a "nem" ág alkérdéseit
+                this.clearAlKerdesek(this.igenAg); 
+                this.clearAlKerdesek(this.nemAg); 
                 gomboc.style.boxShadow = "inset 0px 0px 3px 1px grey";
                 gomboc.style.background = "transparent";
                 gomboc.style.transform = "translate(0px, 0px) rotate(45deg)";
+                
                 kerdessav.style.boxShadow = "none";
-                Focus.hideAlKerdesek(this.id); // Elrejti az alkérdések konténerét
+                kerdessav.style.background = ""; // JAVÍTVA: Háttér törlése
+
+                Focus.hideAlKerdesek(this.id); 
                 igenszoveg.classList.remove("igenteli");
                 nemszoveg.classList.remove("nemteli");
                 nemszoveg.style.color="grey";
@@ -377,61 +398,74 @@ inputMezo.addEventListener('input', (event) => {
                 uresszoveg.style.color="black";
 
             } else if (valasz === 'nem') {
-                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); // Alkérdések betöltése
+                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); 
                 gomboc.style.boxShadow = "inset 0px 0px 3px 1px red";
-                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #e20000a3";
                 gomboc.style.background = "#ff0000";
+                gomboc.style.transform = "translate(-38px, 0px) rotate(135deg)";
+                
+                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #e2000033";
+                kerdessav.style.background="rgb(255 0 0 / 6%)"; // JAVÍTVA: pontosvessző nélkül
+
                 nemszoveg.style.color="white";
                 igenszoveg.style.color="grey";
                 uresszoveg.style.color="grey";
 
-                gomboc.style.transform = "translate(-38px, 0px) rotate(135deg)";
-                this.clearAlKerdesek(this.igenAg); // Törli az "igen" ág alkérdéseit
+                this.clearAlKerdesek(this.igenAg); 
                 igenszoveg.classList.remove("igenteli");
                 nemszoveg.classList.add("nemteli");
 
-            } else {
-                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); // Alkérdések betöltése
+            } else { // IGEN ág
+                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); 
                 gomboc.style.boxShadow = "inset 0px 0px 3px 1px #88ca00";
                 gomboc.style.color = "white";
                 gomboc.style.background = "rgb(145 204 0)";
                 gomboc.style.transform = "translate(42px, 0px) rotate(-135deg)";
-                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #0d8200a3"
+                
+                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #0d8200a3";
+                kerdessav.style.background="rgb(48 255 0 / 8%)"; // JAVÍTVA: pontosvessző kivéve a stringből
+
                 igenszoveg.classList.add("igenteli");
                 igenszoveg.style.color="white";
                 nemszoveg.classList.remove("nemteli");
                 nemszoveg.style.color="grey";
                 uresszoveg.style.color="grey";
-                this.clearAlKerdesek(this.nemAg); // Törli a "nem" ág alkérdéseit
+                this.clearAlKerdesek(this.nemAg); 
             }
-        } else {
+        } 
+        // --- 2 ÁLLÁSÚ KÉRDÉS (Igen / Üres) ---
+        else {
             if (valasz === 'ures') {
-                this.clearAlKerdesek(this.igenAg); // Törli az "igen" ág alkérdéseit
-                this.clearAlKerdesek(this.nemAg); // Törli a "nem" ág alkérdéseit
+                this.clearAlKerdesek(this.igenAg); 
+                this.clearAlKerdesek(this.nemAg); 
                 gomboc.style.boxShadow = "inset 0px 0px 3px 1px grey";
                 gomboc.style.background = "transparent";
-                gomboc.style.transform = "translate(0px, 0px) rotate(45deg)";               
                 gomboc.style.transform = "translate(-20px, 0px) rotate(45deg)";
+                
+                kerdessav.style.boxShadow = "none";
+                kerdessav.style.background = ""; // JAVÍTVA: Háttér törlése
+
                 igenszoveg.classList.remove("igenteli");
                 igenszoveg.classList.add(".nemkell");
-                kerdessav.style.boxShadow = "none";
                 uresszoveg.style.color ="black";
                 igenszoveg.style.color ="grey";
-                Focus.hideAlKerdesek(this.id); // Elrejti az alkérdések konténerét
+                Focus.hideAlKerdesek(this.id); 
             } else if (valasz === 'igen') {
-                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); // Alkérdések betöltése
+                KategoriaKezelo.loadAlKerdesek(this.id, valasz, this); 
                 gomboc.style.boxShadow = "inset 0px 0px 3px 1px #88ca00";
                 gomboc.style.color = "white";
                 gomboc.style.background = "rgb(145 204 0)";                
                 gomboc.style.transform = "translate(28px, 0px) rotate(135deg)";
+                
+                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #0d8200a3";
+                kerdessav.style.background="rgb(48 255 0 / 8%)"; // JAVÍTVA: hozzáadva a zöld háttér ide is
+
                 this.clearAlKerdesek(this.nemAg); 
                 igenszoveg.classList.add("igenteli");    
                 igenszoveg.style.color ="white";
                 uresszoveg.style.color ="grey";
-                kerdessav.style.boxShadow="inset 6px 0px 1px 1px #0d8200a3";
             }
         }
-        KategoriaKezelo.frissitErtekelesekContainer();/*KategoriaKezelo.generaldDiagram(); */
+        KategoriaKezelo.frissitErtekelesekContainer();
     }
     //A toggleValtozasKezeles() metódus hívja meg, amikor egy kérdésre a felhasználó másik választ ad, így az előző válaszok törlődnek.
         //Kap egy olyan listát (ag) paraméterként, amely a kérdés alkérdéseinek azonosítóit tartalmazza.

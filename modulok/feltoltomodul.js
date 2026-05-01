@@ -1,8 +1,58 @@
 const express = require('express');
 const router = express.Router();
+const fs = require('fs');
+const path = require('path');
 
 function feltoltes(db) {
+    const logger = require('./logmodul')(db);
+
 	//Feltöltési selectek automatikus kitöltése
+		router.get('/api/get-sablonok', (req, res) => {
+			const { modulId, userId } = req.query;
+
+			// Kinyerjük a userId-t a sessionből (legbiztonságosabb), vagy a query-ből
+			const actualUserId = req.session?.userId || userId;
+
+			if (!modulId || !actualUserId) {
+				return res.status(400).json({ message: 'A modulId és a userId megadása kötelező.' });
+			}
+
+			// LÉNYEG: A backend maga keresi ki az int_id-t a felhasználó id-ja alapján!
+	const query = `
+    SELECT s.csoport_nev, s.kerdes, s.ag, s.pont, s.szoveges, s.maximalis_szint 
+    FROM sablonok s
+    JOIN felhasznalok f ON s.int_id = f.int_id
+    WHERE s.modul_id = ? AND f.id = ?
+`;
+
+			db.query(query, [modulId, actualUserId], (err, results) => {
+				if (err) {
+					console.error('Hiba történt a sablonok lekérdezésekor:', err);
+					return res.status(500).json({ message: 'Hiba történt a sablonok lekérdezésekor.' });
+				}
+
+				// Lapos SQL eredmények csoportosítása a frontend JSON formátumára
+				const csoportokMap = {};
+				results.forEach(row => {
+					if (!csoportokMap[row.csoport_nev]) {
+						csoportokMap[row.csoport_nev] = {
+							nev: row.csoport_nev,
+							elemek: []
+						};
+					}
+					csoportokMap[row.csoport_nev].elemek.push({
+						szoveg: row.kerdes,
+						ertek: row.pont,
+						valasz_ag: row.ag,
+						szoveges: row.szoveges === 1,
+                        maxi: row.maximalis_szint === 1// 1 -> true, 0 -> false
+                        
+					});
+				});
+
+				res.json({ SABLON_CSOPORTOK: Object.values(csoportokMap) });
+			});
+		});
 		// Altémakör
 		  router.get('/alkategoriak', (req, res) => {
 			const { foKategoria } = req.query;
@@ -104,12 +154,6 @@ function ujraszamolOsszErtek(parentId, db, callback) {
   });
 }
 
-
-
-        
-        
-        
-
     // KÉRDÉS HOZZÁADÁSA
     router.post('/kerdesek', (req, res) => {
         const { kerdesSzoveg, negaltKerdesSzoveg, foKategoria, alKategoria, altTema, ertek, negalt_ertek, szoveges, kindex, alkerdesek, maximalis_szint,modulId  } = req.body;
@@ -117,7 +161,7 @@ function ujraszamolOsszErtek(parentId, db, callback) {
         const cleanErtek = (!ertek || ertek === '') ? 0 : Number(ertek);
         const cleanKindex = (!kindex || kindex === '') ? 0 : Number(kindex);
 
-   // --- FŐ KÉRDÉS INSERT ---                                               ▼ +negalt_ertek
+   // --- FŐ KÉRDÉS INSERT ---                                               
 const query = `
   INSERT INTO kerdesek
   (kerdes_szoveg, negalt_kerdes_szoveg, parent_id,
@@ -134,7 +178,7 @@ const values = [
   alKategoria,
   altTema,
   cleanErtek,
-  cleanNegaltErtek,       // most jó helyen
+  cleanNegaltErtek,       
   szoveges,
   cleanKindex,
   maximalis_szint ? 1 : 0,
@@ -151,29 +195,35 @@ const values = [
     
             if (alkerdesek && alkerdesek.length > 0) {
                 const alkKerdesekQueries = alkerdesek
-    .filter(alk => alk.al_kerdesSzoveg)
-    .map(alk => {
-        const cleanAlkErtek = (!alk.al_ertek || alk.al_ertek === '') ? 0 : Number(alk.al_ertek);
-        const cleanAlkKindex = (!alk.al_kindex || alk.al_kindex === '') ? 0 : Number(alk.al_kindex);
-return {
-    query: 'INSERT INTO kerdesek (kerdes_szoveg, negalt_kerdes_szoveg, parent_id, fo_kategoria, al_kategoria, alt_tema, ertek, kindex, szoveges, valasz_ag, maximalis_szint, modul_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    values: [
-        alk.al_kerdesSzoveg,
-        alk.al_negaltKerdesSzoveg || '',
-        newKerdesId,
-        foKategoria,
-        alKategoria,
-        altTema,
-        cleanAlkErtek,
-        cleanAlkKindex,
-        alk.szoveges,
-        alk.valasz_ag,
-        alk.maximalis_szint ? 1 : 0,
-        modulId
-    ]
-};
+                    .filter(alk => alk.al_kerdesSzoveg || alk.szoveg) 
+                    .map(alk => {
+                        const alkSzoveg = alk.al_kerdesSzoveg || alk.szoveg;
+                        const alkNegaltSzoveg = alk.al_negaltKerdesSzoveg || alk.negaltSzoveg || '';
+                        const cleanAlkErtek = Number(alk.al_ertek ?? alk.ertek) || 0;
+                        const cleanAlkNegaltErtek = Number(alk.al_negalt_ertek ?? alk.negaltErtek) || 0; 
+                        const cleanAlkKindex = Number(alk.al_kindex ?? alk.kindex) || 0;
+                        const isMaxi = alk.maximalis_szint || alk.maxi ? 1 : 0;
+                        const valaszAg = alk.valasz_ag || alk.valaszAg;
 
-    });
+                        return {
+                            query: 'INSERT INTO kerdesek (kerdes_szoveg, negalt_kerdes_szoveg, parent_id, fo_kategoria, al_kategoria, alt_tema, ertek, negalt_ertek, kindex, szoveges, valasz_ag, maximalis_szint, modul_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                            values: [
+                                alkSzoveg,
+                                alkNegaltSzoveg,
+                                newKerdesId,
+                                foKategoria,
+                                alKategoria,
+                                altTema,
+                                cleanAlkErtek,
+                                cleanAlkNegaltErtek, 
+                                cleanAlkKindex,
+                                alk.szoveges ? 1 : 0,
+                                valaszAg,
+                                isMaxi,
+                                modulId
+                            ]
+                        };
+                    });
 
                 const insertAlkerdesek = alkKerdesekQueries.map(q => new Promise((resolve, reject) => {
                     db.query(q.query, q.values, (err) => {
@@ -203,107 +253,267 @@ return {
             }
         });
     });
-    //FRISSÍT
-  // PATCH – kérdés (és alkérdések) frissítése
+
+// PATCH – kérdés (és alkérdések) frissítése BIZTONSÁGOSAN
 router.patch('/kerdesek/:id', (req, res) => {
-  const { id } = req.params;
-  const {
-    kerdesSzoveg, negaltKerdesSzoveg, foKategoria, alKategoria, altTema,
-    ertek, negalt_ertek, szoveges, kindex, maximalis_szint,
-    alkerdesek = [], modulId
-  } = req.body;
 
-  const cleanErtek       = Number(ertek)        || 0;
-  const cleanNegaltErtek = Number(negalt_ertek) || 0;
-  const cleanKindex      = Number(kindex)       || 0;
+    const { id } = req.params;
+    const {
+        kerdesSzoveg, negaltKerdesSzoveg, foKategoria, alKategoria, altTema,
+        ertek, negalt_ertek, szoveges, kindex, maximalis_szint,
+        alkerdesek = [], modulId
+    } = req.body;
+const actualUserId = req.session?.userId || req.query.userId || 0; 
 
-  /* 1) FŐ KÉRDÉS UPDATE */
-  const updSql = `
-    UPDATE kerdesek SET
-      kerdes_szoveg = ?, negalt_kerdes_szoveg = ?,
-      fo_kategoria  = ?, al_kategoria = ?, alt_tema = ?,
-      ertek = ?, negalt_ertek = ?,
-      szoveges = ?, kindex = ?,
-      maximalis_szint = ?, modul_id = ?
-    WHERE id = ?`;
-  const updVals = [
-    kerdesSzoveg, negaltKerdesSzoveg,
-    foKategoria,  alKategoria,  altTema,
-    cleanErtek,   cleanNegaltErtek,
-    szoveges ? 1 : 0, cleanKindex,
-    maximalis_szint ? 1 : 0,
-    modulId,
-    id
-  ];
+    logger(req, actualUserId, 'KÉRDÉS_SZERKESZTÉS', {
+        kerdes_id: id,
+        modul_id: modulId,
+        fokerdes_szoveg: kerdesSzoveg,
+        kapott_alkerdesek_szama: alkerdesek.length,
+        bekuldott_alkerdesek: alkerdesek
+    });
+    const cleanErtek       = Number(ertek)        || 0;
+    const cleanNegaltErtek = Number(negalt_ertek) || 0;
+    const cleanKindex      = Number(kindex)       || 0;
 
-  db.query(updSql, updVals, (err1) => {
-    if (err1) {
-      console.error('[PATCH UPDATE]', err1);
-      return res.status(500).json({ message: 'Hiba a fő kérdés frissítésekor.', error: err1.message });
+    /* 1) FŐ KÉRDÉS UPDATE */
+    const updSql = `
+        UPDATE kerdesek SET
+            kerdes_szoveg = ?, negalt_kerdes_szoveg = ?,
+            fo_kategoria  = ?, al_kategoria = ?, alt_tema = ?,
+            ertek = ?, negalt_ertek = ?,
+            szoveges = ?, kindex = ?,
+            maximalis_szint = ?, modul_id = ?
+        WHERE id = ?`;
+    const updVals = [
+        kerdesSzoveg, negaltKerdesSzoveg,
+        foKategoria,  alKategoria,  altTema,
+        cleanErtek,   cleanNegaltErtek,
+        szoveges ? 1 : 0, cleanKindex,
+        maximalis_szint ? 1 : 0,
+        modulId, id
+    ];
+
+    db.query(updSql, updVals, async (err1) => {
+        if (err1) {
+            console.error('[PATCH UPDATE]', err1);
+            return res.status(500).json({ message: 'Hiba a fő kérdés frissítésekor.', error: err1.message });
+        }
+
+        try {
+            // Segédfüggvény az async SQL futtatáshoz
+            const queryAsync = (sql, params) => new Promise((resolve, reject) => {
+                db.query(sql, params, (e, r) => e ? reject(e) : resolve(r));
+            });
+
+            /* 2) Alkérdések szinkronizálása (Módosítás, Beszúrás, Törlés) */
+            
+            // Lekérjük a JELENLEGI alkérdések ID-jait
+            const existingRows = await queryAsync('SELECT id FROM kerdesek WHERE parent_id = ?', [id]);
+            const existingIds = existingRows.map(r => r.id);
+
+            // Kinyerjük a FRONTENDRŐL érkező (megtartott) ID-kat
+            const incomingIds = alkerdesek.map(a => a.al_id).filter(val => val !== null);
+            
+            // Ami eddig létezett, de most nem jött meg -> TÖRÖLNI KELL
+           // Ami eddig létezett, de most nem jött meg -> TÖRÖLNI KELL
+            const idsToDelete = existingIds.filter(eId => !incomingIds.includes(eId));
+            
+            // --- BIZTONSÁGI FÉK KEZDETE ---
+            // Ha az adatbázisban voltak alkérdések, de a frontend egyet sem küldött (üres tömb),
+            // és emiatt a rendszer az összes létezőt törölni akarná:
+            if (existingIds.length > 0 && incomingIds.length === 0 && idsToDelete.length === existingIds.length) {
+                console.warn(`[BIZTONSÁGI FÉK] A ${id}-es kérdésnél az összes alkérdés törlését megakadályoztuk!`);
+           
+                idsToDelete.length = 0; 
+            }
+
+            if (idsToDelete.length > 0) {
+                await queryAsync('DELETE FROM kerdesek WHERE id IN (?)', [idsToDelete]);
+            }
+            // Végigmegyünk a kapott alkérdéseken
+            for (const alk of alkerdesek) {
+                const isSzov = alk.szoveges ? 1 : 0;
+                const isMaxi = alk.maximalis_szint ? 1 : 0;
+                const alkErtek = Number(alk.al_ertek) || 0;
+                const alkNegaltErtek = Number(alk.al_negalt_ertek) || 0; // <-- EZT BELE KELL TENNI
+                const alkKindex = Number(alk.al_kindex) || 0;
+
+                if (alk.al_id) {
+                    // VAN ID -> Csak frissítjük a meglévő adatokat
+                    const updAlkSql = `
+                        UPDATE kerdesek SET
+                            kerdes_szoveg = ?, negalt_kerdes_szoveg = ?,
+                            ertek = ?, negalt_ertek = ?, kindex = ?, szoveges = ?, 
+                            valasz_ag = ?, maximalis_szint = ?, modul_id = ?
+                        WHERE id = ? AND parent_id = ?`;
+                    
+                    await queryAsync(updAlkSql, [
+                        alk.al_kerdesSzoveg, alk.al_negaltKerdesSzoveg || '',
+                        alkErtek, alkNegaltErtek, alkKindex, isSzov, alk.valasz_ag, isMaxi, modulId,
+                        alk.al_id, id
+                    ]);
+                } else {
+                    // NINCS ID -> Ez egy most hozzáadott új alkérdés
+                    const insAlkSql = `
+                        INSERT INTO kerdesek
+                        (kerdes_szoveg, negalt_kerdes_szoveg, parent_id,
+                         fo_kategoria, al_kategoria, alt_tema,
+                         ertek, negalt_ertek, kindex, szoveges, valasz_ag, maximalis_szint, modul_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+                    
+                    await queryAsync(insAlkSql, [
+                        alk.al_kerdesSzoveg, alk.al_negaltKerdesSzoveg || '', id,
+                        foKategoria, alKategoria, altTema,
+                        alkErtek, alkNegaltErtek, alkKindex, isSzov, alk.valasz_ag, isMaxi, modulId
+                    ]);
+                }
+            }
+            /* 3) Újraszámolás */
+           /* 3) Újraszámolás */
+            // Konvertáljuk az URL-ből érkező id-t Integer-ré, hogy az újraszámoló 
+            // DB lekérdezései garantáltan egyezzenek az adatbázis típusaival!
+            
+          const numericId = parseInt(id, 10);
+
+// 🔥 MEGKERESSÜK A PARENT_ID-T
+const parentResult = await queryAsync(
+    'SELECT parent_id FROM kerdesek WHERE id = ?',
+    [numericId]
+);
+
+// ha alkérdés → parent_id
+// ha főkérdés → parent_id null → marad numericId
+const parentId = parentResult?.[0]?.parent_id || numericId;
+
+// 🔥 HELYES ÚJRASZÁMOLÁS
+ujraszamolOsszErtek(parentId, db, (err4) => {
+    if (err4) {
+        console.error('[PATCH UJRASZAMOL]', err4);
+        return res.status(500).json({ 
+            message: 'Hiba az ossz_ertek újraszámolásakor.', 
+            error: err4.message 
+        });
     }
 
-    /* 2) Régi alkérdések törlése */
-    db.query('DELETE FROM kerdesek WHERE parent_id = ?', [id], (err2) => {
-      if (err2) {
-        console.error('[PATCH DELETE ALKERDESEK]', err2);
-        return res.status(500).json({ message: 'Hiba az alkérdések törlésekor.', error: err2.message });
-      }
+    const fokerdesCheckQuery = `
+        SELECT id, ertek, negalt_ertek 
+        FROM kerdesek 
+        WHERE id = ? AND parent_id IS NULL 
+          AND id NOT IN (
+            SELECT DISTINCT parent_id 
+            FROM kerdesek 
+            WHERE parent_id IS NOT NULL
+          )
+    `;
 
-      /* 3) Új alkérdések beszúrása, ha vannak */
-      const values = alkerdesek
-        .filter(a => a.al_kerdesSzoveg)
-        .map(a => [
-          a.al_kerdesSzoveg,
-          a.al_negaltKerdesSzoveg || '',
-          id,
-          foKategoria,
-          alKategoria,
-          altTema,
-          Number(a.al_ertek) || 0,
-          Number(a.al_kindex) || 0,
-          a.szoveges ? 1 : 0,
-          a.valasz_ag,
-          modulId
-        ]);
+    db.query(fokerdesCheckQuery, [parentId], (checkErr, checkRows) => {
+        if (checkErr) {
+            console.error('[PATCH FOKERDES CHECK]', checkErr);
+            return res.json({ message: 'Frissítés sikeres, de a főkérdés %-ának ellenőrzése hibázott.' });
+        }
 
-      if (values.length === 0) {
-        return afterInsert();
-      }
+        if (checkRows.length > 0) {
+            const row = checkRows[0];
+            const ertek = Number(row.ertek) || 0;
+            const negalt_ertek = Number(row.negalt_ertek) || 0;
 
-      const insSql = `
+            const maxErtek = Math.max(ertek, negalt_ertek) || 1;
+
+            const ossz_ertek = Math.round((Math.max(ertek, negalt_ertek) / maxErtek) * 100);
+            const kisebb_ossz_ertek = Math.round((Math.min(ertek, negalt_ertek) / maxErtek) * 100);
+
+            const finalOsszErtek = ertek >= negalt_ertek ? ossz_ertek : kisebb_ossz_ertek;
+
+            db.query(
+                'UPDATE kerdesek SET ossz_ertek = ? WHERE id = ?', 
+                [finalOsszErtek, parentId], 
+                (updErr) => {
+                    if (updErr) console.error('[PATCH FOKERDES UPDATE]', updErr);
+
+                    return res.json({ 
+                        message: 'Frissítés sikeres, értékek és főkérdés % újraszámolva.' 
+                    });
+                }
+            );
+        } else {
+            return res.json({ 
+                message: 'Frissítés sikeres, értékek újraszámolva.' 
+            });
+        }
+    });
+});
+
+        } catch (error) {
+            console.error('[PATCH ALKERDES SZINKRON HIBA]', error);
+            res.status(500).json({ message: 'Hiba az alkérdések szinkronizálása során.', error: error.message });
+        }
+    });
+});
+
+// EGYEDI ALKÉRDÉS HOZZÁADÁSA (Szerkesztőből vagy Sablonból)
+router.post('/api/alkerdesek', (req, res) => {
+    const {
+        kerdesSzoveg,
+        negaltKerdesSzoveg,
+        parentId,
+        foKategoria,
+        alKategoria,
+        altTema,
+        ertek,
+        negaltErtek, // <-- Ezt be kell fogadni
+        szoveges,
+        valaszAg,
+        maximalis_szint,
+        kindex,
+        modulId
+    } = req.body;
+
+    // Értékek tisztítása
+    const cleanErtek = Number(ertek) || 0;
+    const cleanNegaltErtek = Number(negaltErtek) || 0; // <-- Tisztítás
+    const cleanKindex = Number(kindex) || 0;
+    const isSzoveges = szoveges ? 1 : 0;
+    const isMaxi = maximalis_szint ? 1 : 0;
+
+    const query = `
         INSERT INTO kerdesek
         (kerdes_szoveg, negalt_kerdes_szoveg, parent_id,
          fo_kategoria, al_kategoria, alt_tema,
-         ertek, kindex, szoveges, valasz_ag, modul_id)
-        VALUES ?`;
+         ertek, negalt_ertek, szoveges, valasz_ag, maximalis_szint, kindex, modul_id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
-      db.query(insSql, [values], (err3) => {
-        if (err3) {
-          console.error('[PATCH INSERT ALKERDESEK]', err3);
-          return res.status(500).json({ message: 'Hiba az alkérdések beszúrásakor.', error: err3.message });
+    const values = [
+        kerdesSzoveg,
+        negaltKerdesSzoveg || '', // <-- Dinamikus tagadás szöveg
+        parentId,
+        foKategoria,
+        alKategoria,
+        altTema,
+        cleanErtek,
+        cleanNegaltErtek,         // <-- Dinamikus tagadás érték
+        isSzoveges,
+        valaszAg,
+        isMaxi,
+        cleanKindex,
+        modulId
+    ];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Hiba az alkérdés hozzáadásakor:', err);
+            return res.status(500).json({ success: false, message: 'Hiba történt az alkérdés hozzáadásakor.' });
         }
-
-        afterInsert();
-      });
+        
+        ujraszamolOsszErtek(parentId, db, (err2) => {
+            if (err2) {
+                console.error('Hiba az ossz_ertek újraszámolásakor:', err2);
+                return res.status(500).json({ success: false, message: 'Mentve, de hiba az arányok frissítésénél.' });
+            }
+            res.status(201).json({ success: true, message: 'Alkérdés sikeresen hozzáadva.' });
+        });
     });
-  });
-
-  /* 4) Újraszámolás */
-  function afterInsert() {
-    ujraszamolOsszErtek(id, db, (err4) => {
-      if (err4) {
-        console.error('[PATCH UJRASZAMOL]', err4);
-        return res.status(500).json({ message: 'Hiba az ossz_ertek újraszámolásakor.', error: err4.message });
-      }
-
-      res.json({ message: 'Frissítés OK, altéma rendben.' });
-    });
-  }
 });
-
-
-    
-
 // Csoportos frissítés lekérdezése egy adott fő kérdés és alkérdései alapján
 router.get('/kerdesek/csoportos-frissites', (req, res) => {
     const { id } = req.query;
@@ -358,17 +568,36 @@ router.get('/kerdesek/csoportos-frissites', (req, res) => {
     });
 
     // ALKÉRDÉS TÖRLÉSE
-    router.delete('/alkerdesek/:id', (req, res) => {
-        const alkerdesId = req.params.id;
+   // ALKÉRDÉS TÖRLÉSE ÉS ÚJRASZÁMOLÁS
+router.delete('/alkerdesek/:id', (req, res) => {
+    const alkerdesId = req.params.id;
 
-        const deleteAlkerdesQuery = 'DELETE FROM kerdesek WHERE id = ? AND parent_id IS NOT NULL';
-        db.query(deleteAlkerdesQuery, [alkerdesId], (err, result) => {
-            if (err) {
-                return res.status(500).json({ error: err.message });
-            }
-            res.json({ message: 'Alkérdés törölve' });
+    // 1. Megkeressük a parent_id-t a törlés előtt
+    const findParentQuery = 'SELECT parent_id FROM kerdesek WHERE id = ?';
+    
+    db.query(findParentQuery, [alkerdesId], (err, rows) => {
+        if (err || rows.length === 0) {
+            return res.status(500).json({ error: 'Alkérdés nem található.' });
+        }
+        
+        const parentId = rows[0].parent_id;
+
+        // 2. Töröljük az alkérdést
+        const deleteQuery = 'DELETE FROM kerdesek WHERE id = ?';
+        db.query(deleteQuery, [alkerdesId], (err2) => {
+            if (err2) return res.status(500).json({ error: err2.message });
+
+            // 3. Újraszámoljuk a maradék alkérdések arányait
+            ujraszamolOsszErtek(parentId, db, (err3) => {
+                if (err3) {
+                    console.error("Hiba az újraszámolásnál törlés után:", err3);
+                    return res.status(500).json({ message: 'Törölve, de az arányok frissítése hibázott.' });
+                }
+                res.json({ message: 'Alkérdés törölve, értékek újraszámolva.', parentId: parentId });
+            });
         });
     });
+});
 
     // Alkérdések ossz_ertek mezőjének arányos frissítése
 router.post('/api/frissit-ossz-ertek', async (req, res) => {
@@ -494,7 +723,384 @@ router.post('/api/ujraszamol-ossz-ertek', (req, res) => {
         res.json({ success: true, message: 'ossz_ertek sikeresen újraszámolva.' });
     });
 });
+// --- KATEGÓRIA KEZELŐ VÉGPONTOK (FŐ, AL, ALTÉMA) ---
 
+// Segédfüggvény a JSON olvasásához és írásához
+const getJsonPath = () => path.join(__dirname, '../httpdocs/private/info/temakorok.json');
+const readTemakorokJson = () => {
+    try {
+        const data = fs.readFileSync(getJsonPath(), 'utf8');
+        return JSON.parse(data);
+    } catch (err) {
+        console.error('Hiba a JSON olvasásakor:', err);
+        return { optionSets: {} };
+    }
+};
+
+const writeTemakorokJson = (data) => {
+    try {
+        fs.writeFileSync(getJsonPath(), JSON.stringify(data, null, 2), 'utf8');
+    } catch (err) {
+        console.error('Hiba a JSON írásakor:', err);
+    }
+};
+
+// 1. FŐKATEGÓRIA - LÉTREHOZÁS
+router.post('/api/kategoriak/fo', (req, res) => {
+    const { nev, leiras, szin, modulId } = req.body;
+    if (!nev || !modulId) return res.status(400).json({ message: 'Hiányzó adatok' });
+
+    const jsonData = readTemakorokJson();
+    if (!jsonData.optionSets[modulId]) jsonData.optionSets[modulId] = [];
+    
+    if (!jsonData.optionSets[modulId].some(o => o.value === nev)) {
+        jsonData.optionSets[modulId].push({
+            value: nev,
+            text: nev,
+            leiras: leiras || '',
+            szin: szin,
+            chart: szin 
+        });
+        writeTemakorokJson(jsonData);
+    }
+
+    // Golyóálló INSERT: az összes mezőt explicit megadjuk
+const ghostQuery = `
+        INSERT INTO kerdesek (
+            kerdes_szoveg, negalt_kerdes_szoveg, 
+            fo_kategoria, al_kategoria, alt_tema, 
+            ertek, negalt_ertek, szoveges, kindex, maximalis_szint, ossz_ertek, modul_id
+        ) VALUES (
+            '[Új főkategória - kérjük szerkessze]', '', 
+            ?, NULL, NULL, 
+            0, 0, 0, 0, 0, 0, ?
+        )
+    `;
+    
+    db.query(ghostQuery, [nev, modulId], (err) => {
+        if (err) {
+            // EZ A SOR KIÍRJA A PONTOS HIBÁT A BACKEND TERMINÁLBA
+            console.error("❌ KRITIKUS ADATBÁZIS HIBA a főkategória beszúrásnál:", err.message);
+            return res.status(500).json({ message: 'Adatbázis hiba: ' + err.message });
+        }
+        res.status(201).json({ success: true, message: 'Főkategória létrehozva!' });
+    });
+});
+
+// 2. FŐKATEGÓRIA - FRISSÍTÉS (Szín, Név, Leírás + kitoltesek tábla)
+router.patch('/api/kategoriak/fo', (req, res) => {
+    const { regiNev, ujNev, leiras, szin, modulId } = req.body;
+    if (!regiNev || !ujNev || !modulId) return res.status(400).json({ message: 'Hiányzó adatok' });
+
+    const jsonData = readTemakorokJson();
+    const set = jsonData.optionSets[modulId];
+    if (set) {
+        const item = set.find(o => o.value === regiNev);
+        if (item) {
+            item.value = ujNev;
+            item.text = ujNev;
+            if (leiras !== undefined) item.leiras = leiras;
+            if (szin !== undefined) {
+                item.szin = szin;
+                item.chart = szin;
+            }
+        }
+        writeTemakorokJson(jsonData);
+    }
+
+    const updateDb = `UPDATE kerdesek SET fo_kategoria = ? WHERE fo_kategoria = ? AND modul_id = ?`;
+    db.query(updateDb, [ujNev, regiNev, modulId], (err) => {
+        if (err) return res.status(500).json({ message: 'Hiba a kérdések frissítésekor' });
+
+        if (regiNev !== ujNev) {
+            // kitoltesek tábla szazalek JSON frissítése
+            const replaceQuery = `UPDATE kitoltesek SET szazalek = REPLACE(szazalek, ?, ?) WHERE modul_id = ?`;
+            const regiString = `"${regiNev}":`;
+            const ujString = `"${ujNev}":`;
+            db.query(replaceQuery, [regiString, ujString, modulId], () => {
+                res.json({ success: true, message: 'Főkategória és kitöltések frissítve!' });
+            });
+        } else {
+            res.json({ success: true, message: 'Főkategória frissítve!' });
+        }
+    });
+});
+
+// 3. FŐKATEGÓRIA - TÖRLÉS
+router.delete('/api/kategoriak/fo', (req, res) => {
+    const { nev, modulId } = req.body;
+    
+    // 1. JSON biztonságos frissítése
+    try {
+        const jsonData = readTemakorokJson();
+        if (jsonData && jsonData.optionSets && jsonData.optionSets[modulId]) {
+            jsonData.optionSets[modulId] = jsonData.optionSets[modulId].filter(o => o.value !== nev);
+            writeTemakorokJson(jsonData);
+        }
+    } catch (jsonErr) {
+        console.error("Hiba a JSON fájl frissítésekor:", jsonErr);
+    }
+
+    // 2. Adatbázis törlés két lépésben az idegenkulcs-ütközések elkerülésére
+    const deleteAlkerdesek = `DELETE FROM kerdesek WHERE fo_kategoria = ? AND modul_id = ? AND parent_id IS NOT NULL`;
+    db.query(deleteAlkerdesek, [nev, modulId], (err1) => {
+        if (err1) {
+            console.error("❌ DB hiba az alkérdések törlésekor:", err1);
+            return res.status(500).json({ message: 'Hiba történt az alkérdések törlésekor.' });
+        }
+
+        const deleteFokerdesek = `DELETE FROM kerdesek WHERE fo_kategoria = ? AND modul_id = ? AND parent_id IS NULL`;
+        db.query(deleteFokerdesek, [nev, modulId], (err2) => {
+            if (err2) {
+                console.error("❌ DB hiba a főkérdések törlésekor:", err2);
+                return res.status(500).json({ message: 'Hiba történt a főkérdések törlésekor.' });
+            }
+            res.json({ success: true, message: 'Főkategória törölve.' });
+        });
+    });
+});
+
+// 3. ALKATEGÓRIA / ALTÉMA - TÖRLÉS (Ezt is frissítjük a biztonság kedvéért)
+router.delete('/api/kategoriak/al_altema', (req, res) => {
+    const { tipus, nev, foKategoria, alKategoria, modulId } = req.body;
+    
+    let deleteAlQuery = '';
+    let deleteFoQuery = '';
+    let params = [];
+
+    if (tipus === 'al') {
+        deleteAlQuery = `DELETE FROM kerdesek WHERE al_kategoria = ? AND fo_kategoria = ? AND modul_id = ? AND parent_id IS NOT NULL`;
+        deleteFoQuery = `DELETE FROM kerdesek WHERE al_kategoria = ? AND fo_kategoria = ? AND modul_id = ? AND parent_id IS NULL`;
+        params = [nev, foKategoria, modulId];
+    } else {
+        deleteAlQuery = `DELETE FROM kerdesek WHERE alt_tema = ? AND al_kategoria = ? AND fo_kategoria = ? AND modul_id = ? AND parent_id IS NOT NULL`;
+        deleteFoQuery = `DELETE FROM kerdesek WHERE alt_tema = ? AND al_kategoria = ? AND fo_kategoria = ? AND modul_id = ? AND parent_id IS NULL`;
+        params = [nev, alKategoria, foKategoria, modulId];
+    }
+
+    db.query(deleteAlQuery, params, (err1) => {
+        if (err1) {
+            console.error("❌ DB hiba az alkérdések törlésekor:", err1);
+            return res.status(500).json({ message: 'DB hiba törléskor' });
+        }
+        
+        db.query(deleteFoQuery, params, (err2) => {
+            if (err2) {
+                console.error("❌ DB hiba a főkérdések törlésekor:", err2);
+                return res.status(500).json({ message: 'DB hiba törléskor' });
+            }
+            res.json({ success: true });
+        });
+    });
+});
+
+// 1. ALKATEGÓRIA / ALTÉMA - LÉTREHOZÁS
+router.post('/api/kategoriak/al_altema', (req, res) => {
+    const { tipus, nev, foKategoria, alKategoria, modulId } = req.body;
+    let ghostQuery = '';
+    let params = [];
+
+   if (tipus === 'al') {
+        ghostQuery = `
+            INSERT INTO kerdesek (
+                kerdes_szoveg, negalt_kerdes_szoveg, 
+                fo_kategoria, al_kategoria, alt_tema, 
+                ertek, negalt_ertek, szoveges, kindex, maximalis_szint, ossz_ertek, modul_id
+            ) VALUES (
+                '[Új alkategória - szerkessze]', '', 
+                ?, ?, NULL, 
+                0, 0, 0, 0, 0, 0, ?
+            )
+        `;
+        params = [foKategoria, nev, modulId];
+    } else {
+        ghostQuery = `
+            INSERT INTO kerdesek (
+                kerdes_szoveg, negalt_kerdes_szoveg, 
+                fo_kategoria, al_kategoria, alt_tema, 
+                ertek, negalt_ertek, szoveges, kindex, maximalis_szint, ossz_ertek, modul_id
+            ) VALUES (
+                '[Új altéma - szerkessze]', '', 
+                ?, ?, ?, 
+                0, 0, 0, 0, 0, 0, ?
+            )
+        `;
+        params = [foKategoria, alKategoria, nev, modulId];
+    }
+
+    db.query(ghostQuery, params, (err) => {
+        if (err) {
+            console.error("❌ KRITIKUS ADATBÁZIS HIBA al/altéma beszúrásnál:", err.message);
+            return res.status(500).json({ message: 'Adatbázis hiba: ' + err.message });
+        }
+        res.status(201).json({ success: true });
+    });
+});
+// 2. ALKATEGÓRIA / ALTÉMA - FRISSÍTÉS
+router.patch('/api/kategoriak/al_altema', (req, res) => {
+    const { tipus, regiNev, ujNev, foKategoria, alKategoria, modulId } = req.body;
+    let updateQuery = '';
+    let params = [];
+
+    if (tipus === 'al') {
+        updateQuery = `UPDATE kerdesek SET al_kategoria = ? WHERE al_kategoria = ? AND fo_kategoria = ? AND modul_id = ?`;
+        params = [ujNev, regiNev, foKategoria, modulId];
+    } else {
+        updateQuery = `UPDATE kerdesek SET alt_tema = ? WHERE alt_tema = ? AND al_kategoria = ? AND fo_kategoria = ? AND modul_id = ?`;
+        params = [ujNev, regiNev, alKategoria, foKategoria, modulId];
+    }
+
+    db.query(updateQuery, params, (err) => {
+        if (err) return res.status(500).json({ message: 'Adatbázis hiba a kerdesek táblában' });
+        
+        // szazalek JSON update a kitoltesek táblában
+        const replaceQuery = `UPDATE kitoltesek SET szazalek = REPLACE(szazalek, ?, ?) WHERE modul_id = ?`;
+        db.query(replaceQuery, [`"${regiNev}":`, `"${ujNev}":`, modulId], () => {
+            res.json({ success: true });
+        });
+    });
+});
+
+// 3. ALKATEGÓRIA / ALTÉMA - TÖRLÉS
+router.delete('/api/kategoriak/al_altema', (req, res) => {
+    const { tipus, nev, foKategoria, alKategoria, modulId } = req.body;
+    let deleteQuery = '';
+    let params = [];
+
+    if (tipus === 'al') {
+        deleteQuery = `DELETE FROM kerdesek WHERE al_kategoria = ? AND fo_kategoria = ? AND modul_id = ?`;
+        params = [nev, foKategoria, modulId];
+    } else {
+        deleteQuery = `DELETE FROM kerdesek WHERE alt_tema = ? AND al_kategoria = ? AND fo_kategoria = ? AND modul_id = ?`;
+        params = [nev, alKategoria, foKategoria, modulId];
+    }
+
+    db.query(deleteQuery, params, (err) => {
+        if (err) return res.status(500).json({ message: 'DB hiba törléskor' });
+        res.json({ success: true });
+    });
+});
+// --- AI BEÁLLÍTÁSOK LEKÉRÉSE ÉS MENTÉSE ---
+// --- AI BEÁLLÍTÁSOK LEKÉRÉSE ÉS MENTÉSE ---
+router.get('/api/ai-beallitasok', (req, res) => {
+    const { modulId } = req.query;
+    if (!modulId) return res.status(400).json({ success: false, message: "Modul ID szükséges" });
+
+    // JAVÍTÁS: A SELECT-be bekerültek a cim_jellemzes, cim_fejlesztes, cim_ertekeles oszlopok
+    const q = 'SELECT nev, szerep, vizsgalt_targy, ai_kontextus, cim_jellemzes, prompt_jellemzes, cim_fejlesztes, prompt_fejlesztes, cim_ertekeles, prompt_ertekeles FROM modulok WHERE id = ?';
+    
+    db.query(q, [modulId], (err, modulok) => {
+        if (err) return res.status(500).json({ success: false, message: "Adatbázis hiba" });
+        if (modulok.length === 0) return res.status(404).json({ success: false, message: "Modul nem található" });
+
+        const modul = modulok[0];
+        let szakmaiAnyagSzoveg = "";
+        let vanFile = false;
+
+        const filePath = path.join(__dirname, 'szakmai anyag', `${modul.nev}.txt`);
+        try {
+            if (fs.existsSync(filePath)) {
+                szakmaiAnyagSzoveg = fs.readFileSync(filePath, 'utf-8');
+                vanFile = true;
+            }
+        } catch (e) {
+            console.error("Fájl olvasási hiba:", e);
+        }
+
+       res.json({
+            success: true,
+            adatok: {
+                szerep: modul.szerep,
+                vizsgalt_targy: modul.vizsgalt_targy,
+                ai_kontextus: modul.ai_kontextus,
+                cim_jellemzes: modul.cim_jellemzes,    // <-- EZT ADD HOZZÁ
+                prompt_jellemzes: modul.prompt_jellemzes,
+                cim_fejlesztes: modul.cim_fejlesztes,  // <-- EZT ADD HOZZÁ
+                prompt_fejlesztes: modul.prompt_fejlesztes,
+                cim_ertekeles: modul.cim_ertekeles,    // <-- EZT ADD HOZZÁ
+                prompt_ertekeles: modul.prompt_ertekeles,
+                szakmai_anyag: szakmaiAnyagSzoveg,
+                van_szakmai_file: vanFile
+            }
+        });
+    });
+});
+
+// feltoltomodul.js - Mentés végpont
+router.post('/api/ai-beallitasok', (req, res) => {
+    const { modulId, szakmai_anyag, ...egyebAdatok } = req.body;
+
+    // JAVÍTÁS: Az UPDATE-be is bekerültek a cim_... oszlopok
+    const updateQuery = `UPDATE modulok SET szerep=?, vizsgalt_targy=?, ai_kontextus=?, cim_jellemzes=?, prompt_jellemzes=?, cim_fejlesztes=?, prompt_fejlesztes=?, cim_ertekeles=?, prompt_ertekeles=? WHERE id=?`;
+    
+    const params = [
+        egyebAdatok.szerep, egyebAdatok.vizsgalt_targy, egyebAdatok.ai_kontextus, 
+        egyebAdatok.cim_jellemzes, egyebAdatok.prompt_jellemzes, 
+        egyebAdatok.cim_fejlesztes, egyebAdatok.prompt_fejlesztes, 
+        egyebAdatok.cim_ertekeles, egyebAdatok.prompt_ertekeles, 
+        modulId
+    ];
+
+    db.query(updateQuery, params, (err) => {
+        if (err) return res.status(500).json({ success: false, message: "DB hiba" });
+
+        db.query('SELECT nev FROM modulok WHERE id = ?', [modulId], (err2, modulok) => {
+            if (!err2 && modulok.length > 0) {
+                const filePath = path.join(__dirname, 'szakmai anyag', `${modulok[0].nev}.txt`);
+                
+                try {
+                    const dir = path.dirname(filePath);
+                    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+                    fs.writeFileSync(filePath, szakmai_anyag || "", 'utf-8');
+                } catch(e) { console.error('Fájl mentési hiba:', e); }
+            }
+            res.json({ success: true, message: "Beállítások és dokumentum mentve!" });
+        });
+    });
+});
+
+// ÚJ SABLON MENTÉSE (Csoportosan)
+router.post('/api/ment-sablonok', (req, res) => {
+    const { modulId, userId, sablonNev, elemek } = req.body;
+
+    if (!modulId || !userId || !sablonNev || !elemek || elemek.length === 0) {
+        return res.status(400).json({ success: false, message: 'Hiányzó adatok a mentéshez.' });
+    }
+
+    // Először le kell kérnünk az int_id-t a felhasználóhoz a biztonság érdekében
+    db.query('SELECT int_id FROM felhasznalok WHERE id = ?', [userId], (err, userRows) => {
+        if (err || userRows.length === 0) {
+            return res.status(500).json({ success: false, message: 'Felhasználó nem azonosítható.' });
+        }
+        const intId = userRows[0].int_id;
+
+        // Az összes elemet egyetlen query-ben szúrjuk be
+       const query = `
+    INSERT INTO sablonok (csoport_nev, kerdes, ag, pont, szoveges, maximalis_szint, modul_id, int_id)
+    VALUES ?
+`;
+
+        const values = elemek.map(e => [
+    sablonNev,
+    e.szoveg,
+    e.ag,
+    Number(e.ertek) || 0,
+    e.szoveges ? 1 : 0,
+    e.maxi ? 1 : 0, // <-- EZ A SOR HOZZÁADVA
+    modulId,
+    intId
+]);
+
+        db.query(query, [values], (err2) => {
+            if (err2) {
+                console.error('Hiba a sablon mentésekor:', err2);
+                return res.status(500).json({ success: false, message: 'Adatbázis hiba a mentés során.' });
+            }
+            res.json({ success: true, message: 'Sablon sikeresen elmentve!' });
+        });
+    });
+});
 
     return router;
 };

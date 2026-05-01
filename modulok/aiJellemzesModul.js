@@ -73,21 +73,31 @@ function parseDataFromJSON(jsonData) {
 }
 
 // --- 4. SEGÉDFÜGGVÉNY: Szakmai kontextus betöltése adatbázisból és/vagy fájlból ---
+// --- 4. SEGÉDFÜGGVÉNY: Szakmai kontextus betöltése adatbázisból és/vagy fájlból ---
 async function getModuleContext(db, modulId, isEgyeni = false) {
   let holvagyok = '';
   let modulNev = '';
   let szakmaiAnyagSzoveg = '';
   let szerep = '';
-  let vizsgaltTargy = ''; // Új változó
+  let vizsgaltTargy = ''; 
+  let promptJellemzes = '';
+  let promptFejlesztes = '';
+  let promptErtekeles = '';
 
-  // Bekerült a vizsgalt_targy a lekérdezésbe
-  const [modulok] = await db.promise().query('SELECT nev, ai_kontextus, szerep, vizsgalt_targy FROM modulok WHERE id = ?', [modulId]);
+  // Lekérjük a 3 új prompt oszlopot is
+  const [modulok] = await db.promise().query(
+      'SELECT nev, ai_kontextus, szerep, vizsgalt_targy, prompt_jellemzes, prompt_fejlesztes, prompt_ertekeles FROM modulok WHERE id = ?', 
+      [modulId]
+  );
   
   if (modulok && modulok.length > 0) {
     holvagyok = String(modulok[0].ai_kontextus || '').trim();
     modulNev = String(modulok[0].nev || '').trim();
     szerep = String(modulok[0].szerep || '').trim();
-    vizsgaltTargy = String(modulok[0].vizsgalt_targy || '').trim(); // Kiolvassuk az adatbázisból
+    vizsgaltTargy = String(modulok[0].vizsgalt_targy || '').trim();
+    promptJellemzes = String(modulok[0].prompt_jellemzes || '').trim();
+    promptFejlesztes = String(modulok[0].prompt_fejlesztes || '').trim();
+    promptErtekeles = String(modulok[0].prompt_ertekeles || '').trim();
   }
 
   // ALAPÉRTELMEZETT SZEREP
@@ -95,32 +105,38 @@ async function getModuleContext(db, modulId, isEgyeni = false) {
       szerep = 'Szakértő értékelő vagy. Tárgyilagos, szakszerű és hivatalos szakmai nyelvezetet használj.';
   }
 
-  // ALAPÉRTELMEZETT VIZSGÁLT TÁRGY / SZEMÉLY (Ha üres az adatbázis mező)
+  // ALAPÉRTELMEZETT VIZSGÁLT TÁRGY (Univerzális fallback)
   if (!vizsgaltTargy) {
-      // Teljesen semleges, entitás független megfogalmazás
       vizsgaltTargy = isEgyeni 
         ? 'az elemzett adathalmazról' 
         : 'az elemzett adathalmazok összességéről';
   }
 
-  if (!holvagyok && modulNev) {
+if (!holvagyok && modulNev) {
     try {
+      // Visszaállítva a te működő útvonaladra:
       const filePath = path.join(__dirname, 'szakmai anyag', `${modulNev}.txt`);
       szakmaiAnyagSzoveg = await fs.readFile(filePath, 'utf-8');
     } catch (fileErr) {
       console.warn(`[AI Modul] Nem található szakmai txt fájl ehhez: ${modulNev}`);
     }
   }
-
   const txtPromptResz = szakmaiAnyagSzoveg 
     ? `\nAZ ALÁBBI HIVATALOS DOKUMENTUM ALAPJÁN ÉRTÉKELJ, ÉS HASZNÁLD AZ ITT SZEREPLŐ TERMINOLÓGIÁT:\n"""\n${szakmaiAnyagSzoveg}\n"""\n` 
     : '';
 
-  // A baseKontextus most már a vizsgaltTargy változót használja!
   const alapSzoveg = `Általános szakmai értékelést készítesz ${vizsgaltTargy} a kapott adatok alapján.`;
   const baseKontextus = holvagyok ? holvagyok : alapSzoveg;
 
-return { txtPromptResz, baseKontextus, szerep, vizsgaltTargy };
+  return { 
+      txtPromptResz, 
+      baseKontextus, 
+      szerep, 
+      vizsgaltTargy, 
+      promptJellemzes, 
+      promptFejlesztes, 
+      promptErtekeles 
+  };
 }
 
 // --- 5. SEGÉDFÜGGVÉNY: AI Hívás, újrapróbálkozás, modellváltás és Stream ---
@@ -295,7 +311,7 @@ module.exports = (db) => {
             szerep, 
             baseKontextus, 
             txtPromptResz, 
-            '4. Készíts egy csoportszintű értékelést, amelyben kitérsz az általános tendenciákra, majd az átadott "EGYÉNI KIEMELÉSEK" alapján név szerint említsd meg a kiugró teljesítményeket és a fejlesztendő területeket az egyéneknél.'
+            '4. Készíts egy csoportszintű értékelést, amelyben kitérsz az általános tendenciákra, majd az átadott "EGYÉNI KIEMELÉSEK" alapján név szerint említsd meg a kiugró teljesítményeket és a fejlesztendő területeket.'
           )
         },
         { 
@@ -322,7 +338,7 @@ module.exports = (db) => {
     }
   });
 
-  // --- EGYÉNI JELLEMZÉS ---
+// --- EGYÉNI JELLEMZÉS (Fejlesztési terv generáló) ---
   router.post('/generate/jellemzes-from-json', async (req, res) => {
     try {
       const jsonData = req.body?.jsonData ?? null;
@@ -332,9 +348,10 @@ module.exports = (db) => {
         return res.status(400).json({ success:false, message:'Hiányzó elemzési adat (JSON) vagy modulId.' });
       }
       
-      // Ide került be a true paraméter
-  const { txtPromptResz, baseKontextus, szerep, vizsgaltTargy } = await getModuleContext(db, modulId, true);
+      const { txtPromptResz, baseKontextus, szerep, promptFejlesztes } = await getModuleContext(db, modulId, true);
       const payload = parseDataFromJSON(jsonData.statisztika);
+
+      let veglegesFeladat = promptFejlesztes;
 
       const messages = [
         { 
@@ -359,10 +376,12 @@ module.exports = (db) => {
           ${JSON.stringify(jsonData.megjegyzesek)}
 
           FELADAT:
-          Készíts egy részletes, fejlesztési tervet területenként az alábbi struktúrában:
-          1. Írj egy átfogó, részletes helyzetértékelést (kb. 2-3 bekezdésben) ${vizsgaltTargy} aktuális állapotáról a kapott adatok alapján.
-          2. Hagyj ki egy sort, majd írd be ezt a címsort: ### Célzott fejlesztési területek és módszerek
-          3. A címsor alá írj konkrét, gyakorlatias, cselekvésorientált ötleteket. Legalább 8-10 pontot dolgozz ki, Markdown felsorolásként (- jellel). A javaslatokat részletesen indokold meg szakmailag.` 
+          ${veglegesFeladat}
+          
+          FORMÁZÁSI UTASÍTÁSOK:
+          1. A helyzetértékelés 2-3 bekezdés hosszú legyen.
+          2. A helyzetértékelés után hagyj ki egy sort, és használd ezt a címsort: ### Célzott fejlesztési területek és módszerek
+          3. A fejlesztési ötleteket Markdown felsorolásként (- jellel) formázd.` 
         }
       ];
 
@@ -375,7 +394,7 @@ module.exports = (db) => {
     }
   });
 
-// --- EGYÉNI: JELLEMZÉS (Minden kategória, javaslatok nélkül) ---
+  // --- EGYÉNI: JELLEMZÉS (Minden kategória, javaslatok nélkül) ---
   router.post('/generate/jellemzes-detailed', async (req, res) => {
     try {
       const jsonData = req.body?.jsonData ?? null;
@@ -385,9 +404,11 @@ module.exports = (db) => {
         return res.status(400).json({ success:false, message:'Hiányzó elemzési adat (JSON) vagy modulId.' });
       }
       
-   const { txtPromptResz, baseKontextus, szerep } = await getModuleContext(db, modulId, true);
+      const { txtPromptResz, baseKontextus, szerep, promptJellemzes } = await getModuleContext(db, modulId, true);
       const payload = parseDataFromJSON(jsonData.statisztika);
+      
       const mindenKategoria = payload.kategoriak.map(k => k.nev).join(', ');
+      let veglegesFeladat = promptJellemzes; 
 
       const messages = [
         { 
@@ -396,13 +417,13 @@ module.exports = (db) => {
             szerep, 
             baseKontextus, 
             txtPromptResz, 
-            `4. Írj egy összefüggő, kifejtős szakmai esszét több bekezdésre tagolva.
-             5. TILOS konkrét fejlesztési feladatokat vagy javaslatokat írni a szöveg végére.`
+            `4. TILOS konkrét fejlesztési feladatokat vagy javaslatokat írni a szöveg végére.`
           )
         },
         { 
           role: 'user', content:
           `ADATOK AZ ELEMZÉSHEZ:
+          - Összes vizsgált terület: ${mindenKategoria}
           - Kiemelt területek (Erősségek): ${payload.top3.join(', ')}
           - Fejlesztendő területek (Gyengeségek): ${payload.bottom3.join(', ')}
           
@@ -413,7 +434,7 @@ module.exports = (db) => {
           ${JSON.stringify(jsonData.megjegyzesek)}
 
           FELADAT:
-          Készíts egy átfogó, részletes jellemzést a fenti adatok alapján. Térj ki minden vizsgált területre (${mindenKategoria}), az adatokat és megfigyeléseket fűzd logikusan egymásba. Kerüld a tőmondatokat, fejtsd ki az ok-okozati összefüggéseket a szakmai tapasztalatod alapján.` 
+          ${veglegesFeladat}` 
         }
       ];
       await handleGeminiStream(messages, res, 0.7); 
@@ -435,9 +456,12 @@ module.exports = (db) => {
         return res.status(400).json({ success:false, message:'Hiányzó elemzési adat (JSON) vagy modulId.' });
       }
       
-const { txtPromptResz, baseKontextus, szerep } = await getModuleContext(db, modulId, true);
-parseDataFromJSON(jsonData.statisztika); // Csak az adatok érvényességének ellenőrzése miatt hívjuk meg, a visszatérési érték (payload) ide nem kell
-    const messages = [
+      const { txtPromptResz, baseKontextus, szerep, promptErtekeles } = await getModuleContext(db, modulId, true);
+      parseDataFromJSON(jsonData.statisztika); 
+
+      let veglegesFeladat = promptErtekeles; 
+
+      const messages = [
         { 
           role: 'system', 
           content: buildSystemPrompt(
@@ -451,14 +475,15 @@ parseDataFromJSON(jsonData.statisztika); // Csak az adatok érvényességének e
         },
         { 
           role: 'user', content:
-          `ADATOK AZ ELEMZÉSHEZ (A pedagógus által bejelölt állítások hierarchikus szövege):
+          `ADATOK AZ ELEMZÉSHEZ (A felhasználó által bejelölt állítások hierarchikus szövege):
           ${jsonData.strukturatSzoveg || JSON.stringify(jsonData.nyersValaszok)}
 
-          FELADAT ÉS FORMÁTUM:
-          1. Menj végig az összes megadott főkategórián.
-          2. Minden főkategóriát írj ki narancssárga alcímként (### [Főkategória neve] formázással).
-          3. Az alcím alatt fogalmazz meg egy összefüggő, jól olvasható szöveges bekezdést, amelyben a kategóriához tartozó összes bejelölt alkategóriát és állítást logikus mondatokká fűzöd össze.
-          4. Haladj sorban, amíg az összes kapott adatot fel nem dolgoztad folyamatos szövegként!` 
+          FELADAT:
+          ${veglegesFeladat}
+          
+          FORMÁZÁSI UTASÍTÁSOK:
+          1. Minden főkategóriát írj ki narancssárga alcímként (### [Főkategória neve] formázással).
+          2. Az alcímek alatt egybefüggő, folyamatos szöveget használj, tilos a lista és a felsorolás!` 
         }
       ];
 

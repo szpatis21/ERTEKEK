@@ -36,30 +36,28 @@ router.post('/login', async (req, res) => {
     if (!pwOk) {
       return res.json({ success: false, message: 'Hibás felhasználónév vagy jelszó' });
     }
+if (user.role_id !== 4) {
+        const perms = await q(
+          `SELECT 1 FROM jogosultsagok WHERE user_id  = ? AND modul_id = ? AND aktiv = 1 LIMIT 1`,
+          [user.id, mod]
+        );
 
+        if (perms.length === 0) {
+          return res.json({ success: false, message: 'Nincs jogosultságod a kiválasztott témakörhöz' });
+        }
+    }
     // Admin (role_id = 1) bármilyen szerepkörrel beléphet, mások csak a sajátjukkal
-    if (user.role_id !== 1 && user.role_id !== requestedRoleId) {
+// Hierarchikus belépési logika
+    let allowedLogins = [];
+    if (user.role_id === 4) allowedLogins = [1, 2, 3, 4]; // Sysadmin mindent tud
+    else if (user.role_id === 1) allowedLogins = [1, 2, 3]; // Feltöltő (1) tud lenni Elemző és Értékelő is
+    else if (user.role_id === 2) allowedLogins = [2, 3];    // Elemző (2) tud lenni Értékelő is
+    else if (user.role_id === 3) allowedLogins = [3];       // Értékelő (3) csak Értékelő lehet
+
+    if (!allowedLogins.includes(requestedRoleId)) {
       return res.json({
         success: false,
         message: 'Nincs jogosultságod ezzel a szerepkörrel belépni'
-      });
-    }
-
-    // Jogosultság lekérdezése (modulhoz kötötten)
-    const perms = await q(
-      `SELECT 1
-         FROM jogosultsagok
-        WHERE user_id  = ?
-          AND modul_id = ?
-          AND aktiv    = 1
-        LIMIT 1`,
-      [user.id, mod]
-    );
-
-    if (perms.length === 0) {
-      return res.json({
-        success: false,
-        message: 'Nincs jogosultságod a kiválasztott témakörhöz'
       });
     }
 
@@ -79,6 +77,8 @@ router.post('/login', async (req, res) => {
         return res.json({ success: true, redirect: '/elemzo/dashboard.html' });
       case 3:
         return res.json({ success: true, redirect: '/user/dashboard.html' });
+        case 4: // ÚJ: Sysadmin szerepkör
+        return res.json({ success: true, redirect: '/sysadmin/dashboard.html' })
       default:
         return res.json({ success: false, message: 'Ismeretlen szerepkör' });
     }
@@ -332,28 +332,39 @@ router.get('/check-mailname2', (req, res) => {
             const currentModulId = req.session.modulId;
             const currentRoleId = req.session.roleId;
 
-            // 1. Szerepkörök kigyűjtése
+          // 1. Szerepkörök kigyűjtése (Hierarchia alapján)
             let roles = [];
-            if (actualRoleId === 1) {
-                // Az admin (1) bármilyen szerepkörbe átmehet
-                roles = [
-                    { id: 1, nev: 'Adminisztrátor' },
-                    { id: 2, nev: 'Elemző' },
-                    { id: 3, nev: 'Értékelő' }
-                ];
-            } else {
-                // A többiek csak a saját, egyetlen szerepkörüket látják
-                const rData = await q('SELECT id, leiras as nev FROM roles WHERE id = ?', [actualRoleId]);
-                roles = rData.map(r => ({ id: r.id, nev: r.nev }));
+            const allRoles = [
+                { id: 4, nev: 'Rendszergazda (Sysadmin)' },
+                { id: 1, nev: 'Feltöltő' },
+                { id: 2, nev: 'Elemző' },
+                { id: 3, nev: 'Értékelő' }
+            ];
+
+            if (actualRoleId === 4) {
+                roles = allRoles;
+            } else if (actualRoleId === 1) {
+                roles = allRoles.filter(r => [1, 2, 3].includes(r.id));
+            } else if (actualRoleId === 2) {
+                roles = allRoles.filter(r => [2, 3].includes(r.id));
+            } else if (actualRoleId === 3) {
+                roles = allRoles.filter(r => r.id === 3);
             }
 
             // 2. Modulok kigyűjtése
-    const modData = await q(`
-                SELECT m.id, m.nev, m.leiras 
-                FROM jogosultsagok j
-                JOIN modulok m ON m.id = j.modul_id
-                WHERE j.user_id = ? AND j.aktiv = 1
-            `, [req.session.userId]);
+let modData = [];
+            if (actualRoleId === 4) {
+                // A Sysadmin mindent lát
+                modData = await q('SELECT id, nev, leiras FROM modulok');
+            } else {
+                // A többiek csak a kiosztottakat
+                modData = await q(`
+                    SELECT m.id, m.nev, m.leiras 
+                    FROM jogosultsagok j
+                    JOIN modulok m ON m.id = j.modul_id
+                    WHERE j.user_id = ? AND j.aktiv = 1
+                `, [req.session.userId]);
+            }
 
             return res.json({
                 success: true,
@@ -370,52 +381,58 @@ router.get('/check-mailname2', (req, res) => {
     });
 
 // --- ÚJ: Átjelentkezés végrehajtása ---
-    router.post('/switch-execute', async (req, res) => {
-        if (!req.session.userId) return res.json({ success: false, message: 'Nem vagy bejelentkezve!' });
+   router.post('/switch-execute', async (req, res) => {
+    if (!req.session.userId) return res.json({ success: false, message: 'Nem vagy bejelentkezve!' });
 
-        const newModulId = Number(req.body.modul_id);
-        const newRoleId = Number(req.body.szerepkor);
+    const newModulId = Number(req.body.modul_id);
+    const newRoleId = Number(req.body.szerepkor);
 
-        try {
-            const userRes = await q('SELECT role_id FROM felhasznalok WHERE id = ?', [req.session.userId]);
-            if (userRes.length === 0) return res.json({ success: false, message: 'Felhasználó nem található' });
+    try {
+        const userRes = await q('SELECT role_id FROM felhasznalok WHERE id = ?', [req.session.userId]);
+        if (userRes.length === 0) return res.json({ success: false, message: 'Felhasználó nem található' });
 
-            const actualRoleId = userRes[0].role_id;
+        const actualRoleId = userRes[0].role_id;
 
-            // Szerepkör ellenőrzés
-            if (actualRoleId !== 1 && actualRoleId !== newRoleId) {
+        // Szerepkör ellenőrzés
+   // Szerepkör ellenőrzés (Hierarchia alapján)
+            let allowedRoles = [];
+            if (actualRoleId === 4) allowedRoles = [1, 2, 3, 4];
+            else if (actualRoleId === 1) allowedRoles = [1, 2, 3];
+            else if (actualRoleId === 2) allowedRoles = [2, 3];
+            else if (actualRoleId === 3) allowedRoles = [3];
+
+            if (!allowedRoles.includes(newRoleId)) {
                 return res.json({ success: false, message: 'Nincs jogosultságod ehhez a szerepkörhöz!' });
             }
 
-            // Modul ellenőrzés
+        // Modul ellenőrzés (A 4-es sysadmin bypassolja ezt)
+        if (actualRoleId !== 4) {
             const perms = await q('SELECT 1 FROM jogosultsagok WHERE user_id = ? AND modul_id = ? AND aktiv = 1', [req.session.userId, newModulId]);
             if (perms.length === 0) {
                 return res.json({ success: false, message: 'Nincs jogosultságod a választott modulhoz!' });
             }
-
-            // Session frissítése új jelszókérés nélkül!
-            req.session.modulId = newModulId;
-            req.session.roleId = newRoleId;
-
-            // Újrairányítás a választott szerepkör alapján
-            let redirect = '/user/dashboard.html';
-            if (newRoleId === 1) redirect = '/admin/dashboard.html';
-            if (newRoleId === 2) redirect = '/elemzo/dashboard.html';
-
-            // KÖTELEZŐ: Meg kell várnunk a session tényleges fizikai mentését a memóriába/adatbázisba!
-            req.session.save((err) => {
-                if (err) {
-                    console.error('Session mentési hiba:', err);
-                    return res.json({ success: false, message: 'Szerverhiba a munkamenet mentésekor!' });
-                }
-                // Csak akkor válaszolunk a frontendnek, ha sikeresen elmentődött a váltás!
-                return res.json({ success: true, redirect });
-            });
-
-        } catch (err) {
-            console.error('Hiba a váltáskor:', err);
-            return res.json({ success: false, message: 'Szerverhiba történt a váltás közben' });
         }
-    });
+
+        req.session.modulId = newModulId;
+        req.session.roleId = newRoleId;
+
+        let redirect = '/user/dashboard.html';
+        if (newRoleId === 1) redirect = '/admin/dashboard.html';
+        if (newRoleId === 2) redirect = '/elemzo/dashboard.html';
+        if (newRoleId === 4) redirect = '/sysadmin/dashboard.html';
+
+        req.session.save((err) => {
+            if (err) {
+                console.error('Session mentési hiba:', err);
+                return res.json({ success: false, message: 'Szerverhiba a munkamenet mentésekor!' });
+            }
+            return res.json({ success: true, redirect });
+        });
+
+    } catch (err) {
+        console.error('Hiba a váltáskor:', err);
+        return res.json({ success: false, message: 'Szerverhiba történt a váltás közben' });
+    }
+});
     return router;
 };

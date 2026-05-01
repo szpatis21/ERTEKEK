@@ -276,6 +276,9 @@ const sqlLegtobbetMegosztott = `
       ORDER BY db DESC
       LIMIT 1
     `;
+
+
+
     const legtobbetMegosztottRows = await q(sqlLegtobbetMegosztott, [modulId, intId]);
     const legtobbetMegosztott = legtobbetMegosztottRows.length > 0 ? 
         { 
@@ -300,9 +303,63 @@ const sqlLegtobbetMegosztott = `
       JOIN felhasznalok f ON k.felhasznalo_id = f.id
       WHERE k.modul_id = ? AND k.role = 'editor' AND f.int_id = ?
     `;
+    const sqlKerdesStats = `
+      SELECT 
+        COUNT(DISTINCT CASE WHEN fo_kategoria IS NOT NULL AND fo_kategoria != '' THEN fo_kategoria END) AS fo_kat_db,
+        COUNT(DISTINCT CASE WHEN al_kategoria IS NOT NULL AND al_kategoria != '' THEN al_kategoria END) AS al_kat_db,
+        COUNT(DISTINCT CASE WHEN alt_tema IS NOT NULL AND alt_tema != '' THEN alt_tema END) AS alt_tema_db,
+        COUNT(CASE WHEN kerdes_szoveg IS NOT NULL AND kerdes_szoveg != '' THEN id END) AS ossz_kerdes_db
+      FROM kerdesek
+      WHERE modul_id = ?
+    `;
+    const kerdesStatsRows = await q(sqlKerdesStats, [modulId]);
+    const kerdesStats = kerdesStatsRows.length > 0 ? kerdesStatsRows[0] : { fo_kat_db: 0, al_kat_db: 0, alt_tema_db: 0, ossz_kerdes_db: 0 };
+
+    // 14. ÚJ: Modul hozzáférések (Összes felhasználó az adott modulban, és ezen belül a role_id = 1, azaz admin)
+    const sqlHozzaferesStats = `
+      SELECT 
+        COUNT(DISTINCT j.user_id) AS ossz_hozzaferes_db,
+        COUNT(DISTINCT CASE WHEN f.role_id = 1 THEN j.user_id END) AS admin_hozzaferes_db
+      FROM jogosultsagok j
+      JOIN felhasznalok f ON j.user_id = f.id
+      WHERE j.modul_id = ?
+    `;
+    const hozzaferesStatsRows = await q(sqlHozzaferesStats, [modulId]);
+    const hozzaferesStats = hozzaferesStatsRows.length > 0 ? hozzaferesStatsRows[0] : { ossz_hozzaferes_db: 0, admin_hozzaferes_db: 0 };
     const globalEditorRows = await q(sqlGlobalEditorCount, [modulId, intId]);
     const globalEditorCount = globalEditorRows.length > 0 ? globalEditorRows[0].db : 0;
-    
+    // A legtöbb kérdést tartalmazó kategória és a kérdések száma
+const sqlLegtobbKerdes = `
+    SELECT fo_kategoria, COUNT(*) as darab 
+    FROM kerdesek 
+    WHERE modul_id = ? AND fo_kategoria IS NOT NULL AND fo_kategoria != ''
+    GROUP BY fo_kategoria 
+    ORDER BY darab DESC 
+    LIMIT 1
+`;
+
+// Sablonok száma az adott modulban
+const sqlSablonCount = `
+    SELECT COUNT(*) as db 
+    FROM sablonok 
+    WHERE modul_id = ?
+`;
+
+// Generációs nevek (címek) lekérése a modulok táblából
+const sqlModulCimek = `
+    SELECT cim_jellemzes, cim_fejlesztes, cim_ertekeles 
+    FROM modulok 
+    WHERE id = ?
+`;
+
+// Végrehajtás
+const legtobbKerdesRes = await q(sqlLegtobbKerdes, [modulId]);
+const sablonCountRes = await q(sqlSablonCount, [modulId]);
+const modulCimekRes = await q(sqlModulCimek, [modulId]);
+
+const legnepszerubbKategoria = legtobbKerdesRes.length > 0 ? legtobbKerdesRes[0] : { fo_kategoria: 'Nincs adat', darab: 0 };
+const sablonokSzama = sablonCountRes.length > 0 ? sablonCountRes[0].db : 0;
+const modulCimek = modulCimekRes.length > 0 ? modulCimekRes[0] : { cim_jellemzes: '', cim_fejlesztes: '', cim_ertekeles: '' };
   res.json({
       success: true,
       username: userBase.username,
@@ -319,6 +376,18 @@ const sqlLegtobbetMegosztott = `
       modul_leiras: userBase.modul_leiras,
       
       stats: {
+        legnepszerubbKategoriaNev: legnepszerubbKategoria.fo_kategoria,
+        legnepszerubbKategoriaDarab: legnepszerubbKategoria.darab,
+        modulSablonCount: sablonokSzama,
+        cimJellemzes: modulCimek.cim_jellemzes,
+        cimFejlesztes: modulCimek.cim_fejlesztes,
+        cimErtekeles: modulCimek.cim_ertekeles,
+        foKategoriaCount: kerdesStats.fo_kat_db,
+        alKategoriaCount: kerdesStats.al_kat_db,
+        altTemaCount: kerdesStats.alt_tema_db,
+        osszKerdesCount: kerdesStats.ossz_kerdes_db,
+        modulHozzaferesekSzama: hozzaferesStats.ossz_hozzaferes_db,
+        modulAdminHozzaferesekSzama: hozzaferesStats.admin_hozzaferes_db,
         aiOsszMax: userBase.ai_ossz_max, // <--- EZT ADD HOZZÁ A STATS BLOKKBA
         aktualisSzerep: aktualisSzerepNeve,
         globalWarmUserCount: globalWarmUserCount,

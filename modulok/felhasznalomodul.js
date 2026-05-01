@@ -534,7 +534,24 @@ router.post('/save-valaszok', (req, res) => {
     });
 
     // Segédfüggvény a JSON mentéshez
+  // Segédfüggvény a JSON mentéshez
     const saveJsonAndResponse = () => {
+        
+        // --- LOGOLÁS BEILLESZTÉSE IDE ---
+        // Mivel a safeKerdesValaszok és safeSzovegesValaszok már csak a MÓDOSÍTOTT adatokat tartalmazzák,
+        // így pontosan az kerül a logba, amit a rendszer újonnan hozzáadott.
+        const r_kerdesek = Object.keys(safeKerdesValaszok).length > 0 ? safeKerdesValaszok : null;
+        const r_szovegek = Object.keys(safeSzovegesValaszok).length > 0 ? safeSzovegesValaszok : null;
+
+        if (r_kerdesek || r_szovegek) {
+            logger(req, userId, 'értékelés módosítása', { 
+                kitoltes_id: kitoltesId, 
+                modositott_kerdesek: r_kerdesek, 
+                modositott_szovegek: r_szovegek 
+            });
+        }
+        // ---------------------------------
+
         if (!szazalek) {
             return res.json({ success: true, message: 'Válaszok mentve!' });
         }

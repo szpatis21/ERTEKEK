@@ -24,10 +24,14 @@
       integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
       crossorigin="anonymous" referrerpolicy="no-referrer">
 <style>
+    .felso, .kozep{display: none !important;}
+    .also{height: 87vh !important;}
   @media (max-width: 1024px) {
-    .felso{justify-content: center !important;padding-bottom: 0px !important;}}
+   }
+
     .modal-content button{    border: 1px solid #ff9707;}
-    h1{text-shadow: 0px 0px 13px white;;}
+    h1{text-shadow: 0px 0px 13px white;}
+    .role-section{width: 100;}
 .modal-content p {
     font-size: small;
     font-family: system-ui;}
@@ -108,6 +112,13 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
 #chart-container{height: 100% !important; border-radius: 0px;}
 .leiras{border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;}
 .udv{height: 50% !important;}
+ .feherinfo {
+    width:80%;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-around;
+    position: relative;
+}
 </style>
 
 </head>
@@ -131,12 +142,7 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
                                 <div class="logo" style="font-size: small;"> Kedves <div id="sajatnev"> </div>! Üdv a adminisztrációs rendszerben! </div>
                             </div>    
                                    <div style="display: flex;flex-direction:row-reverse;">                         
-                            <div class="gomb" style="flex-direction: column-reverse; aspect-ratio: 0; width: fit-content;">
-                                <div id="ujraszamolas-gomb">
-                                    <div  >Százalék frissítés</div>
-                                    <div style="font-size: small; font-family: auto; text-align: center; color: red;" id="ujraszamolas-eredmeny"></div>
-                                </div>                     
-                            </div> 
+                           
                             <div class="holvagyok" style="color: #ffffff; font-size: small; font-family: auto;  text-align: center; margin: 5px;"></div>
 </div>          
                     </div>
@@ -181,9 +187,9 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
     </article>
     <article id="lapok">
                     <div id="lapozo">
-                     <button class="grap aktiv" data-target="maininf">Grafikonok</button>
-    <button class="sta" data-target="osszesitett">Statisztika</button>
-    <button class="gyik" data-target="gyik">GYIK</button>
+                     <button class="grap" data-target="maininf">Intézmény Info</button>
+    <button class="sta" data-target="osszesitett">Felhasználó Info</button>
+    <button class="gyik aktiv" data-target="gyik">GYIK</button>
                     </div>
                     <div id="fulek">
                         <div id="maininf" class="outer-div">
@@ -193,7 +199,7 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
                                                             <div class="panel-body">
 
                                                                 <div>
-                                                                    <div class="minigyik">ÉRTÉKELŐ</div>
+                                                                    <div class="minigyik">Felhasználók</div>
                                                                     <span class="material-symbols-outlined eva"> person_edit</span>
                                                                     <span style="font-size: small;">Általános felhasználó. Értékeléseket indíthat, szerkeszthet, oszthat meg. Belépéis felület: csak az értékelő modulba</span>
                                                                 </div>
@@ -270,20 +276,24 @@ h4{width: 100%; flex-direction: row; display: flex; margin: 3vh;
                     </div>
                 
     </article>   
-    <article class="savos">
+    <article class="savos"> 
+            <div class="gomb" id="accunt0">
+                <div class="cim" id="accunt">Infók</div>
+            </div>
+
             <div class="gomb" id="ertekek0">
                 <div class="cim dobaktiv" id="ertekek">Felhasználók</div>
-            </div>  
-               <div class="gomb" id="hozzaj0">                                
-                <div class="cim" id="plussz">Kategóriák</div>
-            </div>    
+            </div>
+
+            <div class="gomb" id="hozzaj0">                                
+                <div class="cim" id="szam">Számlázás</div>
+            </div>
+
             <div class="gomb" id="ujert0">
-                <div class="cim" id="ujany">Feltöltés</div>
+                <div class="cim" id="vez">Vezérlés</div>
             </div>                    
             
-            <div class="gomb" id="accunt0">
-                <div class="cim" id="accunt">Fiókom</div>
-            </div>       
+             
            
     </article>  
 

@@ -46,6 +46,9 @@ const sql = `
   FROM kerdesek k
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
+    AND k.fo_kategoria IS NOT NULL 
+    AND k.fo_kategoria != '' 
+    AND k.fo_kategoria NOT LIKE '[Új%'
   ORDER BY k.fo_kategoria ASC
 `;
 db.query(sql, [modulId, modulId], (err, rows) => {
@@ -78,6 +81,9 @@ const sql = `
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE k.fo_kategoria = ?
     AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
+    AND k.al_kategoria IS NOT NULL 
+    AND k.al_kategoria != '' 
+    AND k.al_kategoria NOT LIKE '[Új%'
   ORDER BY k.al_kategoria ASC
 `;
 db.query(sql, [fo_kategoria_id, modulId, modulId], (err, rows) => {
@@ -115,6 +121,9 @@ const sql = `
   WHERE k.fo_kategoria = ?
     AND k.al_kategoria = ?
     AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
+    AND k.alt_tema IS NOT NULL 
+    AND k.alt_tema != '' 
+    AND k.alt_tema NOT LIKE '[Új%'
   ORDER BY k.alt_tema ASC
 `;
 db.query(sql, [fo_kategoria_id, al_kategoria_id, modulId, modulId], (err, rows) => {
@@ -161,6 +170,7 @@ const sql = `
     AND k.alt_tema     = ?
     AND k.parent_id IS NULL
     AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
+    AND k.kerdes_szoveg NOT LIKE '[Új%'
   ORDER BY k.kindex ASC
 `;
 db.query(sql, [fo_kategoria_id, al_kategoria_id, alt_tema_id, modulId, modulId],   // ⇐ 4 param / 4 kérdőjel

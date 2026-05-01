@@ -71,7 +71,7 @@ function markdownToPdfMake(text) {
 // JAVÍTÁS: A datasetKey-eknek egyezniük kell azzal, ahogy a dashCRUD.js beolvassa őket!
 // Fejlesztési -> aiText, Jellemzés -> aiJellemzes, Értékelés -> aiErtekeles
 const AI_TYPES = {
-  fejlesztesi: { id: 'fejlesztesi', label: 'Fejlesztési terv', endpoint: '/api/generate/jellemzes-from-json', saveType: 'fejlesztesi', datasetKey: 'aiText' },
+  fejlesztesi: { id: 'fejlesztesi', label: 'Fejlesztési terv2', endpoint: '/api/generate/jellemzes-from-json', saveType: 'fejlesztesi', datasetKey: 'aiText' },
   jellemzes:   { id: 'jellemzes',   label: 'Jellemzés',       endpoint: '/api/generate/jellemzes-detailed', saveType: 'jellemzes', datasetKey: 'aiJellemzes' },
   ertekeles:   { id: 'ertekeles',   label: 'Értékelés',       endpoint: '/api/generate/ertekeles-evaluation', saveType: 'ertekeles', datasetKey: 'aiErtekeles' }
 };
@@ -232,15 +232,17 @@ function getCurrentCard() {
   return document.querySelector('.meglevok.kijelolt') || window.currentAiCard;
 }
 
+let aiBeallitasokCache = null; // Ideiglenes tár, hogy ne töltsük le minden megnyitáskor feleslegesen
+
 // JAVÍTÁS: A dashCRUD.js ezt a függvényt keresi! (openAiSelector)
-export function openAiSelector(btnElement) {
+export async function openAiSelector(btnElement) {
     const cardElement = btnElement.closest('.meglevok') || getCurrentCard();
     if (cardElement) {
-        openAiModal(cardElement, 'fejlesztesi'); // Indításkor a Fejlesztési tervet nyitjuk meg alapból
+        await openAiModal(cardElement, 'fejlesztesi'); // Indításkor a Fejlesztési tervet nyitjuk meg alapból
     }
 }
 
-export function openAiModal(cardElement, initialType = 'fejlesztesi') {
+export async function openAiModal(cardElement, initialType = 'fejlesztesi') {
   ensureAiModalExists();
   window.currentAiCard = cardElement;
 
@@ -248,7 +250,28 @@ export function openAiModal(cardElement, initialType = 'fejlesztesi') {
   const headerTabs = document.getElementById('ai-type-tabs');
   const titleEl = document.getElementById('ai-modal-main-title');
 
-  // Gombok generálása a fejlécbe
+  // Megjelenítjük azonnal, hogy a felület gyorsan reagáljon
+  titleEl.textContent = `${cardElement.dataset.nev || 'Ismeretlen'} – ÉRTÉKEK`;
+  overlay.style.display = 'flex';
+
+  // 1. Dinamikus címek lekérése a backendről (csak egyszer kérjük le, utána memóriából dolgozik)
+  if (!aiBeallitasokCache && typeof modulId !== 'undefined' && modulId) {
+      try {
+          const res = await fetch(`/api/ai-beallitasok?modulId=${modulId}`);
+          const data = await res.json();
+          if (data.success && data.adatok) {
+              aiBeallitasokCache = data.adatok;
+              // Felülírjuk az AI_TYPES alapértelmezett címkéit az adatbázisból érkezőkkel
+              if (data.adatok.cim_fejlesztes) AI_TYPES.fejlesztesi.label = data.adatok.cim_fejlesztes;
+              if (data.adatok.cim_jellemzes) AI_TYPES.jellemzes.label = data.adatok.cim_jellemzes;
+              if (data.adatok.cim_ertekeles) AI_TYPES.ertekeles.label = data.adatok.cim_ertekeles;
+          }
+      } catch (e) {
+          console.error("Nem sikerült betölteni a dinamikus AI címeket:", e);
+      }
+  }
+
+  // 2. Gombok generálása a fejlécbe (immár a testreszabott címekkel)
   headerTabs.innerHTML = Object.keys(AI_TYPES).map(key => {
     const t = AI_TYPES[key];
     return `<button class="ai-tab-btn ${key === initialType ? 'active' : ''}" data-type="${key}">${t.label}</button>`;
@@ -260,9 +283,6 @@ export function openAiModal(cardElement, initialType = 'fejlesztesi') {
     btn.classList.add('active');
     showAiType(btn.dataset.type);
   }));
-
-  titleEl.textContent = `${cardElement.dataset.nev || 'Ismeretlen'} – ÉRTÉKEK`;
-  overlay.style.display = 'flex';
   
   showAiType(initialType);
 }

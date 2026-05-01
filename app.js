@@ -162,10 +162,18 @@ function authMiddleware(req, res, next) {
 }
 // Admin jogosultság ellenőrzés (csak adminok érhetik el az admin oldalt)
 function adminAuthMiddleware(req, res, next) {
-    if (req.session && req.session.isAdmin) {
+    if (req.session && (req.session.isAdmin || req.session.roleId === 4)) {
         return next(); 
     } else {
-        return res.status(403).send('Nincs jogosultságod az admin oldalhoz!');
+        return res.status(403).send('Nincs jogosultságod az admin végpontokhoz!');
+    }
+}
+function sysadminAuthMiddleware(req, res, next) {
+    // A loginmodul.js-ben a sysadmin szerepkört 4-es roleId-vel mentjük a sessionbe
+    if (req.session && req.session.roleId === 4) {
+        return next(); 
+    } else {
+        return res.status(403).send('Nincs jogosultságod a rendszergazda (sysadmin) oldalhoz!');
     }
 }
 //KISZOLGÁLÁS
@@ -192,6 +200,7 @@ res.sendFile(path.join(__dirname, 'httpdocs', 'public', 'index.html'));
 app.use('/user', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'user')));
 app.use('/elemzo', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'elemzo')));
 app.use('/admin', authMiddleware, adminAuthMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'admin')));
+app.use('/sysadmin', authMiddleware, sysadminAuthMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'sysadmin')));
 app.use('/info',authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'info')));
 app.use('/main', authMiddleware, express.static(path.join(__dirname, 'httpdocs', 'private', 'main')));
 
@@ -206,6 +215,11 @@ const routes = [
         path: '/admin/dashboard.html', // Teljes útvonal használata ajánlott
         file: 'private/admin/dashboard.html', 
         auth: [authMiddleware, adminAuthMiddleware] // Itt dől el a visszairányítás
+    },
+    { 
+        path: '/sysadmin/dashboard.html', 
+        file: 'private/sysadmin/dashboard.html', 
+        auth: [authMiddleware, sysadminAuthMiddleware]    
     },
     { path: '/upload.html', file: 'private/admin/upload/upload.html', auth: [authMiddleware, adminAuthMiddleware] },
     { path: '/teszt.html', file: 'private/admin/teszt/teszt.html', auth: [authMiddleware, adminAuthMiddleware] },

@@ -1,0 +1,75 @@
+  <div class="kerdesmodul uj-ideiglenes-alkerdes" data-kindex="${subKindex}" style="margin-left: 20px; margin-top: 10px;">
+        
+                <input class="kerdes-sorszam-jelzo2" type="number" value="${kovetkezoIndex}">
+
+                <div data-id="${tempId}" data-value="0" class="question">
+                    
+                    <div class="inline-fejlec">
+                        <label>
+                            <input type="checkbox" class="inline-maxi-checkbox"> Maximalizálja a pontszámot
+                        </label>
+                        <label>
+                            <input type="checkbox" class="inline-szoveges-checkbox"> Szöveges (nem pontozott)
+                        </label>
+                        <label class="inline-nem-ag-label">
+                            <input type="checkbox" class="inline-nem-ag-checkbox"> Rendelkezik NEM ággal
+                        </label>
+                    </div>
+                <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
+                    <div class="color-picker-input-container inline-szoveg-container" style="padding: 0px;">
+                        <input type="text" class="editor-input-number inline-szoveg-input" style="padding: 0px; border: 1px solid #008000fc;background: #468a4612;" placeholder="Fogalmazza meg a kérdést/állítást...">
+                        
+                        <input type="text" class="editor-input-number inline-negalt-szoveg-input" style="display: none; padding: 0px;" placeholder="Fogalmazza meg a kérdés tagadását...">
+                    </div>                        
+                    
+                    <div class="csuszka csuszka-valtozo">
+                        <label class="labelnem" style="display: none;">
+                            <input type="radio" class="nem" name="valasz-${tempId}" value="nem">
+                            <div class="material-symbols-rounded nemszoveg" style="color: grey; transition: all 0.3s ease;">close</div>
+                        </label>
+
+                        <label class="labelures">
+                            <input type="radio" class="ures" name="valasz-${tempId}" value="ures" checked>
+                            <div class="material-symbols-rounded uresszoveg" title="Kattintson a válasz elvetéséhez.">settings_ethernet</div>
+                        </label>
+
+                        <label class="labeligen">
+                            <input type="radio" class="igen" name="valasz-${tempId}" value="igen">
+                            <div class="material-symbols-rounded igenszoveg">check</div>
+                        </label>
+                        <div class="gomboc" style="transform: translate(-20px, 0px) rotate(45deg);"></div>
+                    </div>
+                    
+                    <div class="szerkesztolec inline-szerkesztolec">
+                         <div>
+                        <div class="ertek inline-ertek-blokk">
+                            <input type="number" class="inline-ertek-input" value="0"> pont (Igen)
+                        </div>
+
+                        <div class="ertek inline-negalt-ertek-container inline-ertek-blokk" style="display: none;">
+                            <input type="number" class="inline-negalt-ertek-input" value="0"> pont (Nem)
+                        </div>
+                        
+                       
+                        </div> 
+                        <div>
+                           
+                            <button class="btn-inline-megse szerkesztogomb" title="Mégse">
+                                <span class="material-symbols-rounded inline-icon">cancel</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    
+
+                </div>
+              
+                </div>
+                </div>
+
+
+//Főkérdés
+
+             <div class="kerdesmodul uj-ideiglenes-kerdes" data-kindex="${kovetkezoIndex}">
+              
+            </div>

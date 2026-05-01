@@ -231,8 +231,7 @@ export function customPrompt3(uzenet, defaultNev, defaultIdoszak, defaultTipus) 
             const tipus = box.querySelector('#cp3-tipus').value;
 
             if(!nev || !idoszak || !tipus) {
-                alert("Minden mezőt ki kell tölteni!"); // Vagy használhatsz showAlert-et is
-                return;
+            showAlert("Minden mezőt ki kell tölteni!");                return;
             }
             close({ nev, idoszak, tipus });
         });
@@ -296,7 +295,7 @@ export function customDatePrompt(vizsgaltNev) {
             const dateVal = box.querySelector('#cp-date').value;
             if(!dateVal) {
                 // Ideiglenes sima alert, ha nem választott dátumot
-                alert("Kérem válasszon egy dátumot!"); 
+showAlert("Kérem válasszon egy dátumot!");
                 return;
             }
             close(dateVal);
@@ -395,16 +394,49 @@ export function customAuditPrompt(vizsgaltNev) {
             const dateVal = dateInput.value;
 
             if (!msg) {
-                alert("Kérem, írjon egy üzenetet a szerkesztőnek!");
-                return;
+showAlert("Kérem, írjon egy üzenetet a szerkesztőnek!");                return;
             }
 
             if (wantsDate && !dateVal) {
-                alert("Kérem válasszon egy dátumot, vagy vegye ki a pipát!");
-                return;
+showAlert("Kérem válasszon egy dátumot, vagy vegye ki a pipát!");                return;
             }
 
             close({ message: msg, deadline: wantsDate ? dateVal : null });
         });
     });
+}
+export function showSuccessToast(message) {
+    const toast = document.createElement('div');
+    toast.textContent = message;
+    Object.assign(toast.style, {
+        position: 'fixed',
+        bottom: '30px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        backgroundColor: '#4CAF50', // Kellemes zöld szín
+        color: 'white',
+        padding: '12px 24px',
+        borderRadius: '8px',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        zIndex: '10000',
+        opacity: '0',
+        transition: 'opacity 0.3s ease-in-out',
+        fontFamily: "'Montserrat', sans-serif",
+        fontWeight: 'bold'
+    });
+
+    document.body.appendChild(toast);
+
+    // Fade-in
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+    });
+
+    // Fade-out 3 másodperc múlva
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
 }

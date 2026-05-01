@@ -140,21 +140,29 @@ export function szamoljFokerdesOsszErtek(parentKerdes, kerdesekTomb, kerdesValas
     if (hasMaxSzint) return 100;
 
     const hasChildrenOnAktiv = aktivAg.length > 0;
-    const anySelectedOnAktiv = aktivAg
-        .map(id => kerdesekTomb.find(k => k.id === id))
-        .filter(Boolean)
-        .some(k => kerdesValaszok[k.id] === 'igen');
-    if (hasChildrenOnAktiv && !anySelectedOnAktiv) return 0;
+const anySelectedOnAktiv = aktivAg
+    .map(id => kerdesekTomb.find(k => k.id === id))
+    .filter(Boolean)
+    .some(k => kerdesValaszok[k.id] === 'igen' || kerdesValaszok[k.id] === 'nem');
+if (hasChildrenOnAktiv && !anySelectedOnAktiv) return 0;
 
-    if (valasz === 'igen') {
-        const vals = aktivAg
-            .map(id => kerdesekTomb.find(k => k.id === id))
-            .filter(k => k && kerdesValaszok[k.id] === 'igen')
-            .map(k => Number(k.ossz_ertek))
-            .filter(v => Number.isFinite(v));
-        if (vals.length) {
-            return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
-        }
+   if (valasz === 'igen') {
+    const vals = aktivAg
+        .map(id => kerdesekTomb.find(k => k.id === id))
+        .filter(k => k && (kerdesValaszok[k.id] === 'igen' || kerdesValaszok[k.id] === 'nem'))
+        .map(k => {
+            if (kerdesValaszok[k.id] === 'igen') {
+                return Number(k.ossz_ertek);
+            } else {
+                // Ha NEM a válasz az alkérdésre, arányosítunk a negált érték alapján
+                return (Number(k.ertek) > 0) ? (Number(k.negalt_ertek) / Number(k.ertek)) * Number(k.ossz_ertek) : 0;
+            }
+        })
+        .filter(v => Number.isFinite(v));
+        
+    if (vals.length) {
+        return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+    }
         const e = Number(parentKerdes.ertek) || 0;
         const fokerdesErtekek = kerdesekTomb
             .filter(k => !k.parentId && k.alKategoria === parentKerdes.alKategoria)
@@ -163,19 +171,26 @@ export function szamoljFokerdesOsszErtek(parentKerdes, kerdesekTomb, kerdesValas
         return Math.round((e / maxE) * 100);
     }
 
-    if (valasz === 'nem') {
-        const igenMax = Math.max(0, ...igenAg.map(id => kerdesekTomb.find(k => k.id === id)).filter(Boolean).map(k => Number(k.ertek) || 0));
-        const ref = (igenAg.length > 0 ? igenMax : (Number(parentKerdes.ertek) || 0));
-        if (!(ref > 0)) return 0;
+   if (valasz === 'nem') {
+    const igenMax = Math.max(0, ...igenAg.map(id => kerdesekTomb.find(k => k.id === id)).filter(Boolean).map(k => Number(k.ertek) || 0));
+    const ref = (igenAg.length > 0 ? igenMax : (Number(parentKerdes.ertek) || 0));
+    if (!(ref > 0)) return 0;
 
-        const selectedNemVals = nemAg
-            .map(id => kerdesekTomb.find(k => k.id === id))
-            .filter(k => k && kerdesValaszok[k.id] === 'igen')
-            .map(k => (Number(k.ertek) || 0) / ref * 100);
+    const selectedNemVals = nemAg
+        .map(id => kerdesekTomb.find(k => k.id === id))
+        .filter(k => k && (kerdesValaszok[k.id] === 'igen' || kerdesValaszok[k.id] === 'nem'))
+        .map(k => {
+            if (kerdesValaszok[k.id] === 'igen') {
+                return (Number(k.ertek) || 0) / ref * 100;
+            } else {
+                // Itt is kezeljük a negált értéket a NEM ág alkérdésénél
+                return (Number(k.negalt_ertek) || 0) / ref * 100;
+            }
+        });
 
-        if (selectedNemVals.length) {
-            return Math.round(selectedNemVals.reduce((a, b) => a + b, 0) / selectedNemVals.length);
-        }
+    if (selectedNemVals.length) {
+        return Math.round(selectedNemVals.reduce((a, b) => a + b, 0) / selectedNemVals.length);
+    }
         const ne = Number(parentKerdes.negalt_ertek) || 0;
         return Math.round((ne / ref) * 100);
     }
@@ -305,9 +320,18 @@ export function letrehozAlkategoriaChart(labels, data) {
     const baseColor = normalizedMap[normalize(foKategoriaNev)] || 'rgb(200,200,200)';
     
     let r = 200, g = 200, b = 200;
-    const match = baseColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-    if (match) {
-        [r, g, b] = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+    
+    // HEX kód feldolgozása, ha az érkezik
+    if (baseColor.startsWith('#')) {
+        const hex = baseColor.length === 4 ? '#' + baseColor[1]+baseColor[1] + baseColor[2]+baseColor[2] + baseColor[3]+baseColor[3] : baseColor;
+        r = parseInt(hex.slice(1, 3), 16);
+        g = parseInt(hex.slice(3, 5), 16);
+        b = parseInt(hex.slice(5, 7), 16);
+    } else {
+        const match = baseColor.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (match) {
+            [r, g, b] = [parseInt(match[1]), parseInt(match[2]), parseInt(match[3])];
+        }
     }
     
     const [h, s, l] = rgbToHsl(r, g, b);
@@ -316,7 +340,8 @@ export function letrehozAlkategoriaChart(labels, data) {
         const lightnessStep = 0.4 / (labels.length || 1); 
         const newL = Math.max(0.1, Math.min(0.9, l + (index * lightnessStep) - 0.2)); 
         const [newR, newG, newB] = hslToRgb(h, s, newL);
-        return `rgba(${newR}, ${newG}, ${newB}, 0.8)`;
+        // Beállítjuk a félig átlátszó (0.5) értéket
+        return `rgba(${newR}, ${newG}, ${newB}, 0.5)`;
     });
 
     createOrUpdateChart(
@@ -333,10 +358,21 @@ export function letrehozAlkategoriaChart(labels, data) {
 export function letrehozAltTemaChart(labels, data, foKategoriaNev) {
     utolsoAltTemaParams = [labels, data, foKategoriaNev];
     const map = getKategoriakChartSzinek();
-    const baseRgb = map[foKategoriaNev] || "rgba(180,180,180, 0.8)";
+    let baseRgb = map[foKategoriaNev] || "rgba(180,180,180, 0.5)";
 
-    // Itt egyszínű minden oszlop (baseRgb), de ha listát vár a legend generátor,
-    // akkor csinálunk belőle tömböt:
+    // HEX kód átalakítása RGBA-ra 0.5-ös átlátszósággal
+    if (baseRgb.startsWith('#')) {
+        const hex = baseRgb.length === 4 ? '#' + baseRgb[1]+baseRgb[1] + baseRgb[2]+baseRgb[2] + baseRgb[3]+baseRgb[3] : baseRgb;
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        baseRgb = `rgba(${r}, ${g}, ${b}, 0.5)`;
+    } 
+    // Tömör RGB átalakítása RGBA-ra 0.5-ös átlátszósággal
+    else if (baseRgb.startsWith('rgb(') && !baseRgb.includes('rgba')) {
+        baseRgb = baseRgb.replace('rgb(', 'rgba(').replace(')', ', 0.5)');
+    }
+
     const colors = labels.map(() => baseRgb);
 
     createOrUpdateChart(

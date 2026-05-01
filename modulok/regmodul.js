@@ -117,8 +117,9 @@ const query = `
 </div>
                 `;
                 sendEmail(mail2v, 'Regisztráció sikeres - ÉRTÉKEK', htmlContent);
-                
+                console.log(`Új intézmény regisztrálva: ${intv} (Kód: ${intreg})`);
                 res.status(201).json({ message: 'Intézményi regisztráció sikeres', intreg });
+
             }); 
         }); 
     }); 
@@ -155,7 +156,7 @@ router.post('/register/user', (req, res) => {
             }
 
             const newUserId = result.insertId;
-
+            logger(req, newUserId, "regisztráció", "Új felhasználói regisztráció");
             // Jogosultságok mentése
             let modsTomb = Array.isArray(usermods) ? usermods : String(usermods).split(',');
             modsTomb = modsTomb.map(s => s.trim()).filter(s => s.length);

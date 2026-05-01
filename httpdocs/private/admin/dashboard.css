@@ -9,6 +9,9 @@
     align-items: center;
     align-content: center;
   }
+.gomb.aktiv{background:transparent;
+
+  }
   #maininf{    background: white;
     height: 90vh !important;
     border-radius: 15px;
@@ -101,6 +104,42 @@ font-size: 85%;
     transform: translateY(20px); /* Kis eltolás lefelé */
     transition: opacity 0.5s ease, transform 0.5s ease; /* Áttűnés és eltolás */
 }
+#egyik,#masik{
+  backdrop-filter: blur(2px);
+    background: #ff82578f;
+    height: 40px;
+    color: white;
+    text-shadow: 0px 0px 3px;
+    border-radius: 10px;
+    display: flex;
+    padding: 10px;
+    border: 1px solid #80808096;
+    justify-content: center;
+    align-items: center;
+}
+.edit-ai-field{background: #ffa50040;
+    border-radius: 9px;
+    margin: 0px 5px;
+    border: 1px solid #80808042;
+    cursor: pointer;
+    display: flex;
+    transition: all 0.3s;
+    align-items: center;}
+.edit-ai-field:hover{scale: 1.1; border: 1px solid orange; background-color: white;}
+.lapok{height:87vh}
+#ai-beallitasok-container{overflow: auto;
+    height: 85vh;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    color: #4b5563;}
+    #ai-beallitasok-container h3 {
+      margin-top: 0px;
+    }
+.na:hover {
+  color: white !important;
+}
+#egyik p,#masik p{margin: 0px;}
 .mas{height: 20vh; margin: 3vh 0vh; justify-content: space-between !important;}
 .mas button{font-size: larger !important;}
 .category-container .fo.megjelenik {
@@ -480,3 +519,213 @@ margin: 10px;
     transform: translateX(-50%);
     z-index: -1;}
     .cim .edit-button .material-symbols-rounded {font-size: 100px;}
+  
+.kerdesmodul, .csuszka, .csuszka2{flex-wrap: wrap !important;}
+.sabiknak{
+  background: white;
+    border-radius: 9px;
+    height: 85vh;
+    padding: 5px;
+}
+.valaszto-sor span{
+  display: flex;
+}
+.valaszto-sor {
+      box-shadow: 2px 1px 4px -2px;
+    display: flex;
+    flex-direction: column;
+    height: 65px;
+    border: 1px solid #ff6500;
+    background: #eeeeee70;
+    align-items: center;
+    padding: 10px;
+    justify-content: center;
+    min-width: 160px;
+    border-radius: 10px;
+}
+.valaszto-div{
+      width: 100%;
+    gap: 20px;
+    justify-content: space-around;
+    display: flex;
+        border-bottom: 1px solid orangered;
+    padding-bottom: 10px;
+}
+#szerkeszto-interaktiv-terulet{
+  flex-direction: column;
+  height: 75vh;
+  gap: 0px !important;
+  width: 100%;
+}
+.sokadik{
+  display: flex;
+    justify-content: space-around;
+    padding: 2%;
+    font-size: smaller;
+}
+#tab-igen, #tab-nem{ padding: 1px;
+  font-weight: bold;
+  cursor:pointer; color: #272727; opacity: 0.5; border-bottom: 2px solid transparent
+}
+.questionadd{
+      box-shadow: 0px 14px 20px 0px #ff6500ab;
+    margin-bottom: 10px;
+}
+#sabiment{background: #ff6500 !important;
+    color: white;
+    box-shadow: 0px 4px 4px 0px #00000096;
+    border: 1px solid white;}
+    #sabiment:hover span{color: rgb(166, 255, 187) !important;}
+.hp{
+  margin: 0px;
+  margin-top: 10px;
+}
+.mediv{ display: flex;gap: 15px;
+      background: white;
+}
+.btn-save-all-sablon .questionadd{background:orangered !important; box-shadow: none;}
+.sablon-oszlop {    text-align: center;
+    overflow-y: scroll;
+    width: 100%;
+    flex-direction: column;
+    background:#ffffff29;
+    height:65vh;}
+.tipus-valaszto-kontener{
+  display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+.tipus-valaszto-kontener p{
+  border-bottom: 1px solid orangered;
+}
+.sablon-oszlop{
+  display: flex;
+}
+/* Felső zóna, ami tartalmazza a kattintható kártyákat */
+.sablon-top-zone {
+       display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid orangered;
+    align-content: center;
+    justify-content: space-around;
+    align-items: center;
+
+}
+
+/* Egy kattintható sablon kártya felül */
+.sablon-karty-mini {
+    width: 12vh;
+    height: 12vh;
+    text-align: center;
+    display: flex;
+    padding: 10px 18px;
+    border: 1px solid #ddd;
+    border-radius: 11px;
+    background: rgb(255, 140, 0);
+    cursor: pointer;
+    font-weight: 500;
+    font-weight: bold;
+    color: #ffffff;
+    transition: all 0.2s ease;
+    user-select: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.sablon-karty-mini:hover {
+    border-color: #2c2c2c;
+    color: rgb(255, 140, 0);
+    background: #ffffff;
+}
+
+.sablon-karty-mini.active {
+    background: #ffffff;
+    width:12vh !important;
+    height: 12vh !important;
+    margin: 0px !important;
+    color: rgb(255, 140, 0);
+    border-color: #383838;
+    box-shadow: 0 3px 6px rgba(70, 138, 70, 0.3);
+}
+
+/* Az "+ Új sablon" kártya kiemelt stílusa */
+.uj-sablon-karty {
+    border: 1px dashed #ff6500;
+    color: #ff6500;
+}
+
+.uj-sablon-karty.active {
+    background: #ff6500;
+    color: #fff;
+    border-style: solid;
+    box-shadow: 0 3px 6px rgba(255, 101, 0, 0.3);
+}
+
+/* --- Alsó, olvasható (Read-Only) nézet stílusai --- */
+.read-only-container {
+    position: relative;
+    background: #fafafa;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.read-only-pencil {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    color: #ff6500;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.read-only-pencil:hover {
+    background: #ff6500;
+    color: #fff;
+    border-color: #ff6500;
+    transform: scale(1.05);
+}
+
+.ro-lista {
+    list-style-type: none;
+    padding-left: 0;
+    margin-top: 10px;
+}
+
+.ro-lista li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+    font-size: 0.95em;
+    color: #444;
+}
+
+.ro-lista li:last-child {
+    border-bottom: none;
+}
+
+/* Animáció a váltásokhoz */
+.fade-in {
+    animation: fadeInOpacity 0.3s ease-in;
+}
+
+@keyframes fadeInOpacity {
+    0% { opacity: 0; transform: translateY(5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}

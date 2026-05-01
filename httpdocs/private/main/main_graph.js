@@ -128,6 +128,7 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
         });
 
         if (!response.ok) throw new Error(`HTTP hiba!`);
+        
         if (logoutForm || url) {
             if (logoutForm) logoutForm.submit();
             else if (url) window.location.href = url;
