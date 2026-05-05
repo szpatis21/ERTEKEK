@@ -15,7 +15,7 @@ router.get('/kerdesek', (req, res) => {
   // ② Lekérdezés
 const sql = `
   SELECT k.*
-  FROM kerdesek k
+  FROM kerdesek_kategoriaval k
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
   ORDER BY k.kindex ASC
@@ -32,69 +32,107 @@ const sql = `
 
 
 // GET /api/get-fo_kategoriak?modulId=2
+// GET /api/get-fo_kategoriak?modulId=2
 router.get('/api/get-fo_kategoriak', (req, res) => {
-  const modulId = parseInt(req.query.modulId, 10);       // egyértelmű integer-cast
+  const modulId = parseInt(req.query.modulId, 10);
 
-  // ① Validáció
   if (!Number.isInteger(modulId) || modulId <= 0) {
     return res.status(400).json({ message: 'Hiányzó vagy hibás modulId!' });
   }
 
-  // ② Lekérdezés
-const sql = `
-  SELECT DISTINCT k.fo_kategoria AS nev
-  FROM kerdesek k
-  LEFT JOIN kozos z ON z.id = k.osztott
-  WHERE (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
-    AND k.fo_kategoria IS NOT NULL 
-    AND k.fo_kategoria != '' 
-    AND k.fo_kategoria NOT LIKE '[Új%'
-  ORDER BY k.fo_kategoria ASC
-`;
-db.query(sql, [modulId, modulId], (err, rows) => {
+  const sql = `
+    SELECT
+      sajat.nev,
+      sajat.leiras,
+      sajat.szin,
+      sajat.chart
+    FROM fokategoriak sajat
+    WHERE sajat.modul_id = ?
+      AND sajat.nev IS NOT NULL
+      AND sajat.nev != ''
+
+    UNION
+
+    SELECT DISTINCT
+      v.fo_kategoria AS nev,
+      f.leiras,
+      f.szin,
+      f.chart
+    FROM kerdesek_kategoriaval v
+    JOIN kozos z ON z.id = v.osztott
+    LEFT JOIN fokategoriak f
+      ON f.modul_id = v.modul_id
+     AND f.nev = v.fo_kategoria
+    WHERE z.modul_megosztott = ?
+      AND v.modul_id = z.modul_megoszto
+      AND v.fo_kategoria IS NOT NULL
+      AND v.fo_kategoria != ''
+      AND NOT EXISTS (
+        SELECT 1
+        FROM fokategoriak sajat2
+        WHERE sajat2.modul_id = ?
+          AND sajat2.nev = v.fo_kategoria
+      )
+
+    ORDER BY nev ASC
+  `;
+
+  db.query(sql, [modulId, modulId, modulId], (err, rows) => {
     if (err) {
-      console.error(err);
+      console.error('DB-hiba (fo_kategoriak + megosztott):', err);
       return res.status(500).json({ message: 'DB-hiba (fo_kategoriak)' });
     }
+
     res.json(rows);
   });
 });
 
-
-// GET /api/get-al_kategoriak?fo_kategoria_id=„Vezetés”&modulId=2
+// GET /api/get-al_kategoriak?fo_kategoria_id=...&modulId=2
 router.get('/api/get-al_kategoriak', (req, res) => {
   const { fo_kategoria_id, modulId: modulIdRaw } = req.query;
   const modulId = parseInt(modulIdRaw, 10);
 
-  /* ① Validáció ------------------------------------------------------- */
   if (!fo_kategoria_id) {
     return res.status(400).json({ message: 'Hiányzó fo_kategoria_id!' });
   }
+
   if (!Number.isInteger(modulId) || modulId <= 0) {
     return res.status(400).json({ message: 'Hiányzó vagy hibás modulId!' });
   }
 
-  /* ② Lekérdezés ------------------------------------------------------ */
-const sql = `
-  SELECT DISTINCT k.al_kategoria AS nev
-  FROM kerdesek k
-  LEFT JOIN kozos z ON z.id = k.osztott
-  WHERE k.fo_kategoria = ?
-    AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
-    AND k.al_kategoria IS NOT NULL 
-    AND k.al_kategoria != '' 
-    AND k.al_kategoria NOT LIKE '[Új%'
-  ORDER BY k.al_kategoria ASC
-`;
-db.query(sql, [fo_kategoria_id, modulId, modulId], (err, rows) => {
+  const sql = `
+    SELECT a.nev
+    FROM alkategoriak a
+    JOIN fokategoriak f ON f.id = a.fokategoria_id
+    WHERE a.modul_id = ?
+      AND f.nev = ?
+      AND a.nev IS NOT NULL
+      AND a.nev != ''
+
+    UNION
+
+    SELECT DISTINCT
+      v.al_kategoria AS nev
+    FROM kerdesek_kategoriaval v
+    JOIN kozos z ON z.id = v.osztott
+    WHERE z.modul_megosztott = ?
+      AND v.modul_id = z.modul_megoszto
+      AND v.fo_kategoria = ?
+      AND v.al_kategoria IS NOT NULL
+      AND v.al_kategoria != ''
+
+    ORDER BY nev ASC
+  `;
+
+  db.query(sql, [modulId, fo_kategoria_id, modulId, fo_kategoria_id], (err, rows) => {
     if (err) {
-      console.error('DB-hiba (al_kategoriak):', err);
+      console.error('DB-hiba (al_kategoriak + megosztott):', err);
       return res.status(500).json({ message: 'Hiba a lekérdezés során.' });
     }
+
     res.json(rows);
   });
 });
-
 
 // GET /api/get-alt_temak?fo_kategoria_id=„Vezetés”&al_kategoria_id=„Motiváció”&modulId=2
 router.get('/api/get-alt_temak', (req, res) => {
@@ -103,36 +141,56 @@ router.get('/api/get-alt_temak', (req, res) => {
     al_kategoria_id,
     modulId: modulIdRaw
   } = req.query;
+
   const modulId = parseInt(modulIdRaw, 10);
 
-  /* ① Validáció ------------------------------------------------------- */
   if (!fo_kategoria_id || !al_kategoria_id) {
     return res.status(400).json({ message: 'Hiányzó fo_kategoria_id vagy al_kategoria_id!' });
   }
+
   if (!Number.isInteger(modulId) || modulId <= 0) {
     return res.status(400).json({ message: 'Hiányzó vagy hibás modulId!' });
   }
 
-  /* ② Lekérdezés ------------------------------------------------------ */
-const sql = `
-  SELECT DISTINCT k.alt_tema AS nev
-  FROM kerdesek k
-  LEFT JOIN kozos z ON z.id = k.osztott
-  WHERE k.fo_kategoria = ?
-    AND k.al_kategoria = ?
-    AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
-    AND k.alt_tema IS NOT NULL 
-    AND k.alt_tema != '' 
-    AND k.alt_tema NOT LIKE '[Új%'
-  ORDER BY k.alt_tema ASC
-`;
-db.query(sql, [fo_kategoria_id, al_kategoria_id, modulId, modulId], (err, rows) => {
-    if (err) {
-      console.error('DB-hiba (alt_temak):', err);
-      return res.status(500).json({ message: 'Hiba a lekérdezés során.' });
+  const sql = `
+    SELECT t.nev
+    FROM altemak t
+    JOIN alkategoriak a ON a.id = t.alkategoria_id
+    JOIN fokategoriak f ON f.id = a.fokategoria_id
+    WHERE t.modul_id = ?
+      AND f.nev = ?
+      AND a.nev = ?
+      AND t.nev IS NOT NULL
+      AND t.nev != ''
+
+    UNION
+
+    SELECT DISTINCT
+      v.alt_tema AS nev
+    FROM kerdesek_kategoriaval v
+    JOIN kozos z ON z.id = v.osztott
+    WHERE z.modul_megosztott = ?
+      AND v.modul_id = z.modul_megoszto
+      AND v.fo_kategoria = ?
+      AND v.al_kategoria = ?
+      AND v.alt_tema IS NOT NULL
+      AND v.alt_tema != ''
+
+    ORDER BY nev ASC
+  `;
+
+  db.query(
+    sql,
+    [modulId, fo_kategoria_id, al_kategoria_id, modulId, fo_kategoria_id, al_kategoria_id],
+    (err, rows) => {
+      if (err) {
+        console.error('DB-hiba (alt_temak + megosztott):', err);
+        return res.status(500).json({ message: 'Hiba a lekérdezés során.' });
+      }
+
+      res.json(rows);
     }
-    res.json(rows);
-  });
+  );
 });
 
 
@@ -163,8 +221,7 @@ const sql = `
     k.negalt_kerdes_szoveg,
     k.szoveges, k.ertek, k.negalt_ertek,
     k.kindex, k.ossz_ertek, k.maximalis_szint
-  FROM kerdesek k
-  LEFT JOIN kozos z ON z.id = k.osztott
+  FROM kerdesek_kategoriaval k  LEFT JOIN kozos z ON z.id = k.osztott
   WHERE k.fo_kategoria = ?
     AND k.al_kategoria = ?
     AND k.alt_tema     = ?
@@ -209,7 +266,7 @@ const sql = `
     k.parent_id, k.valasz_ag, k.negalt_kerdes_szoveg,
     k.szoveges, k.ertek, k.negalt_ertek,
     k.ossz_ertek, k.maximalis_szint
-  FROM kerdesek k
+  FROM kerdesek_kategoriaval k  
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE k.parent_id = ?
     AND k.valasz_ag = ?
@@ -245,7 +302,7 @@ router.post('/api/check-nem-ag-batch', (req, res) => {
 
 const sql = `
   SELECT k.parent_id, COUNT(*) AS count
-  FROM kerdesek k
+  FROM kerdesek_kategoriaval k
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE k.parent_id IN (${placeholders})
     AND k.valasz_ag = "nem"
@@ -282,7 +339,7 @@ const sql = `
     k.fo_kategoria, k.al_kategoria, k.alt_tema,
     k.szoveges, k.ertek, k.negalt_ertek,
     k.kindex, k.ossz_ertek, k.maximalis_szint
-  FROM kerdesek k
+  FROM kerdesek_kategoriaval k
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))
   ORDER BY k.parent_id, k.kindex ASC
@@ -327,7 +384,7 @@ const sql = `
     k.fo_kategoria, k.al_kategoria, k.alt_tema,
     k.szoveges, k.ertek, k.negalt_ertek,
     k.ossz_ertek, k.maximalis_szint
-  FROM kerdesek k
+  FROM kerdesek_kategoriaval k
   LEFT JOIN kozos z ON z.id = k.osztott
   WHERE k.id IN (${placeholders})
     AND (k.modul_id = ? OR (k.osztott IS NOT NULL AND z.modul_megosztott = ? AND k.modul_id = z.modul_megoszto))

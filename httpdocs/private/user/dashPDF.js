@@ -101,8 +101,10 @@ async function imgFromDivHiDPI(id, pdfWidth = 529) {
 
     if (typeof chart.resize === 'function') {
       chart.resize(originalBox.width, originalBox.height);
-       document.querySelector("#topChartsContainer").style.height ="25vh";
-
+const topChartsContainer = document.querySelector("#topChartsContainer");
+if (topChartsContainer) {
+  topChartsContainer.style.height = "25vh";
+}
     } else {
       chart.resize();
     }

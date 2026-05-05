@@ -603,6 +603,7 @@ margin: 10px;
 .sablon-oszlop{
   display: flex;
 }
+
 /* Felső zóna, ami tartalmazza a kattintható kártyákat */
 .sablon-top-zone {
        display: flex;

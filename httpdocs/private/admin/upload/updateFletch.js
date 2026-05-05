@@ -1,7 +1,6 @@
 import { modulIdBetoltve } from '/private/main/main_alap.js';
 import { showSuccessToast } from '/both/alert.js';
-// updateFletch.js - Cseréld ki a torlesButton függvényt erre:
-import { DeleteConfirm } from './delete_confirm.js'; // <-- Importáld be felülre!
+import { DeleteConfirm } from './delete_confirm.js'; 
 
 export function torlesButton(id, isAlkerdes = false) {
     const deleteButton = document.createElement('button');
@@ -11,7 +10,7 @@ export function torlesButton(id, isAlkerdes = false) {
     deleteButton.addEventListener('click', async () => {
         const url = isAlkerdes ? `/alkerdesek/${id}` : `/kerdesek/${id}`;
         
-        // Szükségünk lesz a KategoriaKezelo-re a frissítéshez
+        //  KategoriaKezelo a frissítéshez
         const { KategoriaKezelo } = await import('/private/main/main_quest.js');
         const kerdes = KategoriaKezelo.kerdesek.find(k => k.id === id);
 
@@ -25,7 +24,6 @@ export function torlesButton(id, isAlkerdes = false) {
                     showSuccessToast('Sikeres törlés!'); 
                     
                     // AZONNALI DOM FRISSÍTÉS:
-                    // Újratöltjük az aktuális nézetet, így az újraszámolt %-ok látszani fognak
                     if (kerdes) {
                         KategoriaKezelo.clearAlkerdesCache();
                         KategoriaKezelo.loadKerdesek(
@@ -51,8 +49,7 @@ export function szerkesztoButton(id) {
     editButton.addEventListener('click', async () => {
         const { KategoriaKezelo } = await import('/private/main/main_quest.js'); 
         const { InlineQuestionCreator } = await import('./category_creator.js'); 
-        const { modulId } = await import('/private/main/main_alap.js');
-
+const modulId = await modulIdBetoltve;
         const kerdes = KategoriaKezelo.kerdesek.find(k => k.id === id);
         if (!kerdes) return;
 
@@ -61,7 +58,7 @@ export function szerkesztoButton(id) {
 
         let osszesAlkerdes = KategoriaKezelo.kerdesek.filter(k => k.parentId == id || k.parent_id == id);
 
-        // Ha még nem húzták el a csúszkát, a memória üres. Betöltjük a cache-ből:
+        // Ha még nem húzták el a csúszkát, a memória üres. Betöltés cachből
         if (osszesAlkerdes.length === 0) {
             const alKerdesMap = await KategoriaKezelo.loadAllAlKerdesek();
             osszesAlkerdes = alKerdesMap[id] || [];
@@ -69,8 +66,6 @@ export function szerkesztoButton(id) {
 
         const igenAlkerdesek = osszesAlkerdes.filter(k => k.valaszAg === 'igen' || k.valasz_ag === 'igen');
         const nemAlkerdesek = osszesAlkerdes.filter(k => k.valaszAg === 'nem' || k.valasz_ag === 'nem');
-        // --- JAVÍTOTT RÉSZ VÉGE ---
-        // --- JAVÍTOTT RÉSZ VÉGE ---
 
         const szerkesztettAdatok = await InlineQuestionCreator.edit(kerdesKartya, kerdes, igenAlkerdesek, nemAlkerdesek);
 

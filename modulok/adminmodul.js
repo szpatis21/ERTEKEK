@@ -15,12 +15,15 @@ module.exports = function(db) {
       return res.status(400).json({ success: false, message: 'Rossz modulId' });
     }
 
-    const sql = `
-      SELECT fo_kategoria AS category, COUNT(*) AS questions_count
-      FROM kerdesek
-      WHERE modul_id = ? AND parent_id IS NULL
-      GROUP BY fo_kategoria;
-    `;
+  const sql = `
+  SELECT fo_kategoria AS category, COUNT(*) AS questions_count
+  FROM kerdesek_kategoriaval
+  WHERE modul_id = ?
+    AND parent_id IS NULL
+    AND fo_kategoria IS NOT NULL
+    AND fo_kategoria != ''
+  GROUP BY fo_kategoria;
+`;
 
     db.query(sql, [modulId], (err, result) => {
       if (err) {
@@ -442,18 +445,18 @@ const [activityRows] = await db.promise().query(sql);
       return res.status(400).json({ success: false, message: 'Rossz paraméterek' });
     }
 
-    const sql = `
-      SELECT 
-        al_kategoria,
-        alt_tema,
-        COUNT(*) AS rogzitett_db
-      FROM kerdesek
-      WHERE modul_id = ?
-        AND fo_kategoria = ?
-        AND (parent_id IS NULL OR parent_id = 0)
-      GROUP BY al_kategoria, alt_tema
-      ORDER BY al_kategoria, alt_tema;
-    `;
+   const sql = `
+  SELECT 
+    al_kategoria,
+    alt_tema,
+    COUNT(*) AS rogzitett_db
+  FROM kerdesek_kategoriaval
+  WHERE modul_id = ?
+    AND fo_kategoria = ?
+    AND (parent_id IS NULL OR parent_id = 0)
+  GROUP BY al_kategoria, alt_tema
+  ORDER BY al_kategoria, alt_tema;
+`;
     db.query(sql, [modulId, fo], (err, rows) => {
       if (err) {
         console.error('SQL hiba:', err.code, err.sqlMessage);
@@ -476,67 +479,6 @@ const [activityRows] = await db.promise().query(sql);
     });
   });
 
-  router.post('/update-temakor', (req, res) => {
-    const { modulId, eredetiNev, ujNev, leiras, szin, chart } = req.body;
-
-    if (!Number.isInteger(modulId) || !eredetiNev) {
-      return res.status(400).json({ success: false, message: 'Hiányzó vagy hibás adatok' });
-    }
-
-    try {
-      const file = path.join(__dirname, '..', 'httpdocs', 'private', 'info', 'temakorok.json');
-      const json = JSON.parse(fs.readFileSync(file, 'utf8'));
-
-      const set = json.optionSets?.[String(modulId)];
-      if (!Array.isArray(set)) {
-        return res.status(400).json({ success: false, message: 'Érvénytelen modulId' });
-      }
-
-      const item = set.find(o => (o.value || o.text) === eredetiNev);
-      if (!item) {
-        return res.status(404).json({ success: false, message: 'Nincs ilyen témakör' });
-      }
-
-      item.value  = ujNev;
-      item.text   = ujNev;
-      item.leiras = leiras;
-      item.szin   = szin;
-      item.chart  = chart;
-
-      fs.writeFileSync(file, JSON.stringify(json, null, 2), 'utf8');
-      res.json({ success: true });
-    } catch (e) {
-      console.error('temakor write error:', e);
-      res.status(500).json({ success: false, message: 'Szerver-hiba írás közben' });
-    }
-  });
-
-  router.post('/add-temakor', (req, res) => {
-    const { modulId, nev, leiras, szin, chart } = req.body;
-    if (!modulId || !nev) {
-      return res.json({ success:false, message:'Hiányzó adatok.' });
-    }
-
-    const file  = path.join(__dirname,'..','httpdocs','private','info','temakorok.json');
-    const json  = JSON.parse(fs.readFileSync(file,'utf8'));
-    const set   = json.optionSets[String(modulId)] || [];
-
-    if (set.some(o => (o.value||o.text) === nev)) {
-      return res.json({ success:false, message:'Már létezik ilyen főkategória.' });
-    }
-
-    set.push({
-      value : nev,
-      text  : nev,
-      leiras: leiras,
-      szin  : szin,
-      chart : chart
-    });
-    json.optionSets[String(modulId)] = set;
-
-    fs.writeFileSync(file, JSON.stringify(json,null,2),'utf8');
-    res.json({ success:true });
-  });
 // Intézmény és minden hozzá tartozó adat (felhasználók, értékelések) végleges törlése
 // Intézmény és minden hozzá tartozó adat (felhasználók, értékelések, megosztások) végleges törlése
   router.delete('/delete-institution', async (req, res) => {

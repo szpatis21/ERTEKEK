@@ -1,26 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
-   
-    
+<html lang="hu">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Animált Logó - Tükröződő Betűk</title>
     
     <style>
-        .gold {color: gold;}
-        #kont{ height: 400px;
-        margin: auto;
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;}
+        .gold { color: rgb(247, 180, 46);
+    text-shadow: rgb(243, 239, 113) 0px 1px 18px;}
+        
+        #kont { 
+            height: 97vh;
+            margin: auto;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #logo-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 320px;
+            height: 320px;
+            /* Erőteljes, pattogós beugrás */
+            animation: introBounce 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
 
         #logokulso {
-            border-radius: 30px;
-            border: 2px solid grey;
-            width: 220px;
-            height: 220px;
+            border-radius: 17px;
+            border: 2px solid rgb(186, 186, 186);
+            width: 320px;
+            height: 320px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -28,44 +42,114 @@
             position: absolute;
             z-index: 2;
         }
-        #logobelso { z-index: 1;
+
+        #logobelso { 
+            z-index: 1;
             animation: shine 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
             display: flex;
             background: white;
-            border-radius: 30px;
-            border: 2px solid gold;
-            width: 200px;
-            height: 200px;
+            letter-spacing: 1px;
+            border-radius: 17px;
+            border: 2px solid rgb(247, 180, 46);
+            width: 300px;
+            height: 300px;
             justify-content: center;
+            text-shadow: 0px 0px 3px white;
             align-items: center;
-            font-family: "Montserrat Subrayada", sans-serif;
-            font-size: xx-large;
+            font-family: "Montserrat Subrayada";
+            font-size: 320%;
+            /* Kell a 3D hatáshoz a gyerek-elemeknél */
+            perspective: 500px; 
         }
-   
-            @keyframes shine {
-                0%, 50%, 100% { box-shadow: 0px 0px 4px 1px gold; }
-                12.5%, 25%, 37.5%, 62.5%, 75%, 87.5% { background-color: white; box-shadow: none;}
+body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+background: #ffebdb;
+background: radial-gradient(ellipse at center, #ffffff 30%, #555555 120%);}        #felirat {
+            display: flex;
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            font-weight: lighter;
+            /* Gyors, pörgős mozgás */
+            animation: letterFlipBlur 0.5s ease-out forwards;
+            /* A doboz megérkezése után (0.9s) indulnak a betűk szorosan egymás után */
+            animation-delay: calc(1s + var(--i) * 0.07s);
+            transform-style: preserve-3d;
+        }
+
+        /* Keyframes a külső keret forgásához */
+        @keyframes rotateClock {
+            0% { transform: rotate(0deg); }
+            12.5% { transform: rotate(45deg); }
+            25% { transform: rotate(45deg); }
+            37.5% { transform: rotate(90deg); }
+            50% { transform: rotate(90deg); }
+            62.5% { transform: rotate(135deg); }
+            75% { transform: rotate(135deg); }
+            87.5% { transform: rotate(180deg); }
+            100% { transform: rotate(180deg); }
+        }
+
+        /* Keyframes a belső villanáshoz */
+        @keyframes shine {
+            0%, 50%, 100% { box-shadow: 0px 0px 4px 1px rgb(247, 180, 46) }
+            12.5%, 25%, 37.5%, 62.5%, 75%, 87.5% { background-color: white; box-shadow: none; }
+        }
+
+        /* A teljes logó beugrása alulról */
+        @keyframes introBounce {
+            0% { 
+                opacity: 0; 
+                transform: translateY(400px) scale(0.7); 
             }
-            @keyframes rotateClock {
-                0% {transform: rotate(0deg);}
-                12.5% {transform: rotate(45deg);}
-                25% {transform: rotate(45deg);}
-                37.5% {transform: rotate(90deg);}
-                50% {transform: rotate(90deg);}
-                62.5% {transform: rotate(135deg);}
-                75% {transform: rotate(135deg);}
-                87.5% {transform: rotate(180deg);}
-                100% {transform: rotate(180deg);}
+            60% { 
+                opacity: 1; 
+                transform: translateY(-25px) scale(1.05); 
             }
-    
+            80% { 
+                transform: translateY(10px) scale(0.97); 
+            }
+            100% { 
+                transform: translateY(0) scale(1); 
+            }
+        }
+
+        /* A betűk tükröződő-homályos befordulása */
+        @keyframes letterFlipBlur {
+            0% { 
+                opacity: 0; 
+                filter: blur(15px); 
+                /* Tükrözve indul, kicsit hátrébb a térben */
+                transform: rotateY(180deg) translateZ(-50px); 
+            }
+            100% { 
+                opacity: 1; 
+                filter: blur(0px); 
+                /* Beáll a normál helyzetbe */
+                transform: rotateY(0deg) translateZ(0); 
+            }
+        }
     </style>
 </head>
 <body>
     <div id="kont">
-        <div id="logokulso">
-        </div>
-        <div id="logobelso">
-            <div class="gold">É</div>RTÉKEK
+        <div id="logo-wrapper">
+            <div id="logokulso"></div>
+            <div id="logobelso">
+                <div id="felirat">
+                    <span class="gold letter" style="--i:0">É</span>
+                    <span class="letter" style="--i:1">R</span>
+                    <span class="letter" style="--i:2">T</span>
+                    <span class="letter" style="--i:3">É</span>
+                    <span class="letter" style="--i:4">K</span>
+                    <span class="letter" style="--i:5">E</span>
+                    <span class="letter" style="--i:6">K</span>
+                </div>
+            </div>
         </div>
     </div>
 </body>

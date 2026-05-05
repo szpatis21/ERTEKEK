@@ -606,6 +606,16 @@ width: 100%;}
      border-radius: 5px;
     margin: 5px;
 }
+.alki{
+        backdrop-filter: blur(1px);
+    z-index: 500;
+    position: sticky;
+    top: 12%;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+}
 .modal.open{
        margin: auto;
     width: fit-content !important;

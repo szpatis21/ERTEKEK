@@ -1,17 +1,92 @@
- #log label {display: flex; font-size: small;     justify-content: center;}
-a:link, a:visited {color: #ffffff;}
+/* =========================================================
+   ÉRTÉKEK - REGISZTRÁCIÓS OLDAL
+   Tisztított CSS: régi #regi / .allabel / input-stílusok kiváltva
+========================================================= */
 
-#log{    flex-direction: column;display: none;     align-items: center;}
-#llog{ font-family: "Montserrat Subrayada"; height: 35px; width: 95%;}
-#whbutt{margin-top: 3px;
+:root {
+    --ertekek-orange: #ff7c00;
+    --ertekek-orange-dark: #ff5722;
+    --ertekek-gold: #ffc107;
+    --ertekek-gold-soft: rgba(255, 193, 7, 0.35);
+    --ertekek-bg: #fff8ef;
+    --ertekek-text: #151515;
+    --ertekek-muted: #6b5d53;
+    --ertekek-card: rgba(255, 255, 255, 0.88);
+    --ertekek-border: rgba(255, 124, 0, 0.26);
+    --ertekek-shadow: 0 18px 45px rgba(70, 38, 0, 0.13);
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body {
+    margin: 0;
+    color: var(--ertekek-text);
+    background: linear-gradient(293deg, #ff3400 0%, #ffab02 100%);
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif;
+    flex-direction: column;
+    align-items: flex-start !important;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: url("media/dragon-scales.svg");
+    background-repeat: repeat;
+    background-size: 480px auto;
+    opacity: 0.10;
+    filter: contrast(120%);
+}
+
+.hero-bg {
+    position: fixed;
+    inset: 0 -20vw auto -20vw;
+    height: 70vh;
+    z-index: -1;
+    transition: all 0.3s;
+    background-image: url("media/dragon-scales.svg");
+}
+
+.main,
+main {
+    width: 100% !important;
+}
+.links a:link,.links a:visited{color: white !important;}
+a:link,
+a:visited {
+    color: #ff7b00;
+}
+
+.gold {
+    color: gold;
+}
+
+button {
+    cursor: pointer;
+    width: fit-content;
+    margin: auto;
+    padding: 5px;
+    border: 1px solid gold;
+    border-radius: 5px;
+    background-color: white;
     font-family: 'Times New Roman', Times, serif;
-    font-size: small;}
-    #log button {transition: all 0.5s;}
-    #log button:hover{
-        background-color: #ff7c00; color: white; transform: scale(1.05);
-    }
-    #regi {background-color: white; margin-top: 5vh;min-height: 20vh;}
-.opening {display: grid;
+    font-weight: 500;
+}
+
+input {
+    cursor: pointer;
+}
+
+/* =========================================================
+   FELSŐ BELÉPÉS / REGISZTRÁCIÓ NYITÓ BLOKK
+========================================================= */
+
+.opening {
+    display: grid;
     grid-auto-flow: row;
     grid-template-columns: repeat(2, 50%);
     justify-items: center;
@@ -20,536 +95,1291 @@ a:link, a:visited {color: #ffffff;}
     backdrop-filter: blur(4px);
     position: relative;
 }
-.eh{color: #FF5722 !important;}
-.inputs input {
-    font-family: 'Times New Roman', Times, serif; 
-    border: 1px solid gold ;border-radius: 5px; padding: 5px;}
-button {cursor: pointer; width: fit-content; margin: auto; background-color: white; border: 1px solid gold; border-radius: 5px; padding: 5px; font-family: 'Times New Roman', Times, serif; font-weight: 500;} 
-.belso {width: 100%;
-    display: flex;
-    background-color: white;
-    height: 100%;
-    align-items: center;
-    justify-content: center;
-    color: black;
-    border-radius: 30px;
-    font-family: "Montserrat Subrayada";
-    transform: rotate(45deg);
-    transition: all 0.3s;
-    border: rgba(0, 0, 0, 0.174) 3px solid;
-}
-.gold{color: gold;}
 
-.belso2 {cursor: pointer;}
-.opening p {font-size: medium; cursor: pointer; text-align: center;}
-.opening .kulso:hover{box-shadow: 0px 0px 2px 2px gold;
-transition: all 0.7s;}
-
-.kulso{    
+.kulso {
     padding: 25px;
     display: flex;
     width: 35vh;
-    top: 0
-    ;
-    position: sticky;
     height: 35vh;
+    top: 0;
+    position: sticky;
     align-items: center;
     justify-content: center;
     border: rgba(255, 217, 0, 0.567) 2px solid;
     border-radius: 30px;
 }
-input {cursor: pointer;}
-#role2,#role3, #role1{box-shadow: none !important;}
-.editbut2{display: flex;}
-.rolebox{    font-size: small;
-    font-style: italic;
-    text-align: center;
-    width: 50%;
-    margin: auto;}
-#userRegi{width: 100%;}
-#ceg, #magan{ display: none; flex-direction: column; width: 50%;}
-#regi{    display: none;
-    flex-direction: column;
-    height: fit-content;
-    width: 90%;
-    border: 1px solid gold;
-    border-radius: 10px;
-    box-shadow: rgb(210 179 3 / 47%) 4px 4px 5px 1px;    
-    font-size: large;
-    text-align: center;
-    padding: 10px;
-   }
-   .choos label{    font-family: "Montserrat Subrayada";
-    font-size: 75%; width: 100%;}
-   #regMagan, #regCeg, #megerosit, #megsem {
-    transition: all 0.3s;
+
+.opening .kulso:hover {
+    box-shadow: 0 0 2px 2px gold;
+    transition: all 0.7s;
+}
+
+.belso {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: black;
+    border-radius: 30px;
+    border: rgba(0, 0, 0, 0.174) 3px solid;
     font-family: "Montserrat Subrayada";
-    width: 200px;
-    height: 45px;
-    box-shadow: inset orange 0px 0px 3px }
-
-    #megsem { box-shadow: inset crimson 0px 0px 3px }
-
-    #regMagan:hover, #regCeg:hover, #megerosit:hover, #megsem:hover{
-        transform: scale(1.05);
-        background-color: #FF5722;
-        color: white;
-
-    } 
-#choicelabel{display: flex; flex-direction: column;}
-#choicelabel div{display: flex;}
-#ceg{flex-direction: column;}
-legend {font-style: italic;margin: 10px;
-     text-align: center;    color: #ff7c00; text-align: left;}
-.allabel{margin: 25px 0px; display: flex;     flex-direction: column;
+    transform: rotate(45deg);
+    transition: all 0.3s;
 }
-.allabel div{display: flex; flex-direction: column; justify-content: space-between;align-items: flex-start;}
-.allabel input {margin-left: 5px;}
-.allabel label {
-    background: white;
-    color: #131313;
-    text-indent: 0px;
-    margin-top: -15px;
-    padding: 3px 13px 0px 0px;
-    border-top: #ffd100 2px solid;
-    border-top-right-radius: 7px;
+
+.belso2 {
+    cursor: pointer;
 }
-.szoveg{font-size: 180%; cursor: pointer;
+
+.szoveg {
+    font-size: 180%;
+    cursor: pointer;
     transform: rotate(-45deg);
-    transition:all 0.3s;
+    transition: all 0.3s;
 }
-#ihoi, #vihoi, #x12hoi, #szamlaChoice1, #szamlaChoice2, #alszamla input{
-    width: max-content !important;
-    box-shadow: none !important;}
 
-    #afsz,#afsz2, #afsz3, #afsz4, #afsz5, #afsz6{
-        width: 20px !important;
-        height: 20px;
-        margin: 10px;
-        box-shadow: none !important;
-        accent-color: orangered;
+.kijelolt {
+    background: linear-gradient(0deg, #ff5722 0%, #f44336e3 100%);
+    color: white !important;
+}
 
+#regi0 {
+    border: rgba(0, 0, 0, 0.174) 3px solid;
+    color: black;
+}
+
+/* =========================================================
+   LOGIN DOBOZ
+========================================================= */
+
+#log {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+}
+
+#log label {
+    display: flex;
+    justify-content: center;
+    font-size: small;
+}
+
+#log button {
+    transition: all 0.5s;
+}
+
+#log button:hover {
+    background-color: var(--ertekek-orange);
+    color: white;
+    transform: scale(1.05);
+}
+
+#llog {
+    width: 95%;
+    height: 35px;
+    font-family: "Montserrat Subrayada";
+}
+
+#whbutt {
+    margin-top: 3px;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: small;
+}
+
+.inputs input {
+    padding: 5px;
+    border: 1px solid gold;
+    border-radius: 5px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.lehetosegek {
+    display: flex;
+    flex-direction: column;
+    margin-top: 25px;
+}
+
+.toggle-jelszo {
+    position: absolute;
+    top: 22%;
+    left: 65%;
+    color: #ff6e01;
+    cursor: pointer;
+}
+
+/* =========================================================
+   ALAP ELRENDEZÉS
+========================================================= */
+
+.al-alap {
+    display: grid;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    position: relative;
+    height: 100%;
+    justify-content: center;
+}
+
+.fade {
+    opacity: 0;
+    transition: all 0.5s ease-in-out;
+    transform: translateY(100%);
+}
+
+.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade2 {
+    opacity: 0;
+    transition: all 0.5s ease-in;
+}
+
+.fade-in2 {
+    opacity: 1;
+}
+
+/* =========================================================
+   ÚJ REGISZTRÁCIÓS FELÜLET - #regi
+========================================================= */
+
+#regi.regi-shell {
+    display: none;
+    position: relative;
+    top: auto;
+    width: min(1120px, calc(100% - 32px));
+    height: fit-content;
+    min-height: 0;
+    margin: 48px auto;
+    padding: 0;
+    overflow: hidden;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex-direction: column;
+    border: 1px solid rgba(255, 193, 7, 0.55);
+    border-radius: 28px;
+    background:
+        radial-gradient(circle at top left, rgba(255, 193, 7, 0.28), transparent 32%),
+        radial-gradient(circle at top right, rgba(255, 87, 34, 0.18), transparent 35%),
+        linear-gradient(145deg, rgba(255,255,255,0.98), rgba(255,250,241,0.96));
+    box-shadow:
+        0 24px 80px rgba(50, 34, 0, 0.16),
+        0 8px 24px rgba(255, 124, 0, 0.18);
+    font-size: 16px;
+    text-align: left;
+}
+
+#regi.regi-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(255, 124, 0, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 124, 0, 0.06) 1px, transparent 1px);
+    background-size: 34px 34px;
+    mask-image: linear-gradient(to bottom, black, transparent 65%);
+}
+
+.regi-hero {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 22px;
+    align-items: center;
+    padding: 34px 38px 28px;
+    background: linear-gradient(135deg, rgba(255, 124, 0, 0.96), #FF9800);
+    color: white;
+}
+
+.regi-hero-mark {
+    display: grid;
+    place-items: center;
+    width: 78px;
+    height: 78px;
+    border-radius: 24px;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.35);
+    box-shadow: inset 0 0 18px rgba(255,255,255,0.16);
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+}
+
+.regi-hero-mark .gold {
+    color: #ffe083;
+}
+
+.regi-kicker {
+    margin: 0 0 4px;
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.88;
+    font-family: system-ui, sans-serif;
+}
+
+.regi-hero h2 {
+    margin: 0;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+    line-height: 1.1;
+    color: #fff7b4;
+}
+
+.regi-hero p {
+    margin: 8px 0 0;
+    max-width: 760px;
+    color: rgba(255,255,255,0.90);
+    line-height: 1.5;
+    font-family: system-ui, sans-serif;
+}
+
+#regi legend {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: #d35400;
+    text-align: left;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: 1.04rem;
+    font-style: normal;
+    letter-spacing: 0.01em;
+}
+
+.regi-switch {
+    position: relative;
+    z-index: 1;
+    width: min(960px, calc(100% - 36px));
+    margin: 24px auto 0;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.76);
+    border: 1px solid rgba(255, 193, 7, 0.32);
+    box-shadow: 0 14px 38px rgba(255, 124, 0, 0.10);
+    backdrop-filter: blur(8px);
+}
+
+.regi-switch > legend {
+    margin-bottom: 14px;
+}
+
+.regi-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.regi-choice-grid input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.regi-choice-card {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    row-gap: 2px;
+    min-height: 78px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 124, 0, 0.26);
+    background: linear-gradient(145deg, #ffffff, #fff8ef);
+    color: #252525;
+    font-family: system-ui, sans-serif;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+
+.regi-choice-card span {
+    grid-row: 1 / span 2;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: rgba(255, 124, 0, 0.12);
+    color: #ff6e01;
+}
+
+.regi-choice-card strong {
+    color: #242424;
+    font-size: 1rem;
+}
+
+.regi-choice-card small {
+    color: #6e625a;
+    line-height: 1.35;
+}
+
+.regi-choice-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 124, 0, 0.55);
+    box-shadow: 0 14px 28px rgba(255, 124, 0, 0.14);
+}
+
+#contactChoice1:checked + .regi-choice-card,
+#contactChoice2:checked + .regi-choice-card {
+    border-color: rgba(255, 124, 0, 0.90);
+    background: linear-gradient(135deg, rgba(255, 124, 0, 0.98), rgb(255 87 34));
+    box-shadow: 0 16px 34px rgba(255, 124, 0, 0.25);
+}
+
+#contactChoice1:checked + .regi-choice-card strong,
+#contactChoice1:checked + .regi-choice-card small,
+#contactChoice1:checked + .regi-choice-card span,
+#contactChoice2:checked + .regi-choice-card strong,
+#contactChoice2:checked + .regi-choice-card small,
+#contactChoice2:checked + .regi-choice-card span {
+    color: white;
+}
+
+#contactChoice1:checked + .regi-choice-card span,
+#contactChoice2:checked + .regi-choice-card span {
+    background: rgba(255,255,255,0.20);
+}
+
+#userRegi,
+#cegesRegi {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+#regi #magan,
+#regi #ceg {
+    display: none;
+    flex-direction: column;
+    width: min(960px, calc(100% - 36px));
+    margin: 18px auto 34px;
+    gap: 18px;
+}
+
+.regi-form-panel {
+    display: none;
+}
+
+.reg-card {
+    position: relative;
+    padding: 22px;
+    border-radius: 24px;
+    border: 1px solid rgba(255, 193, 7, 0.34);
+    background: rgba(255,255,255,0.86);
+    box-shadow:
+        0 18px 40px rgba(55, 35, 0, 0.08),
+        inset 0 1px 0 rgba(255,255,255,0.70);
+    backdrop-filter: blur(10px);
+}
+
+.reg-card::before {
+    content: "";
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    top: 0;
+    height: 3px;
+    border-radius: 0 0 999px 999px;
+    background: linear-gradient(90deg, var(--ertekek-orange), var(--ertekek-gold), transparent);
+}
+
+.reg-section-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    align-items: start;
+    margin-bottom: 18px;
+}
+
+.reg-step {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    color: white;
+    background: linear-gradient(135deg, var(--ertekek-orange), #ffb100);
+    font-family: "Montserrat Subrayada", sans-serif;
+    box-shadow: 0 10px 22px rgba(255, 124, 0, 0.22);
+}
+
+.reg-section-head p {
+    margin: 6px 0 0;
+    color: var(--ertekek-muted);
+    font-size: 0.94rem;
+    line-height: 1.45;
+    font-family: system-ui, sans-serif;
+}
+
+.reg-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.reg-grid .wide,
+.reg-field.wide {
+    grid-column: 1 / -1;
+}
+
+#regi .allabel,
+#regi .reg-field,
+#regi #regcode {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+#regi .allabel > div:first-child,
+#regi .reg-field > div:first-child,
+#regi #regcode {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+}
+
+#regi .allabel label,
+#regi .reg-field label,
+#regi #regcode > label {
+    margin: 0 0 7px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #2b2927;
+    text-indent: 0;
+    font-family: system-ui, sans-serif;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+#regi input[type="text"],
+#regi input[type="email"],
+#regi input[type="password"],
+#regi input[type="tel"],
+#regi input[type="number"],
+#regi textarea {
+    width: 75%;
+    min-height: 46px;
+    margin: 0;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 124, 0, 0.28);
+    background: rgba(255,255,255,0.96);
+    color: #2c2c2c;
+    font-family: system-ui, sans-serif;
+    font-size: 0.96rem;
+    font-weight: 500;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.80),
+        0 8px 18px rgba(255, 124, 0, 0.06);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+#regi input::placeholder,
+#regi textarea::placeholder {
+    color: rgba(80, 60, 45, 0.48);
+    font-style: italic;
+}
+
+#regi input:focus,
+#regi textarea:focus {
+    outline: none;
+    border-color: rgba(255, 124, 0, 0.82);
+    box-shadow:
+        0 0 0 4px rgba(255, 124, 0, 0.12),
+        0 12px 24px rgba(255, 124, 0, 0.10);
+    transform: translateY(-1px);
+}
+
+.password-field .toggle-jelszo,
+#regi .elegemvan {
+      top: 50px;
+    right: 110px;
+    left: auto;
+    position: absolute;
+    color: #ff6e01;
+    cursor: pointer;
+}
+
+.password-field input {
+    padding-right: 46px;
+}
+
+.reg-inline-grid,
+#regi #egybe {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 0.85fr 1.15fr;
+    gap: 16px;
+    align-items: start;
+    justify-content: stretch;
+}
+
+/* =========================================================
+   SZEREPKÖRÖK
+========================================================= */
+
+.reg-role-area {
+    margin-top: 18px;
+}
+
+.reg-role-area legend {
+    margin-bottom: 12px;
+}
+
+.reg-role-grid,
+#roles-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+}
+
+.reg-role-card,
+#regi .editbut2 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 16px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 124, 0, 0.28);
+    background: linear-gradient(145deg, #ffffff, #fff8ef);
+    box-shadow: 0 12px 24px rgba(255, 124, 0, 0.08);
+}
+
+.reg-role-radio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+}
+
+#regi .reg-role-radio input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+    box-shadow: none;
+    accent-color: var(--ertekek-orange);
+}
+
+#regi .reg-role-radio label {
+    margin: 0;
+    padding: 0;
+    color: var(--ertekek-orange);
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: 0.95rem;
+    font-style: normal;
+}
+
+#regi .rolebox {
+    width: 100%;
+    margin: 0;
+    color: #67584e;
+    text-align: left;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    font-family: system-ui, sans-serif;
+}
+
+/* =========================================================
+   MODULVÁLASZTÁS / ÜRES RENDSZER
+========================================================= */
+
+.reg-module-box,
+#szakmaiceg,
+#szakmaiuser {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#szakmaiceg > div,
+#szakmaiuser > div,
+.modul-choice-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 80%;
+    margin: 0;
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(255, 124, 0, 0.26);
+    background: linear-gradient(145deg, #ffffff, #fff8ef);
+    box-shadow: 0 10px 20px rgba(255, 124, 0, 0.07);
+}
+
+#szakmaiceg input,
+#szakmaiuser input,
+.modul-choice-row input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+    box-shadow: none;
+    accent-color: var(--ertekek-orange);
+}
+
+#szakmaiceg label,
+#szakmaiuser label,
+.modul-choice-row label {
+    margin: 0;
+    padding: 0;
+    border: none;
+    color: #2d2d2d;
+    background: transparent;
+    font-family: system-ui, sans-serif;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.ures-modul-row {
+    align-items: stretch;
+    flex-direction: column;
+}
+
+.ures-modul-fejlec {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.ures-modul-panel {
+    display: none;
+    width: 100%;
+    margin-top: 12px;
+    padding: 16px;
+    border-radius: 18px;
+    background: rgba(255, 247, 235, 0.95);
+    border: 1px dashed rgba(255, 124, 0, 0.42);
+}
+
+.ures-modul-panel .allabel {
+    margin-top: 14px;
+}
+
+.szamolas-tipusok {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.szamolas-kartya {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 124, 0, 0.26);
+    background: #fff;
+}
+
+.szamolas-kartya input {
+    width: 18px;
+    min-height: 18px;
+    box-shadow: none;
+}
+
+.info-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-left: 6px;
+    border-radius: 50%;
+    background: var(--ertekek-orange);
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: help;
+}
+
+.info-tip::after {
+    content: attr(data-tip);
+    position: absolute;
+    left: 50%;
+    bottom: 130%;
+    transform: translateX(-50%);
+    width: 280px;
+    max-width: 72vw;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #26211d;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99999;
+    font-family: system-ui, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.35;
+    transition: opacity 0.18s ease;
+}
+
+.info-tip:hover::after {
+    opacity: 1;
+}
+
+.regi-summary-box {
+    width: fit-content;
+    max-width: 90%;
+    margin: auto;
+    padding: 10px 16px;
+    border: 1px solid rgba(255, 124, 0, 0.35);
+    border-radius: 8px;
+    background: #fff9f2;
+    text-align: center;
+}
+
+/* =========================================================
+   CSOMAG / REGISZTRÁCIÓS ALAPADATOK
+========================================================= */
+
+.reg-period-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    width: 100%;
+}
+
+#regi .reg-period-card,
+#regi #szamla .editbut,
+#regi #szamla2 .editbut {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    min-height: 54px;
+    height: auto;
+    margin: 0;
+    padding: 13px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 124, 0, 0.28);
+    background: linear-gradient(145deg, #fff, #fff6e8);
+    color: #282828;
+    box-shadow: 0 10px 22px rgba(255, 124, 0, 0.08);
+    text-transform: none;
+}
+
+#regi .reg-period-card input,
+#regi #szamla .editbut input,
+#regi #szamla2 .editbut input {
+    width: 18px;
+    min-height: 18px;
+    margin: 0;
+    box-shadow: none;
+    accent-color: var(--ertekek-orange);
+}
+
+#regi .reg-period-card label,
+#regi #szamla .editbut label,
+#regi #szamla2 .editbut label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #222;
+    font-family: system-ui, sans-serif;
+    font-weight: 800;
+}
+
+#regi .reg-period-card span,
+#regi #szamla span,
+#regi #szamla2 span {
+    color: #6c5b50;
+    font-size: 0.76rem;
+    font-family: system-ui, sans-serif;
+    font-weight: 600;
+}
+
+#regi #szamla,
+#regi #szamla2,
+#regi #alszamla,
+#regi #alszamla2 {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+    justify-content: flex-start;
+    margin: 0;
+}
+
+.reg-fo-field {
+    margin-top: 16px;
+}
+
+#regi #fo {
+    width: 100%;
+    margin: 0;
+}
+
+/* =========================================================
+   GOMBOK / HIBAÜZENETEK
+========================================================= */
+
+.reg-action-area,
+#regi #kotelezo {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    text-align: left;
+}
+
+.reg-submit-row,
+#regind,
+#regind2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 4px auto 0;
+}
+
+#regi .reg-primary-button,
+#regMagan,
+#regCeg,
+#megerosit,
+#megsem {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: min(280px, 100%);
+    min-height: 50px;
+    margin: 0 auto;
+    padding: 12px 22px;
+    border: none;
+    border-radius: 999px;
+    color: white;
+    background: linear-gradient(135deg, var(--ertekek-orange-dark), #ff9800);
+    box-shadow:
+        0 16px 30px rgba(255, 87, 34, 0.24),
+        inset 0 1px 0 rgba(255,255,255,0.24);
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-size: 0.96rem;
+    cursor: pointer;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+
+#megsem {
+    background: linear-gradient(135deg, #9f1d1d, #d33);
+}
+
+#regi .reg-primary-button:hover,
+#regMagan:hover,
+#regCeg:hover,
+#megerosit:hover,
+#megsem:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: saturate(1.06);
+    box-shadow:
+        0 20px 36px rgba(255, 87, 34, 0.30),
+        inset 0 1px 0 rgba(255,255,255,0.28);
+}
+
+.err,
+#aderr {
+    display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+    color: #b51d1d;
+    background: #fff0ee;
+    border: 1px solid rgba(211, 47, 47, 0.22);
+    padding: 9px 12px;
+    margin-top: 7px;
+    border-radius: 12px;
+    font-family: system-ui, sans-serif;
+    font-size: 0.84rem;
+    font-weight: 700;
+    line-height: 1.35;
+    width: 100%;
+}
+
+/* =========================================================
+   LEBEGŐ HIBAJELZŐK
+   A .err elemek csak adattárolók, nem látható dobozok
+========================================================= */
+
+#regi .err,
+#regi #aderr {
+    display: none !important;
+    opacity: 0 !important;
+    position: static !important;
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.reg-error-tip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 18px;
+    height: 18px;
+    margin-left: 7px;
+    border-radius: 50%;
+    background: #d32f2f;
+    color: white;
+    font-size: 12px;
+    font-family: system-ui, sans-serif;
+    font-weight: 900;
+    line-height: 1;
+    cursor: help;
+    vertical-align: middle;
+    box-shadow:
+        0 0 0 3px rgba(211, 47, 47, 0.10),
+        0 6px 14px rgba(211, 47, 47, 0.22);
+    animation: regErrorTipIn 0.18s ease-out;
+}
+
+.reg-error-tip::after {
+    content: attr(data-error);
+    position: absolute;
+    left: 50%;
+    bottom: 135%;
+    transform: translateX(-50%) translateY(4px);
+    width: 280px;
+    max-width: 72vw;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: #26211d;
+    color: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99999;
+    font-family: system-ui, sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.35;
+    text-align: left;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+}
+
+.reg-error-tip::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 112%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-top-color: #26211d;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 100000;
+    transition: opacity 0.18s ease;
+}
+
+.reg-error-tip:hover::after,
+.reg-error-tip:focus::after {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.reg-error-tip:hover::before,
+.reg-error-tip:focus::before {
+    opacity: 1;
+}
+
+.has-reg-error-tip label {
+    color: #a61d1d !important;
+}
+
+#regi .borderr {
+    border-color: #d32f2f !important;
+    background-color: #fffafa !important;
+    box-shadow:
+        0 0 0 4px rgba(211, 47, 47, 0.10),
+        0 8px 18px rgba(211, 47, 47, 0.08) !important;
+}
+
+.reg-error-pulse {
+    animation: regErrorPulse 0.9s ease;
+}
+
+@keyframes regErrorTipIn {
+    from {
+        opacity: 0;
+        transform: scale(0.75);
     }
-#alszamla, #alszamla2, #szamla2{    display: flex;
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes regErrorPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(211, 47, 47, 0.35);
+    }
+
+    55% {
+        box-shadow: 0 0 0 8px rgba(211, 47, 47, 0.00);
+    }
+
+    100% {
+        box-shadow: inherit;
+    }
+}
+
+
+#kalkulacioEredmeny {
+    position: static;
+    display: none;
+    width: min(560px, 100%);
+    margin: 6px auto 0;
+    padding: 13px 16px;
+    border-radius: 16px;
+    background: var(--ertekek-orange);
+    color: white;
+    box-shadow: 0 14px 28px rgba(255, 124, 0, 0.22);
+    text-align: center;
+    font-family: system-ui, sans-serif;
+}
+
+#errorlog,
+.errorlog2 {
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    font-style: italic;
+    font-size: small;
+}
+
+.reg-hidden-compat {
+    display: none !important;
+}
+
+/* =========================================================
+   HOZZÁJÁRULÁS / ÖSSZEGZŐ PANEL
+========================================================= */
+
+#afsz,
+#afsz2,
+#afsz3,
+#afsz4,
+#afsz5,
+#afsz6 {
+    width: 20px;
+    height: 20px;
+    margin: 10px;
+    box-shadow: none;
+    accent-color: orangered;
+}
+
+.afszp {
+    display: grid;
+    grid-template-columns: 10% 90%;
+    align-items: center;
+    margin: 10px;
+    text-align: left;
+    font-size: medium;
+}
+
+.ellenorzes {
+    width: min(960px, calc(100% - 32px));
+    margin: 20px auto;
+    padding: 20px;
+    transition: all 0.3s;
+    background-color: #ffffff;
+    border: 1px solid rgba(255, 193, 7, 0.42);
+    border-radius: 24px;
+    box-shadow: 0 22px 60px rgba(255, 124, 0, 0.18);
+}
+
+.ellenorzes h4 {
+    color: var(--ertekek-orange);
+    text-align: center;
+    font-family: "Montserrat Subrayada";
+}
+
+.ellenorzes .labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 18px 0;
+    align-items: start;
+}
+
+.ellenorzes .labels div {
+    width: 100%;
+}
+
+.ellenorzes .allabel {
+    margin: 12px 0;
+}
+
+.ellenorzes .allabel label {
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+}
+
+.ellenorzes legend {
+    margin: 0;
+    color: var(--ertekek-orange);
+}
+
+#megerosit {
     justify-content: space-around;
     align-items: center;
-   }
-#szamla2{flex-direction: column;margin-top: 5px;} 
- #regi0{    border: rgba(0, 0, 0, 0.174) 3px solid;
-    color: black;}
- [type=radio]{accent-color: rgb(231 108 0 / 9)}
-    #szamla{display: none; flex-direction: column;}
-     #szamla span, #szamla2 span {
-            font-size: 80%;
-            font-family: 'Times New Roman', Times, serif;
-            font-weight: bold;
-            color: black;
-    }
-    #szamla .editbut, #szamla2 .editbut{ font-size: 14px;
-        display: flex;
-        width: 200px;
-        padding: 0px 5px;
-        flex-direction: row;
-        height: 30px;
-        color: white;
-        background: linear-gradient(0deg, rgba(255, 119, 0, 0.911) 0%, #ffb100 100%);
-        border-radius: 8px;
-        align-content: center;
-        align-items: center;
-        text-transform: uppercase;
-        margin: 10px 0px;}
-        #szamla2 .editbut{width: 220px;}
+}
 
-    #kotelezo{display: flex;
-        text-align: center;
+/* =========================================================
+   SEGÉDLET / CSOMAGKÁRTYÁK
+========================================================= */
+
+#segedlet,
+#segedlet2 {
+    display: none !important;
+    width: 90%;
+    height: fit-content;
+    position: sticky;
+    top: 0;
     flex-direction: column;
-    justify-content: space-around;}
-    #magan input, #ceg input{
-        border-radius: 6px;
-        border: 1px solid rgb(255 153 0 / 82%);
-        width: 90%;
-    padding: 10px;
-    color: rgba(255, 119, 0, 0.911);
-    font-family: system-ui;
-    font-weight: 500;
-    font-weight: 500;
-    box-shadow: 3px 2px 2px 0px #00000045;}
-    #regind, #regind2{margin: auto; display: flex; flex-direction: row;} 
-    #regind .editbut:hover{color: white;background-color: #ff7c00;}
-    .afszp{font-size: medium;
-        display: flex;
-        display: grid;
-        grid-template-columns: 10% 90%; 
-        align-items: center;
-        text-align: left;
-       
-        margin: 10px;}
-    #regcode{margin: 10px;display: flex; font-style: italic;flex-direction: column;}
-    #errorlog,  .errorlog2{width: 50%; text-align: center; margin: auto; font-style: italic; font-size: small;}
-    .errorlog2 {text-align: left;margin: 10px;}
-  
-    .kijelolt{     background: linear-gradient(0deg, #ff5722 0%, #f44336e3 100%);;color: white !important; }
-
-/* --- HIBAÜZENET DOBOZ --- */
-.err, #aderr {
-    display: none; /* Alapértelmezetten rejtve van */
-    opacity: 0;    /* A JS fogja 1-re állítani a lágy megjelenéshez */
-    transition: opacity 0.5s ease-in-out; /* Lágy áttűnés */
-    
-    /* Kinézet */
-    color: #d32f2f; /* Elegáns, olvasható sötétpiros szöveg */
-    background-color: #fde0dc; /* Halvány piros háttér */
-    border: 1px solid #f5c2c7; /* Nagyon vékony pirosas keret */
-    padding: 8px 12px; /* Belső margó, hogy ne tapadjon a szöveg a széléhez */
-    margin-top: 5px; /* Távolság a felette lévő beviteli mezőtől */
-    border-radius: 4px; /* Finom kerekítés a sarkokon */
-    font-size: 0.9em; /* Kicsit kisebb, mint a normál szöveg */
-    font-weight: bold; /* Vastagítás a figyelemfelkeltésért */
-    
-    /* Ne lógjon ki a szülő konténerből */
-    width: fit-content !important;
+    border: 1px solid gold;
+    border-radius: 10px;
+    box-shadow: rgb(210 179 3 / 47%) 4px 4px 5px 1px;
 }
 
-/* --- HIBÁS BEVITELI MEZŐ (INPUT) KERETE --- */
-/* (Ezt kapja meg az az input, amit a JS bepirosít a .borderr hozzáadásával) */
-.borderr {
-    border: 2px solid #d32f2f !important; /* Vastagabb piros keret */
-    background-color: #fffafa !important; /* Nagyon halvány pirosas háttér a mezőnek is */
-    outline: none; /* Ne legyen kék fókusz keret a piros felett */
-}    .borderr2{border: 2px solid #ff000075;border-radius: 8px;}
-    #regifin{    
-        flex-direction: column;
-        font-size: medium;
-        height: fit-content;
-        margin: auto;
-        display: none;
-        width: fit-content;
-        text-align: center;
-        height: 10vh !important;
-        color: #000000;
-        justify-content: flex-start;
-    
-    }
-    #kalkulacioEredmeny {
-    position: fixed;        /* Fix pozíció a képernyőhöz képest */
-    bottom: 10%;           /* 20px távolság alulról (lehet top: 20px is) */
-    right: 25%;            /* 20px távolság jobbról */
-    background-color: #ff7c00; /* Az Értékek narancssárga színe (vagy bármilyen) */
-    color: white;           /* Fehér szöveg */
-    padding: 15px 25px;     /* Belső margó */
-    border-radius: 8px;     /* Lekerekített sarkok */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Kis árnyék, hogy kiemelkedjen */
-    z-index: 9999;          /* Hogy biztosan minden más felett legyen */
-    
-    /* Animáció előkészítése */
-    display: none;          /* Alapból rejtve van */
-    opacity: 1;
-    transition: opacity 0.5s ease-in-out; /* Lágy elhalványulás */
+#regifin p,
+#segedlet p,
+#segedlet2 p {
+    font-family: "Montserrat Subrayada", sans-serif;
 }
-    #regifin p,#segedlet p, #segedlet2 p{font-family: "Montserrat Subrayada", sans-serif;}
-    #regifin span,#segedlet span, #segedlet2 span{color: #ff7c00; font-style: italic;}
-    .serr{font-family: 'Times New Roman', Times, serif !important;
-        margin: auto;
-        text-align: center;}
-    .al-alap {  display: grid;   
-        grid-template-columns: repeat(auto-fit, minmax(45vh, 2fr));   
-        justify-items: center;
-        position: relative;
-        height: 100%;
-        justify-content: center;}
-    #segedlet, #segedlet2{height: fit-content; display: none !important;  width: 90%;
-        border: 1px solid gold;
-        border-radius: 10px;
-        position: sticky; top: 0;
-        box-shadow: rgb(210 179 3 / 47%) 4px 4px 5px 1px;   
-        flex-direction: column;} 
-    .csomagok,.csomagok0{flex-direction: column;}
-    .csomagI {
-        width: 60vh;
-        margin-bottom: 10px;
-        display: flex;
-        flex-direction: column;
-        background: linear-gradient(0deg, #ffb100 0%, rgba(255, 119, 0, 0.911) 100%);
-        border-radius: 15px;
-        padding: 20px;
-        color: white;
-        font-size: large;
-        box-shadow: 1px 2px 5px 1px black;
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    }
-    .cscim{text-align: center;
-        font-size: x-large;
-        font-family: "Montserrat Subrayada", sans-serif;
-        margin: 5px 0px;
-        border-bottom: 5px solid white;}
-    .csalcim{
+
+#regifin span,
+#segedlet span,
+#segedlet2 span {
+    color: var(--ertekek-orange);
+    font-style: italic;
+}
+
+.csomagok,
+.csomagok0 {
+    flex-direction: column;
+}
+
+.csomagI {
+    width: 60vh;
+    margin: 15px 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    background: linear-gradient(0deg, #ffb100 0%, rgba(255, 119, 0, 0.911) 100%);
+    color: white;
+    font-size: large;
+    box-shadow: 1px 2px 5px 1px black;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.cscim {
+    margin: 5px 0;
+    border-bottom: 5px solid white;
+    text-align: center;
+    font-size: x-large;
+    font-family: "Montserrat Subrayada", sans-serif;
+}
+
+.csalcim {
     text-align: center;
     font-size: medium;
     font-style: italic;
-    }
-    .kinekcim{
-    margin: 10px 0px;
+}
+
+.kinekcim {
+    margin: 10px 0;
+    border-bottom: 3px solid white;
     text-align: center;
     font-size: medium;
     font-family: "Montserrat Subrayada", sans-serif;
-    border-bottom: 3px solid white;
-    }
-    .kinek ul{    color: #ffffff;
-        border-radius: 2px;
-        font-size: medium;
-        font-family: 'Times New Roman', Times, serif;
-        box-shadow: 0px 0px 4px 2px #ffffff;
-        font-style: italic;
-        padding: 10px 15px;
-    }
-        .kinek li{margin: 10px;}
-        .ar{font-family: "Montserrat Subrayada", sans-serif;text-align: center;}
-        .csomagI{ margin: 15px 0px;}
+}
 
+.kinek ul {
+    padding: 10px 15px;
+    color: #ffffff;
+    border-radius: 2px;
+    box-shadow: 0 0 4px 2px #ffffff;
+    font-size: medium;
+    font-family: 'Times New Roman', Times, serif;
+    font-style: italic;
+}
 
-.fade {opacity: 0; transition: all 0.5s ease-in-out; transform: translateY(100%);}
-.fade-in {opacity: 1;transform: translateY(0);}
-.fade2 {opacity: 0;transition: all 0.5s ease-in;}
-.fade-in2 {opacity: 1;}
+.kinek li {
+    margin: 10px;
+}
 
-.ellenorzes{
-    margin: 20px auto;
-    transition: all 0.3s;
-    background-color: #ffffff;
-    width: 90%;
-border: none;
-    box-shadow: 0px 0px 5px 2px #FF9800;
-    border-radius: 15px;
-    padding: 15px;}
+.ar {
+    text-align: center;
+    font-family: "Montserrat Subrayada", sans-serif;
+}
 
-.ellenorzes .allabel label {margin-top: 0px; border-top: none;}
-.ellenorzes legend {margin: 0px;}
-#megerosit{display: flex;
-    justify-content: space-around;
-    align-items: center;}
-.ellalbel{
-    grid-template-columns: repeat(2, 50%);
-    display: grid;}
+/* =========================================================
+   SIKERES REGISZTRÁCIÓ BLOKK
+========================================================= */
 
-    #fo{width: 400px !important; margin: auto !important;}
-
-
-    @media (max-width: 900px) {
-        .choos label {margin: auto};
-        #alszamla, #szamla2, #alszamla2 {margin: 10px;}
-        .kulso{width: 27vh;height: 27vh;}
-        .szoveg{font-size: medium;}
-        .szoveg input{border: #ff7c00 solid 1px;}
-           #llog{justify-content: center;
-    align-items: center;}
-    .berorr {font-size: small !important; }
-    .berorr ul {font-size: smaller !important;}
-       #log{justify-content: center;
-    align-items: center;}
-    .opening{    display: flex;
-    justify-content: center;
+#regifin {
+    display: none;
     flex-direction: column;
-    margin: 1vh;
-    align-content: center;
-    align-items: center;}
-    #log label{    display: flex;
-    font-family: auto;
-    font-size: xx-small;
-    justify-content: center;
-    align-content: center;
-    align-items: center;}
-   
-    }
-    @media screen and (min-width: 900px) and (max-width: 995px) { 
-.toggle-jelszo{    top: 50%;
-   }}
-.toggle-jelszo{    top: 25%;
-    position: absolute;
-    cursor: pointer;;
-    left: 65%;
-     color: #ff6e01;}
-  
-    @media(max-width:900px){
-  .toggle-jelszo{
-    top: 23%;
-    left: 70%;
-    }
-  
-    }
- #fo{width: 250px !important; margin: auto !important;}
-  .elegemvan{
-    top: 35%;
-    left: 85%;}
-article{margin: auto;}
-        #llog, #whbutt {font-size: small; width: fit-content;height: fit-content;}
-        #whbutt{font-size: small; margin-top: 0px; padding: 4px;}
-        .opening {column-gap: 15px;grid-template-rows: repeat(2, 50%);}
-        .inputs input{width: 100px; margin: 4px; padding: 5px;}
-        #regi{font-size: medium;}
-        .choos div{display: flex;     align-items: center;}
-        .ellalbel{
-            grid-template-columns: repeat(1, 100%);}
-            #ceginput{width: 60%; margin: auto;}
-            .allabel div {
-                margin: auto;
-                width: 100%;}
-                legend{    text-align: center;
-    border-bottom: 5px solid #ff650087;
-    margin: 10px 0px;}
-                .labels {grid-template-columns:100%}
-.al-alap{    grid-template-columns: repeat(auto-fit, minmax(65vh, 2fr));}
-#alszamla, #alszamla2, #szamla2 {flex-direction: column};
-    #log{justify-content: center;
-    align-items: center;}
-    body {align-items:flex-start  !important;}
-@keyframes fadeOut {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-  
-  body.fade-out {
-    animation: fadeOut 1s forwards;
-  }
-@keyframes spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  body.fade-out {
-    animation: spin 5s forwards;
-  }
-  .labels{    display: grid;
-    grid-template-columns: 70% 30%;
-    margin: 25px;
-    align-items: start;
-    justify-items: center;
-    justify-content: end;}
-    .labels div {width: 100%;}
-    .ellenorzes h4 {font-family: "Montserrat Subrayada";color: #ff7c00; text-align: center; }
- 
-    #egybe {width: 96%;
-        display: grid;
-        grid-template-columns: 30% 65%;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: -25px;
-        height: 75px;
-    }
-    @keyframes shake {
-        0% { transform: translateX(0); }
-        25% { transform: translateX(-5px); }
-        50% { transform: translateX(5px); }
-        75% { transform: translateX(-5px); }
-        100% { transform: translateX(0); }
-    }
-
-    /* Animáció osztály */
-    .shake {
-        animation: shake 0.3s;
-    }
-  #szakmaiceg input,#szakmaiuser input{cursor:pointer; width: 12px !important; box-shadow: none;}
-  #szakmaiceg, #szakmaiuser {width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;}
-    #szakmaiceg div, #szakmaiuser div{    width: 60%;
-    display: flex;
-    justify-content: space-between;
-        border-bottom: 2px solid #ff7c008f;
-    margin-bottom: 5px;
-    padding-bottom: 5px;}
-
-        
-
-
-.main{width: 100% !important;}
-main{width: 100% !important;}
-
-/* Pseudo-element a háttérhez */
-.elso{    background: #ffffff40;
-    padding: 20px;
-    border-radius: 18px;
-    backdrop-filter: blur(2px);}
-.lehetosegek{display: flex;
-    margin-top: 25px;
-    flex-direction: column;}
- body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background-image: url(media/dragon-scales.svg);
-    background-repeat: repeat;
-    opacity: 1 !important;
-    filter: contrast(120%);
-        background-size: revert-layer !important;
-} 
-    html,body{height:100%}
-    body{margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Montserrat Subrayada", sans-serif; 
-        color: #111; background:linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%); flex-direction: column;}
-
-    body::before{
-      content:""; position:fixed; inset:0; z-index:-2;
-    background-image: url('media/dragon-scales.svg');      background-repeat:repeat; background-size: 480px auto; opacity:.08;
-      filter:contrast(120%);}
-            .hero-bg{position:fixed; inset:0 -20vw auto -20vw; height:70vh; z-index:-1;    transition: all 0.3s;  background-image: url('media/dragon-scales.svg'); }    
-.main{width: 100% !important;}
-main{width: 100% !important;}
-            @media (max-width: 900px){
-.inputs{    display: flex;
+    justify-content: flex-start;
+    width: fit-content;
+    height: fit-content;
     margin: auto;
-    align-items: center;
-    justify-content: center;}
-      .hero .grid{display: flex; flex-direction: column-reverse; text-align: center;}
-      .infostrip .items{grid-template-columns:1fr}
-      .features .grid{grid-template-columns:1fr}
-      .steps .grid{grid-template-columns:1fr}
-      .ts-grid{grid-template-columns:1fr 1fr}
-      .cta-footer .cta-card{flex-direction:column; text-align:center}
-      #logokulso{width:220px;height:220px}
-      #logobelso{width:200px;height:200px;font-size:180%}
+    color: #000000;
+    text-align: center;
+    font-size: medium;
+}
 
-      #fnev, #pass {width: 70%; height: 17px;}
-      #temakor, #szerepkor {
-    font-size: x-small}
-    .lehetosegek {
+/* =========================================================
+   LANDING FEATURE KÁRTYÁK
+========================================================= */
 
-    margin-top: 5px;}
-    .csomagok{display: none !important;}
-
-.regi{margin: auto;}
-
- 
- .hero-bg{height: 100vh;      }
-
-
-    }
-/* --- LEBEGŐ KÁRTYÁK SZEKCIÓ --- */
 .landing-features {
     width: 100%;
-    margin: 0px auto;
+    margin: 0 auto;
     text-align: center;
     font-family: Arial, Helvetica, sans-serif;
 }
 
 .features-title {
-       color: whitesmoke;
-    font-size: 2rem;
-    margin-top: 0px;
+    margin-top: 0;
     margin-bottom: 20px;
+    color: whitesmoke;
+    font-size: 2rem;
     font-family: "Montserrat Subrayada", sans-serif;
-    text-shadow: 0px 0px 7px rgb(255 255 255 / 80%);
+    text-shadow: 0 0 7px rgb(255 255 255 / 80%);
 }
-
-
 
 .cards-container {
     display: flex;
@@ -559,19 +1389,19 @@ main{width: 100% !important;}
 }
 
 .feature-card {
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 30px 20px;
     flex: 1 1 300px;
     max-width: 350px;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    padding: 30px 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .feature-card:hover {
@@ -582,17 +1412,17 @@ main{width: 100% !important;}
 }
 
 .card-icon {
-   width: 70px;
+    width: 70px;
     height: 70px;
-    background: rgba(255, 124, 0, 0.15);
-    border-radius: 50%;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
     border: 1px solid rgb(255 255 255 / 30%);
+    border-radius: 50%;
+    background: rgba(255, 124, 0, 0.15);
+    box-shadow: 0 0 5px 0 white;
     transition: transform 0.3s ease;
-    box-shadow: 0px 0px 5px 0px white;
 }
 
 .feature-card:hover .card-icon {
@@ -601,22 +1431,210 @@ main{width: 100% !important;}
 }
 
 .card-icon .material-symbols-outlined {
-    font-size: 35px;
     color: white;
+    font-size: 35px;
 }
 
 .feature-card h3 {
-    color: whitesmoke;
     margin: 0 0 15px 0;
+    color: whitesmoke;
     font-size: 1.3rem;
     letter-spacing: 1px;
 }
 
 .feature-card p {
+    margin: 0;
     color: #b3b3b3;
     font-size: 0.95rem;
     line-height: 1.6;
-    margin: 0;
 }
-#alszamla2{display: none;}
-#ceg{width: 100%;}
+
+/* =========================================================
+   ANIMÁCIÓK
+========================================================= */
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+body.fade-out {
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+/* =========================================================
+   RESZPONZÍV
+========================================================= */
+
+@media (max-width: 900px) {
+    .opening {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        margin: 1vh;
+    }
+
+    .kulso {
+        width: 27vh;
+        height: 27vh;
+    }
+
+    .szoveg {
+        font-size: medium;
+    }
+
+    #log {
+        justify-content: center;
+        align-items: center;
+    }
+
+    #log label {
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+        font-family: auto;
+        font-size: xx-small;
+    }
+
+    .inputs {
+        display: flex;
+        margin: auto;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .inputs input {
+        width: 100px;
+        margin: 4px;
+        padding: 5px;
+    }
+
+    #fnev,
+    #pass {
+        width: 70%;
+        height: 17px;
+    }
+
+    #temakor,
+    #szerepkor {
+        font-size: x-small;
+    }
+
+    .lehetosegek {
+        margin-top: 5px;
+    }
+
+    #llog,
+    #whbutt {
+        width: fit-content;
+        height: fit-content;
+        font-size: small;
+    }
+
+    #whbutt {
+        margin-top: 0;
+        padding: 4px;
+    }
+
+    .toggle-jelszo {
+        top: 23%;
+        left: 70%;
+    }
+
+    #regi.regi-shell {
+        width: min(96vw, 720px);
+        margin: 26px auto;
+        border-radius: 22px;
+    }
+
+    .regi-hero {
+        grid-template-columns: 1fr;
+        padding: 26px 22px;
+        text-align: center;
+    }
+
+    .regi-hero-mark {
+        margin: 0 auto;
+    }
+
+    .regi-choice-grid,
+    .reg-grid,
+    .reg-role-grid,
+    #roles-wrapper,
+    .reg-period-grid,
+    .szamolas-tipusok,
+    .reg-inline-grid,
+    #regi #egybe,
+    .ellenorzes .labels {
+        grid-template-columns: 1fr;
+    }
+
+    #regi #magan,
+    #regi #ceg {
+        width: calc(100% - 24px);
+        margin-bottom: 24px;
+    }
+
+    .reg-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .reg-section-head {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .reg-step {
+        margin: 0 auto;
+    }
+
+    #regi legend,
+    .reg-section-head p {
+        text-align: center;
+    }
+
+    .password-field .toggle-jelszo,
+    #regi .elegemvan {
+                top: 50px;
+        font-size: xx-large;
+        right: 70px;
+        left: auto;
+    }
+
+    #segedlet,
+    #segedlet2 {
+        width: 96%;
+    }
+
+    .csomagI {
+        width: auto;
+    }
+
+    .cards-container {
+        gap: 18px;
+    }
+
+    .feature-card {
+        flex-basis: 260px;
+    }
+
+    .hero-bg {
+        height: 100vh;
+    }
+}

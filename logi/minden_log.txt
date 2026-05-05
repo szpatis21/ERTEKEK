@@ -994,3 +994,18 @@
 [2026-05-01T03:48:41.090Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-05-01T03:57:13.173Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-05-01T04:36:25.156Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T08:06:55.334Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T08:33:38.688Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T10:17:02.953Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T10:23:55.211Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T16:14:06.419Z] [LOG]: Új intézmény regisztrálva üres rendszerrel: PetiPéterKFT (Kód: Pet187202605, Modul ID: 4)
+[2026-05-04T16:14:08.168Z] [LOG]: Email elküldve: 250 2.0.0 OK  1777911247 5b1f17b1804b1-48a8feb47cbsm82984305e9.15 - gsmtp
+[2026-05-04T17:45:26.033Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T17:46:46.738Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T17:47:54.761Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-04T17:51:43.804Z] [LOG]: Email elküldve: 250 2.0.0 OK  1777917103 ffacd0b85a97d-44a8ea7d035sm25693032f8f.5 - gsmtp
+[2026-05-04T19:18:39.256Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-05T09:01:43.090Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-05T11:38:29.513Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-05T12:20:30.190Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-05T12:40:56.869Z] [LOG]: Szerver fut a http://localhost:3000 címen

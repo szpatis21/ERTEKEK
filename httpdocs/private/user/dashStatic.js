@@ -4,7 +4,6 @@ import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok,betoltKategoriakChartSzinek} from '../main/main_alap.js';
 import { szamoljFokerdesOsszErtek,letrehozFoKategoriaChart,kiszamoltFoKategoriaDiagramAdatok,letrehozAlkategoriaChart,letrehozAltTemaChart,  } from '../main/szamitasok.js';
 
-const TEMAKOROK_URL = '/private/info/temakorok.json'; //Témakörök
 const kijelolt = []; //Diagrammok gyűjtője
 const atlagolt = [];  //Diagrammok átlaga
 const levelClasses = ['lvl0', 'lvl1', 'lvl2'];
@@ -163,31 +162,78 @@ function vonalDiagramRajzol(labels, datasets) {
     }
   });
 }
+function colorToRgba(value, alpha = 0.5) {
+  const color = String(value || '').trim();
+
+  if (!color) {
+    return `rgba(160,160,160,${alpha})`;
+  }
+
+  if (color.startsWith('#')) {
+    const hex = color.length === 4
+      ? '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3]
+      : color;
+
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+
+    if ([r, g, b].some(Number.isNaN)) {
+      return `rgba(160,160,160,${alpha})`;
+    }
+
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+
+  if (match) {
+    return `rgba(${match[1]},${match[2]},${match[3]},${alpha})`;
+  }
+
+  return color;
+}
+
 export async function loadColorMaps(modulId) {
   const key = String(modulId);
-  if (_szinCache.has(key)) return _szinCache.get(key);
 
-  const res = await fetch(TEMAKOROK_URL);
-  if (!res.ok) throw new Error('temakorok.json nem elérhető');
-  const data = await res.json();
-
-const set = (data.optionSets && data.optionSets[key]) || [];
-const chartMap = {};
-const bgMap = {};
-
-for (const o of set) {
-  if (!o) continue;
-  const names = [o.value, o.text].filter(Boolean).map(s => s.trim());
-  for (const name of names) {
-    chartMap[name] = o.chart || 'rgba(160,160,160,0.6)';
-    bgMap[name]    = o.szin  || 'linear-gradient(0deg, rgba(160,160,160,0) 0%, rgba(160,160,160,1) 100%)';
+  if (_szinCache.has(key)) {
+    return _szinCache.get(key);
   }
-}
+
+  const res = await fetch(`/api/get-fo_kategoriak?modulId=${encodeURIComponent(modulId)}`, {
+    cache: 'no-store'
+  });
+
+  if (!res.ok) {
+    throw new Error('/api/get-fo_kategoriak nem elérhető');
+  }
+
+  const rows = await res.json();
+
+  const chartMap = {};
+  const bgMap = {};
+
+  for (const item of rows || []) {
+    const nev = String(item.nev || '').trim();
+
+    if (!nev) {
+      continue;
+    }
+
+    const chartColor = item.chart || item.szin || 'rgba(160,160,160,0.6)';
+    const bgColor = item.szin || item.chart || 'rgba(160,160,160,0.6)';
+
+    chartMap[nev] = colorToRgba(chartColor, 0.5);
+    bgMap[nev] = bgColor;
+  }
 
   const out = { chartMap, bgMap };
   _szinCache.set(key, out);
+
   return out;
 }
+
 //Mérések színei
 const RADAR_BASE = [
   'rgb(194,24,91)',
@@ -594,7 +640,13 @@ function letrehozSzummDiagram(jsonObj, kategoriakChartSzinek) {
       labels.push(nev);
       values.push(tartalom['%']);
 const key = nev.trim();
-szinek.push(kategoriakChartSzinek[key] ?? 'rgba(160,160,160,0.6)');    }
+const normalizedKey = normalizeKey(key);
+
+szinek.push(
+  kategoriakChartSzinek[key] ??
+  kategoriakChartSzinek[normalizedKey] ??
+  'rgba(160,160,160,0.6)'
+);   }
   }
 
 

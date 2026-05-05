@@ -29,6 +29,14 @@ let modulLeiras = null;
 let modulNev = null;
 let userName = null;
 export let userId = null; 
+export let modulSzamolas = 0;
+
+function normalizalSzamolas(value) {
+    if (value === 1 || value === '1') return 1;
+    if (typeof value === 'string' && value.toLowerCase() === 'pontosszegzes') return 1;
+    return 0;
+}
+
 
 async function modulinfo() {
     try {
@@ -42,6 +50,8 @@ async function modulinfo() {
             userName = data.username; 
             userId = data.id; // <--- EZT ADD HOZZÁ (elmentjük a felhasználó ID-ját)
             modulId = data.modulId;   // pl. 1
+            modulSzamolas = normalizalSzamolas(data.szamolas);
+            window.modulSzamolas = modulSzamolas;
                 modulNev     = data.modulNev;     // pl. "Fejlesztő"
                 modulLeiras  = data.modulLeiras;  // pl. "Fejlesztői kompetencia …"
                 console.log(modulNev + " " + modulId)
@@ -69,6 +79,8 @@ export const modulIdBetoltve = new Promise((resolve, reject) => {
             if (data.success) {  
                 
                 modulId = data.modulId;
+                modulSzamolas = normalizalSzamolas(data.szamolas);
+                window.modulSzamolas = modulSzamolas;
                 resolve(modulId);  // promise feloldása modulId-vel
             } else {
     window.location.href = '/login.html';
@@ -83,37 +95,58 @@ export const modulIdBetoltve = new Promise((resolve, reject) => {
 
 export async function betoltKategoriakChartSzinek(modulId) {
   try {
-    const res = await fetch('/private/info/temakorok.json'); // útvonalat tedd rendbe a szervered szerint
-    const data = await res.json();
-    const set = (data.optionSets && data.optionSets[String(modulId)]) || [];
+    const res = await fetch(`/api/get-fo_kategoriak?modulId=${encodeURIComponent(modulId)}`, {
+      cache: 'no-store'
+    });
 
-const toRgbaFromGradient = (grad) => {
-  if (typeof grad !== 'string') return 'rgba(200,200,200,0.5)';
-  const m = grad.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-  if (m) return `rgba(${m[1]}, ${m[2]}, ${m[3]}, 0.5)`;
-  const hex = grad.match(/#([0-9a-f]{6})/i);
-  if (hex) {
-    const n = parseInt(hex[1], 16);
-    const r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
-    return `rgba(${r}, ${g}, ${b}, 0.5)`;
-  }
-  return 'rgba(200,200,200,0.5)';
-};
+    if (!res.ok) {
+      throw new Error('/api/get-fo_kategoriak nem elérhető');
+    }
+
+    const rows = await res.json();
+
+    const toRgba = (color, alpha = 0.5) => {
+      const c = String(color || '').trim();
+
+      if (!c) return `rgba(200,200,200,${alpha})`;
+
+      if (c.startsWith('#')) {
+        const hex = c.length === 4
+          ? '#' + c[1] + c[1] + c[2] + c[2] + c[3] + c[3]
+          : c;
+
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+
+        if ([r, g, b].some(Number.isNaN)) {
+          return `rgba(200,200,200,${alpha})`;
+        }
+
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+      }
+
+      const m = c.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+      if (m) {
+        return `rgba(${m[1]}, ${m[2]}, ${m[3]}, ${alpha})`;
+      }
+
+      return c;
+    };
 
     const map = {};
-for (const it of set) {
-  const nev = (it.value || it.text || '').trim();
-  if (!nev || nev === 'Válasszon egy témakört') continue;
 
-  let col = it.chart;
-  if (!col && typeof it.szin === 'string' && it.szin.length) {
-    col = toRgbaFromGradient(it.szin);   // <<< most már STRING
-  }
-  map[nev] = col || 'rgba(200,200,200,0.5)';
-}
+    for (const item of rows || []) {
+      const nev = String(item.nev || '').trim();
+      if (!nev) continue;
+
+      const col = item.chart || item.szin || 'rgba(200,200,200,0.5)';
+      map[nev] = toRgba(col, 0.5);
+    }
 
     window.kategoriakChartSzinek = map;
     return map;
+
   } catch (e) {
     console.error('Színtérkép betöltési hiba:', e);
     window.kategoriakChartSzinek = {};

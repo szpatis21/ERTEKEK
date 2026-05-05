@@ -69,12 +69,17 @@ static toggleActiveClassal(selectedDiv, alKategoriaNev) {
 
 
 
-  static toggleActiveClassalal(selectedDiv, altTemaNev) {
-      Focus.toggleActiveState(selectedDiv, '.alal', () => {}, () => {
-          Focus.alalclearSubcategories(); // Kérdések és alkérdések törlése
-          KategoriaKezelo.loadKerdesek(altTemaNev); // Kérdések betöltése
-      });
-  }
+static toggleActiveClassalal(selectedDiv, altTemaNev) {
+    Focus.toggleActiveState(
+        selectedDiv,
+        '.alal',
+        () => {},
+        () => {
+            Focus.alalclearSubcategories();
+        }
+    );
+}
+  
   //Elemek megjelnításe és elrejtése
   static showContainer(container) {
       container.classList.remove('hidden'); // Elem láthatóvá tétele

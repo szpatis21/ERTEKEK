@@ -35,6 +35,14 @@ async function sendEmail(recipient, subject, htmlContent) {
         console.error('Hiba az e-mail elküldése közben:', error);
     }
 }
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
 
 function regi(db) 
@@ -42,17 +50,42 @@ function regi(db)
     const logger = require('./logmodul')(db); // Ezt a sort kell beszúrni
         // Intézmény regisztráció
 router.post('/register/institution', (req, res) => {
-    // 1. A felületről érkező adatok beolvasása
-    const { intv, intirv, orszv, szekhelyv, adoszv, cimv, vez2v, mail2v, tel2v, intfinv, infov, intmod } = req.body;
+    const {
+        intv,
+        intirv,
+        orszv,
+        szekhelyv,
+        adoszv,
+        cimv,
+        vez2v,
+        mail2v,
+        tel2v,
+        intfinv,
+        infov,
+        intmod,
+        modulTipus = "meglevo",
+        ujModulNev = "",
+        ujModulLeiras = "",
+        szamolas = null
+    } = req.body;
 
     const mailCegv = mail2v;  
-    const telCegv = tel2v;  
-      
-    // 2. --- ÁLLAPOTMENTÉS (Audit log) ADATOK KINYERÉSE ---
+    const telCegv = tel2v;
+
+    const uresModul = modulTipus === "ures";
+    const szamolasErtek = Number(szamolas);
+
+    if (uresModul) {
+        if (!ujModulNev.trim() || !ujModulLeiras.trim() || ![0, 1].includes(szamolasErtek)) {
+            return res.status(400).json({
+                message: "Üres értékelő rendszer esetén a modul nevét, leírását és számítási módját is meg kell adni."
+            });
+        }
+    }
+
     const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
     const userAgent = req.headers['user-agent'] || 'Ismeretlen';
 
-    // 🌟 ÚJ LÉPÉS 1: Aktív időszak lekérdezése az új táblából
     const sqlActivePeriod = "SELECT idoszak FROM idoszak WHERE aktiv = 1 LIMIT 1";
     
     db.query(sqlActivePeriod, (errPeriod, periodResults) => {
@@ -61,16 +94,16 @@ router.post('/register/institution', (req, res) => {
             return res.status(500).json({ message: 'Szerver hiba az időszak ellenőrzésekor.' });
         }
 
-        // Ha nincs aktív jelölve, legyen a biztonsági fallback "teszt"
         const aktualisIdoszak = periodResults.length > 0 ? periodResults[0].idoszak : 'teszt';
 
-        // 🌟 LÉPÉS 2: Eredeti ellenőrzés (Létezik-e már a cég?)
         const checkQuery = 'SELECT * FROM intezmeny WHERE intnev = ? OR intado = ?';
+
         db.query(checkQuery, [intv, adoszv], (err, results) => {
             if (err) {
                 console.error('Adatbázis hiba ellenőrzéskor:', err);
                 return res.status(500).json({ message: 'Adatbázis hiba történt.' });
             }
+
             if (results.length > 0) {
                 return res.status(400).json({ message: 'Ezzel az intézmény névvel vagy adószámmal már regisztráltak.' });
             }
@@ -80,46 +113,146 @@ router.post('/register/institution', (req, res) => {
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const intreg = `${intv.substring(0, 3)}${adoszv.substring(0, 3)}${year}${month}`;
 
-            // 🌟 LÉPÉS 3: ÚJ MENTÉS - Bekerült az "idoszak" oszlop is!
-            // A fizetve oszlop értéke mostantól NULL regisztrációkor
-const query = ` 
-    INSERT INTO intezmeny 
-    (intnev, intir, intor, intszek, intado, intcim, intmail, inttel, intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg, validalva, fizetve, ip_cim, user_agent, idoszak) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NULL, ?, ?, ?);
-`;
-            
-            // Az "aktualisIdoszak" bekerült a values végére
-            const values = [intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, mail2v, tel2v, intfinv, infov, intmod, intreg, ipCim, userAgent, aktualisIdoszak];
+            const indulasiIntmod = uresModul ? "" : String(intmod || "1");
 
-            db.query(query, values, (err) => {
+            const query = ` 
+                INSERT INTO intezmeny 
+                (intnev, intir, intor, intszek, intado, intcim, intmail, inttel, intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg, validalva, fizetve, ip_cim, user_agent, idoszak) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NULL, ?, ?, ?);
+            `;
+
+            const values = [
+                intv,
+                intirv,
+                orszv,
+                szekhelyv,
+                adoszv,
+                cimv,
+                mailCegv,
+                telCegv,
+                vez2v,
+                mail2v,
+                tel2v,
+                intfinv,
+                infov,
+                indulasiIntmod,
+                intreg,
+                ipCim,
+                userAgent,
+                aktualisIdoszak
+            ];
+
+            db.query(query, values, (err, institutionResult) => {
                 if (err) {
                     console.error('Hiba az intézmény mentésekor:', err);
                     return res.status(500).json({ message: 'Hiba a regisztráció során.' });
                 }
 
-                // --- E-MAIL KÜLDÉS ---
-                const htmlContent = `
-                   <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
-    <h2><span style="color: #ff7c00;">K</span>edves ${intv},</h2>
-    <p>Örömmel értesítjük, hogy tesztregisztrációja sikeresen megtörtént. Köszönjük, hogy részt vesz a próbaidőszakban!</p>
-    
-    <p><strong>Regisztrációs kódja:</strong> <span style="color: #ff7c00;">${intreg}</span><br>
-    Kérjük, őrizze meg ezt a kódot! A továbbiakban ezzel tudnak majd regisztrálni munkatársai a <a href="https://ertekek.com/register.html">regisztrációs oldalon</a>.</p>
-    
-    <p>Utolsó lépésként már csak a saját felhasználói regisztrációját kell elvégeznie, ami mindössze egy percet vesz igénybe.</p>
-    <p style="margin-top: 20px;">A regisztráció gombra kattintva válassza a „Felhasználói regisztráció” lehetőséget, és egyszerűen másolja be a fenti kódot.</p>
+                const intezmenyId = institutionResult.insertId;
 
-    <p style="margin-top: 20px;">Ha bármilyen kérdése van, kérjük, ne habozzon kapcsolatba lépni velünk.</p>
-    <a href="https://www.ertekek.com">www.ertekek.com</a>
-    
-    <p style="color: #888; margin-top: 15px;">Köszönjük, hogy minket választott!</p>
-    <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
-</div>
+                const alapHtmlContent = `
+                    <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
+                        <h2><span style="color: #ff7c00;">K</span>edves ${escapeHtml(intv)},</h2>
+
+                        <p>Örömmel értesítjük, hogy tesztregisztrációja sikeresen megtörtént. Köszönjük, hogy részt vesz a próbaidőszakban!</p>
+                        
+                        <p>
+                            <strong>Regisztrációs kódja:</strong>
+                            <span style="color: #ff7c00;">${escapeHtml(intreg)}</span><br>
+                            Kérjük, őrizze meg ezt a kódot! A továbbiakban ezzel tudnak majd regisztrálni munkatársai a
+                            <a href="https://ertekek.com/register.html">regisztrációs oldalon</a>.
+                        </p>
+                        
+                        <p>Utolsó lépésként már csak a saját felhasználói regisztrációját kell elvégeznie, ami mindössze egy percet vesz igénybe.</p>
+                        <p style="margin-top: 20px;">A regisztráció gombra kattintva válassza a „Felhasználói regisztráció” lehetőséget, és egyszerűen másolja be a fenti kódot.</p>
+
+                        <p style="margin-top: 20px;">Ha bármilyen kérdése van, kérjük, ne habozzon kapcsolatba lépni velünk.</p>
+                        <a href="https://www.ertekek.com">www.ertekek.com</a>
+                        
+                        <p style="color: #888; margin-top: 15px;">Köszönjük, hogy minket választott!</p>
+                        <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
+                    </div>
                 `;
-                sendEmail(mail2v, 'Regisztráció sikeres - ÉRTÉKEK', htmlContent);
-                console.log(`Új intézmény regisztrálva: ${intv} (Kód: ${intreg})`);
-                res.status(201).json({ message: 'Intézményi regisztráció sikeres', intreg });
 
+                if (!uresModul) {
+                    sendEmail(mail2v, 'Regisztráció sikeres - ÉRTÉKEK', alapHtmlContent);
+                    console.log(`Új intézmény regisztrálva: ${intv} (Kód: ${intreg})`);
+                    return res.status(201).json({
+                        message: 'Intézményi regisztráció sikeres',
+                        intreg
+                    });
+                }
+
+                const insertModulQuery = `
+                    INSERT INTO modulok
+                    (nev, leiras, szamolas)
+                    VALUES (?, ?, ?);
+                `;
+
+                const insertModulValues = [
+                    ujModulNev.trim(),
+                    ujModulLeiras.trim(),
+                    szamolasErtek
+                ];
+
+                db.query(insertModulQuery, insertModulValues, (modulErr, modulResult) => {
+                    if (modulErr) {
+                        console.error('Hiba az új modul mentésekor:', modulErr);
+                        return res.status(500).json({ message: 'Az intézmény létrejött, de az üres modul mentése sikertelen volt.' });
+                    }
+
+                    const ujModulId = modulResult.insertId;
+
+                    const updateIntmodQuery = `
+                        UPDATE intezmeny
+                        SET intmod = ?
+                        WHERE id = ?;
+                    `;
+
+                    db.query(updateIntmodQuery, [String(ujModulId), intezmenyId], (updateErr) => {
+                        if (updateErr) {
+                            console.error('Hiba az intézményi intmod frissítésekor:', updateErr);
+                            return res.status(500).json({ message: 'Az üres modul létrejött, de az intézményhez rendelés sikertelen volt.' });
+                        }
+
+                        const szamolasNev = szamolasErtek === 1 ? "Normál pontszámítás" : "Arányosított számítás";
+
+                        const uresRendszerHtmlContent = `
+                            <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
+                                <h2><span style="color: #ff7c00;">K</span>edves ${escapeHtml(intv)},</h2>
+
+                                <p>Regisztrációja sikeresen megtörtént, és létrehoztuk az üres értékelő rendszerét.</p>
+
+                                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #ff7c00;">
+                                    <p><strong>Regisztrációs kód:</strong> <span style="color: #ff7c00;">${escapeHtml(intreg)}</span></p>
+                                    <p><strong>Új értékelési terület:</strong> ${escapeHtml(ujModulNev)}</p>
+                                    <p><strong>Leírás:</strong> ${escapeHtml(ujModulLeiras)}</p>
+                                    <p><strong>Számítási mód:</strong> ${escapeHtml(szamolasNev)}</p>
+                                </div>
+
+                                <p>
+                                    Ezt a regisztrációs kódot kell majd használni a felhasználói regisztrációnál.
+                                </p>
+
+                                <p style="color: #888; margin-top: 15px;">
+                                    IDE ÍROD MAJD A KÜLÖN ÜRES RENDSZERES E-MAIL SZÖVEGET.
+                                </p>
+
+                                <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
+                            </div>
+                        `;
+
+                        sendEmail(mail2v, 'Regisztráció sikeres - Üres értékelő rendszer létrehozva - ÉRTÉKEK', uresRendszerHtmlContent);
+
+                        console.log(`Új intézmény regisztrálva üres rendszerrel: ${intv} (Kód: ${intreg}, Modul ID: ${ujModulId})`);
+
+                        return res.status(201).json({
+                            message: 'Intézményi regisztráció sikeres',
+                            intreg,
+                            modulId: ujModulId
+                        });
+                    });
+                });
             }); 
         }); 
     }); 

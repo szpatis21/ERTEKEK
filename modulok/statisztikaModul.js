@@ -303,15 +303,15 @@ const sqlLegtobbetMegosztott = `
       JOIN felhasznalok f ON k.felhasznalo_id = f.id
       WHERE k.modul_id = ? AND k.role = 'editor' AND f.int_id = ?
     `;
-    const sqlKerdesStats = `
-      SELECT 
-        COUNT(DISTINCT CASE WHEN fo_kategoria IS NOT NULL AND fo_kategoria != '' THEN fo_kategoria END) AS fo_kat_db,
-        COUNT(DISTINCT CASE WHEN al_kategoria IS NOT NULL AND al_kategoria != '' THEN al_kategoria END) AS al_kat_db,
-        COUNT(DISTINCT CASE WHEN alt_tema IS NOT NULL AND alt_tema != '' THEN alt_tema END) AS alt_tema_db,
-        COUNT(CASE WHEN kerdes_szoveg IS NOT NULL AND kerdes_szoveg != '' THEN id END) AS ossz_kerdes_db
-      FROM kerdesek
-      WHERE modul_id = ?
-    `;
+   const sqlKerdesStats = `
+  SELECT 
+    COUNT(DISTINCT CASE WHEN fo_kategoria IS NOT NULL AND fo_kategoria != '' THEN fo_kategoria END) AS fo_kat_db,
+    COUNT(DISTINCT CASE WHEN al_kategoria IS NOT NULL AND al_kategoria != '' THEN al_kategoria END) AS al_kat_db,
+    COUNT(DISTINCT CASE WHEN alt_tema IS NOT NULL AND alt_tema != '' THEN alt_tema END) AS alt_tema_db,
+    COUNT(CASE WHEN kerdes_szoveg IS NOT NULL AND kerdes_szoveg != '' THEN id END) AS ossz_kerdes_db
+  FROM kerdesek_kategoriaval
+  WHERE modul_id = ?
+`;
     const kerdesStatsRows = await q(sqlKerdesStats, [modulId]);
     const kerdesStats = kerdesStatsRows.length > 0 ? kerdesStatsRows[0] : { fo_kat_db: 0, al_kat_db: 0, alt_tema_db: 0, ossz_kerdes_db: 0 };
 
@@ -330,12 +330,14 @@ const sqlLegtobbetMegosztott = `
     const globalEditorCount = globalEditorRows.length > 0 ? globalEditorRows[0].db : 0;
     // A legtöbb kérdést tartalmazó kategória és a kérdések száma
 const sqlLegtobbKerdes = `
-    SELECT fo_kategoria, COUNT(*) as darab 
-    FROM kerdesek 
-    WHERE modul_id = ? AND fo_kategoria IS NOT NULL AND fo_kategoria != ''
-    GROUP BY fo_kategoria 
-    ORDER BY darab DESC 
-    LIMIT 1
+  SELECT fo_kategoria, COUNT(*) as darab 
+  FROM kerdesek_kategoriaval
+  WHERE modul_id = ?
+    AND fo_kategoria IS NOT NULL
+    AND fo_kategoria != ''
+  GROUP BY fo_kategoria 
+  ORDER BY darab DESC 
+  LIMIT 1
 `;
 
 // Sablonok száma az adott modulban

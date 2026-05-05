@@ -11,9 +11,29 @@ Adatbázis: ertekek02
 		- fin: finanszírozási forma
 		- validalva: regisztrációs e-mail validálva lett e?
 		- fizetve: valóban fizetett?
-		- int_id: ha intézmény regisztrált annak a kódja az "intezmeny" táblából
+		- int_id: ha intézmény regisztrált annak a kódja az 			"intezmeny" táblából
 		- sznev: számlázási név, HA nem intézményként regisztrált
 		- szcim: számlázási cím, HA nem intézményként regisztrált
+		- reset_exp és reset_token: ideiglenes mező a jelszó 			változtatáshoz
+		- user_agent: Miről regiszritrált a felhasználó
+		- regisztralt: Mikor regisztrált a felhasználó
+		- kerdoiv_kitoltve: töltött e ki elégedettségi kérdőívet
+		- ai_ossz_max: Mennyi ai generálási kerete van 				(felhasználónként 100)
+
+	- fokategoriak: (Főkategóriák adatai)
+		- id: alap_id
+		- modul_id: melyik modulban van
+		- nev: a főkategória neve
+		- leiras: a főkategória rövid leírása
+		- szin: a főkategória színe
+		- chart: (már nem használt) kategória chart szín
+		- létrehozva: Mikor került rögzítésre
+		- frissítve: mikor lett utonjára frissítve	
+
+	- idoszak: (Kérdőívezés vagy fizetési kapu kapcsoló)
+		- id:alap_id
+		- idoszak: teszt vagy tial
+		- aktiv: melyik a kettő közül. az 1-es az aktuális
 
 	- intezmeny: (intézményi adatok)
 		- id: alap_id
@@ -23,61 +43,99 @@ Adatbázis: ertekek02
 		- inttel: intézmény kapcsolattartójának telefonszáma
 		- intkapvez: intézmény kapcsolattartójának neve
 		- intkaptel: intézmény kapcsolattartójának telefonszáma
-		- intfin: intézmény regisztrációjának időtartalma, hónapban megadva
+		- intfin: intézmény regisztrációjának időtartalma, 			napban megadva
 		- intreg: intézmény regisztrációs dátuma
 		- validalva: valóban fizetett az intézmény?
 		- intor: intézmény országának neve
 		- fizetve: kifizetés megtörténtének dátuma
 		- inrir: intézmény irányítószáma
-		- intmod: intézményi modulok id száma, a "modulok" táblából (stringként, egybefűzve, vesszővel elválsztva)
+		- intmod: intézményi modulok id száma, a "modulok" 			táblából (stringként, egybefűzve, vesszővel elválsztva)
+		ip_cim: honnan regisztrált az intézmény
+		user_agent: miről regisztrált az intézmény
+		időszak: tesz vagy aktív licensz vagy exp_teszt. 			funkciókorlátozással egybekötött trial figyelő.
+		reg_datum: regisztráció dátuma
 
 	- jogosultsagok: (jogosultsági adatok) 
 		- id: alap_id
 		- user_id: "felhasznalok" táblából az alap_id
 		- modul_id: "modulok" táblából az alap_id
-		- aktiv: használhatja e a felhasználó vagy nem. (felfüggesztési lehetőség kifizetés elmulasztásakor)
+		- aktiv: használhatja e a felhasználó vagy nem.     			(felfüggesztési lehetőség kifizetés elmulasztásakor)
 
+	- kategoria_kapcsolo: (ez fűzi össze a kategóriákat a kérdésekkel)
+		- id: alap_id (ezt kapja meg a kerdesek tábla)
+		- modul_id: melyik modulhoz tartozik
+		- fokategoria_id: melyik főkategóriához tartozik
+		- alkategoria_id: melyik alkategóriához tartozik
+		- altema_id: melyik altemához tartozik
+		- letrehozva: mikor jött létre a kérdés lánc
+ 
 	- kerdesek: (kérdések)
 		- id: alap_id
-		- fo_kategoria: Kérdés legfelső szintje
-		- al_kategoria: Kérdés 2. szintje
-		- alt_tema: Kérdés 3. szintje
 		- kerdes_szoveg: maga a kérdés
-		- parent_id: kérdés azonosítója ( alkérdések hivatkozási száma a főkérdés alap_id értéke)
+		- kategoria_kapcsolo_id: kérdés láncolat id-je
+		- parent_id: kérdés azonosítója ( alkérdések hivatkozási 		száma a főkérdés alap_id értéke)
 		- ertek: kérdés pontszáma
 		- szoveges: a kérdés input mező e
-		- valasz_ag: az alkérdés "igen" vagy "nem" ágban jelenik e meg
+		- valasz_ag: az alkérdés "igen" vagy "nem" ágban jelenik e 		meg
 		- negalt_kerdes_szoveg: a kérdés szövegének negálása
 		- ossz_ertek: Kérdés százalékos értéke
-		- maximalis_szint: boolean, egy kérdés az adott kérdéskör teljes egészére alkalmazza a saját pontszámát, ha aktív
-		- modul_id: mely modulhoz tartozik a kérdés ("modulok" tábla alap_id -je
+		- negalt_ertek: érték nem válasz esetén
+		- maximalis_szint: boolean, egy kérdés az adott kérdéskör 		teljes egészére alkalmazza a saját pontszámát, ha aktív
+		- modul_id: mely modulhoz tartozik a kérdés ("modulok" 			tábla alap_id -je
 		- osztott: más modulban is megjeleni e a kérdés?
+		- kindex: sorszám		
+
+	- kerdesek_kategoriaval: (Nem tárol külön adatot, hanem egy előre 	elmentett SELECT. Mindig az aktuális táblákból rakja össze az 	eredményt.) Gyakorlatilag a fo-al-alt táblák és a kerdesek 		ötvözete. View.
 
 	- kitoltesek: (már megválaszolt kérdések)
 		- id: alap_id
 		- felhasznalo_id: "felhasznalok" tábla alap_id -je
 		- letrehozve: kitöltés létrehozásának dátuma
 		- kitoltes_neve: kitöltés neve, személynév nélkül
+		- vizsgalt_id: a vizsgaltak tábla id_je a titkosított 			nevekkel
 		- idk: + ID a megosztási azonosítás véget
 		- role: kitöltés tulajdonosának megnevezése (editor/admin)
-		- szazalek: longtext JSON. A kitöltések értéke és neve százalékban megadva)
+		- szazalek: longtext JSON. A kitöltések értéke és neve 			százalékban megadva)
 		- modul_id : "modulok" tábla alap_id oszlopa
+		- audit: boolean. auditáció alatt áll e a kitöltés
+		- AI: a három ai generált hosszú, már mentett szöveg egyik 		fajtája
+		- ai_jellemzes:a három ai generált hosszú, már mentett 			szöveg egyik fajtája
+		- ai_ertekeles: a három ai generált hosszú, már mentett 		szöveg egyik fajtája
+		- ai_kit_max: maximálisan generálható ai müvelet. 15 az 		alap
 
 	- kozos:
 		- id: alap_id
-		- modul_megoszto: a megosztandó modul alap_id oszlopa a "modulok" táblából.
-		- modul_megosztott: a megosztotó modul alap_id oszlopa a "modulok" táblából amely "kölcsönzi az adott kérdést"
+		- modul_megoszto: a megosztandó modul alap_id oszlopa a 		"modulok" táblából.
+		- modul_megosztott: a megosztotó modul alap_id oszlopa a 		"modulok" táblából amely "kölcsönzi az adott kérdést"
 
 	- modulok: (kérdések modul szülője, szakmai anyag megnevezése)
 		- id: alap_id
 		- nev: modul neve
 		- leiras: modul leírása
-		- ai_kontextus: mesterséges intelligencia irányelvei az adott modulhoz
+		- ai_kontextus: mesterséges intelligencia irányelvei az 		adott modulhoz
+		- szerep: ai "egyénisége"
+		- vizsglat_targy: kiről írja az ai az értékelést
+		- prtomt_jellemzes: a 3 ai müvelet egyik fajtájának 			leírása.
+		- promt_fejlesztes: a három ai generált hosszú, már 			mentett szöveg egyik fajtája
+		- promt_ertekeles: a három ai generált hosszú, már mentett 		szöveg egyik fajtája
+		- szamolas: hogy pontoz a szamitasok.js, ha 0 akkor 			arányosít az kérdések összességéből, ha 1 akkor összadja 		őket és az alapján ad maximális pontszámot
+		- cim_jelemzes: Hogy hívja az ai generálás egyik fajtáját
+		- cim_fejlesztes: Hogy hívja az ai generálás egyik 			fajtáját
+		- cim_ertekeles: Hogy hívja az ai generálás egyik fajtáját
 
 	- roles: (szerepkörök)
 		- id: alap_id
-		- role: admin/alanilst/evaulator - ki hova jelentkezhet vele
+		- role: admin/alanilst/evaulator - ki hova jelentkezhet 		vele
 		- leiras: rövid tájékoztatás a szerepkörökről
+
+	- sablonok: (előre bekészített alkérdések)
+		- csoport neve: sablon cím
+		- kerdes: alkérdés szövege
+		- ag: igen vagy nem ág
+		- pont: pontszám
+		- int_id: mely intézmény hozta létre
+		- szoveges: input-e
+		- maximalis_szin: maximalizált e?
 
 	- valaszok: (kitöltött kérdések)
 		- id: alap_id
@@ -93,7 +151,7 @@ Adatbázis: ertekek02
 		- hozzajarulas_datauma: hozzájárulás elfogadásának dátuma
 		- nev_enc: titkosított név adatok
 
-	-vizsglat_hozzajarulas_naplo: (Hozzájárulások naplózása, természetes személyek esetén)
+	-vizsglat_hozzajarulas_naplo: (Hozzájárulások naplózása, 		természetes személyek esetén)
 		- naplo_id: alap_ids
 		- user_id: "felhasznalok" tábla alap_id oszlopa 
 		- beleegyezes_datuma: hozzájárulás létrehozásának dátuma
@@ -101,3 +159,22 @@ Adatbázis: ertekek02
 		- ip_cim: belegyezés mely IP címről érkezett		
 		- user_agent: mely böngészőből érkezett a kérés
 		- verzio_tag: verziószám
+	
+	- aktivitas_log: (logolásra infógyűjtés
+		- id: alap_id
+		- felhasznalo_id: felhasználó azonosító	
+		- tevekenyseg: mit csinált
+		- reszletek: mit csinált részletesen
+		- eskoz_info: honnan csinálta
+		- ip_cim: ip cím
+		- letrehoza: mikor csinálta
+
+	- audit: mentor és auditációs adatok)
+		- id: alap_id
+		- user_audit: ki az aduitáció elrendelője
+		- user_user: kit auditálnak
+		- audit_modul_id: melyik modulból auditálnak
+		- audit_int_id: melyik intézmény auditál
+		- uzenet: rövid szöveges massage amit oda vissza küldhet a 		két fél JSON formátumba
+		- hatarido: dátum, hogy mikorra kell kész lenni
+		- warm: Az utolsó üzenete az auditációt végzőnek

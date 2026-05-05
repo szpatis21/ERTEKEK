@@ -1,14 +1,18 @@
-import { kerdesValaszok, szovegesValaszok, hideLoading, showLoading, megtekintesMod, modulId, userId } from './main_alap.js';import { Kerdes } from './main_category.js';
+import { kerdesValaszok, szovegesValaszok, hideLoading, showLoading, megtekintesMod, modulId, userId, modulSzamolas, modulIdBetoltve } from './main_alap.js';
+import { Kerdes } from './main_category.js';
 import { Focus} from './main_quest_focus.js';
 import { pontokLathatok } from './main_graph.js';
-import { szamoljFokerdesOsszErtek,letrehozFoKategoriaChart,kiszamoltFoKategoriaDiagramAdatok,letrehozAlkategoriaChart,letrehozAltTemaChart } from './szamitasok.js';
-import { modulIdBetoltve } from './main_alap.js';
+import { szamoljFokerdesAdatokModSzerint, normalizalSzamolasMod, letrehozFoKategoriaChart, kiszamoltFoKategoriaDiagramAdatok, letrehozAlkategoriaChart, letrehozAltTemaChart } from './szamitasok.js';
 import { showSuccessToast } from '/both/alert.js';
 
 // JSON-ból töltött lookupok (modulId szerint)
 let kategoriakSzinek = {};
 let kategoriakChartSzinek = {};
 let leirasok = {};
+
+function pontosszegzesAktiv() {
+    return normalizalSzamolasMod(modulSzamolas) === 1;
+}
 
 function normalizeChartColor(c) {
   if (!c) return 'rgba(102, 102, 102, 0.5)'; // Alapértelmezett szürke, átlátszóan
@@ -26,27 +30,73 @@ function normalizeChartColor(c) {
   // A meglévő rgb(r,g,b, a) formátum javítása rgba-ra
   return c.replace(/^rgb\s*\(/i, (m) => (c.includes(',') && c.split(',').length === 4 ? 'rgba(' : m));
 }
-
-async function initTemaLookups() {
-  // modulId: vagy használd az importált modulId-t, vagy: const modulId = await modulIdBetoltve;
-  const resp = await fetch('/private/info/temakorok.json');
-  if (!resp.ok) throw new Error(`temakorok.json HTTP ${resp.status}`);
-  const all = await resp.json();
-  const set = all.optionSets?.[String(modulId)] ?? []; // kizárólag az adott modul készlete
-  // csak értelmes value-val rendelkező sorok
-  const rows = set.filter(o => typeof o.value === 'string' && o.value.trim() !== '');
-
-  kategoriakSzinek = {};
-  kategoriakChartSzinek = {};
-  leirasok = {};
-
-  for (const o of rows) {
-    leirasok[o.value] = o.leiras ?? '';
-    kategoriakSzinek[o.value] = o.szin ?? '';               // pl. linear-gradient(...)
-    kategoriakChartSzinek[o.value] = normalizeChartColor(o.chart ?? '#666666'); // pl. rgba(...)
-  }
+function normalizeKategoriaKey(value) {
+    return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
 }
 
+let temaLookupsPromise = null;
+
+async function ensureTemaLookupsLoaded(force = false) {
+    if (
+        !force &&
+        Object.keys(kategoriakChartSzinek).length > 0 &&
+        Object.keys(kategoriakSzinek).length > 0
+    ) {
+        return;
+    }
+
+    if (!force && temaLookupsPromise) {
+        return temaLookupsPromise;
+    }
+
+    temaLookupsPromise = (async () => {
+        const aktualisModulId = await modulIdBetoltve;
+
+        const response = await fetch(`/api/get-fo_kategoriak?modulId=${encodeURIComponent(aktualisModulId)}`, {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error('Főkategória-színek betöltése sikertelen.');
+        }
+
+        const rows = await response.json();
+        initTemaLookupsFromRows(rows);
+    })();
+
+    return temaLookupsPromise;
+}
+function initTemaLookupsFromRows(rows) {
+    kategoriakSzinek = {};
+    kategoriakChartSzinek = {};
+    leirasok = {};
+
+    for (const item of rows || []) {
+        const nev = String(item.nev || '').trim();
+
+        if (!nev) continue;
+
+        const normalizedNev = normalizeKategoriaKey(nev);
+        const bgColor = item.szin ?? '';
+        const chartColor = normalizeChartColor(item.chart ?? item.szin ?? '#666666');
+
+        leirasok[nev] = item.leiras ?? '';
+        leirasok[normalizedNev] = item.leiras ?? '';
+
+        kategoriakSzinek[nev] = bgColor;
+        kategoriakSzinek[normalizedNev] = bgColor;
+
+        kategoriakChartSzinek[nev] = chartColor;
+        kategoriakChartSzinek[normalizedNev] = chartColor;
+    }
+
+    window.kategoriakChartSzinek = kategoriakChartSzinek;
+    window.kategoriakSzinek = kategoriakSzinek;
+}
 let alKerdesMap = {}; // Cache az alkérdésekhez
 let alKerdesBatchPromise = null;
 window.aktivFoKategoriaNev = null;
@@ -237,31 +287,18 @@ Object.assign(szinKocka.style, {
     background: '#ccc' // alap, amíg nincs fetch eredmény
 });
 foKategoriaDiv.appendChild(szinKocka);
-fetch('/private/info/temakorok.json')
-  .then(res => res.json())
-  .then(data => {
-      const modulData = data.optionSets?.[String(modulId)] || [];
-      const talalat = modulData.find(item => 
-          (item.value || item.text)?.trim() === foKategoriaNev
-      );
+const globalChartSzinek = window.kategoriakChartSzinek || {};
+const globalSzinek = window.kategoriakSzinek || {};
 
-      if (talalat) {
-          let rgbValue = '';
-
-          if (talalat.szin) {
-              szinKocka.style.background = talalat.chart;
-              rgbValue = talalat.chart;
-          } else if (talalat.chart) {
-              szinKocka.style.background = talalat.szin;
-              rgbValue = talalat.szin;
-          }
-
-          // dataset-be mentjük az RGB értéket
-          foKategoriaCim.dataset.szin =rgbValue;
-          szinKocka.dataset.rgb = rgbValue;
-      }
-  })
-  .catch(err => console.error('Szín betöltési hiba:', err));
+const rgbValue =
+    kategoriakChartSzinek[foKategoriaNev] ||
+    kategoriakSzinek[foKategoriaNev] ||
+    globalChartSzinek[foKategoriaNev] ||
+    globalSzinek[foKategoriaNev] ||
+    '#ccc';
+szinKocka.style.background = rgbValue;
+foKategoriaCim.dataset.szin = rgbValue;
+szinKocka.dataset.rgb = rgbValue;
 
             const osszegzesDiv = document.createElement('div');
             osszegzesDiv.classList.add('pontD');
@@ -279,11 +316,13 @@ fetch('/private/info/temakorok.json')
             let hasAlKategoria = false;
             let kategoriaOsszpont = 0;
             let kategoriaAlKategoriaSzazalekok = []; // 🔹 ide gyűjtjük az alkategória átlagokat
+            let kategoriaAlKategoriaPontAdatok = []; // 🔹 pontösszegzéshez: alkategóriák elért/max pontjai
         
             for (const [alKategoriaNev, altTemak] of Object.entries(alKategoriak)) {
                 let hasAltTema = false;
                 let alkategoriaOsszpont = 0;
                 let alKategoriaAltTemaSzazalekok = []; // 🔹 új: ide gyűjtjük az altémák százalékait
+                let alKategoriaAltTemaPontAdatok = []; // 🔹 pontösszegzéshez: altémák elért/max pontjai
 
                 const altTemaRows = [];
         
@@ -333,16 +372,24 @@ fetch('/private/info/temakorok.json')
                                 let aktualisErtek = 0;
                             
                                if (parentKerdes) {
-   
-                                const szazalek = szamoljFokerdesOsszErtek(parentKerdes, KategoriaKezelo.kerdesek, kerdesValaszok);
+                                    const szamitasEredmeny = szamoljFokerdesAdatokModSzerint(
+                                        parentKerdes,
+                                        KategoriaKezelo.kerdesek,
+                                        kerdesValaszok,
+                                        modulSzamolas
+                                    );
 
-                                if (szazalek !== null) {
-                                    aktualisErtek = szazalek;
-                                    altTemaFokerdesSzazalekok.push(szazalek);
-                                } else {
-                                    aktualisErtek = Math.max(parseFloat(ertek) || 0, parseFloat(negalt_ertek) || 0);
+                                    if (szamitasEredmeny !== null) {
+                                        aktualisErtek = szamitasEredmeny.szazalek;
+                                        altTemaFokerdesSzazalekok.push(szamitasEredmeny.szazalek);
+                                        p.dataset.elertPont = String(szamitasEredmeny.elertPont ?? 0);
+                                        p.dataset.maxPont = String(szamitasEredmeny.maxPont ?? 0);
+                                    } else {
+                                        aktualisErtek = Math.max(parseFloat(ertek) || 0, parseFloat(negalt_ertek) || 0);
+                                        p.dataset.elertPont = String(aktualisErtek);
+                                        p.dataset.maxPont = '100';
+                                    }
                                 }
-                            }
 
                                 kerdesOsszpont += aktualisErtek;
                                 altTemaOsszpont += aktualisErtek;
@@ -395,12 +442,32 @@ kerdesekCell.querySelectorAll('.fokerd').forEach(pElem => {
     }
 });
 
-// Döntés: ha van maximalizált kérdés, csak azt vesszük figyelembe
-const ertekek = maximalizaltErtekek.length > 0 ? maximalizaltErtekek : normalErtekek;
-const altTemaAtlag = ertekek.length > 0
-    ? Math.round(ertekek.reduce((sum, val) => sum + val, 0) / ertekek.length)
-    : 0;
+let altTemaAtlag = 0;
+let altTemaElertPont = 0;
+let altTemaMaxPont = 0;
 
+if (pontosszegzesAktiv()) {
+    kerdesekCell.querySelectorAll('.fokerd').forEach(pElem => {
+        if (pElem.getAttribute('data-ignore-score') === 'true') return;
+        const elertPont = parseFloat(pElem.dataset.elertPont || '0');
+        const maxPont = parseFloat(pElem.dataset.maxPont || '0');
+
+        if (Number.isFinite(elertPont)) altTemaElertPont += elertPont;
+        if (Number.isFinite(maxPont)) altTemaMaxPont += maxPont;
+    });
+
+    altTemaAtlag = altTemaMaxPont > 0
+        ? Math.round((altTemaElertPont / altTemaMaxPont) * 100)
+        : 0;
+
+    alKategoriaAltTemaPontAdatok.push({ elertPont: altTemaElertPont, maxPont: altTemaMaxPont });
+} else {
+    // Döntés: ha van maximalizált kérdés, csak azt vesszük figyelembe
+    const ertekek = maximalizaltErtekek.length > 0 ? maximalizaltErtekek : normalErtekek;
+    altTemaAtlag = ertekek.length > 0
+        ? Math.round(ertekek.reduce((sum, val) => sum + val, 0) / ertekek.length)
+        : 0;
+}
 
                         alKategoriaAltTemaSzazalekok.push(altTemaAtlag); // 🔹 gyűjtjük az altéma átlagokat
 
@@ -426,9 +493,21 @@ const altTemaAtlag = ertekek.length > 0
                     // 🔹 Alkategória összpontszám megjelenítése
                     const osszegzesDivAlKat = document.createElement('div');
                     osszegzesDivAlKat.classList.add('pontF');
-                    const alKatAtlag = alKategoriaAltTemaSzazalekok.length > 0
-                    ? Math.round(alKategoriaAltTemaSzazalekok.reduce((sum, val) => sum + val, 0) / alKategoriaAltTemaSzazalekok.length)
-                    : 0;
+                    let alKatAtlag = 0;
+                    let alKatElertPont = 0;
+                    let alKatMaxPont = 0;
+
+                    if (pontosszegzesAktiv()) {
+                        alKatElertPont = alKategoriaAltTemaPontAdatok.reduce((sum, item) => sum + (parseFloat(item.elertPont) || 0), 0);
+                        alKatMaxPont = alKategoriaAltTemaPontAdatok.reduce((sum, item) => sum + (parseFloat(item.maxPont) || 0), 0);
+                        alKatAtlag = alKatMaxPont > 0 ? Math.round((alKatElertPont / alKatMaxPont) * 100) : 0;
+                        kategoriaAlKategoriaPontAdatok.push({ elertPont: alKatElertPont, maxPont: alKatMaxPont });
+                    } else {
+                        alKatAtlag = alKategoriaAltTemaSzazalekok.length > 0
+                            ? Math.round(alKategoriaAltTemaSzazalekok.reduce((sum, val) => sum + val, 0) / alKategoriaAltTemaSzazalekok.length)
+                            : 0;
+                    }
+
                     kategoriaAlKategoriaSzazalekok.push(alKatAtlag); // 🔹 gyűjtjük a főkategória szinthez
 
                 osszegzesDivAlKat.innerHTML = ` (${alKatAtlag}%)`;
@@ -460,9 +539,16 @@ const altTemaAtlag = ertekek.length > 0
             if (hasAlKategoria) {
                 foKategoriaDiv.appendChild(table);
 
-                const foKatAtlag = kategoriaAlKategoriaSzazalekok.length > 0
-                ? Math.round(kategoriaAlKategoriaSzazalekok.reduce((sum, val) => sum + val, 0) / kategoriaAlKategoriaSzazalekok.length)
-                : 0;
+                let foKatAtlag = 0;
+                if (pontosszegzesAktiv()) {
+                    const foKatElertPont = kategoriaAlKategoriaPontAdatok.reduce((sum, item) => sum + (parseFloat(item.elertPont) || 0), 0);
+                    const foKatMaxPont = kategoriaAlKategoriaPontAdatok.reduce((sum, item) => sum + (parseFloat(item.maxPont) || 0), 0);
+                    foKatAtlag = foKatMaxPont > 0 ? Math.round((foKatElertPont / foKatMaxPont) * 100) : 0;
+                } else {
+                    foKatAtlag = kategoriaAlKategoriaSzazalekok.length > 0
+                        ? Math.round(kategoriaAlKategoriaSzazalekok.reduce((sum, val) => sum + val, 0) / kategoriaAlKategoriaSzazalekok.length)
+                        : 0;
+                }
                 
                 osszegzesDiv.innerHTML = `Főkategória teljesítmény: ${foKatAtlag}%`;
                 osszegzesDiv.setAttribute('data-fo-szazalek', foKatAtlag); // csak a szám!
@@ -663,14 +749,15 @@ else {
     }
     //Főkategóriák    
 static loadFoKategoriak() {
-    modulIdBetoltve.then( async modulId => {
-        await initTemaLookups();
+    modulIdBetoltve.then(async modulId => {
         fetch(`/api/get-fo_kategoriak?modulId=${modulId}`)
             .then(response => response.json())
             .then(data => {
+                initTemaLookupsFromRows(data);
+
                 const tartaly = document.getElementById('fo_kategoriak');
                 tartaly.innerHTML = '';
-                
+
                 data.forEach(item => {
                     const kategoria = new Kategoria(item.nev, item.nev);
                     const div = kategoria.render(tartaly);
@@ -839,8 +926,9 @@ ujKategoriaDiv.addEventListener('click', async (e) => {
         const { modulIdBetoltve } = await import('./main_alap.js');
         const modulId = await modulIdBetoltve;
     
-        const response = await fetch(`/api/get-al_kategoriak?fo_kategoria_id=${foKategoriaNev}&modulId=${modulId}`);
-        const data = await response.json();
+const response = await fetch(
+    `/api/get-al_kategoriak?fo_kategoria_id=${encodeURIComponent(foKategoriaNev)}&modulId=${modulId}`
+);        const data = await response.json();
             
         const tartaly = document.getElementById('al_kategoriak');
         Focus.showContainer(tartaly); 
@@ -1219,7 +1307,16 @@ for (const item of data) {
         ujKerdesDiv.addEventListener('click', async () => {
             // Dinamikusan importáljuk az új InlineQuestionCreator osztályt
             const { InlineQuestionCreator } = await import('../admin/upload/category_creator.js');
+const nyitottFokerdesSzerkeszto = tartaly.querySelector('.uj-ideiglenes-kerdes');
 
+if (nyitottFokerdesSzerkeszto) {
+    nyitottFokerdesSzerkeszto.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+    });
+    showSuccessToast("Már van egy megkezdett főkérdés-szerkesztés.");
+    return;
+}
             // 1. Kiszámoljuk a következő indexet
             const jelenlegiKerdesek = KategoriaKezelo.kerdesek.filter(k => 
                 k.foKategoria === foKategoriaNev && 
@@ -1435,38 +1532,61 @@ static async loadAlKerdesek(parentId, valaszAg, parentKerdes) {
 
                     const mentesEredmeny = await InlineQuestionCreator.openSub(gombKontener, kovetkezoIndex);
 
-                    if (mentesEredmeny) {
-                        const { elem, adat } = mentesEredmeny;
-                        
-                        fetch('/api/alkerdesek', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                kerdesSzoveg: adat.szoveg,
-                                negaltKerdesSzoveg: adat.negaltSzoveg,
-                                negaltErtek: adat.negaltErtek, 
-                                parentId: parentKerdes.id,
-                                foKategoria: parentKerdes.foKategoria,
-                                alKategoria: parentKerdes.alKategoria,
-                                altTema: parentKerdes.altTema,
-                                ertek: adat.ertek,
-                                szoveges: adat.szoveges,
-                                valaszAg: valaszAg,
-                                maximalis_szint: adat.maxi,
-                                kindex: kovetkezoIndex,
-                                modulId: await modulIdBetoltve
-                            })
-                        }).then(res => res.json()).then(data => {
-                            if (data.success) {
-                                showSuccessToast("Alkérdés sikeresen hozzáadva!"); // <-- EZT ADD HOZZÁ
-                        alKerdesMap = {}; 
-                        alKerdesBatchPromise = null;                               
-                        KategoriaKezelo.loadAlKerdesek(parentKerdes.id, valaszAg, parentKerdes);
-                            } else {
-                                console.error('Hiba:', data.message);
-                            }
-                        }).catch(err => console.error('Fetch hiba:', err));
-                    }
+if (mentesEredmeny) {
+    const { elem, adat } = mentesEredmeny;
+if (elem) {
+    elem.dataset.saving = '1';
+}
+
+try {
+    const response = await fetch('/api/alkerdesek', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            kerdesSzoveg: adat.szoveg,
+            negaltKerdesSzoveg: adat.negaltSzoveg,
+            negaltErtek: adat.negaltErtek,
+            parentId: parentKerdes.id,
+            foKategoria: parentKerdes.foKategoria,
+            alKategoria: parentKerdes.alKategoria,
+            altTema: parentKerdes.altTema,
+            ertek: adat.ertek,
+            szoveges: adat.szoveges,
+            valaszAg: valaszAg,
+            maximalis_szint: adat.maxi,
+            kindex: kovetkezoIndex,
+            modulId: await modulIdBetoltve
+        })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+        if (elem) {
+            delete elem.dataset.saving;
+        }
+        console.error('Hiba:', data.message);
+        return;
+    }
+
+    if (elem) {
+        elem.dataset.saved = '1';
+        elem.remove();
+    }
+
+    showSuccessToast("Alkérdés sikeresen hozzáadva!");
+
+    alKerdesMap = {};
+    alKerdesBatchPromise = null;
+
+    await KategoriaKezelo.loadAlKerdesek(parentKerdes.id, valaszAg, parentKerdes);
+} catch (err) {
+    if (elem) {
+        delete elem.dataset.saving;
+    }
+    console.error('Fetch hiba:', err);
+}
+}
                 });
 
                 // --- ESEMÉNYKEZELŐ (Sablon Select) ---
@@ -1522,26 +1642,50 @@ static async loadAlKerdesek(parentId, valaszAg, parentKerdes) {
                     e.target.value = ""; 
                 });
             }
+            // A render előtt létező, de még nem mentett alkérdés-szerkesztőket visszatesszük.
+// A sikeresen mentett elemet előtte külön eltávolítjuk, így az nem jön vissza duplán.
+if (ideiglenesSzerkesztok.length > 0) {
+    ideiglenesSzerkesztok.forEach(szerkeszto => {
+        if (
+            szerkeszto &&
+            !szerkeszto.dataset.saved &&
+            !szerkeszto.dataset.saving
+        ) {
+            tartaly.appendChild(szerkeszto);
+        }
+    });
+}
         }
 
     } catch (error) {
         console.error('Hiba történt az alkérdések betöltése során:', error);
     }
 }
-   static async loadAllAlKerdesek() {
-    if (Object.keys(alKerdesMap).length) return alKerdesMap;
+static async loadAllAlKerdesek(force = false) {
+    if (!force && Object.keys(alKerdesMap).length) {
+        return alKerdesMap;
+    }
 
     const modulId = await modulIdBetoltve;
 
-if (!alKerdesBatchPromise) {
-            alKerdesBatchPromise = (async () => {
-                // A Date.now() megakadályozza, hogy a böngésző beragassza a régi adatokat a memóriába
-                const resp = await fetch(`/api/get-all-alkerdesek?modulId=${modulId}&_t=${Date.now()}`);
-                const data = await resp.json();
+    if (force) {
+        alKerdesMap = {};
+        alKerdesBatchPromise = null;
+    }
+
+    if (!alKerdesBatchPromise) {
+        alKerdesBatchPromise = (async () => {
+            const resp = await fetch(
+                `/api/get-all-alkerdesek?modulId=${modulId}&_t=${Date.now()}`,
+                { cache: 'no-store' }
+            );
+
+            const data = await resp.json();
             alKerdesMap = data.alKerdesMap || {};
             return alKerdesMap;
         })();
     }
+
     return alKerdesBatchPromise;
 }
 

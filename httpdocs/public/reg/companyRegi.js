@@ -12,7 +12,34 @@ const arak = {
     6: 5000,  // Fél éves ár per fő
     12: 9000  // Éves ár per fő
 };
+function escapeHTML(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 
+function getUresModulAdatok() {
+    const modulValasztas = document.querySelector('input[name="modulValasztas"]:checked');
+    const modulTipus = modulValasztas ? modulValasztas.value : "";
+
+    const ujModulNevInput = document.querySelector("#ujModulNev");
+    const ujModulLeirasInput = document.querySelector("#ujModulLeiras");
+    const szamolasInput = document.querySelector('input[name="szamolasTipus"]:checked');
+
+    return {
+        modulTipus,
+        ujModulNev: ujModulNevInput ? ujModulNevInput.value.trim() : "",
+        ujModulLeiras: ujModulLeirasInput ? ujModulLeirasInput.value.trim() : "",
+        szamolas: szamolasInput ? Number(szamolasInput.value) : null,
+        szamolasNev:
+            szamolasInput && szamolasInput.value === "1"
+                ? "Normál pontszámítás"
+                : "Arányosított számítás"
+    };
+}
 // Céges regisztráció megjelenítése
 regi0.addEventListener("click", function(event){
     // Érdemes megállítani az alapértelmezett viselkedést
@@ -58,10 +85,10 @@ regi0.addEventListener("click", function(event){
             regifin.style.display = 'none';
             regi.style.display = "flex";
             regi.classList.add('fade');  
-            
-            regi.scrollIntoView({
+            let regiHero=document.querySelector(".al-alap")
+            regiHero.scrollIntoView({
                 behavior: "smooth",
-                block: "nearest" 
+                block: "start" 
             });
             
             setTimeout(function() {
@@ -159,17 +186,23 @@ export function initCompanyRegistration() {
 
     document.querySelector("#cegesRegi").addEventListener("submit", function(event) {
         event.preventDefault();  
-        
-        // Választott modulok összegyűjtése (#szakmaiceg-ben lévő checkboxok)
-        const checkedModules = Array.from(
-            document.querySelectorAll('#szakmaiceg input[type="checkbox"]:checked')
-        );
 
-        const selectedModuleTexts = checkedModules.map(cb => cb.nextElementSibling.textContent.trim());
-        const selectedModuleIds = checkedModules.map(cb => cb.value);
-        const intmod = selectedModuleIds.join(',');      // pl. "1"
+        const modulAdatok = getUresModulAdatok();
 
-        // Változók (CSAK a kötelezőek, amiket a felületen hagytunk)
+        let selectedModuleTexts = [];
+        let selectedModuleIds = [];
+        let intmod = "";
+
+        if (modulAdatok.modulTipus === "meglevo") {
+            const selectedRadio = document.querySelector('input[name="modulValasztas"][value="meglevo"]:checked');
+
+            if (selectedRadio) {
+                selectedModuleIds = [selectedRadio.dataset.modulId];
+                selectedModuleTexts = [selectedRadio.dataset.modulNev || selectedRadio.dataset.modulLeiras || "Fejlesztő-nevelő oktatás"];
+                intmod = selectedModuleIds.join(",");
+            }
+        }
+
         const int = document.querySelector("#int");
         const irsz2 = document.querySelector("#irsz2");
         const szekhely = document.querySelector("#szekhely");
@@ -181,7 +214,6 @@ export function initCompanyRegistration() {
         const tel2 = document.querySelector("#tel2");
         const fo = document.querySelector("#fo");
 
-        // Hibahelyek 
         const orrErr2 = document.querySelector("#orrErr2");
         const irszErr2 = document.querySelector("#irszErr2");
         const interr = document.querySelector("#interr");
@@ -192,26 +224,26 @@ export function initCompanyRegistration() {
         const tel2err = document.querySelector("#telceg2err");
         const foerr = document.querySelector("#foerr");
 
-        // --- LÉTSZÁM (TRIAL) ELLENŐRZÉS MAX 3 FŐ ---
         let infov = 0;
         let letszamRendben = true;
+
         if (fo) {
             infov = parseInt(fo.value.trim(), 10);
+
             if (isNaN(infov) || infov < 1) {
-                if(foerr) foerr.textContent = "Kérjük, adjon meg érvényes létszámot (min. 1)!";
+                if (foerr) foerr.textContent = "Kérjük, adjon meg érvényes létszámot (min. 1)!";
                 fo.classList.add("borderr");
                 letszamRendben = false;
             } else if (infov > 3) {
-                if(foerr) foerr.textContent = "A tesztidőszak alatt maximum 3 fő (licensz) igényelhető!";
+                if (foerr) foerr.textContent = "A tesztidőszak alatt maximum 3 fő (licensz) igényelhető!";
                 fo.classList.add("borderr");
                 letszamRendben = false;
             } else {
-                if(foerr) foerr.textContent = "";
+                if (foerr) foerr.textContent = "";
                 fo.classList.remove("borderr");
             }
         }
 
-        // Többi validáció
         const itnezmenyNev = validacio(int, userRegex, interr, "Írjon be teljes intézmény/cég nevet!");
         const adoszam = validacio(adosz, adoszamRegex, aderr, "Az adószám helyes formátuma: 12345678-9-10");
         const orszag = orsz2 ? validacio(orsz2, countRegex, orrErr2, "Írja be helyesen az ország nevét!") : true;
@@ -219,31 +251,58 @@ export function initCompanyRegistration() {
         const iranyitoszam = irsz2 ? validacio(irsz2, postalCodeRegex, irszErr2, "Az irányítószámnak 4 számjegyűnek kell lennie.") : true;
         const cimutca = validacio(cim, addressRegex, cimerr, "Írjon be a teljes címet!");
         const nev = validacio(vez2, nameRegex, vez2err, "Adjon meg valós vezetéknevet!");
-        const adszellenorzott = adosz.getAttribute('data-valid') === 'true';
-        const intnevellenorzott = int.getAttribute("data-valid") === 'true';
-        // --- LEBEGŐ HIBAÜZENETEK (TOAST FIX) ---
-     // --- HIBAÜZENETEK MEGJELENÍTÉSE ÉS GÖRGETÉS ---
-     
-        if (!adszellenorzott){
-            aderr.innerHTML="Ezzel az adószámmal már regisztráltak!";
+
+        const adszellenorzott = adosz.getAttribute("data-valid") === "true";
+        const intnevellenorzott = int.getAttribute("data-valid") === "true";
+
+        if (!adszellenorzott) {
+            aderr.innerHTML = "Ezzel az adószámmal már regisztráltak!";
             adosz.classList.add("borderr");
         }
-        if (!intnevellenorzott){
-            interr.innerHTML="Ezzel az intézménynévvel már regisztráltak!";
+
+        if (!intnevellenorzott) {
+            interr.innerHTML = "Ezzel az intézménynévvel már regisztráltak!";
             int.classList.add("borderr");
         }
 
         let telefon2 = true;
+
         if (tel2 && tel2.value.trim() !== "") {
             const telRegex = /^(\+36|06)\d{9}$/;
             telefon2 = validacio(tel2, telRegex, tel2err, "Adjon meg valós telefonszámot! (pl. +36301234567)");
         }
 
-        // Ha minden validáció sikeres (Beleértve a létszámot is!)
-        if (adszellenorzott && intnevellenorzott && itnezmenyNev && adoszam && iranyitoszam && varos && orszag && cimutca && nev && telefon2 && letszamRendben) {
-            console.log("Minden adat helyes, folytatás...");
+        let modulRendben = true;
+        const modulErr = document.querySelector("#modulValasztasErr");
 
-            // Adatok összegyűjtése
+        if (!modulAdatok.modulTipus) {
+            modulRendben = false;
+            if (modulErr) modulErr.textContent = "Kérjük, válasszon szakmai anyagot vagy üres értékelő rendszert.";
+        } else if (modulAdatok.modulTipus === "ures") {
+            if (!modulAdatok.ujModulNev || !modulAdatok.ujModulLeiras || ![0, 1].includes(modulAdatok.szamolas)) {
+                modulRendben = false;
+                if (modulErr) modulErr.textContent = "Üres értékelő rendszer esetén a nevet, leírást és számítási módot is meg kell adni.";
+            } else {
+                if (modulErr) modulErr.textContent = "";
+            }
+        } else {
+            if (modulErr) modulErr.textContent = "";
+        }
+
+        if (
+            adszellenorzott &&
+            intnevellenorzott &&
+            itnezmenyNev &&
+            adoszam &&
+            iranyitoszam &&
+            varos &&
+            orszag &&
+            cimutca &&
+            nev &&
+            telefon2 &&
+            letszamRendben &&
+            modulRendben
+        ) {
             const intv = int.value.trim();
             const intirv = irsz2.value.trim();
             const orszv = orsz2.value.trim();
@@ -254,10 +313,9 @@ export function initCompanyRegistration() {
             const tel2v = tel2.value.trim(); 
             const vez2v = vez2.value.trim();
 
-            // --- AUTOMATIZÁLT TRIAL ADATOK (A módosított 1 perces űrlaphoz) ---
-            const mailCegv = mail2v;  // Céges e-mail a kapcsolattartóé lesz
-            const telCegv = tel2v;    // Céges telefon a kapcsolattartóé lesz
-            const intfinv = 10;        // 10-s csomag (Tesztidőszak)
+            const mailCegv = mail2v;
+            const telCegv = tel2v;
+            const intfinv = 10;
 
             al_alap.style.display = "none";
 
@@ -267,20 +325,33 @@ export function initCompanyRegistration() {
             const finanszirozas = new FinanszirozasAdatok(intfinv, infov);
             const elfogadas = new ElfogadasAdatok();
             const gombok = new Gombok();
-            
-            // Ellenőrző lapka
-            const modulesHTML = selectedModuleTexts.length
-                ? `<div style="text-align: center; width: fit-content; margin: auto;">
-                    <b>Választott modulok</b>
-                    <ul style="font-style: italic;">
-                        ${selectedModuleTexts.map(txt => `<li>${txt}</li>`).join('')}
-                    </ul>
-                   </div>`
-                : '<p>Nincs kiválasztott modul.</p>';
+
+            const modulesHTML = modulAdatok.modulTipus === "ures"
+                ? `
+                    <div class="regi-summary-box">
+                        <b>Választott rendszer</b>
+                        <ul style="font-style: italic;">
+                            <li>Üres értékelő rendszer</li>
+                            <li><b>Terület neve:</b> ${escapeHTML(modulAdatok.ujModulNev)}</li>
+                            <li><b>Leírás:</b> ${escapeHTML(modulAdatok.ujModulLeiras)}</li>
+                            <li><b>Számítási mód:</b> ${escapeHTML(modulAdatok.szamolasNev)}</li>
+                        </ul>
+                    </div>
+                  `
+                : selectedModuleTexts.length
+                    ? `
+                        <div class="regi-summary-box">
+                            <b>Választott modulok</b>
+                            <ul style="font-style: italic;">
+                                ${selectedModuleTexts.map(txt => `<li>${escapeHTML(txt)}</li>`).join("")}
+                            </ul>
+                        </div>
+                      `
+                    : "<p>Nincs kiválasztott modul.</p>";
 
             const kirakottSablon = `
                 <h4>Regisztráció elfogadása</h4>
-                <div class= labels>
+                <div class="labels">
                     <div>  
                         ${intezmenynevAdatok.render()}
                         ${kapcsolattarto.render()}
@@ -296,29 +367,28 @@ export function initCompanyRegistration() {
                     ${gombok.render()}
                 </div>   
             `;
-            
+
             const ellenorzes = document.createElement("div");
             alap.appendChild(ellenorzes);
             ellenorzes.classList.add("ellenorzes");
             ellenorzes.style.opacity = "0";
             ellenorzes.style.transform = "translateY(100%)";
             ellenorzes.innerHTML = kirakottSablon;
-            const open= document.querySelector(".alap")
-            
+
+            const open = document.querySelector(".alap");
+
             setTimeout(function() {
-                open.scrollIntoView({ behavior: 'smooth', block: "center" });
+                open.scrollIntoView({ behavior: "smooth", block: "center" });
                 ellenorzes.style.transform = "translateY(0)";
                 ellenorzes.style.opacity = "1";
             }, 10);
 
-            // Vissza gomb
-            document.querySelector("#megsem").addEventListener('click', function(event) {
+            document.querySelector("#megsem").addEventListener("click", function(event) {
                 event.preventDefault();
                 vissza(ellenorzes, al_alap, regi);
             });
 
-            // Küldés gomb
-            document.querySelector("#megerosit").addEventListener("click", function(event){
+            document.querySelector("#megerosit").addEventListener("click", function(event) {
                 event.preventDefault();
 
                 if (!document.querySelector("#afsz").checked || !document.querySelector("#afsz3").checked || !document.querySelector("#afsz4").checked) {
@@ -326,44 +396,70 @@ export function initCompanyRegistration() {
                     return;
                 }
 
-                const data = {intv, intirv, orszv, szekhelyv, adoszv, cimv, mailCegv, telCegv, vez2v, infov, intfinv, tel2v, mail2v, intmod};
+                const data = {
+                    intv,
+                    intirv,
+                    orszv,
+                    szekhelyv,
+                    adoszv,
+                    cimv,
+                    mailCegv,
+                    telCegv,
+                    vez2v,
+                    infov,
+                    intfinv,
+                    tel2v,
+                    mail2v,
+                    intmod,
+                    modulTipus: modulAdatok.modulTipus,
+                    ujModulNev: modulAdatok.ujModulNev,
+                    ujModulLeiras: modulAdatok.ujModulLeiras,
+                    szamolas: modulAdatok.szamolas
+                };
 
-                fetch('/register/institution', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                fetch("/register/institution", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(data)
                 })
                 .then(response => {
-                    if (!response.ok) return response.json().then(errorData => { throw new Error(errorData.message || 'Ismeretlen hiba.'); });
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            throw new Error(errorData.message || "Ismeretlen hiba.");
+                        });
+                    }
+
                     return response.json();
                 })
                 .then(data => {
-                    if (data.message === 'Intézményi regisztráció sikeres') {  
-                        alert('Regisztráció sikeres! A regisztrációs kód elküldve e-mailben.');
-                        regifin.style.display = 'flex';
+                    if (data.message === "Intézményi regisztráció sikeres") {  
+                        alert("Regisztráció sikeres! A regisztrációs kód elküldve e-mailben.");
+                        regifin.style.display = "flex";
                         alap.removeChild(ellenorzes);
                         setTimeout(function() { location.reload(); }, 5000);
                     } else {
-                        alert('Hiba történt a regisztráció során.');
+                        alert("Hiba történt a regisztráció során.");
                         alap.removeChild(ellenorzes);
                     }
                 })
                 .catch(error => {
-                    regifin.style.display = 'flex';
-                    regifin.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    regifin.innerHTML ="Hiba történt:" + error.message;
+                    regifin.style.display = "flex";
+                    regifin.scrollIntoView({ behavior: "smooth", block: "center" });
+                    regifin.innerHTML = "Hiba történt: " + error.message;
                 });
             });
-        }
-        else { 
-            if(eredmenyElem) eredmenyElem.innerHTML= "Vannak olyan adatok melyek nem helyesek, kérjük javítsa a pirossal jelzett mezőket!";
-            const regceg = document.querySelector("#regCeg");
-            if(regceg) {
-                regceg.classList.add('shake');
-                setTimeout(function() { regceg.classList.remove('shake'); }, 600);
+        } else { 
+            if (eredmenyElem) {
+                eredmenyElem.innerHTML = "Vannak olyan adatok melyek nem helyesek, kérjük javítsa a pirossal jelzett mezőket!";
             }
-            
-            // Lebegő hibaüzenetek megjelenítése
+
+            const regceg = document.querySelector("#regCeg");
+
+            if (regceg) {
+                regceg.classList.add("shake");
+                setTimeout(function() { regceg.classList.remove("shake"); }, 600);
+            }
+
             showAndHideErrorMessages(); 
         }
     });
@@ -373,44 +469,131 @@ export function initCompanyRegistration() {
 const szakmaicegBox = document.querySelector('#szakmaiceg');
 
 async function loadModulok() {
-  if (!szakmaicegBox) {
-    console.warn('#szakmaiceg konténer nem található');  
-    return;
-  }
+    if (!szakmaicegBox) {
+        console.warn("#szakmaiceg konténer nem található");  
+        return;
+    }
 
-  try {
-    const res = await fetch('/modulok');   
-    if (!res.ok) throw new Error('Hiba a modulok lekérésénél.');
+    try {
+        const res = await fetch("/modulok");   
 
-    const modulok = await res.json();          
+        if (!res.ok) {
+            throw new Error("Hiba a modulok lekérésénél.");
+        }
 
-    // 1. Leszűrjük a modulokat (Benn hagytam az ideiglenes korlátozásodat a 1-es ID-re)
-    const filteredMods = modulok.filter(m => m.id == 1); 
+        const modulok = await res.json();
 
-    // 2. Végigmegyünk a leszűrt listán
-    filteredMods.forEach(({ id, nev, leiras }) => {
-      const wrap = document.createElement('div');
+        szakmaicegBox.innerHTML = "";
 
-      const cb = document.createElement('input');
-      cb.type  = 'checkbox';
-      cb.value = id;               
-      cb.id    = `mod-${id}`;        
+        const filteredMods = modulok.filter(m => m.id == 1);
 
-      // 🌟 A VARÁZSLAT: Ha pontosan 1 elem van a listában, automatikusan kipipáljuk!
-      if (filteredMods.length === 1) {
-          cb.checked = true;
-      }
+        filteredMods.forEach(({ id, nev, leiras }) => {
+            const wrap = document.createElement("div");
+            wrap.classList.add("modul-choice-row");
 
-      const label = document.createElement('label');
-      label.htmlFor     = cb.id;
-      label.textContent = leiras;    
+            const rb = document.createElement("input");
+            rb.type = "radio";
+            rb.name = "modulValasztas";
+            rb.value = "meglevo";
+            rb.id = `mod-${id}`;
+            rb.dataset.modulId = id;
+            rb.dataset.modulNev = nev || "";
+            rb.dataset.modulLeiras = leiras || "";
+            rb.checked = true;
 
-      wrap.append(cb, label);
-      szakmaicegBox.appendChild(wrap);
-    });
-  } catch (err) {
-    console.error('Modul-betöltési hiba:', err);
-  }
+            const label = document.createElement("label");
+            label.htmlFor = rb.id;
+            label.textContent = leiras || nev || "Fejlesztő-nevelő oktatás";
+
+            wrap.append(rb, label);
+            szakmaicegBox.appendChild(wrap);
+        });
+
+        const uresWrap = document.createElement("div");
+        uresWrap.classList.add("modul-choice-row", "ures-modul-row");
+
+        uresWrap.innerHTML = `
+            <div class="ures-modul-fejlec">
+                <input type="radio" name="modulValasztas" value="ures" id="mod-ures">
+                <label for="mod-ures">Üres értékelő rendszert szeretnék.</label>
+            </div>
+
+            <div id="uresModulPanel" class="ures-modul-panel">
+                <legend>Új értékelési terület adatai</legend>
+
+                <div class="allabel">
+                    <div>
+                        <label for="ujModulNev">
+                            Név
+                            <span class="info-tip" data-tip="Adja meg a terület nevét, amit mérni szeretne az Értékek segítségével.">?</span>
+                        </label>
+                        <input style="width:75% !important" type="text" id="ujModulNev" placeholder="Például: Belső intézményi önértékelés">
+                    </div>
+                </div>
+
+                <div class="allabel">
+                    <div>
+                        <label for="ujModulLeiras">
+                            Leírás
+                            <span class="info-tip" data-tip="Adjon egy rövid leírást arról a területről, amellyel dolgozni fog.">?</span>
+                        </label>
+                        <textarea id="ujModulLeiras" rows="3" placeholder="Röviden írja le, milyen értékelési területhez használja majd a rendszert."></textarea>
+                    </div>
+                </div>
+
+                <legend>Számítási mód</legend>
+
+                <div class="szamolas-tipusok">
+                    <div class="szamolas-kartya">
+                        <input type="radio" id="szamolasAranyositott" name="szamolasTipus" value="0" checked>
+                        <label for="szamolasAranyositott">
+                            Arányosított számítás
+                            <span class="info-tip" data-tip="A válaszok értékét százalékos arányban számolja. Akkor hasznos, ha az ágak, kérdések vagy alkérdések eltérő súlyúak, mégis összehasonlítható eredményt szeretne.">?</span>
+                        </label>
+                    </div>
+
+                    <div class="szamolas-kartya">
+                        <input type="radio" id="szamolasNormal" name="szamolasTipus" value="1">
+                        <label for="szamolasNormal">
+                            Normál pontszámítás
+                            <span class="info-tip" data-tip="Egyszerű pontösszeadás. A rendszer az elért pontokat az összes megszerezhető ponthoz viszonyítja. Akkor jó, ha minden kiválasztott kérdés közvetlenül pontot ér.">?</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        szakmaicegBox.appendChild(uresWrap);
+
+        const modulRadios = document.querySelectorAll('input[name="modulValasztas"]');
+        const uresModulPanel = document.querySelector("#uresModulPanel");
+
+        function frissitUresModulPanel() {
+            const valasztott = document.querySelector('input[name="modulValasztas"]:checked');
+
+            if (!uresModulPanel || !valasztott) return;
+
+            if (valasztott.value === "ures") {
+                uresModulPanel.style.display = "block";
+            } else {
+                uresModulPanel.style.display = "none";
+            }
+        }
+
+        modulRadios.forEach(radio => {
+            radio.addEventListener("change", frissitUresModulPanel);
+        });
+
+        frissitUresModulPanel();
+
+        const err = document.createElement("div");
+        err.classList.add("err");
+        err.id = "modulValasztasErr";
+        szakmaicegBox.appendChild(err);
+
+    } catch (err) {
+        console.error("Modul-betöltési hiba:", err);
+    }
 }
 
 document.addEventListener('DOMContentLoaded', loadModulok);

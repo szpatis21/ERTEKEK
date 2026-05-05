@@ -1,5 +1,38 @@
 // category_editor.js
 
+import { showAlert } from "/both/alert.js";
+
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+}
+
+function escapeAttr(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+}
+
+function safeBackground(value) {
+    const hatter = String(value ?? '').trim();
+
+    // Hex, rgb/rgba, linear-gradient engedélyezve.
+    // Ha bármi gyanús jön, kap egy semleges hátteret.
+    if (
+        /^#[0-9a-f]{3,8}$/i.test(hatter) ||
+        /^rgba?\([^)]+\)$/i.test(hatter) ||
+        /^linear-gradient\(.+\)$/i.test(hatter)
+    ) {
+        return hatter;
+    }
+
+    return '#006cb5';
+}
+
 export class CategoryEditor {
     static open(jelenlegiCim, jelenlegiLeiras, jelenlegiHatter) {
         return new Promise((resolve) => {
@@ -8,28 +41,33 @@ export class CategoryEditor {
 
             const modal = document.createElement('div');
             modal.className = 'color-picker-modal';
-            modal.style.width = '450px'; 
+            modal.style.width = '450px';
+
+            const biztonsagosCimHtml = escapeHtml(jelenlegiCim);
+            const biztonsagosLeirasHtml = escapeHtml(jelenlegiLeiras);
+            const biztonsagosCimAttr = escapeAttr(jelenlegiCim);
+            const biztonsagosHatter = safeBackground(jelenlegiHatter);
 
             modal.innerHTML = `
                 <h3 class="color-picker-title">
                     Témakör szerkesztése
                 </h3>
 
-                <div class="minta" style="margin-bottom: 20px;    justify-content: center;">
-                    <div id="live-preview-card" class="category fo color-picker-preview-card" style="background: ${jelenlegiHatter}; min-height: 80px;">
-                        <div class="cim">${jelenlegiCim}</div>
-                        <div class="leiras">${jelenlegiLeiras}</div>
+                <div class="minta" style="margin-bottom: 20px; justify-content: center;">
+                    <div id="live-preview-card" class="category fo color-picker-preview-card" style="background: ${biztonsagosHatter}; min-height: 80px;">
+                        <div class="cim">${biztonsagosCimHtml}</div>
+                        <div class="leiras">${biztonsagosLeirasHtml}</div>
                     </div>
                 </div>
 
                 <div class="color-picker-input-container">
                     <label for="editor-cim" class="color-picker-label">Cím:</label>
-                    <input type="text" id="editor-cim" value="${jelenlegiCim}" style="width: 100%; color: black; font-family: inherit;">
+                    <input type="text" id="editor-cim" value="${biztonsagosCimAttr}" style="width: 100%; color: black; font-family: inherit;">
                 </div>
 
                 <div class="color-picker-input-container">
                     <label for="editor-leiras" class="color-picker-label">Leírás:</label>
-                    <textarea id="editor-leiras" rows="3" style="width: 100%; color: black; font-family: inherit;">${jelenlegiLeiras}</textarea>
+                    <textarea id="editor-leiras" rows="3" style="width: 100%; color: black; font-family: inherit;"></textarea>
                 </div>
 
                 <div class="color-picker-btn-container">
@@ -46,35 +84,43 @@ export class CategoryEditor {
             const previewCard = modal.querySelector('#live-preview-card');
             const previewCim = previewCard.querySelector('.cim');
             const previewLeiras = previewCard.querySelector('.leiras');
-            
+
             const btnOk = modal.querySelector('#editor-ok');
             const btnMegse = modal.querySelector('#editor-megse');
 
-            // Élő frissítés gépelés közben
+            inputLeiras.value = String(jelenlegiLeiras ?? '');
+
             inputCim.addEventListener('input', () => {
-                previewCim.textContent = inputCim.value;
+                previewCim.textContent = inputCim.value || 'Névtelen témakör';
             });
 
             inputLeiras.addEventListener('input', () => {
-                previewLeiras.textContent = inputLeiras.value;
+                previewLeiras.textContent = inputLeiras.value || '';
             });
 
             const close = (valasz) => {
-                document.body.removeChild(overlay);
+                if (document.body.contains(overlay)) {
+                    document.body.removeChild(overlay);
+                }
                 resolve(valasz);
             };
 
-            // Eseménykezelők: Csak a gombok zárják be
             btnMegse.addEventListener('click', () => close(null));
-            
+
             btnOk.addEventListener('click', () => {
+                const ujCim = inputCim.value.trim();
+                const ujLeiras = inputLeiras.value.trim();
+
+                if (!ujCim) {
+                    showAlert("A témakör címe nem lehet üres!");
+                    return;
+                }
+
                 close({
-                    ujCim: inputCim.value.trim(),
-                    ujLeiras: inputLeiras.value.trim()
+                    ujCim,
+                    ujLeiras
                 });
             });
-
-            // Megjegyzés: Az overlay kattintásfigyelőt szándékosan eltávolítottuk
         });
     }
 }

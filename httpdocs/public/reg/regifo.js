@@ -41,47 +41,161 @@ export const afsz4 = document.getElementById("afsz4");
       export const adoszamRegex = /^\d{8}-\d{1}-\d{2}$/;
       export const foRegex = /^\d{1,3}$/;
       //Validáló
-        export  function validacio(mezo, regex, hiba, hibaUzenet) {
-            if (!regex.test(mezo.value.trim())) {
-                hiba.innerHTML = hibaUzenet;
-                mezo.classList.add("borderr");
-                return false;
-            } else {
-                hiba.innerHTML = "";
-                mezo.classList.remove("borderr");
+    export function validacio(mezo, regex, hiba, hibaUzenet) {
+    if (!regex.test(mezo.value.trim())) {
+        hiba.innerHTML = hibaUzenet;
+        mezo.classList.add("borderr");
+        syncRegErrorTooltips();
+        return false;
+    } else {
+        hiba.innerHTML = "";
+        mezo.classList.remove("borderr");
+        syncRegErrorTooltips();
+        return true;
+    }
+}
+
+function getErrorTooltipTarget(errorDiv) {
+    const fieldWrapper = errorDiv.closest(".allabel, .reg-field, #regcode");
+
+    if (fieldWrapper) {
+        const label = fieldWrapper.querySelector("label");
+
+        if (label) {
+            return label;
+        }
+
+        const input = fieldWrapper.querySelector("input, textarea, select");
+
+        if (input) {
+            return input;
+        }
+
+        return fieldWrapper;
+    }
+
+    const card = errorDiv.closest(".reg-card");
+
+    if (card) {
+        const legend = card.querySelector("legend");
+
+        if (legend) {
+            return legend;
+        }
+
+        return card;
+    }
+
+    return errorDiv.parentElement || errorDiv;
+}
+
+function createErrorTooltip(message) {
+    const tip = document.createElement("span");
+    tip.className = "reg-error-tip";
+    tip.textContent = "!";
+    tip.setAttribute("data-error", message);
+    tip.setAttribute("aria-label", message);
+    tip.setAttribute("tabindex", "0");
+    return tip;
+}
+
+export function syncRegErrorTooltips() {
+    document.querySelectorAll(".reg-error-tip").forEach(tip => tip.remove());
+    document.querySelectorAll(".has-reg-error-tip").forEach(elem => elem.classList.remove("has-reg-error-tip"));
+
+    const errorDivs = document.querySelectorAll(".err");
+
+    errorDivs.forEach(errorDiv => {
+        const message = errorDiv.textContent.trim();
+
+        errorDiv.style.display = "none";
+        errorDiv.style.opacity = "0";
+        errorDiv.style.position = "static";
+
+        if (!message) return;
+
+        const target = getErrorTooltipTarget(errorDiv);
+        const tip = createErrorTooltip(message);
+
+        target.appendChild(tip);
+
+        const fieldWrapper = errorDiv.closest(".allabel, .reg-field, #regcode, .reg-card");
+
+        if (fieldWrapper) {
+            fieldWrapper.classList.add("has-reg-error-tip");
+        }
+    });
+}
+
+export function showAndHideErrorMessages() {
+    syncRegErrorTooltips();
+
+    const elsoHibasMezo = document.querySelector(".borderr");
+
+    if (elsoHibasMezo) {
+        elsoHibasMezo.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+        elsoHibasMezo.classList.add("reg-error-pulse");
+
+        setTimeout(() => {
+            elsoHibasMezo.classList.remove("reg-error-pulse");
+        }, 900);
+    }
+}
+
+export function initRegErrorTooltips() {
+    if (window.__regErrorTooltipsReady) return;
+
+    window.__regErrorTooltipsReady = true;
+
+    const observer = new MutationObserver((mutations) => {
+        const erintett = mutations.some(mutation => {
+            const target = mutation.target;
+
+            if (target.nodeType === 1 && target.classList && target.classList.contains("err")) {
                 return true;
             }
-        }
-        export function showAndHideErrorMessages() {
-            const errorDivs = document.querySelectorAll('.err');
 
-            errorDivs.forEach(div => {
-                if (div.textContent.trim() !== "") { 
-                    // Visszaadjuk nekik a normál elrendezést (ne akarjanak kiszabadulni a konténerből)
-                    div.style.position = 'absolute'; // Vagy vedd ki ezt a sort teljesen, ha a CSS-ben jól be van állítva
-                    div.style.display = 'block';
-
-                    div.style.transition = 'opacity 0.5s ease-in-out';
-                    
-                    setTimeout(() => { div.style.opacity = '1'; }, 10);
-                    
-                    // 5 másodperc múlva elhalványul
-                    setTimeout(() => {
-                        div.style.opacity = '0';
-                        setTimeout(() => { 
-                            div.style.display = 'none'; 
-                        }, 500); 
-                    }, 5000); 
-                }
-            });
-
-            // 🌟 A VARÁZSLAT: Megkeressük az első hibás mezőt, és odagörgetünk!
-            const elsoHibasMezo = document.querySelector('.borderr');
-            if (elsoHibasMezo) {
-                // Finoman odagörget, úgy, hogy a hibás mező pontosan a képernyő KÖZEPÉRE kerüljön
-                elsoHibasMezo.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if (target.parentElement && target.parentElement.classList && target.parentElement.classList.contains("err")) {
+                return true;
             }
+
+            return Array.from(mutation.addedNodes).some(node => {
+                return node.nodeType === 1 && (
+                    node.classList?.contains("err") ||
+                    node.querySelector?.(".err")
+                );
+            });
+        });
+
+        if (erintett) {
+            requestAnimationFrame(syncRegErrorTooltips);
         }
+    });
+
+    observer.observe(document.body, {
+        childList: true,
+        characterData: true,
+        subtree: true
+    });
+
+    document.addEventListener("input", function(event) {
+        if (event.target.matches("#regi input, #regi textarea, #regi select")) {
+            setTimeout(syncRegErrorTooltips, 0);
+        }
+    });
+
+    document.addEventListener("change", function(event) {
+        if (event.target.matches("#regi input, #regi textarea, #regi select")) {
+            setTimeout(syncRegErrorTooltips, 0);
+        }
+    });
+
+    syncRegErrorTooltips();
+}
 
 //Törlés
 export function clearFields(...fields) {
@@ -270,8 +384,8 @@ document.addEventListener("DOMContentLoaded", function() {
     initAnimations();
     initUserRegistration();
     initCompanyRegistration();
+    initRegErrorTooltips();
 });
-
 //Kirakó ellenörzéshez
     // Intézményi adatok osztály
     export class IntezmenynevAdatok {

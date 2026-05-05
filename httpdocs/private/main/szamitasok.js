@@ -125,6 +125,121 @@ function getKategoriakChartSzinek() {
 }
 
 // --- SZÁMÍTÁSI LOGIKA ---
+export function normalizalSzamolasMod(szamolas) {
+    if (szamolas === 1 || szamolas === '1') return 1;
+    if (typeof szamolas === 'string' && szamolas.toLowerCase() === 'pontosszegzes') return 1;
+    return 0;
+}
+
+function biztonsagosPont(value) {
+    const n = Number(value);
+    return Number.isFinite(n) && n > 0 ? n : 0;
+}
+
+function clampSzazalek(value) {
+    const n = Number(value);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+function kerdesById(kerdesekTomb, id) {
+    return kerdesekTomb.find(k => Number(k.id) === Number(id));
+}
+
+export function szamoljFokerdesPontOsszegzesAdatok(parentKerdes, kerdesekTomb, kerdesValaszok) {
+    const valasz = kerdesValaszok[parentKerdes.id];
+    if (!valasz || valasz === 'ures') return null;
+
+    const igenAg = parentKerdes.igenAg || [];
+    const nemAg = parentKerdes.nemAg || [];
+    const aktivAg = valasz === 'igen' ? igenAg : valasz === 'nem' ? nemAg : [];
+
+    // Ha az aktív ágon vannak alkérdések, ezek adják a max pontot.
+    // IGEN válasz = az alkérdés ertek pontja, NEM/ÜRES = 0 pont.
+    if (aktivAg.length > 0) {
+        const aktivAlkerdesek = aktivAg
+            .map(id => kerdesById(kerdesekTomb, id))
+            .filter(Boolean)
+            .filter(k => !k.szoveges);
+
+        const maxPont = aktivAlkerdesek.reduce((sum, k) => sum + biztonsagosPont(k.ertek), 0);
+        if (!(maxPont > 0)) {
+            return { szazalek: 0, elertPont: 0, maxPont: 0 };
+        }
+
+        const vanRogzitettValasz = aktivAlkerdesek.some(k => {
+            const alkValasz = kerdesValaszok[k.id];
+            return alkValasz === 'igen' || alkValasz === 'nem';
+        });
+
+        if (!vanRogzitettValasz) {
+            return { szazalek: 0, elertPont: 0, maxPont };
+        }
+
+        const vanMaximalizaloIgen = aktivAlkerdesek.some(k => {
+            return k?.maximalis_szint == 1 && kerdesValaszok[k.id] === 'igen';
+        });
+
+        if (vanMaximalizaloIgen) {
+            return { szazalek: 100, elertPont: maxPont, maxPont };
+        }
+
+        const elertPont = aktivAlkerdesek.reduce((sum, k) => {
+            return kerdesValaszok[k.id] === 'igen'
+                ? sum + biztonsagosPont(k.ertek)
+                : sum;
+        }, 0);
+
+        return {
+            szazalek: clampSzazalek((elertPont / maxPont) * 100),
+            elertPont,
+            maxPont
+        };
+    }
+
+    // Ha nincs alkérdés az aktív ágon, akkor maga a főkérdés pontja számít.
+    const igenPont = biztonsagosPont(parentKerdes.ertek);
+    const nemPont = biztonsagosPont(parentKerdes.negalt_ertek);
+    const maxPont = Math.max(igenPont, nemPont);
+
+    if (!(maxPont > 0)) {
+        return { szazalek: 0, elertPont: 0, maxPont: 0 };
+    }
+
+    const elertPont = valasz === 'igen' ? igenPont : nemPont;
+
+    return {
+        szazalek: clampSzazalek((elertPont / maxPont) * 100),
+        elertPont,
+        maxPont
+    };
+}
+
+export function szamoljFokerdesPontOsszegzes(parentKerdes, kerdesekTomb, kerdesValaszok) {
+    const eredmeny = szamoljFokerdesPontOsszegzesAdatok(parentKerdes, kerdesekTomb, kerdesValaszok);
+    return eredmeny ? eredmeny.szazalek : null;
+}
+
+export function szamoljFokerdesAdatokModSzerint(parentKerdes, kerdesekTomb, kerdesValaszok, szamolas = 0) {
+    if (normalizalSzamolasMod(szamolas) === 1) {
+        return szamoljFokerdesPontOsszegzesAdatok(parentKerdes, kerdesekTomb, kerdesValaszok);
+    }
+
+    const szazalek = szamoljFokerdesOsszErtek(parentKerdes, kerdesekTomb, kerdesValaszok);
+    if (szazalek === null) return null;
+
+    return {
+        szazalek,
+        elertPont: szazalek,
+        maxPont: 100
+    };
+}
+
+export function szamoljFokerdesModSzerint(parentKerdes, kerdesekTomb, kerdesValaszok, szamolas = 0) {
+    const eredmeny = szamoljFokerdesAdatokModSzerint(parentKerdes, kerdesekTomb, kerdesValaszok, szamolas);
+    return eredmeny ? eredmeny.szazalek : null;
+}
+
 export function szamoljFokerdesOsszErtek(parentKerdes, kerdesekTomb, kerdesValaszok) {
     const valasz = kerdesValaszok[parentKerdes.id];
     if (!valasz || valasz === 'ures') return null;

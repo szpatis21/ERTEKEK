@@ -66,7 +66,7 @@ export class CategoryCreator {
     // --- Fő megnyitó metódus ---
     static open() {
         return new Promise((resolve) => {
-            const alapSzin = "#3498db"; // Alapértelmezett induló szín (pl. egy kellemes kék)
+            const alapSzin = "#006cb5"; // Alapértelmezett induló szín 
 
             const overlay = document.createElement('div');
             overlay.className = 'color-picker-overlay';
@@ -183,7 +183,8 @@ export class CategoryCreator {
             btnOk.addEventListener('click', () => {
                 const cim = inputCim.value.trim();
                 if (!cim) {
-showAlert("A főkategória neve nem lehet üres!"); // alert() helyett                    return;
+showAlert("A főkategória neve nem lehet üres!"); // alert() helyett                    
+            return;
                 }
                 close({
                     ujCim: cim,
@@ -230,8 +231,8 @@ static createAlkerdesUI(options = {}, isStandalone = false) {
                 </div>
                 <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
                     <div class="color-picker-input-container inline-szoveg-container" style="padding: 0px;">
-                        <input type="text" class="editor-input-number inline-szoveg-input" style="padding: 0px; border: 1px solid #008000fc;background: #468a4612;" placeholder="Fogalmazza meg az alkérdést/állítást..." value="${szoveg}">
-                        <input type="text" class="editor-input-number inline-negalt-szoveg-input" style="display: ${vanNemAg && !szoveges ? 'block' : 'none'}; padding: 0px;" placeholder="Fogalmazza meg az alkérdés tagadását..." value="${negaltSzoveg}">
+                        <input type="text" class="editor-input-number inline-szoveg-input" style="padding: 0px; border: 1px solid #008000fc;background: #468a4612;" placeholder="Fogalmazza meg az alkérdést/állítást..." value="${escapeAttr(szoveg)}">
+                        <input type="text" class="editor-input-number inline-negalt-szoveg-input" style="display: ${vanNemAg && !szoveges ? 'block' : 'none'}; padding: 0px;" placeholder="Fogalmazza meg az alkérdés tagadását..." value="${escapeAttr(negaltSzoveg)}">
                     </div>                        
                     <div class="szerkesztolec inline-szerkesztolec">
                         <div>
@@ -367,7 +368,7 @@ static createAlkerdesUI(options = {}, isStandalone = false) {
                 </div>
                  <div class="alkerdeskont question-container fade-in hidden" id="alkerdesek-${tempId}" style="filter: none; flex-direction: column; width: 100%;">
                     
-                    <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
+                    <div class="alki">
                         <div class="kerdesmodul new btn-add-ideiglenes-alkerdes" style="cursor: pointer; flex: 1; margin-bottom: 0;">
                             <div class="questionadd">
                                 <span class="add-alkerdes-szoveg">Új alkérdés hozzáadása</span>
@@ -552,7 +553,7 @@ static createAlkerdesUI(options = {}, isStandalone = false) {
                         listaNem.style.display = 'block';
                         btnAddAlkerdes.dataset.ag = 'nem';
                         updateAddButtonText(); // <-- Gomb szövegének frissítése
-                         frissitSablonSelect('nem'); // <-- EZ AZ ÚJ SOR
+                         frissitSablonSelect('nem'); 
 
                         setTimeout(() => {
                             alkerdesKont.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -682,100 +683,107 @@ static createAlkerdesUI(options = {}, isStandalone = false) {
                 resolve(null);
             });
 
-        btnMent.addEventListener('click', () => {
+       btnMent.addEventListener('click', () => {
     const szoveg = foSzovegInput.value.trim();
     const szovegesVeg = szovegesCheckbox.checked;
     const vanNemAgVeg = nemAgCheckbox.checked;
     const fokerdesNegaltSzoveg = vanNemAgVeg && !szovegesVeg ? negaltSzovegInput.value.trim() : "";
-    
-    // Értékek kinyerése a validációhoz
+
     const maxiVeg = ujModul.querySelector('.inline-maxi-checkbox').checked;
     const ertekVeg = parseFloat(ujModul.querySelector('.inline-ertek-input').value) || 0;
     const negaltErtekVeg = parseFloat(ujModul.querySelector('.inline-negalt-ertek-input').value) || 0;
+
+    const extractAlkerdesek = (listaContainer, ag) => {
+        return Array.from(listaContainer.querySelectorAll('.uj-ideiglenes-alkerdes')).map(sub => {
+            const szovegesSub = sub.querySelector('.inline-szoveges-checkbox').checked;
+            const vanNemAgSub = sub.querySelector('.inline-nem-ag-checkbox').checked;
+
+            return {
+                vanNemAg: vanNemAgSub,
+                al_kindex: parseInt(sub.querySelector('.kerdes-sorszam-jelzo2').value) || 1,
+                al_kerdesSzoveg: sub.querySelector('.inline-szoveg-input').value.trim(),
+                al_ertek: parseFloat(sub.querySelector('.inline-ertek-input').value) || 0,
+                szoveges: szovegesSub,
+                maximalis_szint: sub.querySelector('.inline-maxi-checkbox').checked ? 1 : 0,
+                al_negaltKerdesSzoveg: vanNemAgSub && !szovegesSub
+                    ? sub.querySelector('.inline-negalt-szoveg-input').value.trim()
+                    : "",
+                al_negalt_ertek: vanNemAgSub && !szovegesSub
+                    ? parseFloat(sub.querySelector('.inline-negalt-ertek-input').value) || 0
+                    : 0,
+                valasz_ag: ag
+            };
+        });
+    };
+
+    const igenAlkerdesek = extractAlkerdesek(listaIgen, 'igen');
+    const nemAlkerdesek = extractAlkerdesek(listaNem, 'nem');
+    const osszesAlkerdes = [...igenAlkerdesek, ...nemAlkerdesek];
+    const vanAlkerdes = osszesAlkerdes.length > 0;
 
     if (!szoveg) {
         showAlert("A kérdés szövegének megadása kötelező!");
         return;
     }
+
     if (vanNemAgVeg && !szovegesVeg && !fokerdesNegaltSzoveg) {
         showAlert("Ha a főkérdés rendelkezik 'NEM' ággal, a tagadás szövegének megadása kötelező!");
         return;
     }
 
-    // --- ÚJ PONT VALIDÁCIÓ (Főkérdés) ---
-    if (!szovegesVeg && !maxiVeg) {
+    if (!szovegesVeg && !maxiVeg && !vanAlkerdes) {
         if (ertekVeg === 0) {
-            showAlert("A főkérdés pontszáma nem lehet 0!");
+            showAlert("Az alkérdés nélküli főkérdés pontszáma nem lehet 0!");
             return;
         }
+
         if (vanNemAgVeg && negaltErtekVeg === 0) {
-            showAlert("A főkérdés 'NEM' ágának pontszáma nem lehet 0!");
+            showAlert("Az alkérdés nélküli főkérdés 'NEM' ágának pontszáma nem lehet 0!");
             return;
         }
     }
 
-                const extractAlkerdesek = (listaContainer, ag) => {
-                    return Array.from(listaContainer.querySelectorAll('.uj-ideiglenes-alkerdes')).map(sub => {
-                        const szovegesSub = sub.querySelector('.inline-szoveges-checkbox').checked;
-                        const vanNemAgSub = sub.querySelector('.inline-nem-ag-checkbox').checked;
-                        return {
-                            al_kindex: parseInt(sub.querySelector('.kerdes-sorszam-jelzo2').value) || 1,
-                            al_kerdesSzoveg: sub.querySelector('.inline-szoveg-input').value.trim(),
-                            al_ertek: parseFloat(sub.querySelector('.inline-ertek-input').value) || 0,
-                            szoveges: szovegesSub,
-                            maximalis_szint: sub.querySelector('.inline-maxi-checkbox').checked ? 1 : 0,
-                            al_negaltKerdesSzoveg: vanNemAgSub && !szovegesSub ? sub.querySelector('.inline-negalt-szoveg-input').value.trim() : "",
-                            al_negalt_ertek: vanNemAgSub && !szovegesSub ? parseFloat(sub.querySelector('.inline-negalt-ertek-input').value) || 0 : 0,
-                            valasz_ag: ag 
-                        };
-                    });
-                };
-
-                const igenAlkerdesek = extractAlkerdesek(listaIgen, 'igen');
-                const nemAlkerdesek = extractAlkerdesek(listaNem, 'nem');
-                const osszesAlkerdes = [...igenAlkerdesek, ...nemAlkerdesek];
-
-                // category_creator.js - a validációs ciklus az open() és edit() alján:
-for (let alk of osszesAlkerdes) {
-    if (!alk.al_kerdesSzoveg) {
-        showAlert("Minden alkérdés szövegének megadása kötelező!");
-        return;
-    }
-    if (alk.al_negaltKerdesSzoveg === "" && !alk.szoveges && alk.vanNemAg) {
-        showAlert("Ha egy alkérdés rendelkezik 'NEM' ággal, a tagadás szövegének megadása kötelező!");
-        return;
-    }
-    // --- ÚJ PONT VALIDÁCIÓ (Alkérdések) ---
-    if (!alk.szoveges && alk.maximalis_szint === 0) {
-        if (alk.al_ertek === 0) {
-            showAlert("Az alkérdés pontszáma nem lehet 0!");
+    for (let alk of osszesAlkerdes) {
+        if (!alk.al_kerdesSzoveg) {
+            showAlert("Minden alkérdés szövegének megadása kötelező!");
             return;
         }
-        if (alk.vanNemAg && alk.al_negalt_ertek === 0) {
-            showAlert("Az alkérdés 'NEM' ágának pontszáma nem lehet 0!");
+
+        if (alk.al_negaltKerdesSzoveg === "" && !alk.szoveges && alk.vanNemAg) {
+            showAlert("Ha egy alkérdés rendelkezik 'NEM' ággal, a tagadás szövegének megadása kötelező!");
             return;
         }
+
+        if (!alk.szoveges && alk.maximalis_szint === 0) {
+            if (alk.al_ertek === 0) {
+                showAlert("Az alkérdés pontszáma nem lehet 0!");
+                return;
+            }
+
+            if (alk.vanNemAg && alk.al_negalt_ertek === 0) {
+                showAlert("Az alkérdés 'NEM' ágának pontszáma nem lehet 0!");
+                return;
+            }
+        }
     }
-}
 
-                const eredmeny = {
-                    kindex: parseInt(ujModul.querySelector('.kerdes-sorszam-jelzo2').value) || 1,
-                    szoveg: szoveg,
-                    ertek: parseFloat(ujModul.querySelector('.inline-ertek-input').value) || 0,
-                    szoveges: szovegesVeg,
-                    maxi: ujModul.querySelector('.inline-maxi-checkbox').checked,
-                    vanNemAg: vanNemAgVeg,
-                    negaltSzoveg: fokerdesNegaltSzoveg,
-                    negaltErtek: vanNemAgVeg && !szovegesVeg ? parseFloat(ujModul.querySelector('.inline-negalt-ertek-input').value) || 0 : 0,
-                    alkerdesek: osszesAlkerdes
-                };
+    const eredmeny = {
+        kindex: parseInt(ujModul.querySelector('.kerdes-sorszam-jelzo2').value) || 1,
+        szoveg: szoveg,
+        ertek: ertekVeg,
+        szoveges: szovegesVeg,
+        maxi: maxiVeg,
+        vanNemAg: vanNemAgVeg,
+        negaltSzoveg: fokerdesNegaltSzoveg,
+        negaltErtek: vanNemAgVeg && !szovegesVeg ? negaltErtekVeg : 0,
+        alkerdesek: osszesAlkerdes
+    };
 
-                ujModul.remove();
-                resolve(eredmeny);
-            });
+    ujModul.remove();
+    resolve(eredmeny);
+});
         });
     }
-    // Ezt add hozzá az InlineQuestionCreator osztályon BELÜL
     static openSub(referenciaElem, kindex) {
         return new Promise((resolve) => {
             const subTempId = Date.now() + Math.floor(Math.random() * 1000);
@@ -876,12 +884,45 @@ for (let alk of osszesAlkerdes) {
                 const szoveg = ujSub.querySelector('.inline-szoveg-input').value.trim();
                 
                 if (!szoveg) {
-showAlert("Az alkérdés szövegének megadása kötelező!"); // alert() helyett                    return;
+showAlert("Az alkérdés szövegének megadása kötelező!"); // alert() helyett                    
+return;
                 }
 
-                const szoveges = subSzovegesCb.checked;
-                const vanNemAg = subNemAgCb.checked;
+        const szoveges = subSzovegesCb.checked;
+const vanNemAg = subNemAgCb.checked;
+const maxi = ujSub.querySelector('.inline-maxi-checkbox').checked;
+const ertek = parseFloat(ujSub.querySelector('.inline-ertek-input').value) || 0;
+const negaltSzoveg = vanNemAg && !szoveges ? subNegaltSzovegInput.value.trim() : "";
+const negaltErtek = vanNemAg && !szoveges
+    ? parseFloat(ujSub.querySelector('.inline-negalt-ertek-input').value) || 0
+    : 0;
 
+if (!szoveg) {
+    showAlert("Az alkérdés szövegének megadása kötelező!");
+    return;
+}
+
+if (!szoveges && !maxi && ertek === 0) {
+    showAlert("Az alkérdés pontszáma nem lehet 0!");
+    return;
+}
+
+if (vanNemAg && !szoveges && !negaltSzoveg) {
+    showAlert("Ha az alkérdés rendelkezik 'NEM' ággal, a tagadás szövegének megadása kötelező!");
+    return;
+}
+
+if (vanNemAg && !szoveges && !maxi && negaltErtek === 0) {
+    showAlert("Az alkérdés 'NEM' ágának pontszáma nem lehet 0!");
+    return;
+}
+
+if (btnMent.dataset.busy === '1') {
+    return;
+}
+
+btnMent.dataset.busy = '1';
+btnMent.disabled = true;
                 const eredmeny = {
                     kindex: kindex,
                     szoveg: szoveg,
@@ -920,8 +961,8 @@ const isAlkerdes = !!foKerdes.parentId; // JAVÍTÁS: Megnézzük, hogy ez eleve
                     <p class="pi">(Alkérdések szerkesztéséhez húzza a csúszkát a kívánt helyre (<span style="color:green"> igen</span>/ <span style="color:red"> nem</span>))</p>
                     <div style="display: flex; width: 100%; align-items: center; justify-content: space-between;">
                         <div class="color-picker-input-container inline-szoveg-container" style="padding: 0px;">
-                            <input type="text" class="editor-input-number inline-szoveg-input" style="padding: 0px; border: 1px solid #008000fc;background: #468a4612;" placeholder="Fogalmazza meg a kérdést/állítást..." value="${foKerdes.szoveg}">
-                            <input type="text" class="editor-input-number inline-negalt-szoveg-input" style="display: ${vanNemAg && !szoveges ? 'block' : 'none'}; padding: 0px;" placeholder="Fogalmazza meg a kérdés tagadását..." value="${foKerdes.negaltKerdesSzoveg || ''}">
+                            <input type="text" class="editor-input-number inline-szoveg-input" style="padding: 0px; border: 1px solid #008000fc;background: #468a4612;" placeholder="Fogalmazza meg a kérdést/állítást..." value="${escapeAttr(foKerdes.szoveg)}">
+                            <input type="text" class="editor-input-number inline-negalt-szoveg-input" style="display: ${vanNemAg && !szoveges ? 'block' : 'none'}; padding: 0px;" placeholder="Fogalmazza meg a kérdés tagadását..." value="${escapeAttr(foKerdes.negaltKerdesSzoveg || '')}">
                         </div>                        
                         <div class="csuszka csuszka-valtozo ${vanNemAg ? 'csuszka2' : ''}" style="display: ${szoveges || isAlkerdes ? 'none' : 'flex'}">
                             <label class="labelnem" style="display: ${vanNemAg ? 'inline-block' : 'none'};">
@@ -950,22 +991,22 @@ const isAlkerdes = !!foKerdes.parentId; // JAVÍTÁS: Megnézzük, hogy ez eleve
                         </div>
                     </div>
                     
-<div class="alkerdeskont question-container fade-in hidden" id="alkerdesek-${tempId}" style="display: ${isAlkerdes ? 'none' : 'flex'}; filter: none; flex-direction: column; width: 100%;">                        <div style="display: flex; gap: 10px; width: 100%; margin-bottom: 15px;">
-                            <div class="kerdesmodul new btn-add-ideiglenes-alkerdes" style="cursor: pointer; flex: 1; margin-bottom: 0;">
+                    <div class="alkerdeskont question-container fade-in hidden" id="alkerdesek-${tempId}" style="display: ${isAlkerdes ? 'none' : 'flex'}; filter: none; flex-direction: column; width: 100%;">                        <div class="alki">
+                        <div class=" alki kerdesmodul new btn-add-ideiglenes-alkerdes" style="cursor: pointer; flex: 1; margin-bottom: 0;">
                                 <div class="questionadd">
                                     <span class="add-alkerdes-szoveg">Új alkérdés hozzáadása</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160Zm40 200q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
                                 </div>
-                            </div>
-                            <div class="kerdesmodul new" style="flex: 1; margin-bottom: 0; padding: 0; display: flex;">
+                        </div>
+                        <div class="kerdesmodul new" style="flex: 1; margin-bottom: 0; padding: 0; display: flex;">
                                 <div class="questionadd" style="width: 100%;">
                                     <select class="sablon-select" style="width: 100%; background: transparent; border: none; font-family: inherit; font-size: inherit; font-weight: inherit; color: inherit; cursor: pointer; text-align: center; text-align-last: center; outline: none; appearance: none;">
                                         <option value="" disabled selected>Alkérdés sablon betöltése ▾</option>
                                     </select>
                                 </div>
-                            </div>
+                        </div>
                             
-                            </div>
+                    </div>
                         </div>
 
                         <div class="ideiglenes-alkerdesek-lista-igen" style="display: none; width: 100%;"></div>
@@ -996,12 +1037,12 @@ const isAlkerdes = !!foKerdes.parentId; // JAVÍTÁS: Megnézzük, hogy ez eleve
             const foSzovegInput = ujModul.querySelector('.inline-szoveg-input');
             const alkerdesKont = ujModul.querySelector(`#alkerdesek-${tempId}`);
             
-            // --- MEGLÉVŐ ALKÉRDÉSEK BETÖLTÉSE ---
         // --- MEGLÉVŐ ALKÉRDÉSEK BETÖLTÉSE ---
         const betoltAlkerdesek = (adatok, celLista) => {
                 adatok.forEach(alk => {
                     const sub = InlineQuestionCreator.createAlkerdesUI({
-alkId: alk.id || alk.al_id, // <-- JAVÍTVA: Biztosítjuk az ID kinyerését                        parentId: foKerdes.id, 
+                    alkId: alk.id || alk.al_id, // <-- JAVÍTVA: Biztosítjuk az ID kinyerését                        
+                    parentId: foKerdes.id, 
                         kindex: alk.kindex,
                         // Biztosítjuk, hogy bármelyik formátumban is jön az adat, megtalálja
                         szoveg: alk.szoveg || alk.kerdes_szoveg || "",
@@ -1226,38 +1267,62 @@ alkId: alk.id || alk.al_id, // <-- JAVÍTVA: Biztosítjuk az ID kinyerését    
                     });
                 };
 
-        const igenAlkerdesek = extractAlkerdesek(listaIgen, 'igen');
-                const nemAlkerdesek = extractAlkerdesek(listaNem, 'nem');
-                const osszesAlkerdes = [...igenAlkerdesek, ...nemAlkerdesek];
-                console.log('[DOM kinyerés] A felületről sikeresen beolvasott alkérdések tömbje:', osszesAlkerdes);
+const igenAlkerdesek = extractAlkerdesek(listaIgen, 'igen');
+const nemAlkerdesek = extractAlkerdesek(listaNem, 'nem');
+const osszesAlkerdes = [...igenAlkerdesek, ...nemAlkerdesek];
 
-                // Alkérdések validálása
-               // category_creator.js - a validációs ciklus az open() és edit() alján:
+const maxiVeg = ujModul.querySelector('.inline-maxi-checkbox').checked;
+const ertekVeg = parseFloat(ujModul.querySelector('.inline-ertek-input').value) || 0;
+const negaltErtekVeg = parseFloat(ujModul.querySelector('.inline-negalt-ertek-input').value) || 0;
+const vanAlkerdes = osszesAlkerdes.length > 0;
+
+if (!szovegesVeg && !maxiVeg && !vanAlkerdes) {
+    if (ertekVeg === 0) {
+        showAlert("Az alkérdés nélküli kérdés pontszáma nem lehet 0!");
+        return;
+    }
+
+    if (vanNemAgVeg && negaltErtekVeg === 0) {
+        showAlert("Az alkérdés nélküli kérdés 'NEM' ágának pontszáma nem lehet 0!");
+        return;
+    }
+}
+
 for (let alk of osszesAlkerdes) {
     if (!alk.al_kerdesSzoveg) {
         showAlert("Minden alkérdés szövegének megadása kötelező!");
         return;
     }
-    // JAVÍTÁS: Most már csak a saját vanNemAg tulajdonságát nézzük
+
     if (alk.al_negaltKerdesSzoveg === "" && !alk.szoveges && alk.vanNemAg) {
         showAlert("Ha egy alkérdés rendelkezik 'NEM' ággal, a tagadás szövegének megadása kötelező!");
         return;
     }
-}
 
+    if (!alk.szoveges && alk.maximalis_szint === 0) {
+        if (alk.al_ertek === 0) {
+            showAlert("Az alkérdés pontszáma nem lehet 0!");
+            return;
+        }
+
+        if (alk.vanNemAg && alk.al_negalt_ertek === 0) {
+            showAlert("Az alkérdés 'NEM' ágának pontszáma nem lehet 0!");
+            return;
+        }
+    }
+}
                 const result = {
                     id: foKerdes.id,
                     kerdesSzoveg: szoveg,
-                    ertek: parseFloat(ujModul.querySelector('.inline-ertek-input').value) || 0,
+                    ertek: ertekVeg,
                     szoveges: szovegesVeg ? 1 : 0,
-                    maximalis_szint: ujModul.querySelector('.inline-maxi-checkbox').checked ? 1 : 0,
+                    maximalis_szint: maxiVeg ? 1 : 0,
                     negaltKerdesSzoveg: vanNemAgVeg && !szovegesVeg ? ujModul.querySelector('.inline-negalt-szoveg-input').value.trim() : "",
-                    negalt_ertek: vanNemAgVeg && !szovegesVeg ? parseFloat(ujModul.querySelector('.inline-negalt-ertek-input').value) || 0 : 0, 
+                    negalt_ertek: vanNemAgVeg && !szovegesVeg ? negaltErtekVeg : 0,
                     kindex: parseInt(ujModul.querySelector('.kerdes-sorszam-jelzo2').value) || foKerdes.kindex,                    foKategoria: foKerdes.foKategoria,
                     alKategoria: foKerdes.alKategoria,
                     altTema: foKerdes.altTema,
-                    // Összefűzzük az igen és nem ágakat a PATCH request számára elvárt formátumba
-                    alkerdesek: [...extractAlkerdesek(listaIgen, 'igen'), ...extractAlkerdesek(listaNem, 'nem')]
+                    alkerdesek: osszesAlkerdes                
                 };
 
                 ujModul.remove();
@@ -1266,4 +1331,12 @@ for (let alk of osszesAlkerdes) {
             });
         });
     }
+}
+
+function escapeAttr(value) {
+    return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
 }
