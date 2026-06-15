@@ -1,0 +1,1011 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Értékek - Áraink</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" referrerpolicy="no-referrer">
+
+  <link href="/both/both.css" rel="stylesheet">
+  <link href="/public/reg/stylereg.css" rel="stylesheet">
+  <link href="/private/main/main.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+
+  <style>
+    :root {
+      --ertekek-orange: #ff6500;
+      --ertekek-orange-soft: #fff7ed;
+      --ertekek-orange-border: #fed7aa;
+      --ertekek-text: #273142;
+      --ertekek-muted: #667085;
+      --ertekek-card: rgba(255, 255, 255, 0.94);
+      --ertekek-shadow: 0 18px 50px rgba(0, 0, 0, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ertekek-text);
+       background: linear-gradient(293deg, #ff3400 0%, #ffab02 100% 100%);
+
+      font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+      background: #ff7c00a6;
+    }
+
+    .pricing-page {
+      width: 97% !important;
+      margin: 0% auto;
+      padding: 34px 0 52px;
+    }
+.hatos{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+    .pricing-shell {
+      width: 100%;
+      border-radius: 28px;
+      background: rgba(255,255,255,0.82);
+      border: 1px solid rgba(255, 101, 0, 0.16);
+      box-shadow: var(--ertekek-shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    .pricing-hero {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 22px;
+      align-items: center;
+      padding: 34px clamp(20px, 4vw, 44px);
+      background:
+        linear-gradient(135deg, rgba(255,101,0,0.14), rgba(255,255,255,0.90)),
+        #ffffff;
+      border-bottom: 1px solid rgba(255, 101, 0, 0.16);
+    }
+
+    .pricing-hero-mark {
+      width: 84px;
+      height: 84px;
+      display: grid;
+      place-items: center;
+      border-radius: 24px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      box-shadow: 0 10px 26px rgba(255,101,0,0.18);
+      font-family: "Montserrat Subrayada", Arial, sans-serif;
+      font-size: 2.9rem;
+      font-weight: 700;
+      color: var(--ertekek-orange);
+    }
+
+    .pricing-kicker {
+      margin: 0 0 7px;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .78rem;
+      font-weight: 800;
+      color: #9a3412;
+    }
+
+    .pricing-hero h1 {
+      margin: 0;
+      color: var(--ertekek-orange);
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1;
+    }
+
+    .pricing-hero p {
+      max-width: 850px;
+      margin: 12px 0 0;
+      line-height: 1.65;
+      color: #4b5563;
+      font-size: 1.02rem;
+    }
+
+    .billing-switch {
+display: flex;
+flex-wrap: wrap;
+      padding: 16px;
+      width: 100%;
+      justify-content: space-between;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 20px;
+    }
+
+    .billing-switch-title {
+      font-weight: 900;
+      color: #9a3412;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .billing-options {
+      display: flex;
+      width: 55%;
+      gap: 10px;
+    }
+.active{margin: 0% !important;}
+    .billing-options button {
+      border: 1px solid #fdba74;
+      background: #fff;
+      color: #9a3412;
+      width: 100%;
+      max-width: 200px;
+      border-radius: 999px;
+      padding: 12px 10px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+
+    .billing-options button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(255,101,0,.14);
+    }
+
+    .billing-options button.active {
+      background: #ff6500;
+      color: #fff;
+      border-color: #ff6500;
+      box-shadow: 0 10px 24px rgba(255,101,0,.22);
+    }
+
+    .upgrade-mode-banner {
+      display: none;
+      margin: 16px 0 0;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      color: #7c2d12;
+      font-weight: 700;
+      line-height: 1.45;
+    }
+
+    body.package-upgrade-mode .upgrade-mode-banner {
+      display: block;
+    }
+
+    body.package-upgrade-mode .pricing-card[data-package] > a {
+      background: #9a3412;
+    }
+
+    body.package-upgrade-mode .pricing-card[data-package="demo"] > a {
+      background: #f3f4f6;
+      color: #9ca3af;
+      border: 1px solid #e5e7eb;
+      cursor: not-allowed;
+    }
+
+    .package-request-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background: rgba(17, 24, 39, .72);
+      backdrop-filter: blur(4px);
+    }
+
+    .package-request-box {
+      width: min(560px, 100%);
+      border-radius: 24px;
+      background: #ffffff;
+      box-shadow: 0 24px 80px rgba(0,0,0,.32);
+      border: 1px solid rgba(255, 101, 0, .18);
+      padding: 26px;
+      color: #273142;
+    }
+
+    .package-request-box h2 {
+      margin: 0 0 10px;
+      color: #ff6500;
+      font-size: 1.45rem;
+    }
+
+    .package-request-box p {
+      margin: 9px 0;
+      line-height: 1.55;
+      color: #4b5563;
+    }
+
+    .package-request-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .package-request-actions button {
+      border: none;
+      border-radius: 999px;
+      padding: 11px 17px;
+      cursor: pointer;
+      font-weight: 800;
+    }
+
+    .package-request-actions .primary {
+      background: #ff6500;
+      color: #fff;
+    }
+
+    .package-request-actions .secondary {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+
+
+    .billing-hint {
+      margin-top: 11px;
+      font-size: .93rem;
+      color: #7c2d12;
+    }
+
+    .pricing-section {
+      padding: 28px clamp(18px, 4vw, 42px);
+    }
+
+    .section-head {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .section-step {
+      flex: 0 0 auto;
+      min-width: 42px;
+      height: 42px;
+      padding: 0 9px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: var(--ertekek-orange);
+      color: #fff;
+      font-weight: 900;
+      box-shadow: 0 8px 22px rgba(255,101,0,.20);
+    }
+
+    .section-head h2 {
+      margin: 0;
+      color: #ff6500;
+      font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    .role-principle {
+      padding: 16px 18px;
+      border: 1px solid #fed7aa;
+      border-radius: 18px;
+      background: #fff7ed;
+      color: #7c2d12;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .role-principle strong {
+      color: #9a3412;
+    }
+
+    .role-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+      gap: 16px;
+    }
+
+    .role-card,
+    .pricing-card,
+    .note {
+      background: var(--ertekek-card);
+      border: 1px solid rgba(255, 101, 0, 0.18);
+      border-radius: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.06);
+    }
+
+    .role-card {
+      padding: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .role-card::before,
+    .pricing-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, #ff6500, #ffbd16);
+    }
+
+    .role-card h3,
+    .pricing-card h2 {
+      margin: 0 0 8px;
+      color: #ff6500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .role-card p {
+      margin: 0 0 12px;
+      color: #4b5563;
+      line-height: 1.55;
+    }
+
+    .role-card ul,
+    .pricing-card ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.55;
+    }
+
+    .role-card li,
+    .pricing-card li {
+      margin: 5px 0;
+    }
+
+    .role-inherits {
+      margin-top: 13px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(255, 101, 0, 0.08);
+      color: #9a3412;
+      font-size: .92rem;
+      line-height: 1.45;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
+      gap: 18px;
+    }
+
+    .pricing-card {
+      position: relative;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+      min-height: 100%;
+      overflow: hidden;
+      transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease;
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 18px 42px rgba(255,101,0,.13);
+      border-color: rgba(255, 101, 0, 0.38);
+    }
+
+    .pricing-card.featured {
+      border-color: #ff6500;
+      box-shadow: 0 16px 38px rgba(255,101,0,.16);
+    }
+
+    .badge {
+      position: absolute;
+      top: 50px;
+      right: 14px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 4px 9px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 900;
+    }
+
+    .price {
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: #202124;
+      min-height: 44px;
+    }
+
+    .price small {
+      font-size: .85rem;
+      font-weight: 500;
+      color: #667085;
+      margin-left: 3px;
+    }
+
+    .billing-note {
+      min-height: 20px;
+      font-size: .92rem;
+      color: #667085;
+    }
+
+    .package-role {
+      border-radius: 16px;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      padding: 11px 12px;
+      color: #7c2d12;
+      line-height: 1.45;
+    }
+
+    .package-role strong {
+      color: #9a3412;
+    }
+
+    .package-small-title {
+      font-size: .82rem;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: #9a3412;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+
+    .pricing-card a {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: #ff6500;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 900;
+      margin-top: auto;
+      box-shadow: 0 10px 24px rgba(255,101,0,.18);
+    }
+      .hatdiv{width: 50%;}
+    .pricing-card.secondary a {
+      background: #2f3a45;
+      box-shadow: 0 10px 24px rgba(47,58,69,.14);
+    }
+
+    .note {
+      margin-top: 20px;
+      padding: 18px 20px;
+      background: #fff9f5;
+      line-height: 1.65;
+    }
+
+    .note strong {
+      color: #9a3412;
+    }
+
+    @media (max-width: 900px) {
+      .pricing-hero {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+.hatos{ flex-direction: column; gap:3vh}
+      .pricing-hero-mark {
+        margin: 0 auto;
+      }
+      .hatdiv{width: 100%;}
+      .billing-options {
+width: 100%;      }
+.billing-switch{width: 100%;}
+      .section-head {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
+  <input id="menu-type" type="hidden" value="public">
+  <div aria-hidden="true" class="hero-bg"></div>
+  <header class="nav">
+    <men id="men"></men>
+  </header>
+
+  <main class="pricing-page">
+    <article class="pricing-shell">
+      <section class="pricing-hero">
+        <div class="pricing-hero-mark">É</div>
+        <div>
+          <p class="pricing-kicker">ÉRTÉKEK csomagajánlatok</p>
+          <h1>Áraink és szerepköreink</h1>
+          <p>
+            Válassza ki, hogyan szeretné kipróbálni vagy használni az Értékek rendszert.
+            A fizetés jelenleg átutalással történik; az éles hozzáférést a szerződés és a fizetés beérkezése után aktiváljuk.
+          </p>
+
+          <div class="upgrade-mode-banner" id="upgradeModeBanner">
+            Bejelentkezett fiókot érzékeltünk. A csomaggombok ezért nem új regisztrációra visznek, hanem csomagváltási kérelmet rögzítenek a meglévő intézményhez.
+          </div>
+
+   
+        </div>
+      </section>
+
+      <section class="pricing-section">
+        <div class="section-head">
+          <span class="section-step">01</span>
+          <div>
+            <h2>Szerepkörök egymásra épülve</h2>
+            <p>
+              A szerepkörök felfelé bővülnek: a magasabb szerepkör nem elvesz az előzőből, hanem hozzáad.
+            </p>
+          </div>
+        </div>
+
+        <div class="role-principle">
+          <strong>Fontos működési elv:</strong> ha valaki elemző, akkor értékelőként is be tud lépni.
+          Ha valaki feltöltői / saját rendszer szerepkört kap, akkor a feltöltői munkán túl hozzáférhet az értékelői és elemzői működéshez is.
+          Így nem különálló, elszigetelt jogosultságokról van szó, hanem fokozódó hozzáférési szintekről.
+        </div>
+
+        <div class="role-grid">
+          <article class="role-card">
+            <h3><span class="material-symbols-rounded">edit_note</span>Értékelő</h3>
+            <p>Az alap szakmai munkaszerep. Értékeléseket hoz létre, folytat, megtekint és exportál.</p>
+            <ul>
+              <li>értékelés létrehozása és szerkesztése</li>
+              <li>PDF, grafikon és eredményáttekintés</li>
+              <li>AI-szövegezés, ha a csomag és az intézmény engedélyezi</li>
+              <li>megosztás, ahol a csomag ezt tartalmazza</li>
+            </ul>
+            <div class="role-inherits">Belépési mód: értékelői felület.</div>
+          </article>
+
+          <article class="role-card">
+            <h3><span class="material-symbols-rounded">monitoring</span>Elemző</h3>
+            <p>Az értékelői működés fölé épülő intézményi áttekintő szerepkör.</p>
+            <ul>
+              <li>mindent tud, amit az értékelő</li>
+              <li>intézményi és csoportos statisztikák</li>
+              <li>audit, határidők, visszajelzések</li>
+              <li>kollégák munkájának szakmai követése</li>
+            </ul>
+            <div class="role-inherits">Fokozódás: elemzőként értékelői módban is be tud lépni.</div>
+          </article>
+
+          <article class="role-card">
+            <h3><span class="material-symbols-rounded">construction</span>Feltöltő</h3>
+            <p>A saját rendszer építéséhez kapcsolódó bővített szerepkör.</p>
+            <ul>
+              <li>mindent tudhat, amit az értékelő és az elemző</li>
+              <li>saját szakmai anyag feltöltése vagy létrehozása</li>
+              <li>kategóriák, kérdések, kérdésstruktúrák kezelése</li>
+              <li>intézményi szintű szakmai rendszerépítés</li>
+            </ul>
+            <div class="role-inherits">Fokozódás: a feltöltő nem csak feltölt, hanem teljesebb rendszerkezelői hozzáférést kap.</div>
+          </article>
+        </div>
+      </section>
+
+      <section class="pricing-section">
+        
+        <div class="section-head">
+          <span class="section-step">02</span>
+          <div class="hatos">
+          <div class="hatdiv">
+            <h2>Csomagok</h2>
+          </div>
+
+          <div class="billing-switch" aria-label="Fizetési időszak választása">
+            <div class="billing-switch-title">
+              <span class="material-symbols-rounded">payments</span>
+              Fizetési időszak - bruttó díjak
+            </div>
+            <div class="billing-options">
+              <button type="button" class="active" data-billing="monthly">Havi</button>
+              <button type="button" data-billing="quarterly">Negyedéves</button>
+              <button type="button" data-billing="yearly">Éves</button>
+            </div>
+          </div>
+</div>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="pricing-card secondary" data-package="demo" data-monthly="0" data-quarterly="0" data-yearly="0">
+            <h2><span class="material-symbols-rounded">science</span>Demo</h2>
+            <div class="price" data-price>0 Ft</div>
+            <div class="billing-note" data-note>3 napos kipróbálás</div>
+            <div class="package-role">
+              <div class="package-small-title">Szerepkör</div>
+              <strong>1 értékelő</strong><br>
+              Korlátozott próbahozzáférés, fizetési kötelezettség nélkül.
+            </div>
+            <ul>
+              <li>3 napos próbaidőszak</li>
+              <li>3 létrehozható értékelés</li>
+              <li>betekintés a szakmai anyag jelentős részébe</li>
+              <li>meglévő értékelések megtekintése és PDF-mentése</li>
+              <li>nincs megosztás, másolás, törlés és csoportos statisztika</li>
+            </ul>
+            <a href="/register.html?package=demo">Kipróbálom</a>
+          </article>
+
+          <article class="pricing-card featured" data-package="start" data-monthly="18900" data-quarterly="75000" data-yearly="222000">
+            <span class="badge">Ajánlott indulásra</span>
+            <h2><span class="material-symbols-rounded">school</span>Értékek Start</h2>
+            <div class="price" data-price></div>
+            <div class="billing-note" data-note></div>
+            <div class="package-role">
+              <div class="package-small-title">Szerepkör</div>
+              <strong>2 értékelő</strong><br>
+              Teljes értékelői működés kisebb intézményi használatra.
+            </div>
+            <ul>
+              <li>korlátlan értékelés a kifizetett időszakban</li>
+              <li>teljes szakmai anyag</li>
+              <li>PDF, grafikon és AI-szövegezési segítség</li>
+              <li>nincs elemzői modul, audit és csoportos statisztika</li>
+            </ul>
+            <a href="/register.html?package=start">Start csomagot kérek</a>
+          </article>
+
+          <article class="pricing-card" data-package="pro" data-monthly="24900" data-quarterly="139000" data-yearly="279000">
+            <h2><span class="material-symbols-rounded">workspace_premium</span>Értékek Pro</h2>
+            <div class="price" data-price></div>
+            <div class="billing-note" data-note></div>
+            <div class="package-role">
+              <div class="package-small-title">Szerepkörök</div>
+              <strong>3 értékelő + 2 elemző</strong><br>
+              Az elemzők értékelőként is be tudnak lépni, így a szerepkör bővít, nem levált.
+            </div>
+            <ul>
+              <li>minden Start funkció</li>
+              <li>intézményi és csoportos statisztika</li>
+              <li>audit, határidők és mentoráló visszajelzések</li>
+              <li>értékelések megosztása, szinkronja és csoportos elemzése</li>
+              <li>AI-szövegezés értékelői és intézményi szinten</li>
+            </ul>
+            <a href="/register.html?package=pro">Pro csomagot kérek</a>
+          </article>
+
+          <article class="pricing-card secondary" data-package="sajat" data-monthly="19900" data-quarterly="79000" data-yearly="189000" data-from="1">
+            <h2><span class="material-symbols-rounded">build</span>Saját rendszer</h2>
+            <div class="price" data-price></div>
+            <div class="billing-note" data-note></div>
+            <div class="package-role">
+              <div class="package-small-title">Szerepkör</div>
+              <strong>3 feltöltő</strong><br>
+              A feltöltői szerepkör a saját szakmai anyag építéséhez kapcsolódó bővített hozzáférés.
+            </div>
+            <ul>
+              <li>üres értékelő rendszer létrehozása</li>
+              <li>saját szakmai anyag feltöltése vagy felépítése</li>
+              <li>saját kérdésstruktúrák, kategóriák és szempontok kezelése</li>
+              <li>értékelői, elemzői és feltöltői működés egy rendszerben</li>
+              <li>egyeztetés után támogatással</li>
+            </ul>
+            <a href="/register.html?package=sajat">Teremtsünk Értékeket</a>
+          </article>
+        </div>
+
+        <section class="note">
+          <strong>Fontos:</strong> a demo felület kipróbálásra szolgál. Ne rögzítsen benne valós vagy természetes személyhez kapcsolódó adatot.
+          Éles intézményi használathoz szerződés, adatkezelési/adatfeldolgozási dokumentáció és üzemeltetői aktiválás szükséges.
+          Az árak forintban értendők.
+        </section>
+      </section>
+    </article>
+  </main>
+
+  <script>
+    const billingLabels = {
+      monthly: { suffix: '/ hó', hint: 'Bruttó, havi díjak.', note: 'Havi fizetés' },
+      quarterly: { suffix: '/ negyedév', hint: 'Bruttó, negyedéves díjak.', note: '3 havi díj egyben' },
+      yearly: { suffix: '/ év', hint: 'Bruttó, éves díjak.', note: 'Éves fizetés, kedvezményesebb díjjal' }
+    };
+
+    const packageButtonLabels = {
+      demo: 'Kipróbálom',
+      start: 'Start csomagot kérek',
+      pro: 'Pro csomagot kérek',
+      sajat: 'Teremtsünk Értékeket'
+    };
+
+    const packageUpgradeLabels = {
+      start: 'Start csomagváltást kérek',
+      pro: 'Pro csomagváltást kérek',
+      sajat: 'Saját szakmai anyagot kérek pluszban'
+    };
+
+    let currentBillingPeriod = 'monthly';
+    let packageUpgradeMode = false;
+    let csrfTokenForPackageRequest = '';
+    let packageRequestInProgress = false;
+
+    function formatFt(value) {
+      const n = Number(value || 0);
+      return new Intl.NumberFormat('hu-HU').format(n) + ' Ft';
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function registerBillingValue(period) {
+      const map = {
+        monthly: 'havi',
+        quarterly: 'negyedeves',
+        yearly: 'eves'
+      };
+
+      return map[period] || 'havi';
+    }
+
+    function updatePackageRegisterLinks(period) {
+      const billing = registerBillingValue(period);
+
+      document.querySelectorAll('.pricing-card[data-package] a[href*="register"], .pricing-card[data-package] a[data-package-action]').forEach(link => {
+        const card = link.closest('.pricing-card[data-package]');
+        const packageCode = card ? String(card.dataset.package || '').toLowerCase() : '';
+
+        if (!packageCode) return;
+
+        link.dataset.packageAction = '1';
+        link.dataset.packageCode = packageCode;
+
+        if (packageUpgradeMode) {
+          link.href = '#csomagvaltas';
+          link.textContent = packageCode === 'demo'
+            ? 'Demo csak új regisztrációnál'
+            : (packageUpgradeLabels[packageCode] || 'Csomagváltást kérek');
+          return;
+        }
+
+        const url = new URL('/register.html', window.location.origin);
+        url.searchParams.set('mode', 'ceg');
+        url.searchParams.set('source', 'araink');
+        url.searchParams.set('package', packageCode);
+        url.searchParams.set('billing', billing);
+
+        link.href = url.pathname + url.search;
+        link.textContent = packageButtonLabels[packageCode] || link.textContent;
+      });
+    }
+
+    function renderPrices(period) {
+      currentBillingPeriod = period;
+      const label = billingLabels[period] || billingLabels.monthly;
+
+      document.querySelectorAll('.pricing-card').forEach(card => {
+        const price = Number(card.dataset[period] || 0);
+        const priceEl = card.querySelector('[data-price]');
+        const noteEl = card.querySelector('[data-note]');
+
+        if (!priceEl || !noteEl) return;
+
+        if (card.dataset.package === 'demo') {
+          priceEl.textContent = '0 Ft';
+          noteEl.textContent = '3 napos kipróbálás';
+          return;
+        }
+
+        priceEl.innerHTML = `${formatFt(price)} <small>${label.suffix}</small>${card.dataset.from === '1' ? ' <small>-tól</small>' : ''}`;
+        noteEl.textContent = label.note;
+      });
+
+      const hint = document.getElementById('billingHint');
+      if (hint) hint.textContent = label.hint;
+
+      updatePackageRegisterLinks(period);
+    }
+
+    function showPackageModal(title, message, options = {}) {
+      const old = document.querySelector('.package-request-modal');
+      if (old) old.remove();
+
+      const overlay = document.createElement('div');
+      overlay.className = 'package-request-modal';
+
+      const box = document.createElement('div');
+      box.className = 'package-request-box';
+
+      const titleEl = document.createElement('h2');
+      titleEl.textContent = title;
+
+      const messageEl = document.createElement('p');
+      messageEl.innerHTML = message;
+
+      const actions = document.createElement('div');
+      actions.className = 'package-request-actions';
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.className = options.success ? 'primary' : 'secondary';
+      close.textContent = 'Rendben';
+      close.addEventListener('click', () => overlay.remove());
+
+      actions.appendChild(close);
+      box.append(titleEl, messageEl, actions);
+      overlay.appendChild(box);
+      document.body.appendChild(overlay);
+    }
+
+    async function loadCsrfTokenForPackageRequest() {
+      try {
+        const response = await fetch('/api/csrf-token', {
+          method: 'GET',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) return '';
+        const data = await response.json();
+        return data && data.success && data.csrfToken ? data.csrfToken : '';
+      } catch (err) {
+        return '';
+      }
+    }
+
+    function setPackageUpgradeMode(enabled) {
+      packageUpgradeMode = Boolean(enabled);
+      document.body.classList.toggle('package-upgrade-mode', packageUpgradeMode);
+      updatePackageRegisterLinks(currentBillingPeriod);
+    }
+
+    async function requestPackageChange(packageCode) {
+      if (packageRequestInProgress) return;
+
+      if (packageCode === 'demo') {
+        showPackageModal(
+          'Demo csak új regisztrációhoz',
+          'Már bejelentkezett fióknál a Demo csomag nem csomagváltási cél. Meglévő intézményhez Start vagy Pro csomag kérhető.'
+        );
+        return;
+      }
+
+      packageRequestInProgress = true;
+
+      try {
+        if (!csrfTokenForPackageRequest) {
+          csrfTokenForPackageRequest = await loadCsrfTokenForPackageRequest();
+        }
+
+        if (!csrfTokenForPackageRequest) {
+          showPackageModal(
+            'Bejelentkezés szükséges',
+            'A csomagváltási kérelemhez aktív bejelentkezés szükséges. Új regisztrációhoz a gombok eredeti regisztrációs útvonala használható.'
+          );
+          return;
+        }
+
+        const requestType = packageCode === 'sajat' ? 'custom_material_addon' : 'package_change';
+        const requestLabel = packageCode === 'sajat' ? 'Saját szakmai anyag plusz szolgáltatás' : 'Csomagváltási kérelem';
+
+        const response = await fetch('/api/package-change-request', {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-Token': csrfTokenForPackageRequest
+          },
+          body: JSON.stringify({
+            csomagKod: packageCode,
+            kerelemTipus: requestType,
+            fizetesiIdoszak: registerBillingValue(currentBillingPeriod),
+            extraFelhasznalo: 0,
+            megjegyzes: packageCode === 'sajat'
+              ? 'Áraink oldalról indított saját szakmai anyag plusz szolgáltatási kérelem. Nem automatikus csomagváltásként kezelendő.'
+              : 'Áraink oldalról indított csomagváltási kérelem.'
+          })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success) {
+          showPackageModal('Nem sikerült rögzíteni', escapeHTML(data.message || 'A csomagváltási kérelem rögzítése sikertelen.'));
+          return;
+        }
+
+        showPackageModal(
+          `${escapeHTML(data.requestTypeLabel || requestLabel)} rögzítve`,
+          `Kért cél: <strong>${escapeHTML(data.packageName || packageCode)}</strong>.<br>` +
+          `Várható összeg: <strong>${escapeHTML(formatFt(data.fizetendoOsszeg || 0))}</strong>.<br>` +
+          escapeHTML(data.message || 'Az aktív csomag az üzemeltetői aktiválás után változik meg.'),
+          { success: true }
+        );
+      } catch (err) {
+        showPackageModal('Hálózati hiba', 'A csomagváltási kérelem elküldése nem sikerült.');
+      } finally {
+        packageRequestInProgress = false;
+      }
+    }
+
+    function setupPackageLinks() {
+      document.querySelectorAll('.pricing-card[data-package] a').forEach(link => {
+        link.addEventListener('click', event => {
+          if (!packageUpgradeMode) return;
+          event.preventDefault();
+
+          const card = link.closest('.pricing-card[data-package]');
+          const packageCode = card ? String(card.dataset.package || '').toLowerCase() : '';
+          if (!packageCode) return;
+
+          requestPackageChange(packageCode);
+        });
+      });
+    }
+
+    document.querySelectorAll('.billing-options button').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.billing-options button').forEach(btn => btn.classList.remove('active'));
+        button.classList.add('active');
+        renderPrices(button.dataset.billing);
+      });
+    });
+
+    setupPackageLinks();
+    renderPrices('monthly');
+
+    loadCsrfTokenForPackageRequest().then(token => {
+      if (!token) return;
+      csrfTokenForPackageRequest = token;
+      setPackageUpgradeMode(true);
+    });
+  </script>
+  <script src="/both/csrfFetch.js"></script>
+  <script src="/both/both.js" type="module"></script>
+  <script src="/both/policy.js"></script>
+</body>
+</html>

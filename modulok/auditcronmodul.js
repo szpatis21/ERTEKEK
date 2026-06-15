@@ -1,15 +1,19 @@
 const cron = require('node-cron');
 const nodemailer = require('nodemailer');
-
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
 // --- E-MAIL KÜLDŐ BEÁLLÍTÁSA (Ugyanaz, mint a regmodul.js-ben) ---
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
     }
 });
 
@@ -79,11 +83,11 @@ module.exports = (db) => {
                     const htmlContentUser = `
                         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; line-height: 1.6;">
                             <h2 style="color: #ffaa00;"> ⏰ Közelgő határidő figyelmeztetés!</h2>
-                            <p>Kedves ${i.fullname}!</p>
+                            <p>Kedves ${escapeHtml(i.fullname)}!</p>
                             <p>Felhívjuk szíves figyelmét, hogy az alábbi értékelés leadási határideje <strong style="color: #d9534f;">3 nap múlva lejár</strong>:</p>
                             
                             <ul style="padding-left: 20px;">
-                                <li><strong>${formatCim}</strong></li>
+                            <li><strong>${escapeHtml(formatCim)}</strong></li>
                             </ul>
                             
                             <p><strong>Határidő: <span style="color: #ffae00; font-size: 1.2em;">${szepHatarido}</span></strong></p>
@@ -92,7 +96,7 @@ module.exports = (db) => {
                                 <i>Ha az értékelés kész, a levelet tekintse tárgytalannak. Ha esetleg még finomítana rajta, van még rá három napja. :)</i>
                             </p>
                             <p>Jó munkát:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <a href="www.ertekek.com">www.ertekek.com</a>
+                            <a href="https://www.ertekek.com">www.ertekek.com</a>
                         </div>
                     `;
                     await sendEmail(i.email, "Közelgő határidő (3 nap) - ÉRTÉKEK", htmlContentUser);
@@ -132,14 +136,14 @@ module.exports = (db) => {
                     data.items.forEach(i => {
                         const formatCim = i.kitoltes_neve ? i.kitoltes_neve.replace(/~/g, ' - ').replace(/~/g, '-') : 'Értékelés';
                         // Kivettük a vizsgalt_nev-et, csak a formázott címet írjuk ki
-                        listHtml += `<li><strong>${formatCim}</strong></li>`;
+                        listHtml += `<li><strong>${escapeHtml(formatCim)}</strong></li>`;
                     });
                     listHtml += '</ul>';
 
                     const htmlContentAuditor = `
                         <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px; line-height: 1.6;">
                             <h2 style="color: #ffaa00;"> ⏰ Közelgő Auditációs Határidők!</h2>
-                            <p>Kedves ${data.nev}!</p>
+                            <p>Kedves ${escapeHtml(data.nev)}!</p>
                             <p>Tájékoztatjuk, hogy az Ön által auditációra kijelölt alábbi értékelés(ek) határideje <strong style="color: #d9534f;">HOLNAP lejár</strong>:</p>
                             
                             ${listHtml}
@@ -149,7 +153,7 @@ module.exports = (db) => {
                                 <i>Lépjen be a fiókjába! A rendszer felkínálja a hosszabbítás lehetőségét. Ha hagyja őket lejárni, a határidő jelzése egyszerűen lekerül az értékelésekről, és visszakerülnek a normál várakozó státuszba.</i>
                             </p>
                             <p>Jó munkát:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <a href="www.ertekek.com">www.ertekek.com</a>
+                            <a href="https://www.ertekek.com">www.ertekek.com</a>
                         </div>
                     `;
                     await sendEmail(data.email, "Holnap lejáró határidők - ÉRTÉKEK", htmlContentAuditor);

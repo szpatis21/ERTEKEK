@@ -10,6 +10,8 @@
       <link rel="stylesheet" href="../both/both.css?v=3.3">
                 <link rel="stylesheet" href="/public/stylei.css?v=3.3">
     <link rel="stylesheet" href="dashmobile.css?v=3.3">
+    <link rel="stylesheet" href="../private/main/main_quest_search.css">
+        <link rel="stylesheet" href="../private/main/main_quest_ertekeles_navigator.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
 
@@ -45,7 +47,7 @@
     padding: 10px;
     border-left: 3px solid transparent;
     transition: background-color 0.3s ease, border-left 0.3s ease;
-}
+}.charts{margin-top: -5px !important;}
         .modulebutt:hover{color: white; background-color: orange;}
         .modulebutt:hover select{color: rgb(255, 255, 255); background-color: orange;}
 
@@ -114,7 +116,6 @@
     transition: all 1s;
 }
 .leiras{font-size: small;}
-.alal{height: 35px;}
 .diag{display: flex;}
   @media (max-width: 1024px) {
     .gomb{        height: 40px;
@@ -152,6 +153,8 @@ font-size: 80% !important;}
 .cim {font-size: medium !important; }
 
 }
+
+
     </style>
 </head >
 <body>
@@ -169,8 +172,8 @@ font-size: 80% !important;}
         <div class="gomb" id="ujert0">
             <div class="cimer ertekelesek" id="ujert">Nézet</div>
         </div>                    
-        <div class="gomb navnyom" id="accunt0">
-            <div class="cimer" id="accunt">Nyomtatás</div>
+        <div class="gomb navnyom" id="elozmenyek-gomb">
+            <div class="cimer">Elözmények</div>
         </div>       
         <div class="gomb" id="hozzaj0">                                
             <div class="cimer navment"><a>Letöltés</a></div>
@@ -273,13 +276,9 @@ font-size: 80% !important;}
                     </div>
                 </div>
 </div>
-       
-    <script type="module" src="/both/both.js?v=3.3"></script>
-    <script type="module" src="/private/main/main_alap.js?v=3.3"></script>
+       <script src="/both/csrfFetch.js"></script>
+    <script type="module" src="/both/both.js"></script>
+    <script type="module" src="/private/main/main_alap.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
-    <script src="../both/fonts/vfs_fonts.js"></script>
-
 </body>
 </html>

@@ -20,7 +20,16 @@ function getHelyiIdo() {
     const mp = String(now.getSeconds()).padStart(2, '0');
     return `${ev}-${ho}-${nap} ${ora}:${perc}:${mp}`;
 }
-
+function kerdesKategoriaUtvonal(kerdes) {
+    return [
+        kerdes.foKategoria,
+        kerdes.alKategoria,
+        kerdes.altTema
+    ]
+        .map(v => String(v || '').trim())
+        .filter(Boolean)
+        .join(' > ');
+}
 async function initAlapAllapot() {
     mentesGomb.forEach(gomb => {
         gomb.disabled = true;
@@ -152,12 +161,25 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
                 if (kerdes) {
                     const li = document.createElement('li');
                     li.classList.add("osszefoglalo-lista-elem");
-                    const szinOsztaly = valasz === 'igen' ? 'valasz-igen' : 'valasz-nem'; 
-                    li.innerHTML = `
-                        <b class="mentes-kategoria">[${kerdes.foKategoria} &gt; ${kerdes.alKategoria}]</b><br>
-                        <i>${kerdes.szoveg}</i><br>
-                        Bekerült válasz: <b class="${szinOsztaly}">${valasz.toUpperCase()}</b>
-                    `;
+                    const szinOsztaly = valasz === 'igen' ? 'valasz-igen' : 'valasz-nem';
+
+                    const kategoria = document.createElement('b');
+                    kategoria.classList.add('mentes-kategoria');
+                    kategoria.textContent = `[${kerdesKategoriaUtvonal(kerdes)}]`;
+
+                    const kerdesSzoveg = document.createElement('i');
+                    kerdesSzoveg.textContent = kerdes.szoveg || '';
+
+                    const valaszElem = document.createElement('b');
+                    valaszElem.classList.add(szinOsztaly);
+                    valaszElem.textContent = String(valasz || '').toUpperCase();
+
+                    li.appendChild(kategoria);
+                    li.appendChild(document.createElement('br'));
+                    li.appendChild(kerdesSzoveg);
+                    li.appendChild(document.createElement('br'));
+                    li.appendChild(document.createTextNode('Bekerült válasz: '));
+                    li.appendChild(valaszElem);
                     lista.appendChild(li);
                 }
             }
@@ -178,11 +200,24 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
                 if (kerdes && valasz !== '') {
                     const li = document.createElement('li');
                     li.classList.add("osszefoglalo-lista-elem");
-                    li.innerHTML = `
-                        <b class="mentes-kategoria">[${kerdes.foKategoria} &gt; ${kerdes.alKategoria}]</b><br>
-                        <i>${kerdes.szoveg}</i><br>
-                        Beírt szöveg: <span class="mentes-szoveges-valasz">"${valasz}"</span>
-                    `;
+
+                    const kategoria = document.createElement('b');
+                    kategoria.classList.add('mentes-kategoria');
+                    kategoria.textContent = `[${kerdesKategoriaUtvonal(kerdes)}]`;
+
+                    const kerdesSzoveg = document.createElement('i');
+                    kerdesSzoveg.textContent = kerdes.szoveg || '';
+
+                    const valaszElem = document.createElement('span');
+                    valaszElem.classList.add('mentes-szoveges-valasz');
+                    valaszElem.textContent = `"${valasz}"`;
+
+                    li.appendChild(kategoria);
+                    li.appendChild(document.createElement('br'));
+                    li.appendChild(kerdesSzoveg);
+                    li.appendChild(document.createElement('br'));
+                    li.appendChild(document.createTextNode('Beírt szöveg: '));
+                    li.appendChild(valaszElem);
                     lista.appendChild(li);
                 }
             }
@@ -206,7 +241,11 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
         
         // 1. Létrehozzuk az ideiglenes "ÉRTÉKEK" feliratot
         const ertekekFelirat = document.createElement('div');
-        ertekekFelirat.innerHTML = `<span style="color:gold">É</span>RTÉKEK`;
+        const aranyE = document.createElement('span');
+        aranyE.style.color = 'gold';
+        aranyE.textContent = 'É';
+        ertekekFelirat.appendChild(aranyE);
+        ertekekFelirat.appendChild(document.createTextNode('RTÉKEK'));
         ertekekFelirat.classList.add("nagy")
         
        
@@ -229,13 +268,27 @@ async function mentesEsNavigalas(event, url = null, logoutForm = null) {
                 doboz.style.opacity = "0";
                 doboz.style.transition = "opacity 0.5s ease-in-out";
                 
-                doboz.innerHTML = `
-                    <h2>Sikeres Mentés!</h2>
-                    <p>Az alábbi <b>új és módosított</b> adatok frissültek a rendszerben:</p>
-                    <p style="font-size: 12px; color: gray; margin-top: 15px;">
-                    <i>Tipp: A rendszer 15 percenként a háttérben is automatikusan elmenti a válaszait, így adatai folyamatosan biztonságban vannak.</i>
-                    </p>
-                `;
+                const mentCim = document.createElement('h2');
+                mentCim.textContent = 'Sikeres Mentés!';
+
+                const mentLeiras = document.createElement('p');
+                const mentKiemeles = document.createElement('b');
+                mentKiemeles.textContent = 'új és módosított';
+                mentLeiras.append(
+                    document.createTextNode('Az alábbi '),
+                    mentKiemeles,
+                    document.createTextNode(' adatok frissültek a rendszerben:')
+                );
+
+                const mentTipp = document.createElement('p');
+                mentTipp.style.fontSize = '12px';
+                mentTipp.style.color = 'gray';
+                mentTipp.style.marginTop = '15px';
+                const mentTippItalic = document.createElement('i');
+                mentTippItalic.textContent = 'Tipp: A rendszer 15 percenként a háttérben is automatikusan elmenti a válaszait, így adatai folyamatosan biztonságban vannak.';
+                mentTipp.appendChild(mentTippItalic);
+
+                doboz.append(mentCim, mentLeiras, mentTipp);
                 const most = new Date();
                 utolsoSikeresMentesIdeje = `${String(most.getHours()).padStart(2, '0')}:${String(most.getMinutes()).padStart(2, '0')}`;
                 doboz.appendChild(osszefoglaloDiv);
@@ -292,9 +345,23 @@ function frissitLegfrissebbValasz(kitoltesId) {
                 const mp = String(letrehozva.getSeconds()).padStart(2, '0');
     
                 const formataltDatum = `${ev}. ${honap} ${nap}. - ${napNev}: ${ora}:${perc}:${mp}`;
-                utols.innerHTML = `
-                    <p>Az értékelést módosította <b class="szin">${felhasznaloNev}</b> ekkor: <i class="szin">${formataltDatum}</i></p>
-                `;
+                const p = document.createElement('p');
+                const nevElem = document.createElement('b');
+                nevElem.classList.add('szin');
+                nevElem.textContent = felhasznaloNev || '';
+
+                const datumElem = document.createElement('i');
+                datumElem.classList.add('szin');
+                datumElem.textContent = formataltDatum;
+
+                p.append(
+                    document.createTextNode('Az értékelést módosította '),
+                    nevElem,
+                    document.createTextNode(' ekkor: '),
+                    datumElem
+                );
+
+                utols.replaceChildren(p);
             }
         })
         .catch(err => console.error('Fetch hiba:', err));
@@ -312,9 +379,9 @@ if (document.getElementById('ertekelesneve')) {
     .then(data => {
         if (data.success) {
             const nev = document.querySelector("#nev");
-            if (sajtnev) sajtnev.innerHTML = "&nbsp;" + data.username;
+            if (sajtnev) sajtnev.textContent = ` ${data.username || ''}`;
             userId = data.id; 
-            if (nev) nev.innerHTML = data.vez;
+            if (nev) nev.textContent = data.vez || '';
             
             if (data.role !== 'admin') {
                 const pontok = document.querySelector(".pontok");
@@ -340,7 +407,15 @@ if (document.getElementById('ertekelesneve')) {
                 }
 
                 if (kitneve && data.vizsgalt_nev) {
-                    kitneve.innerHTML = `<b><u>${data.vizsgalt_nev}</u></b> - ${data.kitoltes_neve}`;        
+                    const nevBold = document.createElement('b');
+                    const nevUnderline = document.createElement('u');
+                    nevUnderline.textContent = data.vizsgalt_nev || '';
+                    nevBold.appendChild(nevUnderline);
+
+                    kitneve.replaceChildren(
+                        nevBold,
+                        document.createTextNode(` - ${data.kitoltes_neve || ''}`)
+                    );
                 }
             }
         })
@@ -471,7 +546,7 @@ function mutasdDiszkretMentes() {
 
     toast = document.createElement('div');
     toast.id = 'auto-mentes-toast';
-    toast.innerHTML = '&#10003; Mentve'; // Egy kis pipa és a szöveg
+    toast.textContent = '✓ Mentve'; // Egy kis pipa és a szöveg
     
     // Stílus beállítása JS-ből (jobb alsó sarok, zöldes háttér)
     Object.assign(toast.style, {

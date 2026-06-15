@@ -26,10 +26,12 @@ body {
     width: 100%;
     margin: 0px auto;
     border-radius: 9px;
-    display: flex
-;    flex-direction: column;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+    display: flex;    flex-direction: column;
     font-size: small;}
 .holvagyok{
+  display: none;
     text-shadow: 0px 0px 6px #ffffff99;
     font-size: small !important;
     font-style: normal !important;
@@ -62,7 +64,6 @@ h1 {text-align: center;}
   background-color: #ffffff;
   border: 1px solid #ddd;
   padding: 10px;
-  margin: 10px 0;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
 }
@@ -74,9 +75,53 @@ h1 {text-align: center;}
 .fade-out {animation: fadeOut 0.5s forwards;}
 
 #container {transition: opacity 0.5s ease-in-out; opacity: 1; 
-   height: fit-content; z-index: 1;
+   height: fit-content; z-index: 1; width: 100%;
+       backdrop-filter: blur(2px);
+    background: #2a2a2a14;
 }
+#al_kategoriak .direkt-ag-fejlec{display: none;}
+.direkt-ag-fejlec{
+  display: none;
+}
+.al-belso-alt-temak{display: flex;
+    gap: 10px;
+    margin: 5px;
+    margin-bottom: 0px;
+    border:none !important;
+    justify-content: center;
+    flex-wrap: wrap;display: flex; justify-content: center; flex-wrap: wrap;}
 
+.al-blokk{width: fit-content;}
+.al-blokk:has(.active.al) {
+  width: 90%;
+}
+.question-belso{
+      width: 100%;
+    display: flex;
+    align-items: center;
+    align-content: space-around;
+    justify-content: space-between;
+
+}
+.fo-kozvetlen-kerdesek-tartaly, .al-kozvetlen-kerdesek-tartaly{
+background-color: white;
+    width: 95%;
+    border: 2px solid white;
+    border-radius: 6px;
+    padding: 2px;
+    margin-top: -2%;
+    margin-bottom: -1%;
+    height:fit-content;
+    max-height: 40vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+.al-kozvetlen-kerdesek-tartaly{
+  margin-top: 2%;
+  width: 100%;
+}
+.fo-kozvetlen-altema-kartya{margin: 10px !important;}
+.fo-kozvetlen-kerdesek-tartaly .question{border-radius: 5px;width: 99%;}
 @keyframes fadeIn {
   from {opacity: 0;}
   to {opacity: 1;}
@@ -93,34 +138,42 @@ justify-content: center;
 align-items: center;}
 
 #fo_kategoriak, #al_kategoriak, #alt_temak, #kerdesek {
-  margin: 0%;
-  display: flex;
-  justify-content: space-around;
-  flex-wrap: wrap;
-  align-items: center;
+    margin: 0%;
+    margin-top: 5px;
+gap: 3vh;
+padding-top: 0px;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    align-items: center;
+    border-radius: 10px;}
+#al_kategoriak{gap: 2vh;}
+ #kerdesek{gap:0vh;}
+  #kerdesek{  
+    margin: 3px auto;
+    padding: 5px;
+    border-radius: 7px;
+    width: 86%;
+    background: #ffffff;
+     }
+ .question .utolso-fokusz-marker{
+      width: 22px;
+    height: 22px;
+    box-shadow: none;
+    font-size: 21px;
+      right: 0%;
+      top: 1%;
+ }
+.alkerdeskont .utolso-fokusz-marker {
+      right: -5%;
+    top: 27%;
 }
-  #alt_temak, #kerdesek{margin: 0px auto;
-      border: 1px solid, lightslategrey;
-      border-radius: 5px;
-      border-bottom: transparent;
-      border-bottom-left-radius: 0px;
-      border-bottom-right-radius: 0px;
-      background:  #ffffffd6;
-      width: 100%;}
-      #kerdesek{
-          border-top: transparent;
-          border-top-left-radius: 0px;
-          border-top-right-radius: 0px;
-          border-bottom:1px solid lightslategrey; ;
-      }
-
 .fo, .al {    
   display: flex;
   flex-wrap: wrap;
   align-content: space-between;
   align-items: center;
   justify-content: center;
-  margin: 12px;
   padding: 0px;
   height: 140px;
   width: 140px;
@@ -135,7 +188,6 @@ transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s
 .fo.active{transition: all 0.3s;}
   .al{
       align-content: center;
-      margin: 10px;
       height: 110px;
       width: 110px;
       font-size: 100%;
@@ -147,13 +199,16 @@ transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s
   #kerdesek .kerdesmodul .question .alkerdeskont.hidden{margin-top: 0px;}
       .alal{
           display: flex;
-          margin: 5px 10px;
-          height: 20px;
+          height: 90px;
+        margin: 0px !important;
+          width: 90px;
           align-items: center;
-          width: fit-content;
-          font-family: auto;
-          border: 1px solid #cbcbcba8;
-          border-radius: 5px;
+       border-radius: 10px;
+          border: 1px solid #ffffffa8;
+        padding: 0px;
+        font-family: system-ui;
+        font-weight: bold;
+        transition: all 0.3s;
           text-align: center;
       }
       .alal:hover{box-shadow: 0px 0px 2px 1px black; }
@@ -161,13 +216,13 @@ transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s
      .alkerdes-tartaly{margin-top: 10px;}
      .question-container{width: 90%;}
       .question{
-          width: 95%;
+          width: 100%;
           cursor: default;
           font-family: 'Times New Roman', Times, serif;
           display: flex;
           flex-wrap: wrap;
           align-items: center;
-          justify-content: space-between;
+          justify-content: center;
           margin: 2px;}
       .question:hover{transform: scale(1); box-shadow: inset 0px 0px 2px 1px black; }
 
@@ -182,21 +237,33 @@ transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s
 
 .passive { 
   box-shadow: none;
-  transition: transform 2s, opacity 1s, height 5.5s;
+  transition: transform 0.3s, opacity 1s, height 0.5s;
   transform: scale(0.1);    
   opacity: 0;
+  display: none;
   width: 0%;
   height: 0%;
   overflow: hidden;
   position: absolute;
 }
-.active.fo{margin: 2% 35px;}
+.active.fo{margin: 1% 0px;}
 .active.al{width: 100%; margin:0%; border-radius: 5px;}
-.active.alal{width: fit-content; margin: 5px 10px 0px 10px; box-shadow: inset 0px 0px 1px 2px grey;}
-.passive.alal{display: flex;opacity: 0.5;position: relative;transform: scale(1); overflow:visible;width: fit-content;margin: 5px 10px 0px 10px;}
-.passive.alal:hover {opacity: 1;border-color: black;}
-.cim {display: flex;height: 65%;align-items: center;margin: 0px 5px;}
+.active.alal{  height: 40px;
+  width: fit-content;
+  padding: 0px 5px;
+}
 
+.fo-kozvetlen-altema-kartya.active{
+  height: 40px;
+  width: 85%;
+}
+.passive.alal{display: none;}
+.cim {display: flex;height: 65%;align-items: center;margin: 0px 5px;justify-content: center;}
+.alal .cim{width: 100%;
+    color: #3c3b3b;
+    hyphens: auto;
+    margin: auto;
+    font-size: 75%;}
 .leiras {    
   display: flex;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -214,24 +281,24 @@ transition: transform 0.3s, opacity 0.3s, background-color 0.3s, box-shadow 0.3s
   align-items: center;
 }
 
-.kerdesmodul, .csuszka, .csuszka2{display: flex;flex-wrap: nowrap;justify-content: center;align-items: center;}
+.kerdesmodul, .csuszka, .csuszka2{display: flex;flex-wrap: nowrap;justify-content: center;align-items: center; position: relative;}
 
-.csuszka, .csuszka2 {border-radius: 20px;}
   .csuszka{
-    border-top: 1px solid #80808078;
-    background: linear-gradient(91deg, rgba(255, 255, 255, 1) 46%, rgba(172, 255, 0, 1) 96%, transparent 10%);
-    margin-right: 15px;
+   height: 34px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 101, 0, .34);
+     background: linear-gradient(90deg, rgba(255, 255, 255, .88), rgba(31, 143, 77, .14));
     padding-right: 5px;
-    border-radius: 0px;
-    border-bottom: 1px solid #80808075;}
+   }
 
 .csuszka2{
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 2%, rgb(255 21 0 / 60%) 10%, rgba(218, 218, 218, 0.09576330532212884) 40%, rgba(218, 218, 218, 0.10136554621848737) 60%, rgb(156 219 0 / 60%) 90%, rgba(255, 255, 255, 0) 98%);
-  border-radius: 0px;
-  border: 1px solid #00000000;
-  height: 14px;
-  border-top: 1px solid #8080808a;
-  border-bottom: 1px solid #8080808a;
+    position: relative;
+   
+    height: 34px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 101, 0, .34);
+    background: linear-gradient(90deg, rgba(239, 68, 68, .12), rgba(255, 255, 255, .88), rgba(31, 143, 77, .14));
+    align-items: center;
 }
 .labeligen, .labelnem, .labelures, .labeligen2, .labelures2{
 margin: 5px 0px;
@@ -458,9 +525,11 @@ cursor: pointer;
 position: absolute;
 opacity: 0.7;
 z-index: 60;
-color: gray;
+
 font-size: 130%;
 transition: all 0.3s;}
+.nemszoveg{color:crimson !important;}
+.igenszoveg{color:green !important}
 .uresszoveg{font-size: 140%; opacity: 0.7;}
 .nemszoveg:hover{transform: scale(1.1);color: red;filter:drop-shadow(0px 0px 1px red);}
 .igenszoveg:hover{transform: scale(1.1); color: green;filter:drop-shadow(0px 0px 1px green);}
@@ -503,7 +572,7 @@ align-items: center;
 
 .tooltip2{background-color: rgba(38, 0, 0, 0.752);margin-top: 40px;}
 .kerdesek{border-bottom-left-radius: 4px;border-left: 1px solid #00000082;margin-left: 15px;}
-#kitneve{margin:0px 15px;transition: all 1s; padding: 20px;position: relative;} 
+#kitneve{margin:15px 15px 0px 15px !important ;transition: all 1s; padding: 20px;position: relative;} 
 #ertekelesChart {
   width: 100%;
   height: 100%;
@@ -575,6 +644,7 @@ align-items: center;
         position: absolute;
         z-index: 2;
     }
+    .logo {display: none !important;}
     .logokulso{border-radius: 30px;
     border: 2px solid grey;
     width: 70vh !important;
@@ -652,7 +722,7 @@ align-items: center;
     width: fit-content;
     margin: auto;
     }
- .szin{ color: rgb(255, 81, 0);}y
+ .szin{ color: rgb(255, 81, 0);}
 
  .pontA, .pontB, .pontC, .pontD, .pontE, .pontF{
   width: fit-content;
@@ -713,11 +783,11 @@ align-items: center;
     
 }
 
-#ertekelesek-container{padding: 25px;margin-top: -20px;}
+#ertekelesek-container{padding: 0px 25px;}
 #chart-container, #alkategoriaChartContainer,#altTemaChartContainer{    width: 100%;
   height: 34vh;
-  background: #ffffff;
-  position: relative;;}
+  background: transparent;
+  position: relative;}
   #alkategoriaChartContainer{display: none; max-width: 50%;min-width: 33%;}
   #altTemaChartContainer{display: none; max-width: 33%;}
 
@@ -774,7 +844,7 @@ font-size: x-small;
     color: #ffa12c;}
     .valtos span{font-size: x-large !important; color:white}
 
-.charts{display: flex; flex-direction: row;}
+.charts{display: flex; flex-direction: row; margin-top: -40px !important;}
 .diag{display: flex; flex-direction: column;background-color: white;border-top-left-radius: 15px;border-top-right-radius: 15px;} 
 .diaggombok {padding: 5px; display: grid; grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(1, auto);}
@@ -782,10 +852,13 @@ font-size: x-small;
 .modal.hidden {
   display: none;
 }
-
+.demo-lock-icon{
+  position: absolute;
+  font-size: xxx-large !important;
+}
 .modal-content {
      background: white;
-    padding: 1.5rem;
+    padding: 3vh;
     border-radius: .5rem;
     text-align: center;
     width: fit-content;
@@ -812,8 +885,9 @@ font-size: x-small;
  .modal.open {
     display: flex;
     z-index: 9999999;
-/*     backdrop-filter: blur(2px);
- */  }
+    width: fit-content !important;
+    height: fit-content;
+    margin: auto;  }
  .szoveg-kontener{height: 100%;}
  .missing-item{    display: flex
 ;font-size: small;
@@ -821,19 +895,15 @@ font-size: x-small;
     align-items: center;
     justify-content: flex-start;
     flex-direction: row-reverse;}
-    .missing-item label{    font-weight: bold;    margin-right: 25px;
+    .missing-item label{    font-weight: bold;
 
     color: red;}
-    .modal-content.inner-div{width: 80%;}
+    .modal-content.inner-div{width: 100%;}
     .modal .outer-div{ height: 95vh;
     display: flex;
     align-items: center;
     justify-content: center; }
-    .missing-list{display: grid
-;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.5rem;
-    overflow-y: auto;
+    .missing-list{display: flex;
     margin-top: 1rem;}
 #missingConfirm{
     font-family: auto;
@@ -968,3 +1038,379 @@ transition:opacity 1s ease-in-out}
 #main-container{min-height: fit-content;}
 
   }
+/* =========================================================
+   ÚJ FÓKUSZ ANIMÁCIÓ
+   Aktív elem: finom előrelépés
+   Passzív elemek: háttérbe húzódás layout-rombolás nélkül
+   ========================================================= */
+
+/* Alap animálható kategóriaelemek */
+.fo,
+.al,
+.alal {
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  backface-visibility: hidden;
+  transition:
+    transform 320ms cubic-bezier(.2, .8, .2, 1),
+    opacity 260ms ease,
+    filter 260ms ease,
+    box-shadow 260ms ease,
+    border-color 260ms ease;
+}
+
+/* Aktív állapot: nem durva nagyítás, inkább kiemelés */
+.fo.active,
+.al.active,
+.alal.active {
+  opacity: 1;
+  width: 100%;
+  margin-top: 5px !important;
+  filter: saturate(1.08) contrast(1.03);
+  transform: translateY(-2px) scale(1);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.18),
+    0 0 0 2px rgba(255, 255, 255, 0.65);
+  animation: focusRise 340ms cubic-bezier(.2, .8, .2, 1) both;
+}
+
+/* Passzív állapot: NEM nullázunk width/height-ot */
+.fo.passive,
+.al.passive {
+  opacity: 0;
+  filter: saturate(0.65) contrast(0.92);
+  transform: translateY(10px) scale(0.82);
+  pointer-events: none;
+
+  /*
+    Fontos:
+    Nem position:absolute.
+    Nem width:0.
+    Nem height:0.
+    Így sok elemnél sem rángatja szét a layoutot.
+  */
+}
+
+/* Altémák passzív állapotban maradjanak láthatóbbak */
+.alal.passive {
+  opacity: 0.42;
+  filter: saturate(0.75) contrast(0.95);
+  transform: scale(0.96);
+  pointer-events: auto;
+  box-shadow: none;
+}
+
+/* Altéma aktív állapot: kis címke-jelleg */
+.alal.active {
+  height: 40px;
+  padding: 0 10px;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Főkategória aktív állapot */
+.fo.active {
+  width: 95%;
+  height: fit-content;
+  margin: 1% 0;
+  border-radius: 12px;
+}
+
+/* Alkategória aktív állapot */
+.al.active {
+  width: 100%;
+  height: 40px;
+  margin: 0;
+  border-radius: 8px;
+}
+
+/* A régi .active általános width/margin szabályt felülírjuk */
+.active {
+  border-radius: 10px;
+}
+
+/* Finom belépő mozgás */
+@keyframes focusRise {
+  0% {
+    opacity: 0.82;
+    transform: translateY(8px) scale(0.97);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1);
+  }
+}
+
+/* Több elem visszatérésekor lágy megjelenés */
+.alal:not(.active):not(.passive) {
+  animation: softReturn 260ms ease both;
+}
+
+@keyframes softReturn {
+  from {
+    opacity: 0.65;
+    transform: translateY(6px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Hover továbbra is érződjön, de ne üsse szét az aktív/passzív állapotot */
+.fo:not(.active):not(.passive):hover,
+.al:not(.active):not(.passive):hover,
+.alal:not(.active):not(.passive):hover {
+  transform: translateY(-3px) scale(1);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.16);
+}
+
+/* Akinek csökkentett animáció van beállítva */
+@media (prefers-reduced-motion: reduce) {
+  .fo,
+  .al,
+  .alal,
+  .fo.active,
+  .al.active,
+  .alal.active,
+  .fo.passive,
+  .al.passive,
+  .alal.passive {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+/* =========================================================
+   FÓKUSZBÓL VISSZATÉRŐ KATEGÓRIÁK
+   Megakadályozza az egyszerre bevillanó alkategóriákat.
+   ========================================================= */
+
+.fo,
+.al,
+.alal {
+  transform-origin: center center;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Az aktív elem visszatér normál kártyává */
+.fo.active-returning,
+.al.active-returning,
+.alal.active-returning {
+  animation: activeReturnToCard 190ms cubic-bezier(.22, .75, .25, 1) both;
+}
+
+@keyframes activeReturnToCard {
+  from {
+    opacity: 1;
+    transform: translateY(-2px) scale(1);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* A korábban passzív elemek nem egyszerre ugranak vissza */
+.fo.passive-returning,
+.al.passive-returning,
+.alal.passive-returning {
+  opacity: 0;
+  transform: translateY(10px) scale(0.94);
+  animation: passiveReturnSoft 260ms var(--return-delay, 0ms) cubic-bezier(.22, .75, .25, 1) both;
+}
+
+@keyframes passiveReturnSoft {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.94);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+/* Alkategória visszazáráskor ne legyen layout-rángatás */
+#al_kategoriak.al-layout-reset,
+#al_kategoriak.al-layout-reset * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Visszatéréskor finom, rövid belépés */
+#al_kategoriak.al-returning .al-blokk {
+  animation: alBlokkReturn 180ms ease both;
+}
+
+@keyframes alBlokkReturn {
+  from {
+    opacity: 0.75;
+    transform: translateY(5px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+#fo_kategoriak{height: 50px;}
+/* Főkategória visszazáráskor ne legyen layout-rángatás */
+#fo_kategoriak.fo-layout-reset,
+#fo_kategoriak.fo-layout-reset * {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Főkategóriák visszatérésekor finom, rövid belépés */
+#fo_kategoriak.fo-returning .fo {
+  animation: foKartyaReturn 180ms ease both;
+}
+
+@keyframes foKartyaReturn {
+  from {
+    opacity: 0.75;
+    transform: translateY(5px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.export-format-btn {
+    border: 0;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.export-format-cancel {
+color: #ccc;
+    position: absolute;
+    top: 1%;
+    right: 1%;
+    width: fit-content;
+    background: #ff8257;
+    font-family: 'Montserrat Subrayada';
+
+}
+.export-format-btn:hover{
+  scale: 1.1;
+
+}
+.export-format-pdf {
+   background: linear-gradient(135deg, #ffaa00, #ff6500);
+    color: white;
+    font-weight: 900;
+}
+
+.export-format-docx {
+    background: linear-gradient(135deg, #ff6500, #ffaa00);
+    color: white;
+    font-weight: 900;
+}
+.dokdiv{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.dokidiv{
+  width:min(420px, calc(100% - 32px)) ;
+  background:#fffaf4;
+  border: 1px solid #ffd0a3;
+  border-radius: 18px;
+  box-shadow: 0 18px 45px rgba(0,0,0,.22);
+  padding: 22px;
+  font-family: system-ui;
+  color:#374151;
+  position: relative;
+}
+/* Folytatás / utolsó aktivitás csempe */
+
+.folytatas-kartya {
+    cursor: pointer;
+    border: 0;
+    text-align: left;
+    overflow: hidden;
+    position: relative;
+}
+
+.folytatas-kartya:focus-visible {
+    outline: 3px solid rgba(255, 189, 22, 0.75);
+    outline-offset: 4px;
+}
+
+.folytatas-kartya .folytatas-koszones,
+.folytatas-kartya .folytatas-tartalom {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    line-height: 1.15;
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.folytatas-kartya .folytatas-koszones {
+    animation: folytatasKoszonesEgyszer 2.45s ease-in-out forwards;
+}
+
+.folytatas-kartya .folytatas-tartalom {
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: inherit;
+    opacity: 0;
+    transform: translateY(12px);
+    animation: folytatasTartalomEgyszer 2.45s ease-in-out forwards;
+}
+
+.folytatas-kartya .folytatas-cim {
+    font-weight: 700;
+    font-size: clamp(0.95rem, 1.7vw, 1.35rem);
+}
+
+.folytatas-kartya .folytatas-utvonal {
+    font-size: clamp(0.72rem, 1.1vw, 0.92rem);
+    opacity: 0.85;
+    max-width: 100%;
+    white-space: pre-wrap;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.folytatas-kartya .folytatas-valasz {
+    font-size: x-small;
+    opacity: 0.95;
+}
+
+@keyframes folytatasKoszonesEgyszer {
+    0%, 70% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(-12px);
+    }
+}
+
+@keyframes folytatasTartalomEgyszer {
+    0%, 70% {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

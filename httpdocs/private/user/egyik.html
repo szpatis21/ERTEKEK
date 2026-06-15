@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gyakran Ismételt Kérdések – Értékelés menete – ÉRTÉKEK</title>
+  <meta name="description" content="Gyakran ismételt kérdések az ÉRTÉKEK rendszer értékelési folyamatáról, a témakörök használatáról, a kérdések megválaszolásáról és a diagramokról." />
+  <style>
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+.vissz{    display: flex;
+    border-bottom: white 3px solid;
+    justify-content: space-around;
+    padding: 5px;
+    border-radius: 10px;
+    background: #ffffff24;
+    align-items: center;}
+    .vissz a{    background: white;
+      transition: all 0.4s;
+    border-radius: 10px;
+    color: #3b3b3b;}
+.faq-hero{display:grid;grid-template-columns:1.3fr .7fr;gap:18px;align-items:stretch;margin:24px 0}.hero-card{background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.38);border-radius:var(--radius);padding:18px}.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.quick a{display:inline-flex;text-decoration:none;border-radius:999px;padding:7px 10px;background:#fff0dc;border:1px solid #ffd6a6;color:#a24c00;font-weight:900;font-size:.9rem}.faq-list{display:grid;gap:12px;margin:18px 0}details{background:rgba(255,255,255,.94);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:20px;box-shadow:var(--shadow);overflow:hidden}summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:10px}summary::-webkit-details-marker{display:none}summary::before{content:'+';width:28px;height:28px;border-radius:50%;display:inline-grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;flex:0 0 28px;font-weight:900}details[open] summary::before{content:'–'}details .answer{padding:0 18px 18px 56px;color:var(--text)}.tag{display:inline-block;font-size:.78rem;font-weight:900;border-radius:999px;padding:4px 8px;margin:0 6px 6px 0;background:#fff7ed;border:1px solid #ffd6a6;color:#a24c00}.kbd{font-weight:900;background:#fff1e3;border:1px solid #ffd6a6;border-radius:8px;padding:1px 6px;color:#8a3d00}.toc-card{position:sticky;top:16px}.mini-title{font-weight:900;color:#fff;margin-bottom:8px}.hint-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.hint{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:var(--shadow)}.hint strong{color:var(--brand);display:block;margin-bottom:4px}@media(max-width:860px){.faq-hero{grid-template-columns:1fr}.toc-card{position:static}.hint-row{grid-template-columns:1fr}}@media print{details{box-shadow:none;break-inside:avoid}details .answer{display:block}summary::before{display:none}.faq-hero{display:block}.quick,nav{display:none}}
+  @media (max-width: 900px) {
+  .vissz{ height: 20vh;
+flex-direction: column-reverse;}
+.meta2{display: none;}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+    <div class="vissz">
+        <a class="meta" href="/user/ertekelo.html">Vissza az értékeléshez</a>
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+      <span class="meta">Gyakran Ismételt Kérdések</span>
+      </div>
+      <h1>Értékelés menete</h1>
+      <p class="lead">Rövid, közérthető válaszok az értékelő felület használatához: műveleti gombok, témakörök, kérdések, csúszkák, készülő értékelés és diagramok.</p>
+      <nav aria-label="Oldalon belüli navigáció">
+        <a href="#alapok">Alapok</a>
+        <a href="#felulet">Felület</a>
+        <a href="#temakorok">Témakörök</a>
+        <a href="#kerdesek">Kérdések</a>
+        <a href="#elozmenyek">Előzmények</a>
+        <a href="#diagramok">Diagramok</a>
+      </nav>
+      <div class="faq-hero">
+        <div class="hero-card">
+          <p class="mini-title">Miről szól ez az oldal?</p>
+          <p>A cél, hogy a felhasználó gyorsan megtalálja, hogyan tud elindulni az értékelésben, hogyan ad választ a kérdésekre, hogyan tud visszalépni a témakörök között, és mit mutatnak a diagramok.</p>
+        </div>
+        <div class="hero-card toc-card">
+          <p class="mini-title">Gyors elérés</p>
+          <div class="quick">
+            <a href="#q-mentes">Mentés</a>
+            <a href="#q-nezet">Nézet</a>
+            <a href="#q-valasz">Válaszadás</a>
+            <a href="#q-torles">Törlés</a>
+            <a href="#q-aranyositas">Arányosítás</a>
+            <a href="#q-elozmenyek">Előzmények</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="note ok">
+      <h2>Röviden</h2>
+      <p>Az értékelés során a felhasználó kiválaszt egy témakört, majd annak szintjein végighaladva válaszol a kérdésekre. A válaszok azonnal megjelennek a készülő értékelésben, miközben a rendszer automatikusan ment. Az előzményjelölések és a folytatási csempe segítenek később visszatérni a legutóbbi munkaponthoz.</p>
+    </section>
+
+    <section id="alapok" class="card">
+      <h2>1. Alapok és műveleti gombok</h2>
+      <div class="faq-list">
+        <details open>
+          <summary>Mi történik új értékelés létrehozása vagy folytatása után?</summary>
+          <div class="answer">
+            <p>Az értékelő felületre kerül, ahol a bal oldalon négy fő műveleti gomb látható: <span class="kbd">Mentés</span>, <span class="kbd">Nézet</span>, <span class="kbd">Nyomtatás</span> és <span class="kbd">Letöltés</span>. Mobilnézetben ezek a felső sávban jelennek meg.</p>
+          </div>
+        </details>
+        <details id="q-mentes">
+          <summary>Mire való a Mentés gomb?</summary>
+          <div class="answer">
+            <p>A rendszer automatikusan menti a válaszokat. A <strong>Mentés</strong> gombra főleg akkor érdemes kattintani, ha ellenőrizni szeretné, milyen bevitt vagy törölt válaszok kerültek a rendszerbe.</p>
+          </div>
+        </details>
+        <details id="q-nezet">
+          <summary>Mire való a Nézet gomb?</summary>
+          <div class="answer">
+            <p>A <strong>Nézet</strong> gombbal elrejthető vagy megjeleníthető a szakmai anyag, illetve a készülő értékelés. Ez akkor hasznos, ha több helyet szeretne adni az egyik oldalnak.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hogyan tudom kinyomtatni vagy letölteni az értékelést?</summary>
+          <div class="answer">
+            <p>A <strong>Nyomtatás</strong> gomb az értékelés nyomtatására szolgál. A <strong>Letöltés</strong> gombbal az elkészült értékelés letölthető.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hogyan tudok visszatérni a kezelőfelületre?</summary>
+          <div class="answer">
+            <p>Ha befejezte a munkát, vagy később folytatná az értékelést, kattintson az <strong>Értékeim</strong> menüpontra. Ezzel visszakerül a kezelőfelületre.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="felulet" class="card">
+      <h2>2. Az értékelő felület felépítése</h2>
+      <div class="hint-row">
+        <div class="hint"><strong>Bal oldal</strong>Témakörök és szakmai anyag.</div>
+        <div class="hint"><strong>Jobb oldal</strong>Készülő értékelés.</div>
+        <div class="hint"><strong>Felső rész</strong>Diagram és diagrammenü.</div>
+        <div class="hint"><strong>Alsóbb szintek</strong>Kérdések, állítások, alkérdések.</div>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>Milyen részekből áll az értékelő felület?</summary>
+          <div class="answer">
+            <p>A felület két fő részre oszlik: az <strong>értékelési témakörökre</strong> és a <strong>készülő értékelésre</strong>. Az egyik oldalon halad a felhasználó a szakmai anyagban, a másik oldalon pedig valós időben látható az értékelés szövege.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mit jelent az, hogy a témakörök alrészekre oszlanak?</summary>
+          <div class="answer">
+            <p>A témakörök hierarchikusan épülnek fel. A felhasználó egyre mélyebbre halad az adott ágon belül, amíg eljut a konkrét kérdésekig és állításokig.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hol jelennek meg a kiválasztott válaszok?</summary>
+          <div class="answer">
+            <p>Minden bekerülő válasz a <strong>készülő értékelésben</strong> jelenik meg, témakörök és leágazások szerint rendezve. Így munka közben is ellenőrizhető, hogyan épül a dokumentum.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mire való a diagram feletti menüsáv?</summary>
+          <div class="answer">
+            <p>A diagram menüsávja kizárólag a diagramra vonatkozik. Itt lehet diagramfajtát választani, a diagramot elrejteni vagy megjeleníteni, mellékletként letölteni, illetve nyomtatásra küldeni.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="temakorok" class="card">
+      <h2>3. Témakörök és navigáció</h2>
+      <div class="faq-list">
+        <details>
+          <summary>Mit látok a témakörök felső sávjában?</summary>
+          <div class="answer">
+            <p>A felső sávban a szakmai anyag neve látható, valamint az, hogy ki és mikor módosította utoljára az adott értékelést.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mire valók a színes csempék?</summary>
+          <div class="answer">
+            <p>A színes csempék a fő témaköröket jelölik. A csempéken a témakör címe és rövid leírása olvasható. Kattintással nyitható meg az adott témakör következő szintje.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Milyen szinteken haladhatok végig?</summary>
+          <div class="answer">
+            <p>A szakmai anyag felépítésétől függően megjelenhetnek <span class="tag">altémakörök</span><span class="tag">alkategóriák</span><span class="tag">kérdések</span><span class="tag">alkérdések</span>. A rendszer ezek között vezeti végig a felhasználót.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hogyan tudok visszalépni egy korábbi témaszintre?</summary>
+          <div class="answer">
+            <p>Visszalépéshez elég a színes, megnyúlt fejlécekre kattintani. A felső fejléc az összes főkategóriához, az alatta lévő fejléc pedig az adott főkategória alkategóriáihoz visz vissza.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section id="kerdesek" class="card">
+      <h2>4. Kérdések, állítások és csúszkák</h2>
+      <div class="faq-list">
+        <details id="q-valasz">
+          <summary>Hogyan tudok választ adni egy kérdésre?</summary>
+          <div class="answer">
+            <p>A kérdések és alkérdések mellett található csúszkákat kell mozgatni. Jobbra húzva igen választ, balra húzva nem választ lehet megadni.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mit jelent a zöld pipa?</summary>
+          <div class="answer">
+            <p>A zöld pipa egy igen választ jelent. Ilyenkor a rendszer az adott pozitív megállapítást helyezi el a készülő értékelésben.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mikor érdemes az alkérdésekre is válaszolni?</summary>
+          <div class="answer">
+            <p>Ha az adott kérdés további pontosítást igényel, akkor célszerű az alkérdéseket is megválaszolni. Ezek részletesebbé és pontosabbá teszik az értékelés szövegét.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Lehet saját megjegyzést hozzáadni?</summary>
+          <div class="answer">
+            <p>Igen. Igény esetén szabadszavas megjegyzés is hozzáadható a készülő értékeléshez.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mi történik nemleges válasz esetén?</summary>
+          <div class="answer">
+            <p>Nemleges válasznál a működés hasonló, de a rendszer a nem válaszhoz tartozó megállapítást és esetleges alkérdéseket jeleníti meg.</p>
+          </div>
+        </details>
+        <details id="q-torles">
+          <summary>Hogyan tudok törölni egy korábban megadott választ?</summary>
+          <div class="answer">
+            <p>A csúszkát a középen lévő semleges állapotba kell állítani. Ekkor a meglévő alkérdések és maga a kérdés elhalványul, majd eltűnik az értékelésből.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+
+
+    <section id="elozmenyek" class="card">
+      <h2>5. Előzmények és utolsó fókusz</h2>
+      <div class="faq-list">
+        <details id="q-elozmenyek" open>
+          <summary>Mit jelent a kis órácska az értékelő felületen?</summary>
+          <div class="answer">
+            <p>A kis órácska azt jelzi, hogy az adott elemhez előzmény tartozik. Segít visszatalálni ahhoz a kategóriához, témához, kérdéshez vagy válaszhoz, amellyel legutóbb dolgozott.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mit mutat az előzmények panel?</summary>
+          <div class="answer">
+            <p>Az előzmények panel az utolsó megnyitásokat és módosításokat listázza. Megjelenhet benne az útvonal, a kérdés szövege, az esemény ideje és az utolsó válasz is.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Megmaradnak az előzményeim későbbi belépéskor is?</summary>
+          <div class="answer">
+            <p>Igen. Az új működés már nemcsak az aktuális böngészőfülben őrzi az előzményeket, hanem adatbázisban is rögzíti a legfontosabb fókuszeseményeket. Így a kezelőpanel később is fel tudja ajánlani a folytatást.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Mit jelent a „Folytassa ahol abbahagyta”?</summary>
+          <div class="answer">
+            <p>A kezelőpanel Infók képernyőjén megjelenő folytatási csempe az utolsó értékelési munkapont alapján segít visszatérni a legutóbb használt értékeléshez. A csempe útvonalat, kérdésszöveget és utolsó választ is mutathat.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Minden kattintást ment a rendszer?</summary>
+          <div class="answer">
+            <p>Nem. A rendszer csak azokat az értelmes fókusz- és módosítási eseményeket rögzíti, amelyek a munka folytatásához hasznosak lehetnek, például kategória, téma, kérdés vagy válasz érintését.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+    <section id="diagramok" class="card">
+      <h2>5. Diagramok és eredmények</h2>
+      <div class="faq-list">
+        <details>
+          <summary>Mit mutatnak a diagramok?</summary>
+          <div class="answer">
+            <p>A diagramok az adott területen létrejött eredményeket jelenítik meg jól látható, grafikus formában. Több szinten keresztül mutatják az értékelés eredményeit.</p>
+          </div>
+        </details>
+        <details id="q-aranyositas">
+          <summary>Mit jelent az, hogy a rendszer arányosítást használ?</summary>
+          <div class="answer">
+            <p>A pontozás nem egyszerű átlagolással történik. Az alsóbb szintek eredményei összeadódnak, majd szintenként alakul ki az eredmény. Az arányosítás figyelembe veszi az adott kérdés bonyolultságát és szakmai súlyát.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hol látom a százalékos eredményeket?</summary>
+          <div class="answer">
+            <p>A százalékos eredményeket a diagram egyes cikkelyei mutatják. Ha az egeret egy cikkely fölé viszi, megjelenik a részletes eredmény.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Hogyan tudom csak egy témakör eredményét megnézni?</summary>
+          <div class="answer">
+            <p>A diagram alatti témakörnevekre kattintva szűkíthető, hogy mely cikkelyek látszódjanak. Így külön témakörök vagy szintek is vizsgálhatók.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <section class="note">
+      <h2>Felhasználói tanács</h2>
+      <p>Az értékelés közben érdemes figyelni a készülő értékelés jobb oldali szövegét. Így azonnal látható, hogy egy válasz, alkérdés vagy megjegyzés valóban a megfelelő tartalmat hozta létre. Hosszabb munka esetén az órácskás előzményjelölések is segítenek visszatalálni az utoljára érintett pontokhoz.</p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>ÉRTÉKEK – Gyakran Ismételt Kérdések az értékelési folyamathoz.</p>
+    </div>
+  </footer>
+</body>
+</html>

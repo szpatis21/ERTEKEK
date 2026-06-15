@@ -9,10 +9,13 @@
     <link rel="stylesheet" href="/private/user/dashboardU.css">
     <link rel="stylesheet" href="/private/main/main.css">
     <link rel="stylesheet" href="/public/stylei.css">
-    <link rel="stylesheet" href="../user/dashmobile.css">
         <link rel="stylesheet" href="./upload/upload.css">
+                <link rel="stylesheet" href="./modulSzamolasKartya.css">
+
           <link rel="stylesheet" href="/admin/upload/upload.css">
 <link rel="stylesheet" href="/private/main/main.css">
+    <link rel="stylesheet" href="../user/dashmobile.css">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
 
@@ -27,6 +30,13 @@
       crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_circle" />
 <style>
+    .igenszoveg {
+    color: green !important;
+    top: -3px;
+    left: 55px;}
+    .uresszoveg{    left: 4px;
+    top: -3px;
+    color: black;}
   @media (max-width: 1024px) {
     .felso{justify-content: center !important;padding-bottom: 0px !important;}
   }
@@ -130,9 +140,48 @@
 
 </head>
 <body>    
+<div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
 
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
 <div id="gobut4" style="display: none;" ></div>
-<input type="hidden" id="menu-type" value="private">
+<input type="hidden" id="menu-type" value="private2">
 <div class="hero-bg" aria-hidden="true"></div>
   <header class="nav">
     <men id="men"></men>
@@ -248,7 +297,7 @@
 
     <article class="savos">
          <div class="gomb" id="accunt0">
-            <div class="cim" id="accunt">Fiókom</div>
+            <div class="cim" id="accunt">INFÓK</div>
         </div> 
           <div class="gomb" id="ujert0">
             <div class="cim" id="ujany">Feltöltés</div>
@@ -264,9 +313,11 @@
 </div>
         
 
-
+<script src="/both/csrfFetch.js"></script>
 <script type="module" src="/both/both.js"></script>
 <script type="module" src="./dashAMain.js"></script>
+<script type="module" src="../main/modulSzamolasKartya.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </body>
 </html>

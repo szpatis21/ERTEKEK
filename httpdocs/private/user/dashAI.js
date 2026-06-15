@@ -1,30 +1,142 @@
-// dashAI.js – TELJES KÉSZ VERZIÓ (3 AI típus + közös modal + csoportos AI)
 import { modulId, userId } from './dashMain.js';
-// A PDF readBarLegendItems-t kivettem, ha nincs rá szükséged, ha van, tedd vissza
+import { safeMarkdownLiteToHtml, escapeHTML } from '/both/safeDom.js';
 import { showAlert } from '/both/alert.js';
 import { readBarLegendItems } from './dashPDF.js';
 
 // ====================== SEGÉDFÜGGVÉNYEK ======================
 function formatTextToHtmlList(rawText) {
-    if (!rawText) return '';
-    const lines = rawText.split('\n');
-    let html = '', inList = false;
-    for (let line of lines) {
-        let t = line.trim().replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        if (t.startsWith('* ') || t.startsWith('- ')) {
-            if (!inList) { html += '<ul style="padding-left:25px;margin:15px 0;border-left:3px solid #ff9800;">'; inList = true; }
-            html += `<li style="margin-bottom:8px;padding-left:5px;">${t.substring(2)}</li>`;
-        } else {
-            if (inList) { html += '</ul>'; inList = false; }
-            if (t.startsWith('# ')) html += `<h1 style="color:#333;border-bottom:2px solid #ff9800;padding-bottom:5px;margin-top:20px;font-size:1.5em;">${t.substring(2)}</h1>`;
-            else if (t.startsWith('### ')) html += `<h3 style="color:#ff6500;margin-top:15px;font-size:1.2em;">${t.substring(4)}</h3>`;
-            else if (t) html += `<p style="margin:0 0 10px 0;">${t}</p>`;
-            else html += '<br>';
-        }
-    }
-    if (inList) html += '</ul>';
-    return html;
+    // Csak nyomtatási HTML-hez használjuk. A safeMarkdownLiteToHtml előbb escape-el,
+    // és csak a saját, szűk markdown-részhalmazt engedi vissza HTML-ként.
+    return safeMarkdownLiteToHtml(rawText);
 }
+
+function appendInlineMarkdownText(parent, value) {
+    const parts = String(value ?? '').split(/(\*\*.*?\*\*)/g);
+
+    parts.forEach(part => {
+        if (!part) return;
+
+        if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+            const strong = document.createElement('strong');
+            strong.textContent = part.slice(2, -2);
+            parent.appendChild(strong);
+            return;
+        }
+
+        parent.appendChild(document.createTextNode(part));
+    });
+}
+
+function renderSafeMarkdownLiteToElement(target, rawText) {
+    if (!target) return;
+
+    target.replaceChildren();
+
+    const lines = String(rawText ?? '').split('\n');
+    let currentList = null;
+
+    const closeList = () => {
+        if (!currentList) return;
+        target.appendChild(currentList);
+        currentList = null;
+    };
+
+    lines.forEach(line => {
+        const t = String(line ?? '').trim();
+
+        if (t.startsWith('* ') || t.startsWith('- ')) {
+            if (!currentList) {
+                currentList = document.createElement('ul');
+                currentList.style.cssText = 'padding-left:25px;margin:15px 0;border-left:3px solid #ff9800;';
+            }
+
+            const li = document.createElement('li');
+            li.style.cssText = 'margin-bottom:8px;padding-left:5px;';
+            appendInlineMarkdownText(li, t.substring(2));
+            currentList.appendChild(li);
+            return;
+        }
+
+        closeList();
+
+        if (t.startsWith('# ')) {
+            const h1 = document.createElement('h1');
+            h1.style.cssText = 'color:#333;border-bottom:2px solid #ff9800;padding-bottom:5px;margin-top:20px;font-size:1.5em;';
+            appendInlineMarkdownText(h1, t.substring(2));
+            target.appendChild(h1);
+            return;
+        }
+
+        if (t.startsWith('### ')) {
+            const h3 = document.createElement('h3');
+            h3.style.cssText = 'color:#ff6500;margin-top:15px;font-size:1.2em;';
+            appendInlineMarkdownText(h3, t.substring(4));
+            target.appendChild(h3);
+            return;
+        }
+
+        if (t) {
+            const par = document.createElement('p');
+            par.style.cssText = 'margin:0 0 10px 0;';
+            appendInlineMarkdownText(par, t);
+            target.appendChild(par);
+            return;
+        }
+
+        target.appendChild(document.createElement('br'));
+    });
+
+    closeList();
+}
+
+function setAiBodyFromRaw(body, rawText) {
+    if (!body) return;
+    body.style.whiteSpace = 'normal';
+    renderSafeMarkdownLiteToElement(body, rawText);
+    body.dataset.rawText = String(rawText ?? '');
+}
+
+function setAiBodyEmpty(body, message = 'Ehhez a részhez még nincs mentett MI-szöveg.') {
+    if (!body) return;
+    body.style.whiteSpace = 'normal';
+    body.replaceChildren();
+
+    const par = document.createElement('p');
+    par.style.cssText = 'color:#777;font-style:italic;margin:0;';
+    par.textContent = message;
+    body.appendChild(par);
+
+    delete body.dataset.rawText;
+}
+
+function renderAiTabs(headerTabs, initialType) {
+    if (!headerTabs) return;
+
+    headerTabs.replaceChildren();
+
+    Object.keys(AI_TYPES).forEach(key => {
+        const type = AI_TYPES[key];
+        const btn = document.createElement('button');
+
+        btn.className = `ai-tab-btn ${key === initialType ? 'active' : ''}`.trim();
+        btn.dataset.type = key;
+        btn.textContent = type.label;
+
+        btn.addEventListener('click', () => {
+            headerTabs.querySelectorAll('.ai-tab-btn').forEach(item => item.classList.remove('active'));
+            btn.classList.add('active');
+            showAiType(btn.dataset.type);
+        });
+
+        headerTabs.appendChild(btn);
+    });
+}
+
+function setButtonLoadingText(button, text) {
+    if (!button) return;
+    button.replaceChildren(document.createTextNode(text));
+}
+
 // ÚJ FÜGGVÉNY: Markdown szöveg átalakítása pdfMake objektumokká
 function markdownToPdfMake(text) {
     if (!text) return [];
@@ -107,7 +219,7 @@ function ensureAiModalExists() {
       </div>
 
       <div style="background:#fff3e0;padding:12px 20px;text-align:center;border-top:1px solid #ffcc80;font-size:0.9rem;flex-shrink:0;">
-        <i>* A mesterséges intelligencia által generált szöveg nem minősül szakvéleménynek.</i>
+        <i>* A mesterséges intelligencia által generált szöveg nem minősül szakvéleménynek. Az MI-funkció név és közvetlen azonosító nélkül, a kérdőívből származó strukturált szakmai adatokat használ. Szabad szöveges megjegyzések nem kerülnek továbbításra.</i>
       </div>
     </div>
   </div>
@@ -124,7 +236,6 @@ function ensureAiModalExists() {
   // MÁSOLÁS GOMB
   document.getElementById('ai-btn-copy').onclick = () => {
       const title = document.getElementById('ai-modal-main-title').innerText;
-      // Nyers szöveget szedünk ki!
       const text = document.getElementById('ai-modal-body').dataset.rawText;
       if (!text) { showAlert('Nincs mit másolni!'); return; }
       
@@ -135,8 +246,10 @@ function ensureAiModalExists() {
   // NYOMTATÁS GOMB
   document.getElementById('ai-btn-print').onclick = () => {
       const title = document.getElementById('ai-modal-main-title').innerText;
-      const content = document.getElementById('ai-modal-body').innerHTML;
-      if (!document.getElementById('ai-modal-body').dataset.rawText) { 
+      const rawText = document.getElementById('ai-modal-body').dataset.rawText;
+      const safeTitle = escapeHTML(title);
+      const content = formatTextToHtmlList(rawText);
+      if (!rawText) { 
           showAlert('Nincs mit nyomtatni!'); return; 
       }
 
@@ -144,7 +257,7 @@ function ensureAiModalExists() {
       printWindow.document.write(`
           <html>
           <head>
-              <title>${title}</title>
+              <title>${safeTitle}</title>
               <style>
                   body { font-family: Arial, sans-serif; line-height: 1.6; color: #000; padding: 20px; max-width: 800px; margin: auto; }
                   h1 { border-bottom: 2px solid #333; padding-bottom: 10px; font-size: 1.5em; }
@@ -155,8 +268,8 @@ function ensureAiModalExists() {
               </style>
           </head>
           <body>
-              <h2>${title}</h2>
-              ${content}
+          <h2>${safeTitle}</h2>
+          ${content}
           </body>
           </html>
       `);
@@ -272,34 +385,50 @@ export async function openAiModal(cardElement, initialType = 'fejlesztesi') {
   }
 
   // 2. Gombok generálása a fejlécbe (immár a testreszabott címekkel)
-  headerTabs.innerHTML = Object.keys(AI_TYPES).map(key => {
-    const t = AI_TYPES[key];
-    return `<button class="ai-tab-btn ${key === initialType ? 'active' : ''}" data-type="${key}">${t.label}</button>`;
-  }).join('');
+  renderAiTabs(headerTabs, initialType);
 
-  // Tab-váltás logika
-  headerTabs.querySelectorAll('.ai-tab-btn').forEach(btn => btn.addEventListener('click', () => {
-    headerTabs.querySelectorAll('.ai-tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    showAiType(btn.dataset.type);
-  }));
-  
   showAiType(initialType);
 }
 function sanitizeForAi(rawJson) {
     if (!rawJson) return {};
+
     const clean = {};
+
     for (const [tema, adat] of Object.entries(rawJson)) {
-        if (adat['%'] != null) {
-            clean[tema] = { pct: adat['%'], al: {} };
-            for (const [alKat, alAdat] of Object.entries(adat.alkategoriak || {})) {
-                const szurtAltémák = Object.entries(alAdat.altTemak || {})
-                    .filter(([_, p]) => p < 70 || p === 100)
-                    .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
-                clean[tema].al[alKat] = { pct: alAdat['%'], reszletek: szurtAltémák };
-            }
+        if (!adat || adat['%'] == null) continue;
+
+        clean[tema] = {
+            pct: adat['%'],
+            al: {},
+            direkt: false
+        };
+
+        const alkategoriak = adat.alkategoriak || {};
+        const alEntries = Object.entries(alkategoriak);
+
+        if (alEntries.length === 0) {
+            clean[tema].direkt = true;
+            continue;
+        }
+
+        for (const [alKat, alAdat] of alEntries) {
+            if (!alAdat) continue;
+
+            const altTemak = alAdat.altTemak || {};
+            const altEntries = Object.entries(altTemak);
+
+            const szurtAltémák = altEntries
+                .filter(([_, p]) => p < 70 || p === 100)
+                .reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {});
+
+            clean[tema].al[alKat] = {
+                pct: alAdat['%'],
+                direkt: altEntries.length === 0,
+                reszletek: szurtAltémák
+            };
         }
     }
+
     return clean;
 }
 // Függvény, ami az adott fül tartalmát megjeleníti
@@ -323,13 +452,10 @@ async function showAiType(typeKey) {
   content.style.display = 'block';
 
 if (savedText && savedText.trim() !== '') {
-    body.style.whiteSpace = 'normal';
-    body.innerHTML = formatTextToHtmlList(savedText);
-    body.dataset.rawText = savedText; // <-- EZ A SOR KELL BELE!
+    setAiBodyFromRaw(body, savedText);
     createGenerateButton(type, true);
   } else {
-    body.innerHTML = `<p...`;
-    delete body.dataset.rawText; // Ha nincs szöveg, töröljük a nyerset is
+    setAiBodyEmpty(body);
     createGenerateButton(type, false);
   }
 }
@@ -343,14 +469,17 @@ export async function triggerAiAnalysis() {
       }
   }
   try {
-    const smartText = buildAiPromptText(); 
-    if (smartText.length < 50) throw new Error('A sűrített adatok generálása sikertelen.');
+    const smartText = await buildAiPromptTextFromSelectedCards();
+    console.log('CSOPORTOS AI RAW:', smartText);
+    if (!smartText || smartText.length < 50 || smartText.startsWith('Hiba:')) {
+      throw new Error(smartText || 'A csoportos adatok generálása sikertelen.');
+    }
 
     // Kinyitjuk a modált a töltőképernyővel
 // Kinyitjuk a modált a töltőképernyővel a csoportos elemzéshez
     ensureAiModalExists();
     document.getElementById('ai-modal-main-title').textContent = 'Csoportos Szakmai Értékelés';
-    document.getElementById('ai-type-tabs').innerHTML = ''; // Csoportosnál nem kellenek az egyéni tabok
+    document.getElementById('ai-type-tabs').replaceChildren(); // Csoportosnál nem kellenek az egyéni tabok
     document.getElementById('ai-modal-overlay').style.display = 'flex';
     document.getElementById('ai-modal-loading').style.display = 'flex';
     document.getElementById('ai-modal-content').style.display = 'none';
@@ -363,7 +492,8 @@ export async function triggerAiAnalysis() {
         // Promise.all-t használunk, hogy a 10-20 gyerek adatát egyszerre, párhuzamosan (villámgyorsan) kérje le, ne egyesével várjon rájuk.
         const adatIgeretek = Array.from(checkedBoxes).map(async (checkbox) => {
             const kitoltesDiv = checkbox.closest('.meglevok');
-            const nev = kitoltesDiv ? (kitoltesDiv.dataset.nev || 'Ismeretlen') : 'Ismeretlen';
+            const sorszam = Array.from(checkedBoxes).indexOf(checkbox) + 1;
+            const nev = `Résztvevő #${sorszam}`;
             const kitoltesId = checkbox.dataset.id;
 
             try {
@@ -411,10 +541,9 @@ export async function triggerAiAnalysis() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-          raw: smartText, 
-          egyeniAdatok: egyeniAdatokSzoveg, 
-          modulId: modulId 
-      })
+    raw: smartText, 
+    egyeniAdatok: egyeniAdatokSzoveg
+})
     });
 
     if (!response.ok) {
@@ -437,8 +566,7 @@ export async function triggerAiAnalysis() {
       
       if (done) {
         bodyDiv.style.whiteSpace = 'normal';
-        bodyDiv.innerHTML = formatTextToHtmlList(fullTextBuffer);
-        bodyDiv.dataset.rawText = fullTextBuffer; 
+        setAiBodyFromRaw(bodyDiv, fullTextBuffer);
         break; 
       }
 
@@ -469,12 +597,12 @@ export async function triggerAiAnalysis() {
           
           if (dataChunk === '[DONE]') {
             bodyDiv.style.whiteSpace = 'normal';
-            bodyDiv.innerHTML = formatTextToHtmlList(fullTextBuffer);
-            fetch('/api/decrease-global-quota', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userId: userId })
-            }).then(() => {
+            setAiBodyFromRaw(bodyDiv, fullTextBuffer);
+           fetch('/api/decrease-global-quota', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+})
+.then(() => {
                 // Végigmegyünk az összes kártyán, és levonunk egyet a memóriában lévő kvótából,
                 // így a következő kattintásnál már a frissített limit lesz érvényben.
                 document.querySelectorAll('.meglevok').forEach(kartya => {
@@ -519,10 +647,9 @@ if (aiBtn && !aiBtn.dataset.listenerAdded) {
     if (window.__pdfBusy) return;
     window.__pdfBusy = true;
     
-    // CSERE ITT:
-    const oldText = aiBtn.innerHTML; 
+    const oldNodes = Array.from(aiBtn.childNodes).map(node => node.cloneNode(true)); 
     aiBtn.disabled = true;
-    aiBtn.innerHTML = 'Indítás...'; 
+    setButtonLoadingText(aiBtn, 'Indítás...'); 
 
     try {
       await triggerAiAnalysis();
@@ -530,13 +657,186 @@ if (aiBtn && !aiBtn.dataset.listenerAdded) {
       console.error('AI elemzés hiba:', err);
     } finally {
       aiBtn.disabled = false;
-      // CSERE ITT IS:
-      aiBtn.innerHTML = oldText; 
+      aiBtn.replaceChildren(...oldNodes); 
       window.__pdfBusy = false;
     }
   });
   aiBtn.dataset.listenerAdded = 'true';
 }
+
+async function buildAiPromptTextFromSelectedCards() {
+  const checkedBoxes = Array.from(
+    document.querySelectorAll('input[type="checkbox"].cheking:checked')
+  );
+
+  if (checkedBoxes.length === 0) {
+    return 'Hiba: Nincs kijelölt értékelés a csoportos elemzéshez.';
+  }
+
+  const rows = [];
+
+  await Promise.all(checkedBoxes.map(async (checkbox, index) => {
+    const kitoltesId = checkbox.dataset.id;
+    if (!kitoltesId) return;
+
+    try {
+      const res = await fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${encodeURIComponent(kitoltesId)}`);
+      const data = await res.json();
+
+      if (!data || !data.szazalek) return;
+
+      const raw = typeof data.szazalek === 'string'
+        ? JSON.parse(data.szazalek)
+        : data.szazalek;
+
+      rows.push({
+        label: `Résztvevő #${index + 1}`,
+        szazalek: raw
+      });
+    } catch (err) {
+      console.warn(`Csoportos AI százalék lekérési hiba (${kitoltesId}):`, err);
+    }
+  }));
+
+  if (rows.length === 0) {
+    return 'Hiba: A kijelölt értékelésekhez nem található százalékos adat.';
+  }
+
+  const sums = {};
+  const counts = {};
+  const részletek = {};
+
+  rows.forEach(row => {
+    for (const [tema, obj] of Object.entries(row.szazalek || {})) {
+      if (!tema) continue;
+
+      let pct = null;
+      if (obj && typeof obj === 'object') {
+        pct = Number(obj['%'] ?? obj.percent);
+      } else {
+        pct = Number(obj);
+      }
+
+      if (!Number.isFinite(pct)) continue;
+
+      sums[tema] = (sums[tema] || 0) + pct;
+      counts[tema] = (counts[tema] || 0) + 1;
+
+      if (!részletek[tema]) {
+        részletek[tema] = {};
+      }
+
+      const alkategoriak = obj && typeof obj === 'object' ? (obj.alkategoriak || {}) : {};
+      for (const [alKatNev, alKatAdat] of Object.entries(alkategoriak)) {
+        if (!alKatAdat || typeof alKatAdat !== 'object') continue;
+
+        const alPct = Number(alKatAdat['%'] ?? alKatAdat.percent);
+        if (!Number.isFinite(alPct)) continue;
+
+        if (!részletek[tema][alKatNev]) {
+          részletek[tema][alKatNev] = { sum: 0, count: 0, altTemak: {} };
+        }
+
+        részletek[tema][alKatNev].sum += alPct;
+        részletek[tema][alKatNev].count += 1;
+
+        const altTemak = alKatAdat.altTemak || {};
+        for (const [altNev, altAdat] of Object.entries(altTemak)) {
+          let altPct = null;
+          if (altAdat && typeof altAdat === 'object') {
+            altPct = Number(altAdat['%'] ?? altAdat.percent);
+          } else {
+            altPct = Number(altAdat);
+          }
+
+          if (!Number.isFinite(altPct)) continue;
+
+          if (!részletek[tema][alKatNev].altTemak[altNev]) {
+            részletek[tema][alKatNev].altTemak[altNev] = { sum: 0, count: 0 };
+          }
+
+          részletek[tema][alKatNev].altTemak[altNev].sum += altPct;
+          részletek[tema][alKatNev].altTemak[altNev].count += 1;
+        }
+      }
+    }
+  });
+
+  const parsed = Object.keys(sums)
+    .map(name => ({
+      name,
+      pct: Math.round(sums[name] / counts[name])
+    }))
+    .filter(x => x.name && Number.isFinite(x.pct))
+    .sort((a, b) => b.pct - a.pct);
+
+  if (parsed.length < 3) {
+    return 'Hiba: Legalább 3 értelmezhető fő kategória szükséges a csoportos AI elemzéshez.';
+  }
+
+  const nums = parsed.map(p => p.pct).sort((a, b) => a - b);
+  const n = nums.length;
+  const avg = Math.round(nums.reduce((s, v) => s + v, 0) / n);
+  const med = n % 2
+    ? nums[(n - 1) / 2]
+    : Math.round((nums[n / 2 - 1] + nums[n / 2]) / 2);
+
+  const sortedDesc = [...parsed].sort((a, b) => b.pct - a.pct);
+  const top2 = sortedDesc.slice(0, 2);
+  const low2 = [...sortedDesc].reverse().slice(0, 2);
+  const kiemeltek = [...top2, ...low2];
+
+  let prompt = '';
+  prompt += `Elemzés ${rows.length} fő bevonásával készült.\n\n`;
+  prompt += `ÖSSZESÍTETT EREDMÉNYEK (${n} fő kategória):\n`;
+  prompt += `Átlag: ${avg}%, Medián: ${med}%\n\n`;
+
+  prompt += 'FŐ KATEGÓRIÁK ÁTLAGAI:\n';
+  sortedDesc.forEach(kat => {
+    prompt += `- ${kat.name}: ${kat.pct}%\n`;
+  });
+
+  prompt += '\n--- KIEMELT KATEGÓRIÁK RÉSZLETES LEBONTÁSA ---\n';
+
+  kiemeltek.forEach(kat => {
+    prompt += `\nKategória: "${kat.name}" (Összesített: ${kat.pct}%)\n`;
+
+    const alkatok = részletek[kat.name] || {};
+    const alkatEntries = Object.entries(alkatok)
+      .map(([nev, adat]) => ({
+        nev,
+        pct: Math.round(adat.sum / adat.count),
+        altTemak: adat.altTemak || {}
+      }))
+      .filter(x => x.nev && Number.isFinite(x.pct))
+      .sort((a, b) => b.pct - a.pct);
+
+    if (!alkatEntries.length) {
+      prompt += '  - Részletes alkategória bontás nem áll rendelkezésre.\n';
+      return;
+    }
+
+    alkatEntries.forEach(alkat => {
+      prompt += `  - Alkategória: ${alkat.nev} (${alkat.pct}%)\n`;
+
+      const altEntries = Object.entries(alkat.altTemak)
+        .map(([nev, adat]) => ({
+          nev,
+          pct: Math.round(adat.sum / adat.count)
+        }))
+        .filter(x => x.nev && Number.isFinite(x.pct))
+        .sort((a, b) => b.pct - a.pct)
+        .slice(0, 8);
+
+      altEntries.forEach(alt => {
+        prompt += `    - ${alt.nev}: ${alt.pct}%\n`;
+      });
+    });
+  });
+
+  return prompt;
+}
+
 function buildAiPromptText() {
   let prompt = "";
   const reszletesAdatok = parseSummaryTableToObject();
@@ -545,7 +845,7 @@ function buildAiPromptText() {
 
   const barLegendItems = readBarLegendItems(); 
   const parsed = barLegendItems.map(it => {
-      const m = it.label.match(/^(.*?)\s+(\d{1,3})\s*%/);
+const m = it.label.match(/^(.*?)\s*[:\-–]?\s*(\d{1,3})\s*%/);
       const name = (m ? m[1] : it.label).trim();
       const pct = m ? +m[2] : null;
       return { name, pct };
@@ -648,10 +948,14 @@ function createGenerateButton(type, isRegenerate) {
   btn.className = 'modulebutt';
   btn.style.cssText = 'position: sticky; bottom: 90%; left: 90%; background: rgb(255, 132, 81); color: white; padding: 14px; font-family: system-ui;';
   
-  btn.innerHTML = isRegenerate 
-    ? `<span class="material-symbols-rounded">refresh</span> Újragenerálás` 
-    : `<span class="material-symbols-rounded">auto_awesome</span> Generálás`;
-    
+  const icon = document.createElement('span');
+  icon.className = 'material-symbols-rounded';
+  icon.textContent = isRegenerate ? 'refresh' : 'auto_awesome';
+
+  const label = document.createTextNode(isRegenerate ? ' Újragenerálás' : ' Generálás');
+
+  btn.append(icon, label);
+
   btn.onclick = () => triggerIndividualAiAnalysisByType(type);
   wrapper.appendChild(btn);
 }
@@ -662,33 +966,21 @@ export async function triggerIndividualAiAnalysisByType(type) {
   if (!card) return;
   const kitoltesId = card.dataset.kitoltesId;
 
+  if (!kitoltesId) {
+    showAlert('Hiányzik az értékelés azonosítója, ezért az AI generálás nem indítható.');
+    return;
+  }
+
   // Kvóta ellenőrzés
   if (parseInt(card.dataset.aiKitMax || 10) <= 0) {
     showAlert('Ehhez az értékeléshez már nem indíthatsz új AI elemzést (limit elérve).');
     return;
   }
 
-  // --- ÚJRA BEÉPÍTETT ADAT-ELLENŐRZÉS ÉS CSOMAGOLÁS ---
-  if (!window.ertekelesJSON || Object.keys(window.ertekelesJSON).length < 3) {
-      showAlert('Nincs elegendő adat az elemzéshez. Legalább 3 témakört értékelni kell.');
-      return;
-  }
-
-const tisztaAdat = sanitizeForAi(window.ertekelesJSON);
-  const komplexAdatcsomag = {
-      statisztika: tisztaAdat,
-      nyersValaszok: (window.kerdesValaszok || []).map(v => ({ k: v.kerdes_szoveg, p: v.valasz_ertek })),
-      megjegyzesek: window.szovegesValaszok || {}
-  };
-
-  // CSAK az Értékelés modulnál kinyerjük a DOM-ból a tiszta, hierarchikus szöveget (a rejtett pontok nélkül!)
-  if (type.id === 'ertekeles') {
-      const ertekelesekContainer = document.getElementById('ertekelesek-container');
-      if (ertekelesekContainer) {
-          komplexAdatcsomag.strukturatSzoveg = ertekelesekContainer.innerText;
-      }
-  }
-  // --------------------------------------------------
+  // ADATVÉDELMI MÓDOSÍTÁS:
+  // Nem küldünk frontendről nyers kérdés-válasz tömböt, szabad szöveges megjegyzést,
+  // DOM-ból vett strukturált szöveget vagy nevet. A backend a kitoltesId alapján,
+  // saját jogosultságellenőrzés után építi fel a név nélküli, kontrollált kérdőívállítás-csomagot.
 
   const loading = document.getElementById('ai-modal-loading');
   const content = document.getElementById('ai-modal-content');
@@ -702,11 +994,13 @@ const tisztaAdat = sanitizeForAi(window.ertekelesJSON);
   if (dynamicBtn) dynamicBtn.style.display = 'none';
 
   try {
-    // ITT A VÁLTOZÁS: A komplexAdatcsomag-ot küldjük el!
     const response = await fetch(type.endpoint, {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ jsonData: komplexAdatcsomag, modulId }) 
+      body: JSON.stringify({
+        kitoltesId,
+        aiType: type.id
+      })
     });
 
     if (!response.ok) {
@@ -729,8 +1023,7 @@ const reader = response.body.getReader();
         if (done) {
             // Ha végzett a stream, megformázzuk a teljes kész szöveget
             body.style.whiteSpace = 'normal';
-            body.innerHTML = formatTextToHtmlList(fullTextBuffer);
-            body.dataset.rawText = fullTextBuffer; 
+            setAiBodyFromRaw(body, fullTextBuffer);
             break;
         }
 
@@ -746,8 +1039,7 @@ const reader = response.body.getReader();
                 
                 if (chunk === '[DONE]') {
                     body.style.whiteSpace = 'normal';
-                    body.innerHTML = formatTextToHtmlList(fullTextBuffer);
-                    body.dataset.rawText = fullTextBuffer;
+                    setAiBodyFromRaw(body, fullTextBuffer);
                     break; 
                 }
                 
@@ -783,8 +1075,11 @@ const reader = response.body.getReader();
     const saveResponse = await fetch('/api/save-ai-text', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ kitoltesId, aiText: fullTextBuffer, userId, type: type.saveType })
-    });
+body: JSON.stringify({
+    kitoltesId,
+    aiText: fullTextBuffer,
+    type: type.saveType
+})    });
     
     if (saveResponse.ok) {
         card.dataset.aiKitMax = Math.max(0, parseInt(card.dataset.aiKitMax || 10) - 1);
@@ -792,8 +1087,7 @@ const reader = response.body.getReader();
     }
 
     card.dataset[type.datasetKey] = fullTextBuffer;
-    body.innerHTML = formatTextToHtmlList(fullTextBuffer);
-    body.dataset.rawText = fullTextBuffer; // <-- EZ A SOR KELL BELE!
+    setAiBodyFromRaw(body, fullTextBuffer);
      // --------------------------------
     loading.style.display = 'none';
     content.style.display = 'block';

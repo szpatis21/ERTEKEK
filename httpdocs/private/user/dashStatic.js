@@ -1,15 +1,52 @@
 //Statisztika, grafikonok, és összevont táblázat
+
+function canUseGroupStatisticsFeature() {
+  if (typeof window.canUseGroupStatistics === 'function') {
+    return window.canUseGroupStatistics();
+  }
+
+  const license = window.__licenseStatus;
+  if (license && license.success && license.permissions) {
+    return license.permissions.canUseGroupStatistics !== false;
+  }
+
+  return true;
+}
+
+function notifyGroupStatisticsBlocked() {
+  const message = typeof window.explainGroupStatisticsBlocked === 'function'
+    ? window.explainGroupStatisticsBlocked()
+    : 'A csoportos statisztika a Pro csomagban érhető el.';
+
+  if (typeof window.showLicenseToast === 'function') {
+    window.showLicenseToast(message);
+    return;
+  }
+
+  console.info(message);
+}
+
+function getErtekekInnerDiv() {
+  return document.querySelector('.ertekek-lista-inner') ||
+    document.querySelector('[data-ertekek-lista="1"]') ||
+    document.querySelector('article.main[data-content-id="ertekek"] .olvaso .outer-div > .inner-div') ||
+    document.querySelector('article.main[data-content-id="ertekek"] .inner-div') ||
+    document.querySelector('.main.aktiv-tartalom .olvaso .outer-div > .inner-div') ||
+    document.querySelector('.main.aktiv-tartalom .inner-div') ||
+    document.querySelector('.inner-div');
+}
 import {fullname,felbukkano2,felbukkano4,felbukkano3,modulId } from './dashMain.js'
 import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok,betoltKategoriakChartSzinek} from '../main/main_alap.js';
 import { szamoljFokerdesOsszErtek,letrehozFoKategoriaChart,kiszamoltFoKategoriaDiagramAdatok,letrehozAlkategoriaChart,letrehozAltTemaChart,  } from '../main/szamitasok.js';
-
+import { escapeHTML, escapeAttr } from '/both/safeDom.js';
 const kijelolt = []; //Diagrammok gyűjtője
 const atlagolt = [];  //Diagrammok átlaga
 const levelClasses = ['lvl0', 'lvl1', 'lvl2'];
 let _szinCache = new Map();
 let megtekintesMod = false;
 let osszehasonlitoDiagramInstance = null;
+let folyamatSorrendIds = [];
 
 // Témakörök színei
 
@@ -20,6 +57,124 @@ const toAlpha = (rgba, a) => {
     const m = rgba.match(/rgba?\((\s*\d+\s*,\s*\d+\s*,\s*\d+)(?:\s*,\s*[\d.]+)?\)/i);
     return m ? `rgba(${m[1]}, ${a})` : rgba;
   };
+function normalizeKey(value) {
+  return String(value || '')
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/\s+/g, ' ');
+}
+
+
+function normalizalFolyamatSorrend(kijeloltTomb) {
+  const aktualisIds = new Set(kijeloltTomb.map(item => String(item.id)));
+
+  folyamatSorrendIds = folyamatSorrendIds.filter(id => aktualisIds.has(String(id)));
+
+  kijeloltTomb.forEach(item => {
+    const id = String(item.id);
+    if (!folyamatSorrendIds.includes(id)) {
+      folyamatSorrendIds.push(id);
+    }
+  });
+
+  return folyamatSorrendIds;
+}
+
+function getFolyamatElemFelirat(item) {
+  const periodus = String(item?.periodus || '').trim();
+  const nev = String(item?.nev || '').trim();
+
+  if (periodus && nev) return `${periodus} – ${nev}`;
+  return periodus || nev || `Értékelés #${item?.id ?? ''}`;
+}
+
+function getRendezettFolyamatKijelolt() {
+  if (!Array.isArray(kijelolt) || kijelolt.length === 0) return [];
+
+  const pozicioMap = new Map(
+    folyamatSorrendIds.map((id, index) => [String(id), index])
+  );
+
+  return [...kijelolt].sort((a, b) => {
+    const aPoz = pozicioMap.has(String(a.id)) ? pozicioMap.get(String(a.id)) : Number.MAX_SAFE_INTEGER;
+    const bPoz = pozicioMap.has(String(b.id)) ? pozicioMap.get(String(b.id)) : Number.MAX_SAFE_INTEGER;
+
+    if (aPoz !== bPoz) return aPoz - bPoz;
+    return String(a.periodus || '').localeCompare(String(b.periodus || ''), 'hu');
+  });
+}
+
+function renderFolyamatSorrendValaszto(container, kijeloltTomb) {
+  if (!container) return;
+
+  normalizalFolyamatSorrend(kijeloltTomb);
+
+  const regi = container.querySelector('.folyamat-sorrend-valaszto');
+  if (regi) regi.remove();
+
+  if (!Array.isArray(kijeloltTomb) || kijeloltTomb.length < 2) {
+    return;
+  }
+
+  const rendezett = getRendezettFolyamatKijelolt();
+  const wrapper = document.createElement('div');
+  wrapper.className = 'folyamat-sorrend-valaszto no-print';
+
+  const cim = document.createElement('h4');
+  cim.textContent = 'Előrehaladás sorrendje:';
+  wrapper.appendChild(cim);
+
+  const leiras = document.createElement('p');
+  leiras.className = 'folyamat-sorrend-leiras';
+  leiras.textContent = 'Itt állítható be, melyik értékelés legyen az első, közbülső vagy utolsó állapot a vonaldiagramon.';
+  wrapper.appendChild(leiras);
+
+  const lista = document.createElement('div');
+  lista.className = 'folyamat-sorrend-lista';
+
+  rendezett.forEach((item, index) => {
+    const sor = document.createElement('label');
+    sor.className = 'folyamat-sorrend-sor';
+
+    const nev = document.createElement('span');
+    nev.className = 'folyamat-sorrend-nev';
+    nev.textContent = getFolyamatElemFelirat(item);
+
+    const select = document.createElement('select');
+    select.className = 'folyamat-sorrend-select';
+    select.dataset.kitoltesId = String(item.id);
+
+    for (let i = 1; i <= rendezett.length; i += 1) {
+      const option = document.createElement('option');
+      option.value = String(i);
+      option.textContent = i === 1
+        ? '1. első állapot'
+        : (i === rendezett.length ? `${i}. utolsó állapot` : `${i}. közbülső állapot`);
+      if (i === index + 1) option.selected = true;
+      select.appendChild(option);
+    }
+
+    sor.append(select, nev);
+    lista.appendChild(sor);
+  });
+
+  wrapper.appendChild(lista);
+  container.appendChild(wrapper);
+}
+
+function mozgatFolyamatSorrendben(id, ujPozicio) {
+  const idStr = String(id);
+  const jelenlegiIndex = folyamatSorrendIds.indexOf(idStr);
+
+  if (jelenlegiIndex < 0) return;
+
+  const celIndex = Math.max(0, Math.min(Number(ujPozicio) - 1, folyamatSorrendIds.length - 1));
+
+  folyamatSorrendIds.splice(jelenlegiIndex, 1);
+  folyamatSorrendIds.splice(celIndex, 0, idStr);
+}
 
 
 // dashStatic.js
@@ -28,81 +183,107 @@ async function temaChecklistLetrehoz(kijeloltTomb) {
   const container = document.getElementById('tema-valaszto-container');
   if (!container) return;
 
-  // Összegyűjtjük az összes egyedi főkategóriát
   const temaSet = new Set();
+
   kijeloltTomb.forEach(item => {
-    const fokategoriak = extractTopLevelPercents(item.szazalek); // Ez a függvény már létezik nálad
+    const fokategoriak = extractTopLevelPercents(item.szazalek);
     Object.keys(fokategoriak).forEach(tema => temaSet.add(tema));
   });
 
-  // Rendezés marad
-const rendezettTemak = Array.from(temaSet).sort((a, b) => a.localeCompare(b, 'hu'));
-// Betöltjük a szín-hozzárendeléseket
-const { chartMap } = await loadColorMaps(modulId);
+  const rendezettTemak = Array.from(temaSet).sort((a, b) => a.localeCompare(b, 'hu'));
+  const { chartMap } = await loadColorMaps(modulId);
 
-// (Opcionális) biztonságos kiíráshoz
-const escapeHtml = s => String(s)
-  .replaceAll('&','&amp;').replaceAll('<','&lt;')
-  .replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#39;');
-
-// HTML felépítése: h4 + külön konténer a checkboxoknak + gomb
-let checklistHTML = `
-  <div class="tema-valaszto">
-    <h4 id="temak-cim">Válassza ki a témákat az összehasonlításhoz:</h4>
-    <div class="temak-container" role="group" aria-labelledby="temak-cim">
-`;
-
-rendezettTemak.forEach((tema, idx) => {
-  const temaId = `tema-${tema.replace(/[^a-zA-Z0-9]/g, '-')}`;
-  const baseColor = chartMap[tema]?.trim() || RADAR_BASE[idx % RADAR_BASE.length];
-  const bgColor = toAlpha(baseColor, 0.25); // Áttetsző háttérszín
-  
-  checklistHTML += `
-    <label class="tema-checkbox" for="${temaId}" style="background-color: ${bgColor}; border-left: 5px solid ${baseColor};">
-      <input type="checkbox" id="${temaId}" name="tema" value="${escapeHtml(tema)}" checked>
-      <span class="tema-felirat">${escapeHtml(tema)}</span>
-    </label>
+  let checklistHTML = `
+    <div class="tema-valaszto">
+      <h4 id="temak-cim">Válassza ki a témákat az összehasonlításhoz:</h4>
+      <div class="temak-container" role="group" aria-labelledby="temak-cim">
   `;
-});
-checklistHTML += `</div></div>`; // Lezárjuk a diveket
 
-container.innerHTML = checklistHTML;
+  rendezettTemak.forEach((tema, idx) => {
+    const temaId = `tema-${String(tema).replace(/[^a-zA-Z0-9]/g, '-')}`;
+    const rawBaseColor = chartMap[tema]?.trim() || RADAR_BASE[idx % RADAR_BASE.length];
+    const baseColor = safeCssColor(rawBaseColor);
+    const bgColor = safeCssColor(toAlpha(baseColor, 0.25), 'rgba(160,160,160,0.25)');
 
-const temakBox = container.querySelector('.temak-container');
-  if (temakBox) {
-    temakBox.addEventListener('change', (e) => {
+    checklistHTML += `
+      <label class="tema-checkbox" for="${escapeAttr(temaId)}" style="background-color: ${bgColor}; border-left: 5px solid ${baseColor};">
+        <input type="checkbox" id="${escapeAttr(temaId)}" name="tema" value="${escapeAttr(tema)}" checked>
+        <span class="tema-felirat">${escapeHTML(tema)}</span>
+      </label>
+    `;
+  });
+
+  checklistHTML += `</div></div>`;
+  container.innerHTML = checklistHTML;
+
+  renderFolyamatSorrendValaszto(container, kijeloltTomb);
+
+  if (container.dataset.folyamatControlsBound !== '1') {
+    container.dataset.folyamatControlsBound = '1';
+
+    container.addEventListener('change', (e) => {
       if (e.target && e.target.matches('input[name="tema"]')) {
-        // async függvény, de event handlerből hívható
-        vonalDiagramFrissites();
+        void vonalDiagramFrissites(container);
+        return;
+      }
+
+      if (e.target && e.target.matches('.folyamat-sorrend-select')) {
+        mozgatFolyamatSorrendben(e.target.dataset.kitoltesId, e.target.value);
+        renderFolyamatSorrendValaszto(container, kijelolt);
+        void vonalDiagramFrissites(container);
       }
     });
   }
 
-
-  vonalDiagramFrissites();
+  await vonalDiagramFrissites(container);
 }
 
-async function vonalDiagramFrissites() {
+function getTemaContainer(root = document) {
+  if (root?.matches?.('#tema-valaszto-container')) return root;
+  return root?.querySelector?.('#tema-valaszto-container') || document.getElementById('tema-valaszto-container');
+}
 
-  const labels = kijelolt.map(ertekeles => ertekeles.periodus || 'Névtelen értékelés');
+function clearOsszehasonlitoDiagram(canvas = document.getElementById('osszehasonlitoVonaldiagram')) {
+  if (!canvas) return;
 
-  const kivalasztottTemak = [];
-  document
-    .querySelectorAll('#tema-valaszto-container input[name="tema"]:checked')
-    .forEach(cb => kivalasztottTemak.push(cb.value));
+  const existingChart = window.Chart?.getChart(canvas);
+  if (existingChart) existingChart.destroy();
 
-  if (kivalasztottTemak.length === 0 || kijelolt.length === 0) return;
+  if (osszehasonlitoDiagramInstance) {
+    try { osszehasonlitoDiagramInstance.destroy(); } catch {}
+    osszehasonlitoDiagramInstance = null;
+  }
 
-  // temakorok.json → chartMap
-  const { chartMap } = await loadColorMaps(modulId); // modulId már globálban elérhető
+  const ctx = canvas.getContext('2d');
+  if (ctx) ctx.clearRect(0, 0, canvas.width || 0, canvas.height || 0);
+}
+
+async function vonalDiagramFrissites(root = document, canvas = document.getElementById('osszehasonlitoVonaldiagram')) {
+  const temaContainer = getTemaContainer(root);
+  const canvasEl = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
+
+  if (!temaContainer || !canvasEl) return;
+
+  const rendezettKijelolt = getRendezettFolyamatKijelolt();
+  const labels = rendezettKijelolt.map(ertekeles => ertekeles.periodus || ertekeles.nev || 'Névtelen értékelés');
+
+  const kivalasztottTemak = Array
+    .from(temaContainer.querySelectorAll('input[name="tema"]:checked'))
+    .map(cb => cb.value);
+
+  if (rendezettKijelolt.length === 0 || kivalasztottTemak.length === 0) {
+    clearOsszehasonlitoDiagram(canvasEl);
+    return;
+  }
+
+  const { chartMap } = await loadColorMaps(modulId);
 
   const datasets = kivalasztottTemak.map((tema, idx) => {
-    const data = kijelolt.map(ertekeles => {
+    const data = rendezettKijelolt.map(ertekeles => {
       const top = extractTopLevelPercents(ertekeles.szazalek);
       return top[tema] || 0;
     });
 
-    // Preferált kategória-szín a temakorok.json alapján, egyébként fallback a RADAR_BASE
     const base = chartMap[tema]?.trim() || RADAR_BASE[idx % RADAR_BASE.length];
     const borderColor = toAlpha(base, 1) || base;
     const backgroundColor = toAlpha(base, 0.18) || base;
@@ -120,20 +301,25 @@ async function vonalDiagramFrissites() {
     };
   });
 
-  vonalDiagramRajzol(labels, datasets);
+  vonalDiagramRajzol(labels, datasets, canvasEl, rendezettKijelolt.map(item => String(item.id)));
 }
 
-// dashStatic.js
-
-function vonalDiagramRajzol(labels, datasets) {
-  const ctx = document.getElementById('osszehasonlitoVonaldiagram')?.getContext('2d');
+function vonalDiagramRajzol(labels, datasets, canvas = document.getElementById('osszehasonlitoVonaldiagram'), folyamatIds = []) {
+  const canvasEl = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
+  const ctx = canvasEl?.getContext?.('2d');
   if (!ctx) return;
-  
-  if (osszehasonlitoDiagramInstance) {
-    osszehasonlitoDiagramInstance.destroy();
+
+  canvasEl.dataset.folyamatIds = JSON.stringify(folyamatIds.map(id => String(id)));
+
+  const existingChart = window.Chart?.getChart(canvasEl);
+  if (existingChart) existingChart.destroy();
+
+  if (canvasEl.id === 'osszehasonlitoVonaldiagram' && osszehasonlitoDiagramInstance) {
+    try { osszehasonlitoDiagramInstance.destroy(); } catch {}
+    osszehasonlitoDiagramInstance = null;
   }
-  
-  osszehasonlitoDiagramInstance = new Chart(ctx, {
+
+  const chart = new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
@@ -142,8 +328,9 @@ function vonalDiagramRajzol(labels, datasets) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      animation: false,
       plugins: {
-        legend: { display: false }, // <<< LEGENDA KIKAPCSOLVA
+        legend: { display: false },
         title: {
           display: true,
           text: 'Értékelések profiljának összehasonlítása'
@@ -161,15 +348,29 @@ function vonalDiagramRajzol(labels, datasets) {
       }
     }
   });
+
+  if (canvasEl.id === 'osszehasonlitoVonaldiagram') {
+    osszehasonlitoDiagramInstance = chart;
+  }
 }
-function colorToRgba(value, alpha = 0.5) {
+
+function safeCssColor(value, fallback = 'rgba(160,160,160,0.6)') {
   const color = String(value || '').trim();
 
-  if (!color) {
-    return `rgba(160,160,160,${alpha})`;
-  }
+  if (/^#[0-9a-fA-F]{3}$/.test(color)) return color;
+  if (/^#[0-9a-fA-F]{6}$/.test(color)) return color;
+  if (/^rgb\(\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*\)$/.test(color)) return color;
+  if (/^rgba\(\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(0|1|0?\.\d+)\s*\)$/.test(color)) return color;
 
-  if (color.startsWith('#')) {
+  return fallback;
+}
+function colorToRgba(value, alpha = 0.5) {
+  const fallback = `rgba(160,160,160,${alpha})`;
+  const color = String(value || '').trim();
+
+  if (!color) return fallback;
+
+  if (/^#[0-9a-fA-F]{3}$/.test(color) || /^#[0-9a-fA-F]{6}$/.test(color)) {
     const hex = color.length === 4
       ? '#' + color[1] + color[1] + color[2] + color[2] + color[3] + color[3]
       : color;
@@ -178,20 +379,21 @@ function colorToRgba(value, alpha = 0.5) {
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
 
-    if ([r, g, b].some(Number.isNaN)) {
-      return `rgba(160,160,160,${alpha})`;
-    }
-
+    if ([r, g, b].some(Number.isNaN)) return fallback;
     return `rgba(${r},${g},${b},${alpha})`;
   }
 
-  const match = color.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
-
-  if (match) {
-    return `rgba(${match[1]},${match[2]},${match[3]},${alpha})`;
+  const rgbMatch = color.match(/^rgb\(\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*\)$/i);
+  if (rgbMatch) {
+    return `rgba(${rgbMatch[1]},${rgbMatch[2]},${rgbMatch[3]},${alpha})`;
   }
 
-  return color;
+  const rgbaMatch = color.match(/^rgba\(\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(25[0-5]|2[0-4]\d|1?\d?\d)\s*,\s*(0|1|0?\.\d+)\s*\)$/i);
+  if (rgbaMatch) {
+    return `rgba(${rgbaMatch[1]},${rgbaMatch[2]},${rgbaMatch[3]},${alpha})`;
+  }
+
+  return fallback;
 }
 
 export async function loadColorMaps(modulId) {
@@ -224,8 +426,13 @@ export async function loadColorMaps(modulId) {
     const chartColor = item.chart || item.szin || 'rgba(160,160,160,0.6)';
     const bgColor = item.szin || item.chart || 'rgba(160,160,160,0.6)';
 
-    chartMap[nev] = colorToRgba(chartColor, 0.5);
-    bgMap[nev] = bgColor;
+    const normalizedNev = normalizeKey(nev);
+
+chartMap[nev] = colorToRgba(chartColor, 0.5);
+chartMap[normalizedNev] = colorToRgba(chartColor, 0.5);
+
+bgMap[nev] = safeCssColor(bgColor);
+bgMap[normalizedNev] = safeCssColor(bgColor);
   }
 
   const out = { chartMap, bgMap };
@@ -445,13 +652,14 @@ if (!szummMultiPieInstance) {
   szummMultiPieInstance.data.datasets = datasets;
   szummMultiPieInstance.update();
 }
-  const pieLeg = document.getElementById('pieLegend');
+const pieLeg = document.getElementById('pieLegend');
+
 if (pieLeg) {
   pieLeg.innerHTML = labels.map((lab, i) => `
-    <span class="legend-item" style="background:${catColors[i]}">
-      ${lab}
+    <span class="legend-item" style="background:${safeCssColor(catColors[i])}">
+      ${escapeHTML(lab)}
     </span>
-  `);
+  `).join('');
 }
 }
 //Radar frissítő
@@ -530,16 +738,35 @@ function renderSummaryTree(jsonObj, targetSel = '#szumm-fa') {
 const pct = (typeof val['%'] === 'number') ? val['%'] : null;
 if (pct === 0) continue;              // 0-ás belső csomópontot is ugorjuk
 
-      const next = val.alkategoriak || val.altTemak ||
-                   Object.fromEntries(Object.entries(val).filter(([k]) => k !== '%'));
-      walk(next, [...path, { key, pct }]);
+     const next = val.alkategoriak || val.altTemak ||
+             Object.fromEntries(Object.entries(val).filter(([k]) => k !== '%'));
+
+const nextEntries = Object.entries(next || {});
+
+if (nextEntries.length === 0) {
+  if (typeof pct === 'number') {
+    leaves.push([...path, { key, pct }]);
+  }
+  continue;
+}
+
+walk(next, [...path, { key, pct }]);
     }
   })(jsonObj);
 if (leaves.length === 0) {
 target.innerHTML = '<div class="no-data">Nincs elegendő közös adat a statisztika megjelenítéséhez (a válaszadási arány túl alacsony).</div>';
    return;}
-  const depth        = Math.max(...leaves.map(p => p.length));
-  const rowspanTodo  = Array(depth).fill(0);
+const depth = Math.max(...leaves.map(p => p.length));
+
+const normalizedLeaves = leaves.map(path => {
+  const copy = [...path];
+  while (copy.length < depth) {
+    copy.push({ key: '', pct: null });
+  }
+  return copy;
+});
+
+const rowspanTodo = Array(depth).fill(0);
 
   /* ---- táblázat ---- */
   const table = document.createElement('table');
@@ -551,8 +778,7 @@ target.innerHTML = '<div class="no-data">Nincs elegendő közös adat a statiszt
   let prevRoot = null, prevRootRow = null;          // lvl0
   let prevSub  = null, prevSubRow  = null;          // lvl1
 
-  leaves.forEach((path, rowIdx) => {
-    while (path.length < depth) path.push({ key: '', pct: null });
+normalizedLeaves.forEach((path, rowIdx) => {
 
     const rootKey = path[0].key;                   // lvl0 kulcs
     const subKey  = path[1]?.key || null;          // lvl1 kulcs (lehet '' / null)
@@ -582,10 +808,10 @@ target.innerHTML = '<div class="no-data">Nincs elegendő közös adat a statiszt
 
       /* rowspan mérete */
       let span = 0;
-      for (let i = rowIdx; i < leaves.length; i++) {
-        if (leaves[i][lvl].key === key) span++;
-        else break;
-      }
+   for (let i = rowIdx; i < normalizedLeaves.length; i++) {
+    if ((normalizedLeaves[i][lvl]?.key || '') === key) span++;
+    else break;
+}
       rowspanTodo[lvl] = span - 1;
 
       /* cella */
@@ -623,6 +849,13 @@ const style = document.createElement('style');
 style.textContent = `
   .summary-matrix { border-collapse: collapse; width: 100%; }
   .summary-matrix td { border: 1px solid #ccc; }
+  .folyamat-sorrend-valaszto { margin-top: 14px; padding: 12px; border: 1px solid rgba(0,0,0,.12); border-radius: 10px; background: rgba(255,255,255,.72); }
+  .folyamat-sorrend-valaszto h4 { margin: 0 0 6px 0; }
+  .folyamat-sorrend-leiras { margin: 0 0 10px 0; font-size: .9rem; opacity: .78; }
+  .folyamat-sorrend-lista { display: grid; gap: 8px; }
+  .folyamat-sorrend-sor { display: grid; grid-template-columns: minmax(145px, 190px) 1fr; gap: 10px; align-items: center; }
+  .folyamat-sorrend-select { width: 100%; padding: 6px 8px; border-radius: 8px; border: 1px solid rgba(0,0,0,.22); background: #fff; }
+  .folyamat-sorrend-nev { font-weight: 600; color: #333; }
 `;
 document.head.appendChild(style);
 
@@ -679,8 +912,7 @@ function renderInlineBarLegend({ mount, labels, values, colors, statsMap }) {
   const parts = labels.map((lab, i) => {
     const v = values[i];
     const pct = Number.isFinite(v) ? `${Math.round(v)}%` : '—';
-    const sw = `<span class="swatch" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:${colors[i]}"></span>`;
-    const isExtreme = (v === minVal) || (v === maxVal);
+const sw = `<span class="swatch" style="display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;background:${safeCssColor(colors[i])}"></span>`;    const isExtreme = (v === minVal) || (v === maxVal);
 
     const st = statsMap?.[lab]; // lab == főkategória kulcs
     const statsHtml = st
@@ -689,7 +921,7 @@ function renderInlineBarLegend({ mount, labels, values, colors, statsMap }) {
          </span>`
       : '';
 
-    const body = `${sw}<span>${lab} ${pct}</span>${statsHtml}`;
+const body = `${sw}<span>${escapeHTML(lab)} ${escapeHTML(pct)}</span>${statsHtml}`;
     return isExtreme
       ? `<strong class="legend-item" style="display:inline-flex;align-items:center;">${body}</strong>`
       : `<span class="legend-item" style="display:inline-flex;align-items:center;">${body}</span>`;
@@ -711,9 +943,9 @@ function renderExtremeBox({ mount, labels, values, colors, count = null }) {
   const build = (type,val) => {
     const i = values.indexOf(val);
     return `<div class="${type}">
-              <span class="swatch" style="background:${colors[i]}"></span>
+<span class="swatch" style="background:${safeCssColor(colors[i])}"></span>
               <strong>${type === 'best' ? 'Legjobban teljesített terület neve' : 'Fejlesztésre szoruló terület neve'}:</strong>
-              ${labels[i]} ${Math.round(val)}%
+${escapeHTML(labels[i])} ${Math.round(val)}%
             </div>`;
   };
   let html = build('best',max) + build('worst',min);
@@ -727,56 +959,74 @@ function renderExtremeBox({ mount, labels, values, colors, count = null }) {
   box.innerHTML = html;
   mount.appendChild(box); // Mindig a végére kerül!
 }
-
   if (ctx) {
-    if (!szummChartInstance) {
-  const dispLabels = labels.map(()=>'');      // üres feliratok a tengelyhez
-szummChartInstance = new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: dispLabels,
-    datasets: [{
-      label: 'Főkategóriák átlaga (%)',
-      data: values,
-      backgroundColor: szinek,
-      borderColor: szinek.map(s => s.replace('0.5','1')),
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    maintainAspectRatio: false, // <<-- EZT A SORT ADD HOZZÁ!
-    layout: { padding: 0 },   // <<-- EZT A SORT ADD HOZZÁ!
-    animation: { duration: 800 },
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { ticks: { display: false }, grid: { display: false } },
-      y: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } }
+    if (szummChartInstance && !szummChartInstance.data?.datasets?.[0]) {
+      szummChartInstance.destroy();
+      szummChartInstance = null;
     }
-  }
-});
 
-// ── saját legenda ──
-const leg = document.getElementById('barLegend') ?? (() => {
-  const d = document.createElement('div');
-  d.id = 'barLegend';
-  d.className = 'chart-legend';
-  ctx.canvas.parentNode.appendChild(d);
-  return d;
-})();
-leg.innerHTML = '';
-labels.forEach((lab, i) => {
-  const badge = document.createElement('div');
-  badge.className = 'legend-badge';
-  badge.innerHTML = `<span class="swatch" style="background:${szinek[i]}"></span>${lab}`;
-  leg.appendChild(badge);
-});
+    if (!szummChartInstance) {
+      const dispLabels = labels.map(() => '');
+
+      szummChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: dispLabels,
+          datasets: [{
+            label: 'Főkategóriák átlaga (%)',
+            data: values,
+            backgroundColor: szinek,
+            borderColor: szinek.map(s => String(s).replace('0.5', '1')),
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: 0 },
+          animation: { duration: 800 },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { display: false }, grid: { display: false } },
+            y: { beginAtZero: true, max: 100, ticks: { stepSize: 20 } }
+          }
+        }
+      });
+
+      const leg = document.getElementById('barLegend') ?? (() => {
+        const d = document.createElement('div');
+        d.id = 'barLegend';
+        d.className = 'chart-legend';
+        ctx.canvas.parentNode.appendChild(d);
+        return d;
+      })();
+
+      leg.innerHTML = '';
+      labels.forEach((lab, i) => {
+        const badge = document.createElement('div');
+        badge.className = 'legend-badge';
+badge.innerHTML = `<span class="swatch" style="background:${safeCssColor(szinek[i])}"></span>${escapeHTML(lab)}`;
+        leg.appendChild(badge);
+      });
     } else {
-      szummChartInstance.data.labels = labels;
+      const dispLabels = labels.map(() => '');
+
+      szummChartInstance.data.labels = dispLabels;
       szummChartInstance.data.datasets[0].data = values;
       szummChartInstance.data.datasets[0].backgroundColor = szinek;
-      szummChartInstance.data.datasets[0].borderColor = szinek.map(s => s.replace('0.5', '1'));
+      szummChartInstance.data.datasets[0].borderColor = szinek.map(s => String(s).replace('0.5', '1'));
       szummChartInstance.update();
+
+      const leg = document.getElementById('barLegend');
+      if (leg) {
+        leg.innerHTML = '';
+        labels.forEach((lab, i) => {
+          const badge = document.createElement('div');
+          badge.className = 'legend-badge';
+badge.innerHTML = `<span class="swatch" style="background:${safeCssColor(szinek[i])}"></span>${escapeHTML(lab)}`;
+          leg.appendChild(badge);
+        });
+      }
     }
   }
 
@@ -884,11 +1134,17 @@ pointLabels: {
           }
         }
       });
-    } else {
-      szummRadarInstance.data.labels = labels;
-      szummRadarInstance.data.datasets[0].data = values;
-      szummRadarInstance.update();
-    }
+  } else {
+  if (!szummRadarInstance.data?.datasets?.[0]) {
+    szummRadarInstance.destroy();
+    szummRadarInstance = null;
+    return letrehozSzummDiagram(jsonObj, kategoriakChartSzinek);
+  }
+
+  szummRadarInstance.data.labels = labels;
+  szummRadarInstance.data.datasets[0].data = values;
+  szummRadarInstance.update();
+}
   } else {
     console.warn('Hiányzik a szummRadarChart canvas.');
   }
@@ -911,7 +1167,7 @@ async function frissitAtlag() {
   
 }
 export function monitorozCheckek() {
-  const container = document.querySelector('.inner-div');
+  const container = getErtekekInnerDiv();
   if (!container) return;
 
   // 1. Védelem: Ne csatoljunk újabb figyelőt, ha már van rajta
@@ -920,6 +1176,12 @@ export function monitorozCheckek() {
 
   container.addEventListener('change', async (e) => {
     if (!e.target.matches('input[type="checkbox"].cheking')) return;
+
+    if (!canUseGroupStatisticsFeature()) {
+      e.target.checked = false;
+      notifyGroupStatisticsBlocked();
+      return;
+    }
 
     const osszes = [...container.querySelectorAll('input[type="checkbox"].cheking')];
     const aktivak = osszes.filter(cb => cb.checked);
@@ -1023,8 +1285,14 @@ const ujertBtn = document.getElementById('ujstat');
 
 //Függvény defniálás
 function selectAllCheckboxes() {
+  if (!canUseGroupStatisticsFeature()) {
+    notifyGroupStatisticsBlocked();
+    return;
+  }
+
   // mindent, ami cheking osztályú checkbox
-  const boxes = Array.from(document.querySelectorAll('input.cheking[type="checkbox"]'));
+  const container = getErtekekInnerDiv();
+  const boxes = Array.from((container || document).querySelectorAll('input.cheking[type="checkbox"]'));
   if (boxes.length === 0) {
     console.warn('Nincs egyetlen checkbox sem az oldalon.');
     return;

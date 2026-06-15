@@ -1010,3 +1010,984 @@
 [2026-05-05T12:20:30.190Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-05-05T12:40:56.869Z] [LOG]: Szerver fut a http://localhost:3000 címen
 [2026-05-05T17:19:34.141Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-06T04:55:27.241Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-06T07:08:10.821Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-06T12:26:47.083Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-07T07:36:02.368Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-08T05:34:18.208Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T04:48:12.487Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T05:16:30.923Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T05:39:54.701Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T05:47:28.755Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T06:04:18.723Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-11T06:26:09.506Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:37:28.307Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:42:18.900Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:45:06.429Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:47:59.477Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:48:29.206Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:51:59.165Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T10:54:26.780Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T11:01:00.315Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T11:02:15.153Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T11:08:08.489Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-12T11:16:36.219Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T04:57:42.568Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T04:57:57.378Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:00:15.754Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:01:22.979Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:02:40.817Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:03:47.841Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:04:12.755Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:06:44.087Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:10:22.295Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:13:28.451Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:16:06.067Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:16:31.553Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:19:15.060Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:23:18.191Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:25:59.583Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:28:29.138Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:30:04.464Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:47:19.461Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:48:30.584Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:48:46.038Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:49:01.684Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:49:12.186Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:51:08.335Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:51:16.714Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:53:17.796Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:56:30.599Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T05:59:25.570Z] [LOG]: Email elküldve: 250 2.0.0 OK  1778651965 5b1f17b1804b1-48e8f410d9fsm47936175e9.6 - gsmtp
+[2026-05-13T06:00:17.024Z] [LOG]: Email elküldve: 250 2.0.0 OK  1778652016 ffacd0b85a97d-458b3664e3esm22135360f8f.3 - gsmtp
+[2026-05-13T06:01:00.424Z] [LOG]: Email elküldve: 250 2.0.0 OK  1778652060 5b1f17b1804b1-48fce066eeasm21785065e9.7 - gsmtp
+[2026-05-13T06:12:09.880Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:26:40.326Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:29:52.055Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:50:18.849Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:54:49.254Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:55:24.477Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:55:52.011Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T06:58:01.925Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:01:41.693Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:10:19.434Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:16:47.042Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:21:07.450Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:29:40.899Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:31:10.465Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:35:10.218Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T07:46:50.598Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:00:19.331Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:00:24.715Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:29:55.770Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:30:20.346Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:32:42.072Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:33:10.350Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:39:10.665Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T09:44:09.033Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T10:31:46.425Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T10:31:57.220Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T10:36:16.941Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T10:37:14.284Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T10:43:02.622Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:37:03.898Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:39:20.475Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:39:48.707Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:43:43.130Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:46:16.726Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T11:56:08.316Z] [LOG]: Email elküldve: 250 2.0.0 OK  1778673368 ffacd0b85a97d-45491da03a7sm40768027f8f.33 - gsmtp
+[2026-05-13T12:14:48.010Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:25:45.277Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:26:39.705Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:29:38.050Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:29:46.127Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:31:25.335Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T12:31:27.422Z] [HIBA]: [2026-05-13T12:31:27.419Z] HTTP ERROR: Error: ENOENT: no such file or directory, stat 'C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\httpdocs\public\index.html'
+
+[2026-05-13T12:33:54.111Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T16:56:47.929Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T16:57:12.439Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T17:44:26.616Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-13T17:59:45.039Z] [HIBA]: [AI Modul] Stream hiba: TypeError: terminated
+    at Fetch.onAborted (node:internal/deps/undici/undici:11020:53)
+    at Fetch.emit (node:events:518:28)
+    at Fetch.terminate (node:internal/deps/undici/undici:10178:14)
+    at Object.onError (node:internal/deps/undici/undici:11141:38)
+    at Request.onError (node:internal/deps/undici/undici:2094:31)
+    at Object.errorRequest (node:internal/deps/undici/undici:1591:17)
+    at TLSSocket.<anonymous> (node:internal/deps/undici/undici:6263:16)
+    at TLSSocket.emit (node:events:530:35)
+    at node:net:343:12
+    at TCP.done (node:_tls_wrap:650:7)
+[2026-05-13T17:59:45.060Z] [HIBA]: [AI Modul] Stream hiba: TypeError: terminated
+    at Fetch.onAborted (node:internal/deps/undici/undici:11020:53)
+    at Fetch.emit (node:events:518:28)
+    at Fetch.terminate (node:internal/deps/undici/undici:10178:14)
+    at Object.onError (node:internal/deps/undici/undici:11141:38)
+    at Request.onError (node:internal/deps/undici/undici:2094:31)
+    at Object.errorRequest (node:internal/deps/undici/undici:1591:17)
+    at TLSSocket.<anonymous> (node:internal/deps/undici/undici:6263:16)
+    at TLSSocket.emit (node:events:530:35)
+    at node:net:343:12
+    at TCP.done (node:_tls_wrap:650:7)
+[2026-05-14T05:04:39.600Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T11:47:09.137Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T11:47:21.656Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T11:47:37.131Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T11:51:20.522Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T19:38:47.945Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-16T19:47:31.495Z] [LOG]: Új intézmény regisztrálva: 0121asda  adas (Kód: 012190202605)
+[2026-05-16T19:47:37.064Z] [LOG]: Email elküldve: 250 2.0.0 OK  1778960856 5b1f17b1804b1-48feaa2c96csm45413915e9.2 - gsmtp
+[2026-05-17T15:42:38.057Z] [LOG]: Email elküldve: 250 2.0.0 OK  1779032557 5b1f17b1804b1-48fe53767ecsm179597035e9.10 - gsmtp
+[2026-05-17T16:25:37.533Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-17T17:23:50.084Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-17T17:24:29.942Z] [LOG]: Email elküldve: 250 2.0.0 OK  1779038669 5b1f17b1804b1-48febe58638sm61145805e9.17 - gsmtp
+[2026-05-18T11:53:58.124Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-18T11:54:46.175Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-18T12:39:51.931Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-21T10:11:51.573Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:12:30.406Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:12:53.623Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:13:11.205Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:13:33.953Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:13:53.356Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:13:55.930Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-21T10:14:14.574Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-22T09:28:05.266Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-22T16:17:45.548Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-22T16:21:34.657Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-22T16:28:47.641Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-22T17:10:51.951Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-22T17:11:06.860Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T05:59:58.747Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:00:41.911Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:01:22.962Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:02:07.863Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:02:38.860Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:03:04.897Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:03:41.719Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:04:33.695Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:17:56.835Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T06:44:22.323Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T07:20:23.019Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T07:29:48.639Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T07:29:57.593Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T07:30:00.678Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T08:41:31.642Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T08:42:13.082Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T08:47:50.643Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-24T09:08:51.278Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T05:55:39.504Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T07:26:17.924Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T07:44:57.873Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:16:25.923Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:22:23.520Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:22:45.282Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:22:48.708Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:26:33.742Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:26:40.733Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:30:15.441Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:40:22.519Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:41:51.461Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:43:25.503Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:55:06.736Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:56:15.158Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T08:56:41.911Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T13:35:05.165Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-05-25T13:35:20.712Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T14:41:39.380Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T14:45:54.681Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T14:46:04.559Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T14:46:33.129Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T14:47:02.139Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T15:28:26.878Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T16:04:36.210Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T16:45:20.795Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T17:46:02.004Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T17:54:04.048Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T17:57:10.358Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T17:58:25.568Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T17:58:56.911Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T18:04:52.522Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-25T18:45:11.783Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-26T05:51:27.416Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-26T06:04:49.481Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-26T06:33:26.260Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_DATA_TOO_LONG","errno":1406,"sqlState":"22001"}
+[2026-05-27T05:36:13.009Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T08:36:06.707Z] [HIBA]: Bejelentkezési hiba: Error: Table 'ertekek02.felhasznalok' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T08:37:33.505Z] [HIBA]: [2026-06-01T08:37:33.503Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T08:51:26.162Z] [HIBA]: [2026-06-01T08:51:26.160Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T08:52:33.454Z] [HIBA]: [2026-06-01T08:52:33.453Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:02:59.056Z] [HIBA]: [2026-06-01T09:02:59.056Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:02:59.069Z] [HIBA]: [2026-06-01T09:02:59.068Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:07:33.416Z] [HIBA]: [2026-06-01T09:07:33.415Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:22:33.393Z] [HIBA]: [2026-06-01T09:22:33.392Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:37:33.380Z] [HIBA]: [2026-06-01T09:37:33.379Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:52:33.366Z] [HIBA]: [2026-06-01T09:52:33.364Z] UNHANDLED REJECTION: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:25.444Z] [HIBA]: [2026-06-01T09:54:25.443Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:25.489Z] [HIBA]: [2026-06-01T09:54:25.488Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:25.532Z] [HIBA]: [2026-06-01T09:54:25.531Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:27.458Z] [HIBA]: [2026-06-01T09:54:27.458Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:27.485Z] [HIBA]: [2026-06-01T09:54:27.485Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:27.514Z] [HIBA]: [2026-06-01T09:54:27.514Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:54:42.585Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T09:55:23.251Z] [HIBA]: Bejelentkezési hiba: Error: Table 'ertekek02.modulok' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T09:56:48.103Z] [HIBA]: [2026-06-01T09:56:48.103Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:56:48.883Z] [HIBA]: [2026-06-01T09:56:48.882Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:18.876Z] [HIBA]: [2026-06-01T09:57:18.875Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:19.607Z] [HIBA]: [2026-06-01T09:57:19.607Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:21.449Z] [HIBA]: [2026-06-01T09:57:21.449Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:21.513Z] [HIBA]: [2026-06-01T09:57:21.512Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:25.314Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T09:57:26.963Z] [HIBA]: [2026-06-01T09:57:26.963Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:27.018Z] [HIBA]: [2026-06-01T09:57:27.017Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:28.510Z] [HIBA]: [2026-06-01T09:57:28.509Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:57:28.550Z] [HIBA]: [2026-06-01T09:57:28.549Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:59:40.528Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T09:59:44.126Z] [HIBA]: [2026-06-01T09:59:44.126Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T09:59:44.171Z] [HIBA]: [2026-06-01T09:59:44.170Z] HTTP ERROR: Error: Unknown database 'ertekek02'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at ClientHandshake.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-01T10:00:45.463Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:00:59.399Z] [HIBA]: Bejelentkezési hiba: Error: Table 'ertekek.modulok' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:02:54.135Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:03:17.605Z] [HIBA]: Bejelentkezési hiba: Error: Table 'ertekek02.modulok' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:15:47.935Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:16:34.472Z] [HIBA]: Aktivitásnapló mentési hiba: {"code":"ER_NO_DEFAULT_FOR_FIELD","errno":1364,"sqlState":"HY000"}
+[2026-06-01T10:16:34.661Z] [HIBA]: Adatbázis hiba (/api/user-brief): Error: Table 'ertekek02.roles' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:16:34.664Z] [HIBA]: get-username hiba: Error: Table 'ertekek02.roles' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:16:55.342Z] [HIBA]: get-username hiba: Error: Table 'ertekek02.roles' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:16:55.349Z] [HIBA]: get-username hiba: Error: Table 'ertekek02.roles' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:20:03.084Z] [HIBA]: Adatbázis hiba (/api/user-brief): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:20:07.814Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:20:15.658Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:20:17.773Z] [HIBA]: Adatbázis hiba (/api/user-brief): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:33:40.945Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T10:34:00.680Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:00.688Z] [HIBA]: Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:03.079Z] [HIBA]: Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:03.093Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:03.098Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:34.235Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:34.252Z] [HIBA]: Adatbázis hiba (/api/user-brief): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:34.260Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:34.291Z] [HIBA]: Adatbázis hiba (/api/user-brief): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T10:34:34.296Z] [HIBA]: DB-hiba (fo_kategoriak + megosztott): Error: The user specified as a definer ('szpatis21'@'%') does not exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T11:15:30.939Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T11:15:38.248Z] [HIBA]: DB-hiba (alt_temak rugalmas): Error: Unknown column 't.nev' in 'field list'
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-01T11:19:52.419Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T12:23:35.631Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T12:23:47.622Z] [HIBA]: [2026-06-01T12:23:47.621Z] HTTP ERROR: InternalServerError: stream is not readable
+    at readStream (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\raw-body\index.js:185:17)
+    at getRawBody (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\raw-body\index.js:116:12)
+    at read (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\body-parser\lib\read.js:79:3)
+    at jsonParser (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\body-parser\lib\types\json.js:138:5)
+    at Layer.handle [as handle_request] (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\layer.js:95:5)
+    at trim_prefix (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:328:13)
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:286:9
+    at Function.process_params (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:346:12)
+    at next (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express\lib\router\index.js:280:10)
+    at C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\express-session\index.js:514:7
+
+[2026-06-01T14:41:10.476Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T14:42:28.091Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T14:45:57.788Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T14:56:26.348Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T14:57:45.878Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T15:02:18.408Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-01T17:28:11.701Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-02T10:06:01.794Z] [HIBA]: [feltoltomodul] Al/Altéma létrehozási hiba Error: Column 'alkategoria_id' cannot be null
+    at PromisePool.query (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\promise.js:356:22)
+    at getOrCreateAltId (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\kategoriaHelper.js:101:39)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async resolveKategoriaKapcsoloId (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\kategoriaHelper.js:134:17)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\feltoltomodul.js:1485:5
+[2026-06-02T11:24:35.779Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-04T11:08:25.636Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-05T07:13:05.975Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-05T07:19:18.170Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-05T07:50:51.908Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-05T12:46:10.991Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T09:49:15.621Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T09:54:08.302Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T09:54:44.582Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T10:21:26.233Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T10:27:23.192Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T10:56:39.414Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T10:57:01.147Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T10:57:26.140Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-06T16:11:29.051Z] [HIBA]: [feltoltomodul] Al/Altéma létrehozási hiba Error: Column 'alkategoria_id' cannot be null
+    at PromisePool.query (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\promise.js:356:22)
+    at getOrCreateAltId (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\kategoriaHelper.js:101:39)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async resolveKategoriaKapcsoloId (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\kategoriaHelper.js:134:17)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\feltoltomodul.js:1535:5
+[2026-06-08T07:14:04.869Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T06:39:35.989Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T06:40:36.789Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T10:11:45.923Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T10:15:42.488Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781000142 a640c23a62f3a-bf0559f35c2sm1027551466b.61 - gsmtp
+[2026-06-09T10:17:26.932Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781000246 ffacd0b85a97d-4601f351d40sm59643300f8f.26 - gsmtp
+[2026-06-09T10:29:47.264Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T10:42:49.525Z] [HIBA]: SQL hiba (/update-institution): Error: Incorrect datetime value: '' for column 'szerzodes_visszaerkezett_at' at row 1
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+[2026-06-09T11:42:06.629Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T17:11:27.674Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-09T17:17:38.907Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T07:03:26.669Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781075005 ffacd0b85a97d-4601f2f67c6sm66642930f8f.16 - gsmtp
+[2026-06-10T07:06:35.273Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781075195 ffacd0b85a97d-4601f3529e0sm70677012f8f.28 - gsmtp
+[2026-06-10T07:10:45.522Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781075445 ffacd0b85a97d-4601f3444fesm68940706f8f.20 - gsmtp
+[2026-06-10T07:13:40.758Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781075619 5b1f17b1804b1-490dc471b6dsm34477845e9.0 - gsmtp
+[2026-06-10T08:07:20.055Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:10:30.155Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:16:45.114Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:21:03.458Z] [HIBA]: [2026-06-10T08:21:03.454Z] HTTP ERROR: Error: Table 'ertekek02.sessions' doesn't exist
+    at Packet.asError (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packets\packet.js:738:17)
+    at Query.execute (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\commands\command.js:29:26)
+    at PoolConnection.handlePacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:481:34)
+    at PacketParser.onPacket (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:97:12)
+    at PacketParser.executeStart (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\packet_parser.js:75:16)
+    at Socket.<anonymous> (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\node_modules\mysql2\lib\connection.js:104:25)
+    at Socket.emit (node:events:518:28)
+    at addChunk (node:internal/streams/readable:561:12)
+    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)
+    at Readable.push (node:internal/streams/readable:392:5)
+
+[2026-06-10T08:29:26.115Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781080165 ffacd0b85a97d-4602cda3651sm58316018f8f.32 - gsmtp
+[2026-06-10T08:30:45.387Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781080245 ffacd0b85a97d-4601f35133csm67333005f8f.25 - gsmtp
+[2026-06-10T08:30:58.133Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:30:58.164Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:30:58.202Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:30:58.204Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:30:58.232Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:31:52.466Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:31:52.473Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:31:52.480Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:31:52.486Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:31:52.499Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:33:59.418Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:34:06.680Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:34:09.929Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:34:09.952Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:34:09.983Z] [HIBA]: [license-status hiba] ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licencmodul.js:16:22
+[2026-06-10T08:34:09.985Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:34:10.012Z] [HIBA]: [ertekelomodul] licenc státusz hiba: ReferenceError: firstDefined is not defined
+    at loadPackage (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:145:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async getLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\licenseHelper.js:288:23)
+    at async attachLicenseStatus (C:\Users\kerek\Desktop\webfejlesztés\ertekek.com\ertekek.com\ERTEKEK\modulok\ertekelomodul.js:21:27)
+[2026-06-10T08:34:25.916Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T08:41:20.845Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781080880 ffacd0b85a97d-4601f2f2710sm54816703f8f.14 - gsmtp
+[2026-06-10T08:42:56.962Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781080976 5b1f17b1804b1-490bc3b59f0sm625076415e9.2 - gsmtp
+[2026-06-10T08:57:26.922Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T09:04:34.346Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T09:58:10.979Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T10:04:01.374Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-10T11:11:50.767Z] [LOG]: Új intézmény regisztrálva: DEMO2 (Kód: DEMO-202606-D4A3CB3893, Csomag: demo, Fizetendő: 0)
+[2026-06-10T11:11:52.342Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781089912 5b1f17b1804b1-490bc3d663csm619148525e9.11 - gsmtp
+[2026-06-10T11:11:52.451Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781089912 5b1f17b1804b1-490bc3b5b82sm587015995e9.1 - gsmtp
+[2026-06-11T08:00:24.387Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-12T13:42:21.329Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-13T06:44:08.684Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-13T15:11:53.388Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-13T15:14:01.873Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-13T15:30:02.990Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-13T15:32:28.413Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T04:32:34.084Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T04:39:44.662Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T04:43:02.241Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T04:49:42.813Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T04:50:48.662Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T05:26:05.235Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T05:45:54.887Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T05:47:19.430Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T06:23:55.119Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T07:14:12.038Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T07:39:07.851Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T09:17:40.315Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T09:18:23.519Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781428702 5b1f17b1804b1-49220304180sm143505805e9.4 - gsmtp
+[2026-06-14T09:18:24.337Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781428703 5b1f17b1804b1-4922031b21dsm140715745e9.6 - gsmtp
+[2026-06-14T09:28:03.789Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T09:41:23.976Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T09:42:17.645Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781430137 ffacd0b85a97d-4606f2ce361sm22730055f8f.31 - gsmtp
+[2026-06-14T09:42:17.676Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781430137 ffacd0b85a97d-4606f2b0bbfsm23218893f8f.23 - gsmtp
+[2026-06-14T09:42:30.911Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T09:42:49.997Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781430169 5b1f17b1804b1-492203dd0b9sm146654055e9.15 - gsmtp
+[2026-06-14T09:42:50.814Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781430170 5b1f17b1804b1-492203c05ebsm146616535e9.9 - gsmtp
+[2026-06-14T10:25:29.525Z] [LOG]: Szerver fut a http://localhost:3000 címen
+[2026-06-14T10:26:55.770Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781432815 ffacd0b85a97d-4606f26f23fsm23405148f8f.9 - gsmtp
+[2026-06-14T10:26:56.499Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781432816 5b1f17b1804b1-490ea4a128csm241285165e9.0 - gsmtp
+[2026-06-14T13:24:45.782Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781443485 ffacd0b85a97d-4606f2d933esm23368867f8f.33 - gsmtp
+[2026-06-14T13:24:46.193Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781443486 ffacd0b85a97d-4606f2b0c35sm25337501f8f.22 - gsmtp
+[2026-06-14T13:54:21.432Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781445261 ffacd0b85a97d-4606f2c3fcfsm21650950f8f.26 - gsmtp
+[2026-06-14T13:54:22.229Z] [LOG]: Email elküldve: 250 2.0.0 OK  1781445262 5b1f17b1804b1-492202e5d61sm152214565e9.1 - gsmtp

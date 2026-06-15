@@ -2,7 +2,10 @@
 
 import './main_graph.js'; //Grafikus elemek, PDF generálás, gombok, diagrammok 
 import './main_quest.js'; //Kérdőív rendszer
+import './main_quest_search.js'; // Keresős
+import './main_focus_history.js'; // Előzmények és utolsó fókusz jelölése
 import './main_pdf.js'; //PDF rendszer
+import './main_quest_ertekeles_navigator.js'; //PDF navi
 import { KategoriaKezelo } from './main_quest.js';
 export let megtekintesMod = false;
 
@@ -56,10 +59,10 @@ async function modulinfo() {
                 modulLeiras  = data.modulLeiras;  // pl. "Fejlesztői kompetencia …"
                 console.log(modulNev + " " + modulId)
 
-                const holis = document.querySelector('.holvagyok')
+                const holis = document.querySelector('.holvagyok');
                 const sajtnev = document.querySelector(".sajtnev");
-                holis.innerHTML = modulLeiras;
-                sajtnev.innerHTML = userName;
+                if (holis) holis.textContent = modulLeiras || '';
+                if (sajtnev) sajtnev.textContent = userName || '';
             } else {console.error('Hiba:', data.message);}
         } catch (error) {console.error('Fetch hiba:', error);
         }
@@ -234,7 +237,7 @@ export function animateMessage(text, fontSize, color) {
         loadingOverlay.style.opacity = '1';
 
         // 2. Szöveg beállítása
-        logobelso.innerHTML = text;
+        logobelso.textContent = text ?? '';
         logobelso.style.fontSize = fontSize;
         logobelso.style.color = color;
         logobelso.style.textAlign = "center";
@@ -269,7 +272,7 @@ export function animateMessage(text, fontSize, color) {
   
       loadingOverlay.style.display = 'flex';
       loadingOverlay.style.opacity = '1';
-      logobelso.innerHTML = text;
+      logobelso.textContent = text ?? '';
       logobelso.style.fontSize = fontSize;
       logobelso.style.color = color;
       logobelso.style.textAlign = "center";

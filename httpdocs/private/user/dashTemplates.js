@@ -1,5 +1,51 @@
 // dashTemplates.js
 
+function escapeHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function escapeAttr(value) {
+    return escapeHtml(value).replace(/`/g, '&#096;');
+}
+
+function accountWelcomeCard(d) {
+    const nev = escapeHtml(d?.userName || '');
+    const fokusz = d?.utolsoFokusz;
+
+    const folytatasEngedelyezett =
+        d?.isUser === true &&
+        d?.isElemzo !== true &&
+        d?.isAdmin !== true &&
+        d?.isSysAdmin !== true &&
+        window.location.pathname.includes('/user/');
+
+    if (!folytatasEngedelyezett || !fokusz?.url) {
+        return `
+                            <div class="main-title card">
+                                <span>Jó újra látni ${nev}!</span>
+                            </div>`;
+    }
+
+    const utvonal = escapeHtml(fokusz.utvonalFelirat || 'Értékelő modul');
+    const szoveg = escapeHtml(fokusz.szoveg || 'Utolsó értékelési pont');
+    const valasz = escapeHtml(fokusz.valaszFelirat || 'folytatás');
+    const url = escapeAttr(fokusz.url);
+
+    return `
+                            <div class="main-title card folytatas-kartya" role="button" tabindex="0" data-folytatas-url="${url}" title="Folytatás az értékelő modulban">
+                                <span class="folytatas-koszones">Jó újra látni ${nev}!</span>
+                                <span class="folytatas-tartalom">
+                                    <span class="folytatas-cim">Folytassa ahol abbahagyta:</span>
+                                    <span class="folytatas-utvonal">${utvonal}</span>
+                                    <span class="folytatas-valasz">${szoveg} · ${valasz}</span>
+                                </span>
+                            </div>`;
+}
 export const templates = {
     'ujert': {
         main: () => ` 
@@ -85,9 +131,7 @@ export const templates = {
                 return `      
                     <div class="kontainer">
                         <div class="grid-layout">
-                            <div class="main-title card">
-                                <span>Jó újra látni ${d.userName}!</span>
-                            </div>
+${accountWelcomeCard(d)}
                             <div class="description card">
                                <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
@@ -147,9 +191,7 @@ export const templates = {
                 return `
                     <div class="kontainer">
                         <div class="grid-layout">
-                            <div class="main-title card">
-                                <span>Jó újra látni ${d.userName}!</span>
-                            </div>
+${accountWelcomeCard(d)}
                             <div class="description card">
                                <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
@@ -208,9 +250,7 @@ export const templates = {
                 return `
                     <div class="kontainer">
                         <div class="grid-layout">
-                            <div class="main-title card">
-                                <span>Jó újra látni ${d.userName}!</span>
-                            </div>
+${accountWelcomeCard(d)}
                             <div class="description card">
                                <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
@@ -269,9 +309,7 @@ export const templates = {
                 return `
                     <div class="kontainer">
                         <div class="grid-layout">
-                            <div class="main-title card">
-                                <span>Jó újra látni ${d.userName}!</span>
-                            </div>
+${accountWelcomeCard(d)}
                             <div class="description card">
                                <div class="icon">
                                     <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M664-121q-8-2-15-7l-120-70q-14-8-21.5-21.5T500-249v-141q0-16 7.5-29.5T529-441l120-70q7-5 15-7t16-2q8 0 15.5 2.5T710-511l120 70q14 8 22 21.5t8 29.5v141q0 16-8 29.5T830-198l-120 70q-7 4-14.5 6.5T680-119q-8 0-16-2ZM287-527q-47-47-47-113t47-113q47-47 113-47t113 47q47 47 47 113t-47 113q-47 47-113 47t-113-47ZM80-160v-112q0-33 17-62t47-44q51-26 115-44t141-18h14q6 0 12 2-8 18-13.5 37.5T404-360h-4q-71 0-127.5 18T180-306q-9 5-14.5 14t-5.5 20v32h252q6 21 16 41.5t22 38.5H80Zm376.5-423.5Q480-607 480-640t-23.5-56.5Q433-720 400-720t-56.5 23.5Q320-673 320-640t23.5 56.5Q367-560 400-560t56.5-23.5ZM400-640Zm12 400Zm174-166 94 55 94-55-94-54-94 54Zm124 208 90-52v-110l-90 53v109Zm-150-52 90 53v-109l-90-53v109Z"/></svg>
@@ -527,8 +565,9 @@ export const templates = {
             </div>
             <div class="info-strip">
                 <div class="infocard" id="changepass">Jelszó megváltoztatása</div>
+                <div class="infocard" id="csomagvaltas">Csomagváltás / bővítés</div>
                 <div style ="display:none" class="infocard" id="remove">Adatvédelmi beállítások</div>
-                <div class="infocard" id="plussj">Kérelem jogosultságok bővítésére</div>
+                <div class="infocard" id="plussj">Jogosultság bővítési kérelem</div>
                 <div class="infocard" id="deleteacc">Profil Törlése</div>
             </div>`,
         lapok: (d) => `        
@@ -536,6 +575,10 @@ export const templates = {
                 <div class="infocard">
                     <h3>Intézmény</h3>
                     <p><b>${d.intezmeny}</b> - ${d.intkapmail}</p>
+                </div>
+                <div class="infocard">
+                    <h3>Licenc / csomag</h3>
+                    <p><b>${d.licenszTipus}</b><br>${d.licenszLejarat} - ${d.napokInfo}</p>
                 </div>
                 <div class="infocard">
                     <h3>Szerepkör</h3>
@@ -761,55 +804,149 @@ export const templates = {
                     </div>                            
             </div>
             <div class="info-strip">
-                    <div class="infocard">
+                  <div class="infocard">
                         <p> Ha belépett a feltöltő és tesztelő felületre, hozhat létre:  </p>
                         <p style="display: flex; flex-direction:column;">  
-                                    <p>- Fő-kategóriákat</p> 
+                                    </p><p>- Fő-kategóriákat</p> 
                                     <p>- Al-kategóriákat</p>    
                                     <p>- Hozzá tartozó témákat</p>    
                                     <p>- Kérdéseket</p>    
                                     <p>- és hozzá tartozó alkérdéseket</p>    
-                        </p>
+                        <p></p>
                             <p> továbbá tesztelheti a feltöltött kérdéseket pontszámozás és diagramm megjelenítés szempontjából.</p> 
                             <br> 
                     </div>
-            </div>
         </div>`,
         lapok: () => `
-            <div class="info-strip">
-                <div class="infocard">
-                    <h3>Hogy töltök fel új anyagokat?</h3>
-                    <p>                                    
-                       Az "Indítás" gombra kattintva átugri a feltöltő és tesztelő felületre. 
-                       Itt lesz lehetősége új anyagokat rögzíteni különböző kategóriákon belül.
-                    </p>
-                </div>
-                <div class="infocard">
-                    <h3>Hol fogom látni a létrehozott kérdésköröket?</h3>
-                    <p>                                    
-                        Létrehozás csak pár kattintás a szöveg és pontszámok megadása után, és mind az értékelő mind az adminisztrációs felületen megjelennek az új kategóriák dobozai vagy a kérdések.
-                    </p>
-                </div>
-                <div class="infocard">
-                    <h3>Milyen szakmai anyagot tudok feltölteni és mennyit?</h3>
-                    <p>                                    
-                        Korlátlanul és szabadon tölthet fel és bőívtheti a szakmai anyagát amíg a licensze érvényes. Ezeket az anyagokat ön és kollegái is látni fogják.                              
-                    </p>
-                </div>
-                <div class="infocard">
-                    <h3>Mások szakmai anyagát is láthatom?</h3>
-                    <p>                                    
-                     Csak ha előfizet rá és csak ha adott szakmai anyag készítői ehhez hozzájárulnak. 
-                     Az ÉRTÉKEKben létre hozott anyagok alapból az ön szellemi tulajdonát képezik, más nem jogosult rájuk.   
-                      </p>     
-                </div>
+           <div class="infocard modul-szamolas-infocard">
+                        <div class="modul-szamolas-fejlec">
+                            <h3>Pontszámítás módja</h3>
+                            <span id="modulSzamolasAllapot" class="modul-szamolas-badge">Betöltés...</span>
+                        </div>
+
+                        <div class="modul-szamolas-kapcsolo">
+                            <span>Arányosított</span>
+                            <label class="ai-switch modul-szamolas-switch" for="modulSzamolasRange">
+                                <input id="modulSzamolasRange" type="checkbox" aria-label="Pontszámítás módja">
+                                <span class="ai-slider"></span>
+                            </label>
+                            <span>Összegzés</span>
+                        </div>
+
+                        <div id="modulSzamolasLeiras" class="modul-szamolas-leiras"></div>
+
+                        <div class="modul-szamolas-demo">
+                            <div id="modulSzamolasDemoKerdesek" class="modul-szamolas-demo-kerdesek">
+
+                                <div data-opcios="0" data-opcio-group="" data-demo-kerdes-id="9001" class="question">
+                                    <div class="question-belso">
+                                        <div class="question-szoveg">1 pontos kérdés</div>
+                                        <div class="question-csuszka">
+                                            <div class="csuszka">
+                                                <label class="labelures">
+                                                    <input type="radio" class="ures" name="modulSzamolasDemo9001" value="ures" checked>
+                                                    <div class="material-symbols-rounded uresszoveg" title="Kattintson a válasz elvetéséhez.">settings_ethernet</div>
+                                                </label>
+                                                <label class="labeligen">
+                                                    <input type="radio" class="igen" name="modulSzamolasDemo9001" value="igen">
+                                                    <div class="tooltip" style="opacity: 0; visibility: hidden;">1. Kérdés</div>
+                                                    <div class="material-symbols-rounded igenszoveg">check</div>
+                                                </label>
+                                                <div class="gomboc"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="szerkesztolec">
+                                        <div class="ertek" data-id="9001">1 pont</div>
+                                    </div>
+                                </div>
+
+                                <div data-opcios="0" data-opcio-group="" data-demo-kerdes-id="9002" class="question">
+                                    <div class="question-belso">
+                                        <div class="question-szoveg">5 pontos kérdés</div>
+                                        <div class="question-csuszka">
+                                            <div class="csuszka">
+                                                <label class="labelures">
+                                                    <input type="radio" class="ures" name="modulSzamolasDemo9002" value="ures" checked>
+                                                    <div class="material-symbols-rounded uresszoveg" title="Kattintson a válasz elvetéséhez.">settings_ethernet</div>
+                                                </label>
+                                                <label class="labeligen">
+                                                    <input type="radio" class="igen" name="modulSzamolasDemo9002" value="igen">
+                                                    <div class="tooltip" style="opacity: 0; visibility: hidden;">2. Kérdés</div>
+                                                    <div class="material-symbols-rounded igenszoveg">check</div>
+                                                </label>
+                                                <div class="gomboc"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="szerkesztolec">
+                                        <div class="ertek" data-id="9002">5 pont</div>
+                                    </div>
+                                </div>
+
+                                <div data-opcios="0" data-opcio-group="" data-demo-kerdes-id="9003" class="question">
+                                    <div class="question-belso">
+                                        <div class="question-szoveg">10 pontos kérdés</div>
+                                        <div class="question-csuszka">
+                                            <div class="csuszka">
+                                                <label class="labelures">
+                                                    <input type="radio" class="ures" name="modulSzamolasDemo9003" value="ures" checked>
+                                                    <div class="material-symbols-rounded uresszoveg" title="Kattintson a válasz elvetéséhez.">settings_ethernet</div>
+                                                </label>
+                                                <label class="labeligen">
+                                                    <input type="radio" class="igen" name="modulSzamolasDemo9003" value="igen">
+                                                    <div class="tooltip" style="opacity: 0; visibility: hidden;">3. Kérdés</div>
+                                                    <div class="material-symbols-rounded igenszoveg">check</div>
+                                                </label>
+                                                <div class="gomboc"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="szerkesztolec">
+                                        <div class="ertek" data-id="9003">10 pont</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modul-szamolas-demo-chart">
+                                <canvas id="modulSzamolasDemoChart"></canvas>
+                                <div id="modulSzamolasDemoEredmeny" class="modul-szamolas-demo-eredmeny"></div>
+                            </div>
+                        </div>
+                    </div>
             </div>`
     },
     'plussz': {
      main: () => `<div id="tartalom2">
                 <div id="ai-beallitasok-container">
                     <h3>Mesterséges Intelligencia beállításai</h3>
-                    
+                    <p class="aiwarm">A szakmai anyag és prompt mezőkbe ne írjon személyes adatot vagy esetre utaló információt. 
+                    Ezek a mezők kizárólag általános szakmai kontextus megadására szolgálnak.</p>
+                    <div id="ai-switch-panel" class="ai-switch-panel">
+    <div class="ai-switch-row">
+        <div>
+            <h3 style="margin:0;">MI-alapú szövegezési segédfunkció</h3>
+            <p id="ai-switch-status-text" style="margin:6px 0 0 0;font-size:0.9rem;color:#666;">
+                Állapot betöltése...
+            </p>
+        </div>
+
+        <label class="ai-switch">
+            <input type="checkbox" id="ai-enabled-switch">
+            <span class="ai-slider"></span>
+        </label>
+    </div>
+
+    <div id="ai-disabled-info" class="ai-disabled-info" style="display:none;">
+        <strong>Az MI-funkció jelenleg ki van kapcsolva.</strong>
+        <p>
+            Bekapcsolás esetén a rendszer név és közvetlen azonosító nélkül,
+            kizárólag a kérdőívből származó strukturált szakmai adatokat továbbít
+            külső MI-szolgáltató felé szövegezési segítség céljából.
+            Szabad szöveges megjegyzések nem kerülnek továbbításra.
+        </p>
+    </div>
+</div>
                     <div style="margin-bottom: 30px; padding: 15px; border: 1px solid #ccc; border-radius: 5px;">
                         <h3>Alapbeállítások</h3>
                         
@@ -924,15 +1061,55 @@ export const templates = {
     },
     'sabik': { 
         main: () => `
-        <div id="tartalom2" class="sabiknak">
-            <h3 style="margin-bottom:15px">Új sablonok létrehozása</h3>
-            
-            <div id="szerkeszto-interaktiv-terulet" style="display: flex; flex-direction: column; gap: 20px;">
+        <div id="tartalom2" class="sabiknak sablonok-panel">
+            <div class="sablon-page-head">
+                <div>
+                    <h3>Sablonok kezelése</h3>
+                    <p>Hozzon létre új alkérdés-sablont, vagy nyisson meg egy korábban mentett sablont.</p>
+                </div>
             </div>
+
+            <div class="sablon-main-tabs" role="tablist" aria-label="Sablonok">
+                <button type="button" class="sablon-main-tab active" data-sablon-tab="uj" aria-selected="true">Új sablonok</button>
+                <button type="button" class="sablon-main-tab" data-sablon-tab="meglevo" aria-selected="false">Meglévő sablonok</button>
+            </div>
+
+            <section id="sablon-tab-uj" class="sablon-tab-panel active" data-sablon-panel="uj">
+                <div class="sablon-hero-card">
+                    <div>
+                        <h3>Új sablon létrehozása</h3>
+                        <p>Az új sablon elemei IGEN vagy NEM ághoz rendelhetők. Először válasszon ágat, utána adja meg az alkérdés típusát.</p>
+                    </div>
+                    <button type="button" id="btn-uj-sablon-letrehozas" class="sablon-primary-btn">
+                        <span class="material-symbols-rounded">add_circle</span>
+                        <span>Új sablon létrehozása</span>
+                    </button>
+                </div>
+            </section>
+
+            <section id="sablon-tab-meglevo" class="sablon-tab-panel" data-sablon-panel="meglevo" hidden>
+                <div class="sablon-hero-card sablon-hero-card--muted">
+                    <div>
+                        <h3>Meglévő sablonok</h3>
+                        <p>Válasszon egy mentett sablont a lapok oldali listából. A kiválasztott sablon ott nyílik meg szerkesztésre.</p>
+                    </div>
+                </div>
+            </section>
         </div>`,
         lapok: () => `
-        <div id="alkerdest-szerkeszto-terulet">
-            <h3 style="margin-bottom:0px">Meglévő sablonok</h3>
+        <div id="sablon-lapok-terulet" class="sablon-lapok-shell">
+            <div id="sablon-lapok-uj" class="sablon-lapok-panel" data-sablon-lapok-panel="uj">
+                <div id="szerkeszto-interaktiv-terulet" class="sablon-editor-shell">
+                    <div class="sablon-empty-state sablon-lapok-placeholder">
+                        <h3>Itt jelenik meg az új sablon szerkesztője.</h3>
+                        <p>Kattintson az „Új sablon létrehozása” gombra a fő panelen.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="sablon-lapok-meglevo" class="sablon-lapok-panel" data-sablon-lapok-panel="meglevo" hidden>
+                <div id="alkerdest-szerkeszto-terulet" class="sablon-existing-list"></div>
+                <div id="meglevo-sablon-szerkeszto-terulet" class="sablon-editor-shell"></div>
+            </div>
         </div>`
     },
      'szam': { 

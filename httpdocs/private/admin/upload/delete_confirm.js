@@ -1,68 +1,152 @@
 // delete_confirm.js
 
+function applyStyles(element, styles) {
+    Object.assign(element.style, styles);
+    return element;
+}
+
+function createElement(tagName, options = {}) {
+    const element = document.createElement(tagName);
+
+    if (options.id) element.id = options.id;
+    if (options.className) element.className = options.className;
+    if (options.text !== undefined) element.textContent = String(options.text ?? '');
+    if (options.styles) applyStyles(element, options.styles);
+
+    return element;
+}
+
+function getDeleteCopy(szint) {
+    if (szint === 'fo') {
+        return {
+            pirosCim: 'EGY FŐTÉMAKÖR TÖRLÉSÉRE KÉSZÜL',
+            mindenUtaniSzoveg: ' alkategória, téma, kérdés és alkérdés törlésre kerül.'
+        };
+    }
+
+    if (szint === 'al') {
+        return {
+            pirosCim: 'EGY ALKATEGÓRIA TÖRLÉSÉRE KÉSZÜL',
+            mindenUtaniSzoveg: ' téma, kérdés és alkérdés törlésre kerül.'
+        };
+    }
+
+    if (szint === 'alal') {
+        return {
+            pirosCim: 'EGY ALTÉMA TÖRLÉSÉRE KÉSZÜL',
+            mindenUtaniSzoveg: ' kérdés és alkérdés törlésre kerül.'
+        };
+    }
+
+    return {
+        pirosCim: 'TÖRLÉSRE KÉSZÜL',
+        mindenUtaniSzoveg: null
+    };
+}
+
 export class DeleteConfirm {
     // A 'szint' alapértelmezetten 'fo' marad, így a főkategóriáknál nem is muszáj átírnod a hívást
     static open(kategoriaNev, szint = 'fo') {
         return new Promise((resolve) => {
-            let pirosCim = "";
-            let kovetkezmeny = "";
+            const { pirosCim, mindenUtaniSzoveg } = getDeleteCopy(szint);
 
-            // Szövegek beállítása a szint alapján
-            if (szint === 'fo') {
-                pirosCim = "EGY FŐTÉMAKÖR TÖRLÉSÉRE KÉSZÜL";
-                kovetkezmeny = "<b>MINDEN</b> alkategória, téma, kérdés és alkérdés törlésre kerül.";
-            } else if (szint === 'al') {
-                pirosCim = "EGY ALKATEGÓRIA TÖRLÉSÉRE KÉSZÜL";
-                kovetkezmeny = "<b>MINDEN</b> téma, kérdés és alkérdés törlésre kerül.";
-            } else if (szint === 'alal') {
-                pirosCim = "EGY ALTÉMA TÖRLÉSÉRE KÉSZÜL";
-                kovetkezmeny = "<b>MINDEN</b> kérdés és alkérdés törlésre kerül.";
-            } else {
-                pirosCim = "TÖRLÉSRE KÉSZÜL";
-                kovetkezmeny = "Minden kapcsolódó adat törlésre kerül.";
-            }
+            const overlay = createElement('div', { className: 'color-picker-overlay' });
 
-            const overlay = document.createElement('div');
-            overlay.className = 'color-picker-overlay';
-
-            const modal = document.createElement('div');
-            modal.className = 'color-picker-modal';
+            const modal = createElement('div', { className: 'color-picker-modal' });
             modal.style.width = '350px';
 
-            modal.innerHTML = `
-                <h3 style="color: #ff4444; border-bottom-color: #ffaaaa;  background: white; border-radius: 10px; display: flex; justify-content: center;">
-                    Törlés megerősítése
-                </h3>
-                
-                <div style="text-align: center; background: white; padding: 15px; border-radius: 15px; margin-bottom: 25px; line-height: 1.5; color: black;">
-                    
-                    <h3 style="margin-top: 0; color: #dc3545;">${pirosCim}</h3>          
-        
-                    <p style="margin-bottom: 0;">
-                        Biztosan törölni szeretnéd a(z) <b>"${kategoriaNev}"</b> elemet? Ezt a műveletet később nem lehet visszavonni! ${kovetkezmeny}
-                    </p>
-                    
-                </div>
+            const title = createElement('h3', {
+                text: 'Törlés megerősítése',
+                styles: {
+                    color: '#ff4444',
+                    borderBottomColor: '#ffaaaa',
+                    background: 'white',
+                    borderRadius: '10px',
+                    display: 'flex',
+                    justifyContent: 'center'
+                }
+            });
 
-                <div class="color-picker-btn-container">
-                    <button id="confirm-megse" class="color-picker-btn-cancel">Mégse</button>
-                    <button id="confirm-ok" class="color-picker-btn-save" style="background: #dc3545;">Igen, törlöm</button>
-                </div>
-            `;
+            const body = createElement('div', {
+                styles: {
+                    textAlign: 'center',
+                    background: 'white',
+                    padding: '15px',
+                    borderRadius: '15px',
+                    marginBottom: '25px',
+                    lineHeight: '1.5',
+                    color: 'black'
+                }
+            });
 
+            const dangerTitle = createElement('h3', {
+                text: pirosCim,
+                styles: {
+                    marginTop: '0',
+                    color: '#dc3545'
+                }
+            });
+
+            const message = createElement('p', {
+                styles: {
+                    marginBottom: '0'
+                }
+            });
+
+            message.append(
+                document.createTextNode('Biztosan törölni szeretnéd a(z) ')
+            );
+
+            const itemName = createElement('b');
+            itemName.append(
+                document.createTextNode('"'),
+                document.createTextNode(String(kategoriaNev ?? '')),
+                document.createTextNode('"')
+            );
+            message.appendChild(itemName);
+
+            message.append(
+                document.createTextNode(' elemet? Ezt a műveletet később nem lehet visszavonni! ')
+            );
+
+            if (mindenUtaniSzoveg) {
+                const minden = createElement('b', { text: 'MINDEN' });
+                message.append(minden, document.createTextNode(mindenUtaniSzoveg));
+            } else {
+                message.appendChild(document.createTextNode('Minden kapcsolódó adat törlésre kerül.'));
+            }
+
+            body.append(dangerTitle, message);
+
+            const buttonContainer = createElement('div', { className: 'color-picker-btn-container' });
+            const btnMegse = createElement('button', {
+                id: 'confirm-megse',
+                className: 'color-picker-btn-cancel',
+                text: 'Mégse'
+            });
+            const btnOk = createElement('button', {
+                id: 'confirm-ok',
+                className: 'color-picker-btn-save',
+                text: 'Igen, törlöm',
+                styles: {
+                    background: '#dc3545'
+                }
+            });
+
+            buttonContainer.append(btnMegse, btnOk);
+            modal.append(title, body, buttonContainer);
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            const btnOk = modal.querySelector('#confirm-ok');
-            const btnMegse = modal.querySelector('#confirm-megse');
-
             const close = (valasz) => {
-                document.body.removeChild(overlay);
+                if (overlay.parentElement) {
+                    overlay.remove();
+                }
                 resolve(valasz);
             };
 
             btnMegse.addEventListener('click', () => close(false));
-            
+
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) close(false);
             });

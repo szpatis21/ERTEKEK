@@ -1,0 +1,115 @@
+.modul-szamolas-infocard {
+    font-size: small;
+}
+
+.modul-szamolas-fejlec {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.modul-szamolas-badge {
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(255, 189, 22, 0.22);
+    font-weight: 700;
+}
+
+.modul-szamolas-kapcsolo {
+    display: flex;
+    align-items: center;
+        justify-content: center;
+    gap: 3vh;
+    margin: 1rem 0;
+}
+.modul-szamolas-kapcsolo span{
+    font-weight: bold;
+    font-size: larger;
+}
+#modulSzamolasRange {
+    width: 100%;
+    accent-color: #ffbd16;
+}
+
+.modul-szamolas-leiras {
+    margin: 0.75rem 0 1rem;
+}
+
+.modul-szamolas-leiras h4 {
+    margin: 0 0 0.35rem;
+}
+
+.modul-szamolas-demo {
+ display: flex;
+    align-items: center;
+}
+
+.modul-szamolas-demo-kerdesek {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.modul-szamolas-demo-chart {
+    min-height: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#modulSzamolasDemoChart {
+    width: 100%;
+    min-height: 180px;
+}
+
+.modul-szamolas-demo-eredmeny {
+    margin-top: 0.5rem;
+    font-weight: 700;
+    text-align: center;
+}
+
+@media (max-width: 780px) {
+    .modul-szamolas-demo {
+        grid-template-columns: 1fr;
+    }
+
+    .modul-szamolas-kapcsolo {
+        grid-template-columns: 1fr;
+    }
+}
+.modul-szamolas-demo .csuszka {
+    position: relative;
+}
+
+.modul-szamolas-demo .gomboc {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition:
+        left 220ms ease,
+        transform 220ms ease,
+        box-shadow 220ms ease,
+        background-color 220ms ease;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* üres / elvetett állapot */
+.modul-szamolas-demo .csuszka.ures-valasztva .gomboc {
+    left: 25%;
+}
+
+/* igen állapot */
+.modul-szamolas-demo .csuszka.igen-valasztva .gomboc {
+    left: 75%;
+}
+
+/* kis vizuális kiemelés kattintás után */
+.modul-szamolas-demo .csuszka.igen-valasztva .gomboc,
+.modul-szamolas-demo .csuszka.ures-valasztva .gomboc {
+    box-shadow: 0 0 12px rgba(255, 189, 22, 0.8);
+}
+.ertek{display: none;}

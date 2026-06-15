@@ -1,5 +1,5 @@
 import { showAlert } from "/both/alert.js";
-import { playIntroSequence, setupAccountInfoListeners, ellenorizTesztStatusz, loadAdminLogs } from "./dashUtils.js";
+import { playIntroSequence, setupAccountInfoListeners, ellenorizTesztStatusz, loadAdminLogs, openPackageUpgradeModal } from "./dashUtils.js";
 import { templates } from "./dashTemplates.js";
 let userName, fullname, intezmeny, leiras, hozzaferhetoModulok, mailname, tel, int_fin, fizetve, intkapmail, modul_leiras, idoszak;
 let azonosIntezmenyRegisztraltak = 0;
@@ -41,6 +41,117 @@ let modulSablonCount = 0;
 let cimJellemzes = '';
 let cimFejlesztes = '';
 let cimErtekeles = '';
+let utolsoFokusz = null;
+
+
+function tisztitDashboardSzoveg(value) {
+    return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function roviditDashboardSzoveg(value, max = 96) {
+    const clean = tisztitDashboardSzoveg(value);
+    return clean.length > max ? `${clean.slice(0, max - 1)}…` : clean;
+}
+
+function safeJsonArray(value) {
+    if (Array.isArray(value)) return value;
+    if (!value) return [];
+    try {
+        const parsed = typeof value === 'string' ? JSON.parse(value) : value;
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function valaszFelirat(valasz) {
+    const clean = tisztitDashboardSzoveg(valasz);
+    if (!clean) return '';
+    if (clean.toLowerCase() === 'ures') return 'válasz törölve';
+    return clean.toUpperCase();
+}
+
+function aktualisErtekeloUtvonal() {
+    const path = window.location.pathname || '/user/dashboard.html';
+    if (path.endsWith('/')) return `${path}ertekelo.html`;
+    return path.replace(/\/[^/]*$/, '/ertekelo.html');
+}
+
+function normalizalUtolsoFokusz(row) {
+    if (!row || typeof row !== 'object') return null;
+
+    const kitoltesId = row.kitoltes_id || row.kitoltesId || row.kitoltesID;
+    const elemKulcs = tisztitDashboardSzoveg(row.elemKulcs || row.elem_kulcs);
+
+    if (!kitoltesId || !elemKulcs) return null;
+
+    const utvonal = safeJsonArray(row.utvonal || row.utvonal_json)
+        .map(tisztitDashboardSzoveg)
+        .filter(Boolean);
+
+    const urlParams = new URLSearchParams();
+    urlParams.set('kitoltes_id', String(kitoltesId));
+    urlParams.set('fokusz', elemKulcs);
+
+    const kitoltesLetrehozva = row.kitoltes_letrehozva || row.kitoltesLetrehozva || row.letrehozva_kitoltes;
+    if (kitoltesLetrehozva) {
+        urlParams.set('letrehozva', String(kitoltesLetrehozva).slice(0, 10));
+    }
+
+    const feliratValasz = valaszFelirat(row.valasz);
+    const szoveg = roviditDashboardSzoveg(row.szoveg || row.kerdes_szoveg || 'Utolsó értékelési pont');
+
+    return {
+        kitoltesId,
+        elemKulcs,
+        tipus: tisztitDashboardSzoveg(row.tipus) || 'Elem',
+        akcio: tisztitDashboardSzoveg(row.akcio) || 'megnyitva',
+        szoveg,
+        utvonal,
+        utvonalFelirat: utvonal.length ? utvonal.join(' › ') : 'Értékelő modul',
+        valaszFelirat: feliratValasz || tisztitDashboardSzoveg(row.akcio) || 'folytatás',
+        iso: row.iso || row.letrehozva || '',
+        url: row.url || row.href || `${aktualisErtekeloUtvonal()}?${urlParams.toString()}`
+    };
+}
+
+async function betoltUtolsoFokusz() {
+    try {
+        const response = await fetch('/api/fokusz-elmenyek?limit=1', {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+        });
+
+        if (!response.ok) return null;
+
+        const data = await response.json();
+        const sor = Array.isArray(data?.data) ? data.data[0] : data?.data;
+        return normalizalUtolsoFokusz(sor);
+    } catch (error) {
+        console.warn('Utolsó fókusz betöltési hiba:', error);
+        return null;
+    }
+}
+
+function bekotFolytatasKartya(container = document) {
+    const kartya = container.querySelector?.('[data-folytatas-url]');
+    if (!kartya || kartya.dataset.folytatasBekotve === '1') return;
+
+    kartya.dataset.folytatasBekotve = '1';
+
+    const megnyit = () => {
+        const url = kartya.dataset.folytatasUrl;
+        if (url) window.location.href = url;
+    };
+
+    kartya.addEventListener('click', megnyit);
+    kartya.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            megnyit();
+        }
+    });
+}
 
 async function loadAsideData() {
   if (adatokBetoltve) return; 
@@ -122,6 +233,8 @@ modulAdminHozzaferes = data.stats.modulAdminHozzaferesekSzama || 0;
             globalAudit2Count = data.stats.globalAudit2Count || 0;
             aiOsszMax = data.stats.aiOsszMax !== undefined ? data.stats.aiOsszMax : 0;
         }
+        utolsoFokusz = await betoltUtolsoFokusz();
+
         adatokBetoltve = true; 
         console.log(hozzaferhetoModulok)
     } else {
@@ -207,7 +320,8 @@ const isAdmin = window.location.pathname.includes('/admin/') && !isSysadmin;
     modulSablonCount, 
     cimJellemzes, 
     cimFejlesztes, 
-    cimErtekeles
+    cimErtekeles,
+    utolsoFokusz
     };
 
     // --- Elemek összegyűjtése ---
@@ -294,6 +408,19 @@ const isAdmin = window.location.pathname.includes('/admin/') && !isSysadmin;
     if (initialMain && initialLapok) {
         initialMain.dataset.contentId = 'ertekek';
         initialLapok.dataset.contentId = 'ertekek';
+
+        // v5.2 hotfix:
+        // Az eredeti Értékeim panel legyen biztosan látható induláskor.
+        // Különben a lista kirenderelődhet egy rejtett article-be, miközben a user üres felületet lát.
+        if (!document.querySelector('.layout > article.aktiv-tartalom')) {
+            initialMain.classList.add('aktiv-tartalom');
+            initialLapok.classList.add('aktiv-tartalom');
+        }
+
+        const ertekekButton = document.getElementById('ertekek');
+        if (ertekekButton && !document.querySelector('.dobaktiv')) {
+            ertekekButton.classList.add('dobaktiv');
+        }
     }
 
     gombok.forEach(gomb => {
@@ -323,6 +450,9 @@ if (aktivGombId === 'sabik') {
     }, 50); 
 }
             if (this.classList.contains('dobaktiv')) {
+                if (aktivGombId === 'accunt') {
+                    bekotFolytatasKartya(document.querySelector('.main[data-content-id="accunt"]') || document);
+                }
                 return;
             }
 
@@ -383,6 +513,9 @@ if (aktivGombId === 'sabik') {
     if (aktivGombId === 'accunt' || aktivGombId === 'fiokom') {
         loadAdminLogs();
     }
+    if (aktivGombId === 'accunt') {
+        bekotFolytatasKartya(newMain || document);
+    }
 if (aktivGombId === 'plussz') {
     if (isAdmin) {
         import('../admin/dashAMain.js').then(adminModul => {
@@ -391,6 +524,15 @@ if (aktivGombId === 'plussz') {
     }
 }
 }, 10);
+        });
+    });
+
+    const csomagvaltasGombok = document.querySelectorAll('.csomagvaltas-menu, #csomagvaltas');
+
+    csomagvaltasGombok.forEach(gomb => {
+        gomb.addEventListener('click', function(e) {
+            e.preventDefault();
+            openPackageUpgradeModal();
         });
     });
 
@@ -442,7 +584,7 @@ if (aktivGombId === 'plussz') {
             }
 
             if (newMain) {
-                setupAccountInfoListeners(newMain, userName);
+                setupAccountInfoListeners(newMain, userName, viewData);
             }
 
             setTimeout(() => {
@@ -451,9 +593,17 @@ if (aktivGombId === 'plussz') {
         });
     });
 
-    const accuntGomb = document.getElementById('accunt');
-    if (accuntGomb) {
-        accuntGomb.click();
+const accuntGomb = document.getElementById('accunt');
+if (accuntGomb) {
+    document.querySelectorAll('.layout > article:not(.savos)').forEach(article => {
+        article.classList.remove('aktiv-tartalom');
+    });
+
+    document.querySelectorAll('.dobaktiv').forEach(gomb => {
+        gomb.classList.remove('dobaktiv');
+    });
+
+    accuntGomb.click();
         
         setTimeout(() => {
             ellenorizTesztStatusz(idoszak, fizetve, int_fin, sajatLetrehozasuAdmin);

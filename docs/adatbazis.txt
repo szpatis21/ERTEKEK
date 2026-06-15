@@ -178,3 +178,9 @@ Adatbázis: ertekek02
 		- uzenet: rövid szöveges massage amit oda vissza küldhet a 		két fél JSON formátumba
 		- hatarido: dátum, hogy mikorra kell kész lenni
 		- warm: Az utolsó üzenete az auditációt végzőnek
+
+
+
+
+
+

@@ -1,0 +1,26 @@
+/* Értékelési/PDF-előkészítő nézetből kérdőívpontra ugrás */
+
+#ertekelesek-container .ertekeles-navigalhato {
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 160ms ease;
+}
+
+#ertekelesek-container .ertekeles-navigalhato:hover {
+    background-color: rgba(37, 99, 235, 0.08);
+}
+
+#ertekelesek-container p.ertekeles-navigalhato:hover {
+    transform: translateX(3px);
+}
+
+.ertekeles-navigacio-folyamatban #ertekelesek-container .ertekeles-navigalhato {
+    cursor: wait;
+}
+
+@media print {
+    #ertekelesek-container .ertekeles-navigalhato {
+        cursor: default !important;
+        transform: none !important;
+        background-color: transparent !important;
+    }
+}

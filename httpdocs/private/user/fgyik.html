@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gyakran Ismételt Kérdések – ÉRTÉKEK</title>
+  <meta name="description" content="Az ÉRTÉKEK kezelőpanelének és alapvető funkcióinak gyakran ismételt kérdései: Infók, Értékeim, új értékelés, megosztás, AI-generálás és csoportos statisztika." />
+  <style>
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+.vissz{    display: flex;
+    border-bottom: white 3px solid;
+    justify-content: space-around;
+    padding: 5px;
+    border-radius: 10px;
+    background: #ffffff24;
+    align-items: center;}
+    .vissz a{    background: white;
+      transition: all 0.4s;
+    border-radius: 10px;
+    color: #3b3b3b;}
+
+    .vissz a:hover {background-color: #FF5722; color: white;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.hero-actions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#fff;color:var(--brand);border-radius:999px;padding:10px 14px;font-weight:900;box-shadow:0 10px 26px rgba(45,21,21,.10)}.kicker{display:inline-flex;align-items:center;gap:8px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;border-radius:999px;padding:7px 12px;font-weight:900;margin-bottom:12px}.faq-list{display:grid;gap:13px;margin:16px 0}.faq-item{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(45,21,21,.07);overflow:hidden}.faq-item summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;color:var(--ink);display:flex;gap:10px;align-items:flex-start}.faq-item summary::-webkit-details-marker{display:none}.faq-item summary::before{content:'+';flex:0 0 28px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900;line-height:1}.faq-item[open] summary::before{content:'–'}.faq-item .answer{padding:0 18px 17px 56px;color:var(--text)}.answer p:last-child{margin-bottom:0}.toc{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin:18px 0}.toc a{grid-column:span 4;text-decoration:none;background:#fff;border:1px solid var(--line);border-left:6px solid var(--brand);border-radius:18px;padding:13px 14px;box-shadow:0 10px 24px rgba(45,21,21,.07);color:var(--ink);font-weight:900}.quick{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.quick .note{grid-column:span 4;margin:0}.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;background:#fff7ed;border:1px solid var(--line);font-size:.83rem;color:var(--muted);font-weight:800;margin:2px 4px 2px 0}.steps{counter-reset:step;list-style:none;padding-left:0}.steps li{counter-increment:step;position:relative;padding:0 0 12px 48px;margin:0 0 10px}.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900;display:grid;place-items:center}@media(max-width:860px){.toc a,.quick .note{grid-column:span 12}.faq-item .answer{padding-left:18px}.faq-item summary{padding:15px}}
+ @media (max-width: 900px) {
+  .vissz{ height: 20vh;
+flex-direction: column-reverse;}
+.meta2{display: none;}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="vissz">
+        <a class="meta" href="/admin/dashboard.html">Vissza a kezelőpanelra</a>
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+      <span class="meta meta2">Gyakran Ismételt Kérdések</span>
+      </div>
+      <h1>Feltöltőmodul GYIK</h1>
+      <p class="lead">Rövid, közérthető válaszok az ÉRTÉKEK feltöltőmoduljának használatához: kezelőfelület, Infók képernyő, feltöltés indítása, pontozási módok, arányosított számítás, összegzés és MI-alapú szövegezési beállítások.</p>
+      <nav aria-label="Oldalon belüli navigáció"><a href="#alapok">Alapok</a><a href="#infok">Infók</a><a href="#folytatas">Folytatás</a><a href="#feltoltes">Feltöltés</a><a href="#sablonok">Sablonok</a><a href="#pontozas">Pontozás</a><a href="#aranyositott">Arányosított</a><a href="#osszegzes">Összegzés</a><a href="#ai">MI</a><a href="#gyors">Gyors segítség</a></nav>
+      <div class="hero-actions"><a href="adatkezeles.html">Adatkezelési tájékoztató</a><a href="afsz.html">ÁSZF</a><a href="mailto:ertekek.info@gmail.com">Kapcsolat</a></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="note" id="roviden">
+      <h2>Röviden</h2>
+      <p>Ez az oldal a feltöltőmodulhoz kapcsolódó legfontosabb kérdéseket foglalja össze. A cél az, hogy a felhasználó gyorsan megértse, hol tud szakmai anyagot feltölteni vagy bővíteni, hogyan működik a pontozás, mire valók a sablonok, és hogyan állítható be a mesterséges intelligencia alapú szövegezési segítség.</p>
+    </section>
+
+    <section class="grid" aria-label="Gyors áttekintés">
+      <div class="card span6"><span class="pill">Infók</span><h3>Kezdő áttekintés</h3><p>Szerepkör, intézmény, szakmai anyag, bontások, kategóriák, sablonok és elérhető MI-szolgáltatások egy helyen.</p></div>
+      <div class="card span6"><span class="pill">Feltöltés</span><h3>Szakmai anyag bővítése</h3><p>Az Indítás gombbal beléphet a feltöltőfelületre, ahol a kérdőívrendszer szakmai tartalma építhető.</p></div>
+      <div class="card span6"><span class="pill">Sablonok</span><h3>Gyors alkérdés-beszúrás</h3><p>Visszatérő alkérdéscsoportok hozhatók létre, menthetők, szerkeszthetők és később egy kattintással újra felhasználhatók.</p></div>
+      <div class="card span6"><span class="pill">Pontozás</span><h3>Két számítási mód</h3><p>Az Arányosított és az Összegzés mód eltérően kezeli a pontokat és a kiválasztott válaszokat.</p></div>
+    </section>
+
+    <section id="alapok" class="card">
+      <span class="kicker">Feltöltőmodul</span>
+      <h2>1. Alapok</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mire való a feltöltőmodul?</summary>
+          <div class="answer"><p>A feltöltőmodul az ÉRTÉKEK rendszer azon része, ahol a szakmai anyagok feltölthetők, bővíthetők és beállíthatók. Itt készül elő az a kérdőívstruktúra, amelyet később az értékelőmodul használ.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit látok bejelentkezés után?</summary>
+          <div class="answer"><p>Bejelentkezés után a feltöltőmodul kezelőfelülete jelenik meg. Asztali nézetben az akciógombok a képernyő bal oldalán találhatók, mobilnézetben pedig a felső sávba kerülnek.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Melyik menüpont aktív belépéskor?</summary>
+          <div class="answer"><p>Belépéskor az <strong>Infók</strong> menüpont aktív. Ez az oldal ad gyors áttekintést a szerepkörről, az intézményről, a kiválasztott szakmai anyagról és a rendszer aktuális állapotáról.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="infok" class="card">
+      <span class="kicker">Infók</span>
+      <h2>2. Infók képernyő</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Milyen alapadatokat mutat az Infók oldal?</summary>
+          <div class="answer"><p>Az Infók oldalon látható a jelenlegi szerepkör, az intézmény neve és a választott szakmai anyag neve. Ezek segítenek ellenőrizni, hogy a megfelelő rendszerben és jogosultsággal dolgozik-e a felhasználó.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan jelennek meg a részletesebb információk?</summary>
+          <div class="answer"><p>Több csempénél további részletek jelenhetnek meg, ha az egeret a csempére visszük. Így gyorsan ellenőrizhetők olyan adatok, amelyekre nincs mindig szükség, de munka közben hasznosak lehetnek.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent a bontások száma?</summary>
+          <div class="answer"><p>A bontások száma azt mutatja, hogy a jelenlegi kérdőívrendszer hányféle szerkezeti vagy tartalmi egységből épül fel. Ez segít átlátni a szakmai anyag méretét és összetettségét.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit mutat a rendszer a kategóriákról?</summary>
+          <div class="answer"><p>A rendszer megmutathatja, hány kategória került már be, és ezek közül melyik a legnagyobb. A legnagyobb kategória az, amelyik a legtöbb kérdést tartalmazza.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Milyen egyéb adatok jelenhetnek meg?</summary>
+          <div class="answer"><p>Az Infók oldalon megjelenhetnek hasznos tippek, a rendszerben elérhető sablonok száma, valamint az is, hogy hányféle mesterséges intelligencia alapú szolgáltatás érhető el.</p></div>
+        </details>
+      </div>
+    </section>
+
+
+
+    <section id="folytatas" class="card">
+      <span class="kicker">Új funkció</span>
+      <h2>Folytatás ott, ahol abbahagyta</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit mutat az első információs csempe?</summary>
+          <div class="answer"><p>Az első csempe először üdvözli a felhasználót, majd ha van korábbi értékelési előzmény, átvált a „Folytassa ahol abbahagyta” nézetre. Ilyenkor az utolsó munkapont útvonala, a kérdés szövege és az utolsó válasz is megjelenhet.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mire jó ez feltöltőként vagy adminisztrátorként?</summary>
+          <div class="answer"><p>Ha a felhasználó értékelő szerepkörben is dolgozik, gyorsan visszatérhet a legutóbbi értékeléshez. Így a kezelőpanel nemcsak statikus tájékoztató oldal, hanem valódi folytatási pont is.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mitől függ, hogy megjelenik-e a folytatási csempe?</summary>
+          <div class="answer"><p>Attól, hogy a rendszer talált-e az adott felhasználóhoz kapcsolódó korábbi értékelési fókuszelőzményt. Ha nincs ilyen adat, a csempe normál üdvözlő csempeként működik.</p></div>
+        </details>
+      </div>
+    </section>
+    <section id="feltoltes" class="card">
+      <span class="kicker">Feltöltés</span>
+      <h2>3. Feltöltés indítása</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Hol indítható a feltöltőfelület?</summary>
+          <div class="answer"><p>A feltöltőfelület a <strong>Feltöltés</strong> menüpontból érhető el. Az <strong>Indítás</strong> gombra kattintva a rendszer közvetlenül a feltöltőmodul munkafelületére navigál.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit lehet beállítani a Feltöltés menüpontban?</summary>
+          <div class="answer"><p>Itt állítható be, hogy a kérdőívrendszer milyen pontozási módot használjon. Ez később meghatározza, hogyan számolja ki a rendszer a válaszokból származó eredményeket.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit mutat a narancssárga szövegbuborék?</summary>
+          <div class="answer"><p>A narancssárga szövegbuborék azt jelzi, hogy jelenleg melyik pontszámítási mód aktív a rendszerben.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="sablonok" class="card">
+      <span class="kicker">Sablonok</span>
+      <h2>4. Sablonok létrehozása és szerkesztése</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mire valók a sablonok?</summary>
+          <div class="answer"><p>A sablonok arra valók, hogy egy kiterjedt kérdőívrendszerben ne kelljen minden visszatérő alkérdést egyesével újra létrehozni. Egy jól felépített alkérdés-sablon később egy kattintással beilleszthető egy kiválasztott kérdéshez.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hol találom a sablonokat?</summary>
+          <div class="answer"><p>A sablonok a <strong>Sablonok</strong> menüpont alatt érhetők el. Itt választható ki, hogy új sablont szeretne létrehozni, vagy a meglévő sablonokat szeretné szerkeszteni.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan hozható létre új sablon?</summary>
+          <div class="answer"><p>Új sablon a narancssárga <strong>Új sablon létrehozása</strong> gombbal indítható. Kattintás után a jobb oldali panelen megjelenik az összeállító felület, ahol az Igen és szükség esetén a Nem ághoz tartozó alkérdések építhetők fel.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent az Igen ág és a Nem ág a sablonban?</summary>
+          <div class="answer"><p>Az Igen ág azokat az alkérdéseket tartalmazza, amelyek az igen válaszhoz kapcsolódnak. A Nem ág akkor hasznos, ha a nem válaszhoz is szeretne külön alkérdést, például szöveges megjegyzést vagy kiegészítő magyarázatot rendelni.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Milyen alkérdéstípus használható sablonban?</summary>
+          <div class="answer"><p>A sablonba többféle alkérdéstípus kerülhet. Például használható <strong>opció</strong> típus, amikor egyszerre csak egy válasz jelölhető be, vagy <strong>szöveges</strong> típus, amikor megjegyzés, magyarázat vagy kiegészítő információ rögzíthető.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Módosítható utólag az alkérdés típusa vagy pontszáma?</summary>
+          <div class="answer"><p>Igen. Az alkérdések tulajdonságai a <strong>Tulajdonságok</strong> gombbal módosíthatók. Így később átállítható például a kérdéstípus vagy a pontszám is.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan menthető el a sablon?</summary>
+          <div class="answer"><p>Az elkészült sablont mentéskor érdemes jól felismerhető névvel ellátni. Ez segít abban, hogy később a meglévő sablonok között gyorsan megtalálható legyen.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan ellenőrizhető, hogy jól működik a sablon?</summary>
+          <div class="answer"><p>Mentés után a sablon beillesztésével ellenőrizhető, hogy az alkérdések megfelelően betöltődnek-e. Ha a létrehozott elemek gond nélkül megjelennek, a sablon használatra kész.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan szerkeszthető egy meglévő sablon?</summary>
+          <div class="answer"><p>Meglévő sablon szerkesztéséhez a <strong>Meglévő sablonok</strong> menüpontot kell választani. A jobb oldali panelen megjelennek a korábban létrehozott sablonok, ezek közül kiválasztható és módosítható a kívánt elem.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Menthetem új néven a módosított sablont?</summary>
+          <div class="answer"><p>Igen. Ha egy sablont módosít, mentéskor új nevet is adhat neki. Ez akkor hasznos, ha az eredeti sablont is meg szeretné tartani, de szüksége van egy módosított változatra is.</p></div>
+        </details>
+      </div>
+      <div class="note ok"><p><strong>Hasznos:</strong> a sablonok különösen akkor gyorsítják a munkát, ha ugyanazokat az alkérdéscsoportokat több kérdésnél vagy több szakmai anyagban is használni szeretné.</p></div>
+    </section>
+
+    <section id="pontozas" class="card">
+      <span class="kicker">Pontozási módok</span>
+      <h2>5. Arányosított és Összegzés mód</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mire való az Arányosított / Összegzés csúszka?</summary>
+          <div class="answer"><p>A csúszka a két pontszámítási mód között vált. Az <strong>Arányosított</strong> mód a pontokat egymáshoz viszonyítja, az <strong>Összegzés</strong> mód pedig a kiválasztott állítások mennyiségét és pontértékét összesíti.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Kell kézzel százalékot számolni?</summary>
+          <div class="answer"><p>Nem. A százalékos eredményeket a rendszer automatikusan kiszámolja. A felhasználónak csak a szakmai logika alapján kell pontszámokat adnia a válaszokhoz vagy állításokhoz.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi alapján érdemes pontozni a válaszokat?</summary>
+          <div class="answer"><p>A legjobb vagy legfontosabb válasz kapjon magasabb pontszámot, a gyengébb vagy kevésbé kedvező válaszok pedig alacsonyabbat. A rendszer ezekből számolja ki az eredményt.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="aranyositott" class="card">
+      <span class="kicker">Arányosított pontszámítás</span>
+      <h2>6. Hogyan működik az Arányosított mód?</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit jelent az Arányosított pontszámítás?</summary>
+          <div class="answer"><p>Arányosított pontszámításnál egy kérdéscsoporton belül mindig a legmagasabb pontszám jelenti a száz százalékot. Minden alacsonyabb pontszám ehhez képest kap arányosított százalékos eredményt.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi történik, ha a válaszok egy, öt és tíz pontot érnek?</summary>
+          <div class="answer"><p>Ha a legmagasabb pontszám tíz, akkor a tíz pont száz százalékot jelent. Az egy pont tíz százalékot, az öt pont pedig ötven százalékot ér.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi történik, ha több választ is kiválasztunk?</summary>
+          <div class="answer"><p>Arányosított módban a több válasz árnyalhatja az eredményt. Ha a száz százalékos válasz mellé alacsonyabb pontszámú válaszok is bekerülnek, azok csökkenthetik a végső eredményt.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mikor hasznos az Arányosított mód?</summary>
+          <div class="answer"><p>Akkor hasznos, ha a válaszok között minőségi különbséget szeretnénk kifejezni, és fontos, hogy a legjobb válaszhoz képest látszódjon a gyengébb válaszok aránya.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="osszegzes" class="card">
+      <span class="kicker">Összegzés</span>
+      <h2>7. Hogyan működik az Összegzés mód?</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit jelent az Összegzés pontszámítás?</summary>
+          <div class="answer"><p>Összegzés módban a rendszer azt veszi figyelembe, hogy hány állítás igaz, illetve ezek együtt mennyi pontot adnak. Ebben a módban minden kiválasztott válasz hozzáad a végeredményhez.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan lehet száz százalékot elérni Összegzés módban?</summary>
+          <div class="answer"><p>Száz százalék akkor érhető el, ha az adott kérdéskörben minden szükséges vagy releváns állítás igaznak bizonyul, és minden elvárt pont bekerül az összesítésbe.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Rontja az eredményt, ha több választ választunk ki?</summary>
+          <div class="answer"><p>Nem. Összegzés módban a több kiválasztott válasz nem rontja, hanem javítja az eredményt, mert minden igaz állítás hozzáadódik az összpontszámhoz.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mikor hasznos az Összegzés mód?</summary>
+          <div class="answer"><p>Akkor hasznos, ha azt szeretnénk mérni, hogy egy adott területen hány feltétel, állítás vagy szakmai szempont teljesül egyszerre.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="ai" class="card">
+      <span class="kicker">MI-alapú szövegezés</span>
+      <h2>8. Mesterséges intelligencia beállítása</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Hol kapcsolható be a mesterséges intelligencia?</summary>
+          <div class="answer"><p>Az MI-alapú szövegezési segédfunkció a hozzá tartozó csúszkával kapcsolható be vagy ki. Ha nincs bekapcsolva, akkor az értékelőmodulban az intézmény többi tagja sem tudja használni ezt a funkciót az adott szakmai anyaghoz.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit kell megadni az MI szerepkörénél?</summary>
+          <div class="answer"><p>Az MI szerepkörét világosan és részletesen kell megfogalmazni. Ez határozza meg, milyen szakmai nézőpontból készítse el a rendszer a szöveges értékeléstervezeteket.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent az, hogy kiről vagy miről szóljon az értékelés?</summary>
+          <div class="answer"><p>Itt azt kell megadni, hogy az értékelés alanya mi legyen. Ez lehet például tanuló, projekt vagy ellátott. Általában egy pontos szó vagy rövid kifejezés is elég.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mire való a szakmai kontextus?</summary>
+          <div class="answer"><p>A szakmai kontextus segít abban, hogy az MI ne általános szöveget írjon, hanem az adott szakmai anyag céljaihoz, fogalmaihoz és elvárásaihoz igazodó értékeléstervezetet készítsen.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi a különbség a rövid kontextus és a részletes szakmai anyag között?</summary>
+          <div class="answer"><p>Rövid kontextusnál néhány jól megfogalmazott mondatban adjuk meg az értékelés célját és alapelveit. Részletes szakmai anyagnál több oldalnyi szakmai szöveg, fogalommagyarázat, példa és dokumentumrészlet adható meg.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent a Generáció fajtái rész?</summary>
+          <div class="answer"><p>Itt legfeljebb három különböző szövegtípus állítható be. Ilyen lehet például egyéni jellemzés, fejlesztési javaslat vagy összefüggő szöveges esszé.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit kell írni a generáció leírásába?</summary>
+          <div class="answer"><p>A leírásban azt kell megfogalmazni, mit várunk az adott generációtól. Például: térjen ki minden vizsgált területre, vagy fűzze össze az értékelésből kapott információkat egy folyószöveges szakmai összefoglalóvá.</p></div>
+        </details>
+      </div>
+      <div class="note danger"><p><strong>Fontos:</strong> az MI által készített szöveg szakmai tervezet. A végleges dokumentumot mindig szakembernek kell átnéznie, javítania és jóváhagynia.</p></div>
+    </section>
+
+    <section id="gyors" class="card">
+      <span class="kicker">Gyors válaszok</span>
+      <h2>9. Gyors segítség</h2>
+      <div class="quick">
+        <div class="note"><h3>Feltöltés indítása</h3><p>Feltöltés menüpont → Indítás gomb → feltöltőfelület megnyitása.</p></div>
+        <div class="note"><h3>Sablon létrehozása</h3><p>Sablonok → Új sablon létrehozása → ág kiválasztása → alkérdések hozzáadása → mentés.</p></div>
+        <div class="note"><h3>Sablon szerkesztése</h3><p>Sablonok → Meglévő sablonok → sablon kiválasztása → módosítás → mentés vagy mentés új néven.</p></div>
+        <div class="note"><h3>Pontozási mód váltása</h3><p>Arányosított / Összegzés csúszka → aktív mód ellenőrzése a narancssárga szövegbuborékban.</p></div>
+        <div class="note"><h3>Folytatás</h3><p>Infók → első csempe → utolsó értékelési munkapont megnyitása.</p></div>
+        <div class="note"><h3>MI beállítása</h3><p>MI bekapcsolása → szerepkör megadása → értékelés alanya → szakmai kontextus → generáció fajtái.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>ÉRTÉKEK – Feltöltőmodul Gyakran Ismételt Kérdések. Kapcsolat: <a href="mailto:ertekek.info@gmail.com">ertekek.info@gmail.com</a></p>
+      <p class="small">Ez az oldal felhasználói tájékoztatásra szolgál. Intézményi bevezetésnél az adatkezelési dokumentumokat és a belső szabályokat is figyelembe kell venni.</p>
+    </div>
+  </footer>
+</body>
+</html>

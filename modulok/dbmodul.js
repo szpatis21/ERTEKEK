@@ -1,15 +1,6 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-// MySQL adatbázis kapcsolat
-/* const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'szpatis21',
-    password: 'Ertekek0077%d',
-    database: 'ertekek02'
-}); */
-// db.js
-
 const db = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   port: Number(process.env.DB_PORT || 3306),

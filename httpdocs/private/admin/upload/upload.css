@@ -15,6 +15,9 @@ a:visited{color: white;}
 #fo_kategoriak{gap: 3vh;}
 .fo, .al{flex-direction: column;}
 #main-container {
+    overflow: scroll !important;
+    height: 87vh;
+    overflow-x: hidden !important;
 width: 50% !important;
 background-image: none !important;}
 
@@ -169,8 +172,9 @@ border-top-left-radius: 0px;
     display: flex;
     flex-direction: row;
     align-content: flex-start;   
-     height: 70vh !important;
+     height: 85vh !important;
     overflow-y: scroll;
+    overflow-x: hidden;
     position: relative;
     border-top: transparent;
     border-top-left-radius: 0px;
@@ -206,7 +210,7 @@ border-top-left-radius: 0px;
 
 /* Sorszám input a kártya bal oldalán */
 
-
+#al_kategoriak{margin-top: 0px !important;}
 
 /* Maga a kártya finomítása az új módban */
 .uj-ideiglenes-kerdes .question {
@@ -216,10 +220,10 @@ border-top-left-radius: 0px;
     background: #fbf8e5;
 }
 .kerdesmodul.uj-ideiglenes-kerdes{
-       border: 1px solid gold;
     border-left: none;
     border-right: none;
     margin: 1px 0px;
+        background: #ffa50024;
 }
 .kerdesmodul{
     border: 1px solid grey !important;
@@ -231,9 +235,9 @@ border-top-left-radius: 0px;
 }
 .pi{
     font-size: small;
-    font-style: italic;
     text-align: center;
     margin: 0px;
+    font-weight: bold;
     margin-bottom: 5px;
     width: 100%;
     color: #555;
@@ -261,7 +265,7 @@ border-top-left-radius: 0px;
 }
 .csuszka{height: 15px;}
 .csuszka2{position: relative;}
-.nemszoveg{    top: -5px;
+.nemszoveg{    top: 5px;
     left: 10px;}
 /* Szöveges bemenetek konténere */
 .inline-szoveg-container {
@@ -318,8 +322,9 @@ border-top-left-radius: 0px;
     padding: 2px;
 }
 
+.inline-question-middle-row{flex-wrap: wrap; align-items: center;}
 .inline-negalt-ertek-input {
-    width: 40px;
+    width: 35px;
     text-align: center;
     border: 1px solid #ffaaaa;
     background-color: #fff8f8;
@@ -475,13 +480,22 @@ border-top-left-radius: 0px;
 }
 
 .alal.new{
-   height: 20px;
-    width: 200px;
+      height: 30px;
+    width: 100%;
     border-radius: 5px;
     color: #ffffff;
     box-shadow: none;
     background: #ff9800 !important;
 
+
+}
+.al-belso-alt-temak{align-items: center;}
+.alal.new.passive{
+    height: 60px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .jelen{
     margin:auto;
@@ -886,6 +900,7 @@ div {
     #sablon label{    border-bottom: 2px solid rgb(255, 140, 0);
     width: 30%;
     border-radius: 5px;}
+    .question-container{width: 95% !important;}
                         #altTema, #alKategoria { 
                             border-bottom-left-radius: 0px; 
                             border-bottom-right-radius: 0px; 
@@ -1032,8 +1047,86 @@ div {
 .mittom3{border: 3px solid rgb(255, 140, 0); border-radius: 5px; margin: 5px;}
 .al{margin: 1%;}
 #lapok{width:50%; height: 87vh;}
-.mainartdiv{gap: 2%;padding: 1%; width: 97%; padding-top: 0%;}
-#maininf {
+/* .mainartdiv{gap: 2%;padding: 1%; width: 97%; padding-top: 0%;}
+
+ */
+ .sav{
+        display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 87vh;
+        padding-right: 0.5%;
+    border-right: 3px solid #ffffff;
+ }
+ .sav div{
+          width: 15vh;
+    height: 15vh;
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    background: #ff66008f;
+    align-items: center;
+    box-shadow: 2px 2px 5px 0px #00000059;
+    border-radius: 12%;
+    border: 1px dashed;
+    color: white;
+    position: relative;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-shadow: 0px 0px 2px black;
+    font-weight: bold;
+    font-family: system-ui;
+    transition: all 0.3s;
+ }
+   .cimgom {
+        font-family: "Montserrat Subrayada", sans-serif;
+        font-size: small ;
+        display: flex;
+        transition: all 0.3s ;       
+         backdrop-filter: blur(2px);
+        align-items: center;
+        position: relative;
+        background: whitesmoke;
+    width: 12vh;
+    height: 12vh !important;
+    border-radius: 11px;
+    cursor: pointer;
+    text-align: center;
+    color: rgb(0, 0, 0);
+    padding: 1vh;
+    border:1px solid rgba(79, 79, 79, 0.507);
+    align-items: center;
+    margin: 1% 0%; 
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow:-2px -2px 3px 1px #67676773;
+      }
+      .cimgom:hover{
+        background: #ff6000;
+        color: whitesmoke;
+            box-shadow:2px 2px 3px 1px #67676773;
+
+        text-shadow: 0px 0px 2px black;
+      }
+      .alsosav{
+            height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+      }
+     .layout {
+        display: grid;
+  height: 94vh;
+  gap: 3vh;
+  margin:1vh 3vh 3vh 3vh;
+    grid-template-columns: 0.1fr minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "c a b";
+
+  }
+ #maininf {
 height:100%;}
 .color-picker-modal .color-picker-input-container {margin: 2%;}
 
@@ -1216,6 +1309,20 @@ scale: 1.1;}
 
 .mittom3{margin: 0px;}
 #lapok{width: 100%;}
+.sav {
+    display: flex;
+    height: fit-content;
+    flex-direction: row;}
+    .alsosav{display: none;}
+    #sav-context-action{
+            font-size: smaller;
+           font-size: smaller;
+        height: 6vh;
+        width: 100%;
+        border-radius: 10px;
+    }
+    .layout{height: 100%;}
+    .cimgom{display: none;;}
 }
 /* A sötétített háttér */
 .help-modal-overlay {
@@ -1273,3 +1380,45 @@ scale: 1.1;}
 .help-modal-body p { margin-bottom: 15px; }
 .help-modal-body ul { margin-bottom: 15px; padding-left: 20px; }
 .help-modal-body li { margin-bottom: 8px; }
+
+.question-insert-wizard-modal{
+           height: 80vh;
+    overflow-y: scroll;        
+}
+.question-insert-wizard-option{
+    display: flex !important;
+    flex-direction: column !important;
+    width: 35vh !important;
+    height: 25vh !important;
+    gap: 4px !important;
+    padding: 9px !important;
+    border: 2px solid #ffffff94 !important;
+    align-items: flex-start !important;
+}
+.question-insert-wizard-preview{
+width: 28vh !important; 
+    margin: auto;
+
+}
+
+.is-preview-muted{display: none !important;}
+.question-insert-wizard-badge{display: none !important;}
+.question-insert-wizard-list {
+    flex-direction: row !important;
+        justify-content: center !important;
+    flex-wrap: wrap !important;
+}
+.question-insert-wizard-modal .question-insert-wizard-lead{
+    display: none;
+}
+.question-insert-wizard-modal{width: min(800px, calc(100vw - 32px)) !important;}
+.color-picker-input-container .inline-szoveg-container{width: 25vh;}
+.question-insert-wizard-preview .inline-szerkesztolec {display: none !important;}
+.question-insert-wizard-preview .inline-fejlec{ display: none !important;}
+.question-insert-wizard-preview-body .inline-szoveg-container{width: 100% !important; border: none !important;padding: 0px !important;}
+.question-insert-wizard-preview-body{gap: 0px !important;}
+.question-insert-wizard-result{display: none;}
+.question-insert-wizard-preview-kerdesmodul .question{
+    padding: 0px !important;
+}
+.question-insert-wizard-preview-kerdesmodul{border: none !important;}

@@ -1,60 +1,181 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adatkezelési Tájékoztató - ÉRTÉKEK</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; }
-        h1 { color: #ff7c00; }
-        h2 { border-bottom: 2px solid #ff7c00; padding-bottom: 5px; margin-top: 30px; }
-        p, li { margin-bottom: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adatkezelési tájékoztató – ÉRTÉKEK</title>
+  <meta name="description" content="A Szolgáltató saját adatkezeléseinek, az intézményi adatkezelői szerepeknek, az MI-adatminimalizálásnak és a külső szolgáltatóknak az összefoglalása." />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" referrerpolicy="no-referrer">
+     <link rel="stylesheet" href="../both/navmenu.css">
+  <style>
+      body    {flex-direction: column !important; } h1{color: white;} .top{width: 100%;}
+
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+</style>
 </head>
 <body>
+  
+           <input type="hidden" id="menu-type" value="public">
+<men id="men"></men>  
+  <header class="top">
+    <div class="wrap">
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+<!--       <span class="meta">v1.0 – 2026. május 22.</span>
+ -->      <h1>Adatkezelési tájékoztató – ÉRTÉKEK</h1>
+      <p class="lead">A Szolgáltató saját adatkezeléseinek, az intézményi adatkezelői szerepeknek, az MI-adatminimalizálásnak és a külső szolgáltatóknak az összefoglalása.</p>
+      <nav aria-label="Oldalon belüli navigáció"><a href="#fontos">Szerepek</a><a href="#celok">Célok</a><a href="#kulonleges">SNI/SHF</a><a href="#mi">MI</a><a href="#biztonsag">Biztonság</a><a href="#jogok">Jogok</a></nav>
+    </div>
+  </header>
+  <main class="wrap">
 
-<h1>Adatkezelési Tájékoztató</h1>
-    <p>A jelen Tájékoztató célja, hogy bemutassa, miként kezelem az ÉRTÉKEK platform (ingyenes, limitált tesztfázis) használata során megadott személyes adatokat, megfelelve az Európai Unió Általános Adatvédelmi Rendeletének (GDPR).</p>
+<section id="fontos" class="note">
+  <h2>Fontos szerepelhatárolás</h2>
+  <p>Ez a tájékoztató a Szolgáltató saját adatkezeléseiről szól: weboldal, kapcsolattartás, regisztráció, ügyfélkezelés, számlázás, hibabejelentés, biztonsági naplózás és fióküzemeltetés.</p>
+  <p>Az intézmény által a rendszerben rögzített tanulói, ellátotti, kliensi, értékelési, audit- és fejlesztési adatok tekintetében az intézmény vagy szakmai felhasználó az Adatkezelő. A Szolgáltató ezen adatoknál adatfeldolgozóként jár el, külön adatfeldolgozói szerződés alapján.</p>
+</section>
 
-    <h2>1. Az Adatkezelő / Adatfeldolgozó adatai</h2>
-    <p>A rendszert magánszemélyként üzemeltetem.</p>
-    <ul>
-        <li><strong>Név:</strong> Szalai Péter</li>
-        <li><strong>Lakcím:</strong> 7632. Pécs, Varsány u. 18.</li>
-        <li><strong>E-mail cím:</strong> szpatis21@gmail.com</li>
-        <li><strong>Telefonszám:</strong> +36 30 178 4272</li>
-    </ul>
+<section id="adatkezelo" class="card">
+  <h2>1. Az Adatkezelő / Szolgáltató adatai</h2>
+  
+<ul>
+  <li><strong>Szolgáltató / üzemeltető:</strong> Szalai Péter</li>
+  <li><strong>Vállalkozási forma, nyilvántartási szám, adószám:</strong> vállalkozás indításakor kitöltendő</li>
+  <li><strong>Székhely / levelezési cím:</strong> vállalkozási adatok szerint kitöltendő</li>
+  <li><strong>E-mail:</strong> szpatis21@gmail.com</li>
+  <li><strong>Telefon:</strong> +36 30 178 4272</li>
+  <li><strong>Szolgáltatás neve:</strong> ÉRTÉKEK</li>
+  <li><strong>Domain:</strong> ertekek.com</li>
+</ul>
 
-    <h2>2. A szerepkörök tisztázása</h2>
-    <p><strong>A) Amikor Ön regisztrál a rendszerbe:</strong> A fiók létrehozásához megadott kapcsolattartói adatok (név, e-mail, telefonszám) tekintetében <strong>Adatkezelőként</strong> járok el. Az adatkezelés célja a fiók biztosítása és a kapcsolattartás. Jogalapja: a szerződés (ÁFF) teljesítése és az Ön hozzájárulása.</p>
-    <p><strong>B) Amikor Önök értékeléseket készítenek:</strong> A szoftverbe feltöltött kérdőívek, értékelt személyek adatai és eredményei tekintetében az Önök Intézménye az Adatkezelő, én pedig (a szoftver üzemeltetőjeként) csupán <strong>Adatfeldolgozóként</strong> technikai hátteret (tárhelyet, számítási kapacitást) biztosítok. Ezeket az adatokat saját célra nem használom fel.</p>
-    <p><strong>C) Minőségbiztosítási kérdőív:</strong> A rendszerben elérhető felhasználói elégedettségi kérdőív technológiailag 100%-ban anonim módon működik. A válaszok nem kapcsolódnak össze az Ön felhasználói fiókjával vagy személyes adataival, így ezen funkció használata során nem valósul meg személyes adatkezelés.</p>
+  <p class="note">A vállalkozás indításakor a vállalkozói adatokkal, adószámmal, nyilvántartási számmal és hivatalos székhellyel frissítendő.</p>
+</section>
 
-    <h2>3. Adatbiztonság és Technikai Intézkedések (TOM)</h2>
-    <p>Bár a rendszer ingyenes, a legmagasabb szintű adatbiztonságra törekszem. A kezelt adatok védelme érdekében az alábbi technikai intézkedéseket alkalmazom:</p>
-    <ul>
-        <li><strong>Titkosítás:</strong> Az adatok tárolása AES-256 szintű titkosítással történik ("at rest"), az adatátvitel pedig TLS 1.2+ protokollon keresztül zajlik ("in transit").</li>
-        <li><strong>Szegregáció:</strong> A regisztrált intézmények adatai logikailag, táblaszintű korlátokkal szigorúan elkülönítve kerülnek tárolásra.</li>
-        <li><strong>Mentés és Naplózás:</strong> Napi inkrementális és heti teljes, titkosított biztonsági mentéseket végzünk. A rendszereseményeket naplózzuk (180 napos megőrzéssel).</li>
-        <li><strong>Hozzáférések:</strong> Szigorú szerepkör-alapú jogosultságkezelés (RBAC), munkamenet-időkorlátok és IP-korlátozások védik a fiókokat.</li>
-    </ul>
+<section id="celok" class="card">
+  <h2>2. Saját adatkezelési célok, jogalapok, megőrzési idők</h2>
+  <table>
+    <thead><tr><th>Cél</th><th>Adatkör</th><th>Jogalap</th><th>Megőrzés</th></tr></thead>
+    <tbody>
+      <tr><td>Kapcsolatfelvétel, ajánlatkérés</td><td>név, e-mail, telefonszám, üzenet tartalma</td><td>GDPR 6. cikk (1) b) szerződés előkészítése vagy 6. cikk (1) f) jogos érdek</td><td>az ügy lezárásától számított legfeljebb 1 év, szerződés esetén a szerződéses iratokkal együtt</td></tr>
+      <tr><td>Regisztráció és fiókkezelés</td><td>felhasználónév, név, e-mail, intézményi kapcsolat, szerepkör, jogosultságok</td><td>GDPR 6. cikk (1) b) szerződés teljesítése</td><td>a fiók fennállásáig, majd törlési/export rend szerint</td></tr>
+      <tr><td>Előfizetés, számlázás, szerződés</td><td>kapcsolattartói adatok, számlázási adatok, szerződéses dokumentumok</td><td>GDPR 6. cikk (1) b) szerződés; 6. cikk (1) c) jogi kötelezettség</td><td>számviteli és adózási szabályok szerinti megőrzés</td></tr>
+      <tr><td>Hibabejelentés, support</td><td>kapcsolattartó, hiba leírása, képernyőkép vagy technikai részletek, ha a felhasználó megadja</td><td>GDPR 6. cikk (1) b) szerződés teljesítése; 6. cikk (1) f) jogos érdek</td><td>az ügy lezárásától számított legfeljebb 2 év, kivéve jogvita vagy biztonsági esemény esetén</td></tr>
+      <tr><td>Biztonsági és működési naplózás</td><td>felhasználói azonosító, időpont, művelet típusa, IP-cím, user agent, technikai esemény</td><td>GDPR 6. cikk (1) f) jogos érdek; adatbiztonsági kötelezettségek teljesítése</td><td>adatminimalizált formában, a biztonsági célhoz szükséges ideig; konkrét megőrzési idő belső szabályzatban rögzítendő</td></tr>
+      <tr><td>MI-funkció engedélyezési / kikapcsolási műveletei</td><td>intézmény, modul, felhasználó, időpont, tájékoztató verziója, technikai naplóadatok</td><td>GDPR 6. cikk (1) b) szerződés; 6. cikk (1) f) elszámoltathatósági jogos érdek</td><td>a szerződéses jogviszony és az elszámoltathatósági igény fennállásáig</td></tr>
+      <tr><td>Minőségbiztosítási kérdőív</td><td>anonim vagy leválasztott visszajelzés, ha a rendszer így működik</td><td>nem személyes adatként kezelt anonim adat, vagy GDPR 6. cikk (1) f) jogos érdek</td><td>összesített formában határozatlan ideig, személyhez nem köthetően</td></tr>
+    </tbody>
+  </table>
+</section>
 
-    <h2>4. Adattovábbítás és Külső szolgáltatók (További Adatfeldolgozók)</h2>
-    <p>Személyes adatait harmadik félnek nem értékesítem. Az adatokat kizárólag a szoftver technikai működését biztosító partnerek felé továbbítjuk a működéshez feltétlenül szükséges mértékben, akikkel a GDPR előírásainak megfelelő szerződéses viszonyban állunk:</p>
-    <ul>
-        <li><strong>Tárhelyszolgáltató:</strong> Qualityweb Kft. (Dózsa György utca 4/C 2. 5/A., info@qualityweb.hu) - szerver hosting és adatbázis tárolás.</li>
-        <li><strong>Mesterséges Intelligencia Szolgáltató:</strong> Google LLC (1600 Amphitheatre Parkway, Mountain View, CA 94043, USA). A "Szabadszavas generálás" funkció használatakor a prompt adatok (pszichológiai/tanulmányi értékelések részletei név és azonosítók nélkül) titkosított csatornán átadásra kerülnek a szolgáltatónak. A szolgáltató garantálja a "no-training" és "no-retention" elveket, így az adatok tartós tárolásra vagy a nyelvi modell tanítására nem kerülnek felhasználásra.</li>
-    </ul>
+<section id="adatfeldolgozas" class="card">
+  <h2>3. Intézményi értékelési adatok – adatfeldolgozói szerep</h2>
+  <p>Az ÉRTÉKEK használatakor az ügyfél rögzíthet értékelt személyhez kapcsolódó adatokat, például nevet, kitöltéseket, válaszokat, százalékos eredményeket, PDF-riportokat, auditkapcsolatokat és opcionálisan AI-val előkészített szövegtervezeteket.</p>
+  <p>Ezeknél a cél, jogalap, érintetti kör, különleges adatkezelési feltétel, megőrzési idő, export és törlés meghatározása az ügyfél mint Adatkezelő feladata. A Szolgáltató ezen adatokkal saját célból nem rendelkezik, azokat a rendszer technikai működtetése és az ügyfél dokumentált utasítása alapján kezeli.</p>
+</section>
 
-    <h2>5. Az Ön (Érintett) jogai</h2>
-    <ul>
-        <li>Kérheti a kezelt adataihoz való hozzáférést, azok helyesbítését vagy törlését.</li>
-        <li>Kérheti az adatkezelés korlátozását, és tiltakozhat a személyes adatok kezelése ellen.</li>
-        <li>A hozzájáruláson alapuló adatkezelés esetén a hozzájárulását bármikor visszavonhatja az e-mail címemre küldött levéllel.</li>
-    </ul>
-    <p>Kérelmeire indokolatlan késedelem nélkül, de legkésőbb 30 napon belül válaszolok a szpatis21@gmail.com címen.</p>
+<section id="kulonleges" class="card danger">
+  <h2>4. Különleges adatok, SNI / SHF modulok</h2>
+  <p>A rendszer szakmai moduljai – különösen SNI, súlyosan-halmozottan fogyatékos, halmozottan sérült vagy fejlesztési támogatást igénylő tanulók kompetenciaértékelése esetén – egészségi állapotra, fogyatékosságra, fejlődési állapotra vagy más fokozottan védendő körülményre utaló adatokat érinthetnek.</p>
+  <p>Az ilyen adatok jogszerű kezeléséhez az Adatkezelőnek saját dokumentációjában rögzítenie kell:</p>
+  <ul>
+    <li>a GDPR 6. cikk szerinti jogalapot;</li>
+    <li>különleges adat esetén a GDPR 9. cikk szerinti feltételt;</li>
+    <li>az érintetti / törvényes képviselői tájékoztatást;</li>
+    <li>a hozzáférési rendet;</li>
+    <li>az MI-funkció engedélyezését vagy tiltását;</li>
+    <li>a DPIA vagy DPIA-előszűrés szükségességét.</li>
+  </ul>
+  <p>Köznevelési / gyógypedagógiai intézményi használat esetén az alap fejlesztési dokumentáció és kompetenciamérés jellemzően közfeladat vagy jogi kötelezettség teljesítéséhez kapcsolódhat, de ezt az Adatkezelő rögzíti.</p>
+</section>
 
-    <h2>6. Jogorvoslati lehetőségek</h2>
-    <p>Ha úgy ítéli meg, hogy a személyes adatainak kezelése sérti a GDPR előírásait, panaszt tehet a Nemzeti Adatvédelmi és Információszabadság Hatóságnál (NAIH, 1055 Budapest, Falk Miksa utca 9-11., www.naih.hu).</p>
+<section id="mi" class="card">
+  <h2>5. Opcionális MI-alapú szövegezési segédfunkció</h2>
+  <p>Az MI-funkció célja az értékelési adatokból szerkeszthető szövegtervezet készítése. Nem szakvélemény, nem diagnózis, nem automatizált döntéshozatal.</p>
+  <p>A rendszer jelenlegi működési elve szerint az egyéni MI-generálásnál a frontend nem továbbít nevet, szabad szöveges megjegyzést vagy teljes nyers válaszcsomagot az MI-szolgáltató felé. A frontend a backend felé az értékelés azonosítóját és az MI-funkció típusát küldi. A külső MI-szolgáltató felé továbbítható prompt-adatot a backend állítja elő jogosultságellenőrzés után, szöveges mezők kizárásával, kontrollált kérdőívállításokból és százalékos/statisztikai adatokból.</p>
+  <ul>
+    <li><strong>Nem cél továbbítani:</strong> név, e-mail, telefonszám, közvetlen azonosító, IP-cím, user agent, szabad szöveges megjegyzés, teljes DOM-szöveg, auditüzenet, belső naplóadat.</li>
+    <li><strong>Továbbítható:</strong> minimalizált, név nélküli, strukturált kérdőívállítás, kategória, százalékos eredmény, statisztikai összesítés, csoportos módban résztvevő-sorszámos adat.</li>
+    <li><strong>Érzékeny moduloknál:</strong> az MI-használat külön intézményi döntéshez kötendő.</li>
+  </ul>
+  <p class="note">Az MI-kimenetet szakembernek kell ellenőriznie. Az elfogadás, módosítás és szakmai felhasználás az Adatkezelő felelőssége.</p>
+</section>
+
+<section id="biztonsag" class="card">
+  <h2>6. Adatbiztonsági intézkedések</h2>
+  <ul>
+    <li>HTTPS adatátvitel.</li>
+    <li>Session-alapú bejelentkezés.</li>
+    <li>HttpOnly munkamenet-süti; production környezetben Secure attribútum és SameSite=Lax beállítás.</li>
+    <li>Állapotmódosító kéréseknél sessionhöz kötött CSRF-token ellenőrzés.</li>
+    <li>Backend oldali bejelentkezés-, szerepkör-, intézményi-, modul- és objektumszintű jogosultság-ellenőrzés.</li>
+    <li>Belépési, jelszó-visszaállítási és egyes MI-végpontokon próbálkozáskorlátozás.</li>
+    <li>Hash-elt jelszavak és hash-elt, időkorlátos reset tokenek.</li>
+    <li>A vizsgált személy neve titkosított adattárolási logikába kerülhet.</li>
+    <li>Adattakarékos aktivitási naplózás biztonsági és működési célból.</li>
+    <li>Privát frontend állományok autentikációhoz kötött útvonalak mögött.</li>
+    <li>Éles környezetben fejlesztői/debug útvonalak és titkok nem lehetnek publikusak.</li>
+  </ul>
+</section>
+
+<section id="szolgaltatok" class="card">
+  <h2>7. Külső szolgáltatók, alfeldolgozók</h2>
+  <table>
+    <thead><tr><th>Szolgáltató</th><th>Feladat</th><th>Adatkör</th><th>Megjegyzés</th></tr></thead>
+    <tbody>
+      <tr><td>Qualityweb Kft.</td><td>tárhely, szerverinfrastruktúra, adatbázis és Plesk környezet</td><td>a rendszer működéséhez szükséges technikai adatok és adatbázis-tartalom</td><td>részletes feltételek a tárhelyszolgáltató szerződése szerint</td></tr>
+      <tr><td>Google LLC / Google Ireland Limited – Gemini API</td><td>opcionális MI-szövegezési segédfunkció</td><td>minimalizált, név nélküli prompt-adat; kontrollált kérdőívállítások; aggregált statisztikák</td><td>csak engedélyezett MI-funkció esetén</td></tr>
+      <tr><td>E-mail szolgáltató</td><td>rendszerüzenetek, jelszó-visszaállítás, kapcsolattartás</td><td>e-mail cím, üzenet technikai adatai</td><td>a ténylegesen használt levelezési szolgáltató szerint pontosítandó</td></tr>
+      <tr><td>CDN / publikus script/font kiszolgálók</td><td>frontend könyvtárak, grafikon/PDF könyvtárak vagy fontok kiszolgálása, ha élesben használatban vannak</td><td>böngészőoldali technikai kapcsolat, IP-cím a CDN felé</td><td>lehetőség szerint self-hosting vagy dokumentált használat javasolt</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="jogok" class="card">
+  <h2>8. Érintetti jogok</h2>
+  <p>A felhasználói fiókkal, kapcsolattartással és számlázással kapcsolatos saját adatai ügyében az érintett a Szolgáltatóhoz fordulhat. Az értékelésekben szereplő tanulók, ellátottak vagy más értékelt személyek joggyakorlása elsődlegesen az adott intézménynél mint Adatkezelőnél történik.</p>
+  <ul>
+    <li>hozzáférés kérése;</li>
+    <li>helyesbítés kérése;</li>
+    <li>törlés vagy korlátozás kérése;</li>
+    <li>tiltakozás, ha a jogalap ezt lehetővé teszi;</li>
+    <li>adathordozhatóság, ha alkalmazható;</li>
+    <li>panasz benyújtása a NAIH-hoz.</li>
+  </ul>
+</section>
+
+<section id="incidens" class="card">
+  <h2>9. Incidensek</h2>
+  <p>Ha a Szolgáltató adatvédelmi incidenst észlel az ügyfél adataival kapcsolatban, indokolatlan késedelem nélkül tájékoztatja az érintett Adatkezelőt. A hatósági bejelentésről és az érintetti tájékoztatásról főszabály szerint az Adatkezelő dönt, de a Szolgáltató a rendelkezésére álló technikai információkkal támogatja.</p>
+  <p>Gyanús jogosulatlan hozzáférés, adatvesztés, hibás export, rossz címzett vagy API-kulcs szivárgás esetén a rendszerüzemeltetési és incidenskezelési eljárás szerint kell eljárni: jelszó/session érvénytelenítés, érintett modul elkülönítése, logok mentése, kulcscsere, kockázatértékelés, dokumentálás.</p>
+</section>
+
+<section id="sutik" class="card">
+  <h2>10. Sütik</h2>
+  <p>A rendszer a biztonságos működéshez és bejelentkezéshez szükséges technikai munkamenet-sütit használ. A munkamenet-süti HttpOnly védelemmel, SameSite=Lax beállítással, éles HTTPS környezetben Secure attribútummal működik.</p>
+  <ul>
+    <li><strong>Cél:</strong> bejelentkezés fenntartása, jogosultsági kontextus, CSRF-védelem.</li>
+    <li><strong>Típus:</strong> szigorúan szükséges technikai süti.</li>
+    <li><strong>Marketing / analitika:</strong> a rendszer jelen szabvány szerint nem használ marketing vagy profilalkotó sütiket. Ha később analitika kerül bevezetésre, a tájékoztatót és hozzájárulási rendet frissíteni kell.</li>
+  </ul>
+</section>
+
+<section id="jogorvoslat" class="card">
+  <h2>11. Jogorvoslat</h2>
+  <p>Az érintett elsődlegesen az adott Adatkezelőhöz vagy a Szolgáltató saját adatkezelése esetén a Szolgáltatóhoz fordulhat. Panasz esetén a Nemzeti Adatvédelmi és Információszabadság Hatóság is megkereshető.</p>
+  <ul>
+    <li><strong>NAIH:</strong> Nemzeti Adatvédelmi és Információszabadság Hatóság</li>
+    <li><strong>Honlap:</strong> <a href="https://www.naih.hu" rel="noopener">www.naih.hu</a></li>
+    <li><strong>E-mail:</strong> ugyfelszolgalat@naih.hu</li>
+  </ul>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+    </div>
+  </footer>
 </body>
+  <script type="module" src="/both/both.js"></script>
+
 </html>

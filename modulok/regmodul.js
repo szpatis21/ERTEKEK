@@ -2,16 +2,73 @@ const express = require('express');
 const router = express.Router();
 const nodemailer = require('nodemailer');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 
+const ROLE_ADMIN = 1;
+const ROLE_ELEMZO = 2;
+const ROLE_ERTEKELO = 3;
+
+function parseIdList(value) {
+    if (Array.isArray(value)) {
+        return value
+            .map(Number)
+            .filter(id => Number.isInteger(id) && id > 0);
+    }
+
+    return String(value ?? "")
+        .split(",")
+        .map(s => Number(String(s).trim()))
+        .filter(id => Number.isInteger(id) && id > 0);
+}
+
+function uniqueNumbers(values) {
+    return [...new Set(
+        values
+            .map(Number)
+            .filter(id => Number.isInteger(id) && id > 0)
+    )];
+}
+
+function normalizePackageCode(value, modulTipus = 'meglevo') {
+    const raw = String(value || '').trim().toLowerCase();
+    if (['demo', 'start', 'pro', 'sajat', 'fenntartoi'].includes(raw)) return raw;
+    if (modulTipus === 'ures') return 'sajat';
+    return 'start';
+}
+
+function packageMaxUsers(code, fallback) {
+    const n = Number(fallback);
+    const defaults = { demo: 1, start: 5, pro: 20, sajat: 5, fenntartoi: 50 };
+    if (Number.isInteger(n) && n > 0) return n;
+    return defaults[code] || 5;
+}
+
+function shouldGetUploaderRole(packageCode, modulTipus) {
+    return modulTipus === 'ures' || packageCode === 'sajat' || packageCode === 'fenntartoi';
+}
+function getAllowedRolesForPackage(packageCode) {
+    const code = normalizePackageCode(packageCode);
+
+    if (code === 'demo' || code === 'start') {
+        return [ROLE_ERTEKELO];
+    }
+
+    if (code === 'pro') {
+        return [ROLE_ERTEKELO, ROLE_ELEMZO];
+    }
+
+    if (code === 'sajat' || code === 'fenntartoi') {
+        return [ROLE_ADMIN, ROLE_ERTEKELO, ROLE_ELEMZO];
+    }
+
+    return [ROLE_ERTEKELO];
+}
 let transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
-    },
-    tls: {
-        rejectUnauthorized: false
     }
 });
 
@@ -45,83 +102,707 @@ function escapeHtml(value) {
 }
 
 
-function regi(db) 
-{   //Regisztráció fajták
-    const logger = require('./logmodul')(db); // Ezt a sort kell beszúrni
-        // Intézmény regisztráció
-router.post('/register/institution', (req, res) => {
-    const {
-        intv,
-        intirv,
-        orszv,
-        szekhelyv,
-        adoszv,
-        cimv,
-        vez2v,
-        mail2v,
-        tel2v,
-        intfinv,
-        infov,
-        intmod,
-        modulTipus = "meglevo",
-        ujModulNev = "",
-        ujModulLeiras = "",
-        szamolas = null
-    } = req.body;
+const REGISTRATION_NOTIFY_EMAIL = process.env.REGISTRATION_NOTIFY_EMAIL || 'ertekek.info@gmail.com';
 
-    const mailCegv = mail2v;  
-    const telCegv = tel2v;
+const FALLBACK_PACKAGES = {
+    demo: { kod: 'demo', nev: 'Demo', ar_havi: 0, ar_negyedeves: 0, ar_eves: 0, max_felhasznalo: 1, max_ertekelo: 1, max_elemzo: 0, max_feltolto: 0 },
+    start: { kod: 'start', nev: 'Értékek Start', ar_havi: 18900, ar_negyedeves: 75000, ar_eves: 222000, max_felhasznalo: 2, max_ertekelo: 2, max_elemzo: 0, max_feltolto: 0 },
+    pro: { kod: 'pro', nev: 'Értékek Pro', ar_havi: 24900, ar_negyedeves: 139000, ar_eves: 279000, max_felhasznalo: 5, max_ertekelo: 3, max_elemzo: 2, max_feltolto: 0 },
+    sajat: { kod: 'sajat', nev: 'Értékek Saját Rendszer', ar_havi: 19900, ar_negyedeves: 79000, ar_eves: 189000, max_felhasznalo: 3, max_ertekelo: 0, max_elemzo: 0, max_feltolto: 3 },
+    fenntartoi: { kod: 'fenntartoi', nev: 'Fenntartói csomag', ar_havi: 0, ar_negyedeves: 0, ar_eves: 0, max_felhasznalo: 50, max_ertekelo: 30, max_elemzo: 10, max_feltolto: 10 }
+};
 
-    const uresModul = modulTipus === "ures";
-    const szamolasErtek = Number(szamolas);
+const EXTRA_USER_PRICES = {
+    demo: { havi: 0, negyedeves: 0, eves: 0 },
+    start: { havi: 4500, negyedeves: 12500, eves: 45000 },
+    pro: { havi: 6500, negyedeves: 18000, eves: 65000 },
+    sajat: { havi: 6500, negyedeves: 18000, eves: 65000 },
+    fenntartoi: { havi: 0, negyedeves: 0, eves: 0 }
+};
 
-    if (uresModul) {
-        if (!ujModulNev.trim() || !ujModulLeiras.trim() || ![0, 1].includes(szamolasErtek)) {
-            return res.status(400).json({
-                message: "Üres értékelő rendszer esetén a modul nevét, leírását és számítási módját is meg kell adni."
-            });
-        }
+function formatFt(value) {
+    return `${new Intl.NumberFormat('hu-HU').format(Number(value || 0))} Ft`;
+}
+
+function sanitizeBillingPeriod(value) {
+    const raw = String(value || '').toLowerCase();
+    return ['havi', 'negyedeves', 'eves'].includes(raw) ? raw : 'havi';
+}
+
+function getPackagePrice(pkg, period) {
+    if (period === 'eves') return Number(pkg.ar_eves || 0);
+    if (period === 'negyedeves') return Number(pkg.ar_negyedeves || 0);
+    return Number(pkg.ar_havi || 0);
+}
+
+function normalizePackageRow(row, code) {
+    const fallback = FALLBACK_PACKAGES[code] || FALLBACK_PACKAGES.start;
+    return {
+        ...fallback,
+        ...(row || {}),
+        kod: code,
+        nev: row?.nev || fallback.nev,
+        ar_havi: Number(row?.ar_havi ?? fallback.ar_havi ?? 0),
+        ar_negyedeves: Number(row?.ar_negyedeves ?? fallback.ar_negyedeves ?? 0),
+        ar_eves: Number(row?.ar_eves ?? fallback.ar_eves ?? 0),
+        max_felhasznalo: Number(row?.max_felhasznalo ?? fallback.max_felhasznalo ?? 1),
+        max_ertekelo: Number(row?.max_ertekelo ?? fallback.max_ertekelo ?? 0),
+        max_elemzo: Number(row?.max_elemzo ?? fallback.max_elemzo ?? 0),
+        max_feltolto: Number(row?.max_feltolto ?? fallback.max_feltolto ?? 0)
+    };
+}
+
+function calculateRegistrationPricing(packageRow, packageCode, requestedPeriod, requestedExtraUsers) {
+    const csomagKod = normalizePackageCode(packageCode);
+    const pkg = normalizePackageRow(packageRow, csomagKod);
+    const period = csomagKod === 'demo' ? 'demo' : sanitizeBillingPeriod(requestedPeriod);
+    const extraUsersRaw = Number(requestedExtraUsers || 0);
+    const extraUsers = csomagKod === 'demo' ? 0 : Math.max(0, Math.min(20, Number.isInteger(extraUsersRaw) ? extraUsersRaw : 0));
+    const baseUsers = Number(pkg.max_felhasznalo || 1);
+    const basePrice = csomagKod === 'demo' ? 0 : getPackagePrice(pkg, period);
+    const extraUnitPrice = csomagKod === 'demo' ? 0 : Number(EXTRA_USER_PRICES[csomagKod]?.[period] || 0);
+    const extraPrice = extraUsers * extraUnitPrice;
+    const totalPrice = basePrice + extraPrice;
+
+    return {
+        csomagKod,
+        packageName: pkg.nev,
+        period,
+        baseUsers,
+        extraUsers,
+        totalUsers: baseUsers + extraUsers,
+        basePrice,
+        extraUnitPrice,
+        extraPrice,
+        totalPrice,
+        max_ertekelo: pkg.max_ertekelo,
+        max_elemzo: pkg.max_elemzo,
+        max_feltolto: pkg.max_feltolto
+    };
+}
+
+function normalizePackageRequestType(value) {
+    const raw = String(value || '').trim().toLowerCase();
+    if (['user_expansion', 'felhasznalo_bovites', 'users', 'extra_users'].includes(raw)) return 'user_expansion';
+    if (['custom_material_addon', 'sajat_plusz', 'sajat_szakmai_anyag', 'addon_sajat'].includes(raw)) return 'custom_material_addon';
+    if (['permission_upgrade', 'jogosultsag_bovites', 'role_upgrade', 'szerepkor_bovites', 'rights_upgrade'].includes(raw)) return 'permission_upgrade';
+    return 'package_change';
+}
+
+function packageRequestTypeLabel(type) {
+    if (type === 'user_expansion') return 'Felhasználói keret bővítése';
+    if (type === 'custom_material_addon') return 'Saját szakmai anyag plusz szolgáltatás';
+    if (type === 'permission_upgrade') return 'Jogosultság bővítési kérelem';
+    return 'Csomagváltás';
+}
+
+function normalizeExtraUserCount(value) {
+    const n = Number(value || 0);
+    if (!Number.isFinite(n)) return 0;
+    return Math.max(0, Math.min(20, Math.floor(n)));
+}
+
+function calculateChangeRequestPricing({ packageRow, packageCode, requestedPeriod, requestedExtraUsers, currentMaxUsers, requestType }) {
+    const csomagKod = normalizePackageCode(packageCode);
+    const pkg = normalizePackageRow(packageRow, csomagKod);
+    const period = csomagKod === 'demo' ? 'demo' : sanitizeBillingPeriod(requestedPeriod);
+    const currentUsers = Math.max(1, Number(currentMaxUsers || 0) || Number(pkg.max_felhasznalo || 1));
+    const extraUsers = normalizeExtraUserCount(requestedExtraUsers);
+    const extraUnitPrice = csomagKod === 'demo' ? 0 : Number(EXTRA_USER_PRICES[csomagKod]?.[period] || 0);
+
+    if (requestType === 'user_expansion') {
+        const extraPrice = extraUsers * extraUnitPrice;
+        return {
+            csomagKod,
+            packageName: `${pkg.nev} - felhasználói keret bővítés`,
+            period,
+            baseUsers: currentUsers,
+            extraUsers,
+            totalUsers: currentUsers + extraUsers,
+            basePrice: 0,
+            extraUnitPrice,
+            extraPrice,
+            totalPrice: extraPrice,
+            max_ertekelo: pkg.max_ertekelo,
+            max_elemzo: pkg.max_elemzo,
+            max_feltolto: pkg.max_feltolto
+        };
     }
 
-    const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'] || 'Ismeretlen';
+    if (requestType === 'permission_upgrade') {
+        return {
+            csomagKod,
+            packageName: 'Jogosultság bővítési kérelem',
+            period,
+            baseUsers: currentUsers,
+            extraUsers: 0,
+            totalUsers: currentUsers,
+            basePrice: 0,
+            extraUnitPrice: 0,
+            extraPrice: 0,
+            totalPrice: 0,
+            max_ertekelo: pkg.max_ertekelo,
+            max_elemzo: pkg.max_elemzo,
+            max_feltolto: pkg.max_feltolto
+        };
+    }
 
-    const sqlActivePeriod = "SELECT idoszak FROM idoszak WHERE aktiv = 1 LIMIT 1";
-    
-    db.query(sqlActivePeriod, (errPeriod, periodResults) => {
-        if (errPeriod) {
-            console.error('Időszak lekérdezési hiba:', errPeriod);
-            return res.status(500).json({ message: 'Szerver hiba az időszak ellenőrzésekor.' });
+    if (requestType === 'custom_material_addon') {
+        const basePrice = getPackagePrice(pkg, period);
+        return {
+            csomagKod,
+            packageName: 'Saját szakmai anyag plusz szolgáltatás',
+            period,
+            baseUsers: currentUsers,
+            extraUsers: 0,
+            totalUsers: currentUsers,
+            basePrice,
+            extraUnitPrice: 0,
+            extraPrice: 0,
+            totalPrice: basePrice,
+            max_ertekelo: pkg.max_ertekelo,
+            max_elemzo: pkg.max_elemzo,
+            max_feltolto: pkg.max_feltolto
+        };
+    }
+
+    return calculateRegistrationPricing(packageRow, csomagKod, period, extraUsers);
+}
+
+async function generateInstitutionCode(q, packageCode) {
+    const prefixMap = { demo: 'DEMO', start: 'START', pro: 'PRO', sajat: 'SAJAT', fenntartoi: 'FENNT' };
+    const prefix = prefixMap[packageCode] || 'ERTEK';
+    const now = new Date();
+    const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+    for (let i = 0; i < 8; i += 1) {
+        const randomPart = crypto.randomBytes(5).toString('hex').toUpperCase();
+        const code = `${prefix}-${datePart}-${randomPart}`;
+        const rows = await q('SELECT id FROM intezmeny WHERE intreg = ? LIMIT 1', [code]);
+        if (!rows.length) return code;
+    }
+
+    throw new Error('Nem sikerült egyedi intézményi regisztrációs kódot generálni.');
+}
+
+function buildInstitutionNotificationHtml({ type, institutionName, contactName, contactEmail, phone, address, taxNumber, packageName, packageCode, registrationCode, pricing, moduleText, aiEnabled }) {
+    const priceLine = pricing.totalPrice > 0
+        ? `<p><strong>Fizetendő:</strong> ${escapeHtml(formatFt(pricing.totalPrice))} (${escapeHtml(pricing.period)}). Díjbekérő készítendő.</p>`
+        : '<p><strong>Fizetendő:</strong> 0 Ft / demo.</p>';
+
+    return `
+        <div style="font-family: Arial, sans-serif; color:#222; line-height:1.55;">
+            <h2>Új intézményi regisztráció - ÉRTÉKEK</h2>
+            <p><strong>Típus:</strong> ${escapeHtml(type)}</p>
+            <p><strong>Intézmény:</strong> ${escapeHtml(institutionName)}</p>
+            <p><strong>Adószám:</strong> ${escapeHtml(taxNumber)}</p>
+            <p><strong>Cím:</strong> ${escapeHtml(address)}</p>
+            <p><strong>Kapcsolattartó:</strong> ${escapeHtml(contactName)} &lt;${escapeHtml(contactEmail)}&gt; ${escapeHtml(phone || '')}</p>
+            <p><strong>Csomag:</strong> ${escapeHtml(packageName)} (${escapeHtml(packageCode)})</p>
+            <p><strong>Regisztrációs kód:</strong> ${escapeHtml(registrationCode)}</p>
+            <p><strong>Felhasználói keret:</strong> alap ${pricing.baseUsers}, plusz ${pricing.extraUsers}, összesen ${pricing.totalUsers}</p>
+            <p><strong>Alapár:</strong> ${escapeHtml(formatFt(pricing.basePrice))}</p>
+            <p><strong>Plusz felhasználók ára:</strong> ${pricing.extraUsers} × ${escapeHtml(formatFt(pricing.extraUnitPrice))} = ${escapeHtml(formatFt(pricing.extraPrice))}</p>
+            ${priceLine}
+            <p><strong>Modul / rendszer:</strong> ${escapeHtml(moduleText)}</p>
+            <p><strong>MI:</strong> ${aiEnabled ? 'engedélyezve' : 'kikapcsolva'}</p>
+            ${pricing.totalPrice > 0 ? '<p><strong>Teendő:</strong> állj neki díjbekérőt készíteni.</p>' : ''}
+        </div>
+    `;
+}
+
+
+
+function buildPackageChangeNotificationHtml({ institution, requester, pricing, currentPackageCode, currentPeriod, requestType, requestTypeLabel, note }) {
+    const priceLine = pricing.totalPrice > 0
+        ? `<p><strong>Várható fizetendő:</strong> ${escapeHtml(formatFt(pricing.totalPrice))} (${escapeHtml(pricing.period)}). Díjbekérő készítendő.</p>`
+        : '<p><strong>Várható fizetendő:</strong> 0 Ft.</p>';
+    const actionLine = requestType === 'custom_material_addon'
+        ? 'egyeztetés / díjbekérő után a saját szakmai anyag plusz szolgáltatást külön kell kezelni. A meglévő csomagot ez a kérelem nem írja át automatikusan.'
+        : requestType === 'permission_upgrade'
+            ? 'jogosultság ellenőrzése és kézi szerepkörmódosítás szükséges. Ez a kérelem nem csomagváltás.'
+            : 'díjbekérő / szerződés / fizetés után sysadmin aktiválás. Aktiváláskor az intézményi felhasználói keret is frissül.';
+
+    return `
+        <div style="font-family: Arial, sans-serif; color:#222; line-height:1.55;">
+            <h2>Csomagváltási / csomagbővítési kérelem - ÉRTÉKEK</h2>
+            <p><strong>Kérelem típusa:</strong> ${escapeHtml(requestTypeLabel || 'Csomagváltás')}</p>
+            <p><strong>Intézmény:</strong> ${escapeHtml(institution.intnev)}</p>
+            <p><strong>Intézmény ID:</strong> ${escapeHtml(institution.id)}</p>
+            <p><strong>Adószám:</strong> ${escapeHtml(institution.intado || '')}</p>
+            <p><strong>Jelenlegi csomag:</strong> ${escapeHtml(currentPackageCode || 'nincs adat')} / ${escapeHtml(currentPeriod || 'nincs adat')}</p>
+            <p><strong>Kért cél / szolgáltatás:</strong> ${escapeHtml(pricing.packageName)} (${escapeHtml(pricing.csomagKod)})</p>
+            <p><strong>Fizetési időszak:</strong> ${escapeHtml(pricing.period)}</p>
+            <p><strong>Felhasználói keret:</strong> alap ${pricing.baseUsers}, plusz ${pricing.extraUsers}, összesen ${pricing.totalUsers}</p>
+            <p><strong>Alapár:</strong> ${escapeHtml(formatFt(pricing.basePrice))}</p>
+            <p><strong>Plusz felhasználók ára:</strong> ${pricing.extraUsers} × ${escapeHtml(formatFt(pricing.extraUnitPrice))} = ${escapeHtml(formatFt(pricing.extraPrice))}</p>
+            ${priceLine}
+            <p><strong>Kérelmező:</strong> ${escapeHtml(requester.vez || requester.fnev || 'Ismeretlen')} &lt;${escapeHtml(requester.mail || '')}&gt;</p>
+            ${note ? `<p><strong>Megjegyzés:</strong> ${escapeHtml(note)}</p>` : ''}
+            <p><strong>Teendő:</strong> ${escapeHtml(actionLine)}</p>
+        </div>
+    `;
+}
+
+function buildPackageChangeUserHtml({ institutionName, pricing, requestType, requestTypeLabel }) {
+    const paymentText = pricing.totalPrice > 0
+        ? `<p><strong>Várható összeg:</strong> ${escapeHtml(formatFt(pricing.totalPrice))} (${escapeHtml(pricing.period)}).</p><p>Ez még nem díjbekérő. A díjbekérővel vagy az egyeztetéssel külön jelentkezünk.</p>`
+        : '<p>A kért kérelemhez jelenleg nem tartozik automatikus fizetési kötelezettség.</p>';
+    const closingText = requestType === 'custom_material_addon'
+        ? 'A jelenlegi csomagot ez a kérelem nem írja át automatikusan. A saját szakmai anyag plusz szolgáltatás részleteiről külön egyeztetés szükséges.'
+        : requestType === 'permission_upgrade'
+            ? 'A jogosultság csak jóváhagyás és kézi beállítás után változik. A kérelem nem jelent automatikus szerepkörmódosítást.'
+            : 'A változás csak szerződés, fizetés és üzemeltetői aktiválás után lép életbe.';
+
+    return `
+        <div style="font-family: Arial, sans-serif; color:#333; line-height:1.55;">
+            <h2 style="color:#ff7c00;">Kérelmét rögzítettük</h2>
+            <p>Kedves ${escapeHtml(institutionName)}!</p>
+            <p>Az alábbi kérelmet rögzítettük:</p>
+            <p><strong>${escapeHtml(requestTypeLabel || 'Csomagváltás')}</strong></p>
+            <p><strong>${escapeHtml(pricing.packageName)}</strong></p>
+            <p><strong>Felhasználói keret:</strong> ${pricing.totalUsers} fő</p>
+            ${paymentText}
+            <p>${escapeHtml(closingText)}</p>
+            <p>Üdvözlettel,<br><strong>Az ÉRTÉKEK csapata</strong></p>
+        </div>
+    `;
+}
+
+function buildUserNotificationHtml({ institutionName, userName, userEmail, roleName }) {
+    return `
+        <div style="font-family: Arial, sans-serif; color:#222; line-height:1.55;">
+            <h2>Új felhasználói regisztráció - ÉRTÉKEK</h2>
+            <p><strong>Intézmény:</strong> ${escapeHtml(institutionName)}</p>
+            <p><strong>Felhasználó:</strong> ${escapeHtml(userName)}</p>
+            <p><strong>E-mail:</strong> ${escapeHtml(userEmail)}</p>
+            <p><strong>Szerepkör:</strong> ${escapeHtml(roleName)}</p>
+        </div>
+    `;
+}
+
+
+function regi(db) 
+
+{   //Regisztráció fajták
+  const logger = require('./logmodul')(db);
+
+const {
+    q,
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    requireRole,
+    requireActiveLicense
+} = require('./security')(db);
+
+function extractPendingRequestType(note = '') {
+    const match = String(note || '').match(/Kérelem típusa:\s*([^\n]+)/i);
+    return normalizePackageRequestType(match ? match[1] : 'package_change');
+}
+
+function formatPendingChangeRequest(row = {}) {
+    const requestType = extractPendingRequestType(row.megjegyzes || '');
+    return {
+        id: row.id,
+        statusz: row.statusz,
+        requestType,
+        requestTypeLabel: packageRequestTypeLabel(requestType),
+        csomagKod: row.csomag_kod || '',
+        packageName: row.csomag_nev || row.csomag_kod || 'Folyamatban lévő kérelem',
+        maxFelhasznalo: row.max_felhasznalo || null
+    };
+}
+
+router.post('/api/package-change-request', requireLogin, attachUserContext, async (req, res) => {
+    try {
+        const requestType = normalizePackageRequestType(req.body.kerelemTipus || req.body.requestType || req.body.tipus);
+        const rawPackageCode = String(req.body.csomagKod || req.body.packageCode || '').trim().toLowerCase();
+        const fizetesiIdoszak = sanitizeBillingPeriod(req.body.fizetesiIdoszak || req.body.billing || 'havi');
+        const extraFelhasznalo = normalizeExtraUserCount(req.body.extraFelhasznalo || req.body.pluszFelhasznalo || 0);
+        const note = String(req.body.megjegyzes || '').trim().slice(0, 800);
+
+        const userRows = await q(
+            `
+            SELECT
+                f.id,
+                f.fnev,
+                f.vez,
+                f.mail,
+                f.role_id,
+                i.id AS intezmeny_id,
+                i.intnev,
+                i.intado,
+                i.intkapvez,
+                i.intkapmail,
+                i.intkaptel,
+                i.intfo,
+                i.csomag_kod,
+                i.idoszak,
+                i.sysadmin_megjegyzes
+            FROM felhasznalok f
+            JOIN intezmeny i ON i.id = f.int_id
+            WHERE f.id = ?
+            LIMIT 1
+            `,
+            [req.auth.userId]
+        );
+
+        if (!userRows.length) {
+            return res.status(404).json({
+                success: false,
+                message: 'Nem található intézményi fiók a kérelemhez.'
+            });
         }
 
-        const aktualisIdoszak = periodResults.length > 0 ? periodResults[0].idoszak : 'teszt';
+        const row = userRows[0];
+        const institution = {
+            id: Number(row.intezmeny_id),
+            intnev: row.intnev,
+            intado: row.intado,
+            intkapmail: row.intkapmail,
+            intkapvez: row.intkapvez,
+            intkaptel: row.intkaptel
+        };
 
-        const checkQuery = 'SELECT * FROM intezmeny WHERE intnev = ? OR intado = ?';
+        const currentPackageCode = normalizePackageCode(row.csomag_kod || row.idoszak);
+        const currentMaxUsers = Math.max(1, Number(row.intfo || 0) || packageMaxUsers(currentPackageCode, 0));
 
-        db.query(checkQuery, [intv, adoszv], (err, results) => {
-            if (err) {
-                console.error('Adatbázis hiba ellenőrzéskor:', err);
-                return res.status(500).json({ message: 'Adatbázis hiba történt.' });
+        const pendingRows = await q(
+            `
+            SELECT e.id, e.statusz, e.max_felhasznalo, e.megjegyzes,
+                   c.kod AS csomag_kod, c.nev AS csomag_nev
+            FROM elofizetesek e
+            LEFT JOIN csomagok c ON c.id = e.csomag_id
+            WHERE e.tulajdonos_tipus = 'institution'
+              AND e.intezmeny_id = ?
+              AND e.aktiv = 0
+              AND e.statusz IN ('pending', 'pending_request')
+            ORDER BY e.id DESC
+            LIMIT 1
+            `,
+            [institution.id]
+        );
+
+        if (pendingRows.length) {
+            return res.status(409).json({
+                success: false,
+                message: 'Már van folyamatban lévő csomagváltási, bővítési vagy jogosultsági kérelem. Új kérelmet csak a sysadmin oldali jóváhagyás, elutasítás vagy lezárás után lehet indítani.',
+                pendingRequest: formatPendingChangeRequest(pendingRows[0])
+            });
+        }
+
+        let requestedPackageCode = rawPackageCode ? normalizePackageCode(rawPackageCode) : currentPackageCode;
+
+        if (requestType === 'user_expansion') {
+            requestedPackageCode = currentPackageCode;
+            if (currentPackageCode === 'demo') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Demo hozzáférésnél felhasználói keret nem bővíthető. Előbb Start vagy Pro csomagot kell kérni.'
+                });
             }
-
-            if (results.length > 0) {
-                return res.status(400).json({ message: 'Ezzel az intézmény névvel vagy adószámmal már regisztráltak.' });
+            if (extraFelhasznalo < 1) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'A felhasználói keret bővítéséhez legalább 1 plusz felhasználót kell megadni.'
+                });
             }
+        } else if (requestType === 'custom_material_addon') {
+            requestedPackageCode = 'sajat';
+            if (currentPackageCode === 'demo') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Demo hozzáféréshez saját szakmai anyag plusz szolgáltatás nem kérhető. Előbb aktív Start vagy Pro csomag szükséges.'
+                });
+            }
+            if (currentPackageCode === 'sajat') {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ehhez az intézményhez már Saját rendszer csomag tartozik.'
+                });
+            }
+        } else if (requestType === 'permission_upgrade') {
+            requestedPackageCode = currentPackageCode || 'start';
+        } else {
+            if (!rawPackageCode) {
+                return res.status(400).json({ success: false, message: 'Hiányzó csomagkód.' });
+            }
+            if (!['start', 'pro', 'sajat'].includes(requestedPackageCode)) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Meglévő intézményhez Demo csomag nem kérhető. Válasszon Start, Pro vagy Saját rendszer csomagot.'
+                });
+            }
+            if (requestedPackageCode === currentPackageCode) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Ez már a jelenlegi csomag. Felhasználói keret bővítéséhez a külön bővítési opciót használja.'
+                });
+            }
+        }
 
-            const date = new Date();
-            const year = date.getFullYear();
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const intreg = `${intv.substring(0, 3)}${adoszv.substring(0, 3)}${year}${month}`;
+        const packageRows = await q(
+            `
+            SELECT id, kod, nev, ar_havi, ar_negyedeves, ar_eves,
+                   max_felhasznalo, max_ertekelo, max_elemzo, max_feltolto
+            FROM csomagok
+            WHERE kod = ? AND aktiv = 1
+            LIMIT 1
+            `,
+            [requestedPackageCode]
+        );
 
-            const indulasiIntmod = uresModul ? "" : String(intmod || "1");
+        const packageRow = packageRows[0] || FALLBACK_PACKAGES[requestedPackageCode] || FALLBACK_PACKAGES.start;
+        const pricing = calculateChangeRequestPricing({
+            packageRow,
+            packageCode: requestedPackageCode,
+            requestedPeriod: fizetesiIdoszak,
+            requestedExtraUsers: extraFelhasznalo,
+            currentMaxUsers,
+            requestType
+        });
+        const requestTypeLabel = packageRequestTypeLabel(requestType);
 
-            const query = ` 
-                INSERT INTO intezmeny 
-                (intnev, intir, intor, intszek, intado, intcim, intmail, inttel, intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg, validalva, fizetve, ip_cim, user_agent, idoszak) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NULL, ?, ?, ?);
-            `;
+        const requestedAt = new Date().toISOString();
+        const requestNote = [
+            `Kérelem típusa: ${requestType}`,
+            `Kérelem megnevezése: ${requestTypeLabel}`,
+            `Kérelem rögzítve: ${requestedAt}`,
+            `Kérelmező: ${row.vez || row.fnev || 'ismeretlen'} <${row.mail || ''}>`,
+            `Jelenlegi csomag: ${currentPackageCode || 'nincs adat'} / ${row.idoszak || 'nincs adat'}`,
+            `Jelenlegi felhasználói keret: ${currentMaxUsers} fő`,
+            `Kért cél / szolgáltatás: ${pricing.packageName} (${pricing.csomagKod})`,
+            `Fizetési időszak: ${pricing.period}`,
+            requestType === 'user_expansion' ? `Kért plusz felhasználó: ${pricing.extraUsers} fő` : '',
+            `Kért felhasználói keret aktiválás után: ${pricing.totalUsers} fő`,
+            requestType === 'custom_material_addon' ? 'Megjegyzés: a saját szakmai anyag plusz szolgáltatásként lett kérve, nem automatikus csomagváltásként.' : '',
+            requestType === 'permission_upgrade' ? 'Megjegyzés: jogosultság bővítési kérelem, nem csomagváltás és nem automatikus szerepkörmódosítás.' : '',
+            `Fizetendő összesen: ${formatFt(pricing.totalPrice)}`,
+            note ? `Felhasználói megjegyzés: ${note}` : ''
+        ].filter(Boolean).join('\n');
 
-            const values = [
+        await q(
+            `
+            UPDATE intezmeny
+            SET sysadmin_megjegyzes = CONCAT(
+                COALESCE(sysadmin_megjegyzes, ''),
+                CASE WHEN COALESCE(sysadmin_megjegyzes, '') = '' THEN '' ELSE '\n\n' END,
+                ?
+            )
+            WHERE id = ?
+            `,
+            [requestNote, institution.id]
+        );
+
+        const csomagId = Number(packageRow.id || packageRows[0]?.id || 0);
+        const shouldCreateSubscriptionRow = csomagId > 0;
+        const pendingStatusz = ['custom_material_addon', 'permission_upgrade'].includes(requestType) ? 'pending_request' : 'pending';
+        let pendingRequest = null;
+        if (shouldCreateSubscriptionRow) {
+            const insertPendingResult = await q(
+                `
+                INSERT INTO elofizetesek
+                (csomag_id, tulajdonos_tipus, intezmeny_id, user_id, statusz,
+                 trial_indul, trial_lejar, licenc_kezdete, licenc_vege,
+                 szerzodes_visszaerkezett, fizetes_beerkezett, aktiv,
+                 max_felhasznalo, max_ertekelo, max_elemzo, max_feltolto, megjegyzes)
+                VALUES (?, 'institution', ?, NULL, ?, NULL, NULL, NULL, NULL, 0, 0, 0, ?, ?, ?, ?, ?)
+                `,
+                [
+                    csomagId,
+                    institution.id,
+                    pendingStatusz,
+                    pricing.totalUsers,
+                    pricing.max_ertekelo,
+                    pricing.max_elemzo,
+                    pricing.max_feltolto,
+                    requestNote
+                ]
+            );
+
+            pendingRequest = {
+                id: insertPendingResult.insertId,
+                statusz: pendingStatusz,
+                requestType,
+                requestTypeLabel,
+                csomagKod: pricing.csomagKod,
+                packageName: pricing.packageName,
+                maxFelhasznalo: pricing.totalUsers
+            };
+        }
+
+        logger(req, req.auth.userId, requestTypeLabel, {
+            int_id: institution.id,
+            request_type: requestType,
+            current_package: currentPackageCode,
+            requested_package: pricing.csomagKod,
+            period: pricing.period,
+            extra_users: pricing.extraUsers,
+            total_users: pricing.totalUsers,
+            total_price: pricing.totalPrice
+        });
+
+        sendEmail(
+            REGISTRATION_NOTIFY_EMAIL,
+            `${requestTypeLabel} - ${pricing.packageName} - ${institution.intnev}`,
+            buildPackageChangeNotificationHtml({
+                institution,
+                requester: row,
+                pricing,
+                currentPackageCode,
+                currentPeriod: row.idoszak,
+                requestType,
+                requestTypeLabel,
+                note
+            })
+        );
+
+        const userRecipient = row.intkapmail || row.mail;
+        sendEmail(
+            userRecipient,
+            `${requestTypeLabel} rögzítve - ÉRTÉKEK`,
+            buildPackageChangeUserHtml({
+                institutionName: institution.intnev,
+                pricing,
+                requestType,
+                requestTypeLabel
+            })
+        );
+
+        const message = requestType === 'custom_material_addon'
+            ? 'A saját szakmai anyag plusz szolgáltatási kérelmet rögzítettük. Ez nem írja át automatikusan a jelenlegi csomagot; üzemeltetői egyeztetés szükséges.'
+            : requestType === 'permission_upgrade'
+                ? 'A jogosultság bővítési kérelmet rögzítettük. A szerepkörök csak intézményi vagy üzemeltetői jóváhagyás után változnak.'
+                : requestType === 'user_expansion'
+                    ? 'A felhasználói keret bővítési kérelmet rögzítettük. Az új keret csak fizetés és üzemeltetői aktiválás után lép életbe.'
+                    : 'A csomagváltási kérelmet rögzítettük. Az aktív csomag csak szerződés, fizetés és üzemeltetői aktiválás után változik meg.';
+
+        return res.json({
+            success: true,
+            message,
+            requestType,
+            requestTypeLabel,
+            requestedPackage: pricing.csomagKod,
+            packageName: pricing.packageName,
+            fizetesiIdoszak: pricing.period,
+            fizetendoOsszeg: pricing.totalPrice,
+            extraFelhasznalo: pricing.extraUsers,
+            osszesFelhasznalo: pricing.totalUsers,
+            currentMaxUsers,
+            pendingRequest
+        });
+
+    } catch (err) {
+        console.error('[package-change-request hiba]', err);
+        return res.status(500).json({
+            success: false,
+            message: 'A kérelem rögzítése sikertelen.'
+        });
+    }
+});
+
+// Intézmény regisztráció
+router.post('/register/institution', async (req, res) => {
+    try {
+        const {
+            intv,
+            intirv,
+            orszv,
+            szekhelyv,
+            adoszv,
+            cimv,
+            vez2v,
+            mail2v,
+            tel2v,
+            intmod,
+            modulTipus = "meglevo",
+            ujModulNev = "",
+            ujModulLeiras = "",
+            szamolas = null,
+            aiEnabled = false,
+            csomagKod: rawCsomagKod = '',
+            packageCode = '',
+            fizetesiIdoszak = 'havi',
+            extraFelhasznalo = 0
+        } = req.body;
+
+        const mailCegv = mail2v;
+        const telCegv = tel2v;
+        const uresModul = modulTipus === "ures";
+
+        if (!intv || !adoszv || !cimv || !vez2v || !mail2v) {
+            return res.status(400).json({ message: 'Hiányzó intézményi regisztrációs adatok.' });
+        }
+
+        if (!rawCsomagKod && !packageCode && !uresModul) {
+            return res.status(400).json({ message: 'Válasszon csomagot a regisztrációhoz.' });
+        }
+
+        const csomagKod = normalizePackageCode(rawCsomagKod || packageCode, modulTipus);
+        const szamolasErtek = Number(szamolas);
+        const aiEnabledErtek = aiEnabled === true || aiEnabled === 1 || aiEnabled === '1' ? 1 : 0;
+
+        if (uresModul) {
+            if (!ujModulNev.trim() || !ujModulLeiras.trim() || ![0, 1].includes(szamolasErtek)) {
+                return res.status(400).json({
+                    message: "Üres értékelő rendszer esetén a modul nevét, leírását és számítási módját is meg kell adni."
+                });
+            }
+        }
+
+        const duplicateRows = await q(
+            'SELECT id FROM intezmeny WHERE intnev = ? OR intado = ? LIMIT 1',
+            [intv, adoszv]
+        );
+
+        if (duplicateRows.length) {
+            return res.status(400).json({ message: 'Ezzel az intézmény névvel vagy adószámmal már regisztráltak.' });
+        }
+
+        const packageRows = await q(
+            `
+            SELECT id, kod, nev, ar_havi, ar_negyedeves, ar_eves,
+                   max_felhasznalo, max_ertekelo, max_elemzo, max_feltolto
+            FROM csomagok
+            WHERE kod = ? AND aktiv = 1
+            LIMIT 1
+            `,
+            [csomagKod]
+        );
+
+        const packageRow = packageRows[0] || FALLBACK_PACKAGES[csomagKod] || FALLBACK_PACKAGES.start;
+        const pricing = calculateRegistrationPricing(packageRow, csomagKod, fizetesiIdoszak, extraFelhasznalo);
+
+        const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const userAgent = req.headers['user-agent'] || 'Ismeretlen';
+        const aktualisIdoszak = csomagKod === 'demo' ? 'demo' : 'pending';
+        const intreg = await generateInstitutionCode(q, csomagKod);
+        const indulasiIntmod = uresModul ? "" : String(intmod || "1");
+        const moduleText = uresModul
+            ? `Üres értékelő rendszer: ${ujModulNev.trim()}`
+            : `Kész szakmai anyag: ${indulasiIntmod}`;
+
+        const sysadminMegjegyzes = [
+            `Regisztráció: ${new Date().toISOString()}`,
+            `Csomag: ${pricing.packageName} (${pricing.csomagKod})`,
+            `Fizetési időszak: ${pricing.period}`,
+            `Alapár: ${formatFt(pricing.basePrice)}`,
+            `Plusz felhasználó: ${pricing.extraUsers} fő, ${formatFt(pricing.extraPrice)}`,
+            `Fizetendő összesen: ${formatFt(pricing.totalPrice)}`,
+            pricing.totalPrice > 0 ? 'Nem díjbekérő, díjbekérő küldendő.' : 'Demo / nincs fizetési kötelezettség.'
+        ].join('\n');
+
+        const insertInstitutionResult = await q(
+            `
+            INSERT INTO intezmeny
+            (intnev, intir, intor, intszek, intado, intcim, intmail, inttel,
+             intkapvez, intkapmail, intkaptel, intfin, intfo, intmod, intreg,
+             validalva, fizetve, ip_cim, user_agent, idoszak, ai_enabled, csomag_kod,
+             aktiv, szerzodes_visszaerkezett, fizetes_beerkezett, sysadmin_megjegyzes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, false, NULL, ?, ?, ?, ?, ?, 0, 0, 0, ?)
+            `,
+            [
                 intv,
                 intirv,
                 orszv,
@@ -133,208 +814,405 @@ router.post('/register/institution', (req, res) => {
                 vez2v,
                 mail2v,
                 tel2v,
-                intfinv,
-                infov,
+                csomagKod === 'demo' ? 3 : 0,
+                pricing.totalUsers,
                 indulasiIntmod,
                 intreg,
                 ipCim,
                 userAgent,
-                aktualisIdoszak
-            ];
+                aktualisIdoszak,
+                aiEnabledErtek,
+                csomagKod,
+                sysadminMegjegyzes
+            ]
+        );
 
-            db.query(query, values, (err, institutionResult) => {
-                if (err) {
-                    console.error('Hiba az intézmény mentésekor:', err);
-                    return res.status(500).json({ message: 'Hiba a regisztráció során.' });
-                }
+        const intezmenyId = insertInstitutionResult.insertId;
+        let ujModulId = null;
 
-                const intezmenyId = institutionResult.insertId;
+        if (uresModul) {
+            const insertModulResult = await q(
+                `
+                INSERT INTO modulok
+                (nev, leiras, szamolas)
+                VALUES (?, ?, ?)
+                `,
+                [ujModulNev.trim(), ujModulLeiras.trim(), szamolasErtek]
+            );
 
-                const alapHtmlContent = `
-                    <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
-                        <h2><span style="color: #ff7c00;">K</span>edves ${escapeHtml(intv)},</h2>
+            ujModulId = insertModulResult.insertId;
 
-                        <p>Örömmel értesítjük, hogy tesztregisztrációja sikeresen megtörtént. Köszönjük, hogy részt vesz a próbaidőszakban!</p>
-                        
-                        <p>
-                            <strong>Regisztrációs kódja:</strong>
-                            <span style="color: #ff7c00;">${escapeHtml(intreg)}</span><br>
-                            Kérjük, őrizze meg ezt a kódot! A továbbiakban ezzel tudnak majd regisztrálni munkatársai a
-                            <a href="https://ertekek.com/register.html">regisztrációs oldalon</a>.
-                        </p>
-                        
-                        <p>Utolsó lépésként már csak a saját felhasználói regisztrációját kell elvégeznie, ami mindössze egy percet vesz igénybe.</p>
-                        <p style="margin-top: 20px;">A regisztráció gombra kattintva válassza a „Felhasználói regisztráció” lehetőséget, és egyszerűen másolja be a fenti kódot.</p>
+            await q(
+                'UPDATE intezmeny SET intmod = ? WHERE id = ?',
+                [String(ujModulId), intezmenyId]
+            );
+        }
 
-                        <p style="margin-top: 20px;">Ha bármilyen kérdése van, kérjük, ne habozzon kapcsolatba lépni velünk.</p>
-                        <a href="https://www.ertekek.com">www.ertekek.com</a>
-                        
-                        <p style="color: #888; margin-top: 15px;">Köszönjük, hogy minket választott!</p>
-                        <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
-                    </div>
-                `;
+        const csomagId = Number(packageRow.id || packageRows[0]?.id || 0);
+        if (csomagId > 0) {
+            await q(
+                `
+                INSERT INTO elofizetesek
+                (csomag_id, tulajdonos_tipus, intezmeny_id, user_id, statusz,
+                 trial_indul, trial_lejar, licenc_kezdete, licenc_vege,
+                 szerzodes_visszaerkezett, fizetes_beerkezett, aktiv,
+                 max_felhasznalo, max_ertekelo, max_elemzo, max_feltolto, megjegyzes)
+                VALUES (?, 'institution', ?, NULL, ?, NULL, NULL, NULL, NULL, 0, 0, 1, ?, ?, ?, ?, ?)
+                `,
+                [
+                    csomagId,
+                    intezmenyId,
+                    csomagKod === 'demo' ? 'demo' : 'pending',
+                    pricing.totalUsers,
+                    pricing.max_ertekelo,
+                    pricing.max_elemzo,
+                    pricing.max_feltolto,
+                    sysadminMegjegyzes
+                ]
+            );
+        }
 
-                if (!uresModul) {
-                    sendEmail(mail2v, 'Regisztráció sikeres - ÉRTÉKEK', alapHtmlContent);
-                    console.log(`Új intézmény regisztrálva: ${intv} (Kód: ${intreg})`);
-                    return res.status(201).json({
-                        message: 'Intézményi regisztráció sikeres',
-                        intreg
-                    });
-                }
+        const fizetesiBlokk = pricing.totalPrice > 0
+            ? `
+                <div style="background:#fff8ef; border-left:5px solid #ff7c00; padding:12px; margin:16px 0;">
+                    <p><strong>Fizetendő összeg:</strong> ${escapeHtml(formatFt(pricing.totalPrice))}</p>
+                    <p>Ez nem díjbekérő. A díjbekérővel hamarosan külön jelentkezünk.</p>
+                </div>
+              `
+            : '<p><strong>Demo csomag:</strong> fizetési kötelezettség nincs.</p>';
 
-                const insertModulQuery = `
-                    INSERT INTO modulok
-                    (nev, leiras, szamolas)
-                    VALUES (?, ?, ?);
-                `;
+        const htmlContent = `
+            <div style="font-family: 'Times New Roman', Times, serif; color: #333; line-height:1.55;">
+                <h2><span style="color: #ff7c00;">K</span>edves ${escapeHtml(intv)},</h2>
+                <p>Regisztrációja sikeresen megtörtént.</p>
+                <p><strong>Csomag:</strong> ${escapeHtml(pricing.packageName)}</p>
+                <p><strong>Regisztrációs kód:</strong> <span style="color:#ff7c00; font-weight:bold;">${escapeHtml(intreg)}</span></p>
+                <p><strong>Felhasználói keret:</strong> ${pricing.totalUsers} fő</p>
+                ${fizetesiBlokk}
+                <p><strong>MI-funkció állapota:</strong> ${aiEnabledErtek === 1 ? 'engedélyezve' : 'kikapcsolva'}.</p>
+                <p>A munkatársak ezzel a kóddal tudnak felhasználói fiókot létrehozni a regisztrációs oldalon.</p>
+                <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
+            </div>
+        `;
 
-                const insertModulValues = [
-                    ujModulNev.trim(),
-                    ujModulLeiras.trim(),
-                    szamolasErtek
-                ];
+        sendEmail(mail2v, uresModul ? 'Regisztráció sikeres - Üres értékelő rendszer létrehozva - ÉRTÉKEK' : 'Regisztráció sikeres - ÉRTÉKEK', htmlContent);
 
-                db.query(insertModulQuery, insertModulValues, (modulErr, modulResult) => {
-                    if (modulErr) {
-                        console.error('Hiba az új modul mentésekor:', modulErr);
-                        return res.status(500).json({ message: 'Az intézmény létrejött, de az üres modul mentése sikertelen volt.' });
-                    }
+        sendEmail(
+            REGISTRATION_NOTIFY_EMAIL,
+            `Új intézményi regisztráció - ${pricing.packageName} - ${intv}`,
+            buildInstitutionNotificationHtml({
+                type: uresModul ? 'Saját / üres rendszer' : 'Kész szakmai anyag',
+                institutionName: intv,
+                contactName: vez2v,
+                contactEmail: mail2v,
+                phone: tel2v,
+                address: `${orszv}, ${intirv} ${szekhelyv}, ${cimv}`,
+                taxNumber: adoszv,
+                packageName: pricing.packageName,
+                packageCode: pricing.csomagKod,
+                registrationCode: intreg,
+                pricing,
+                moduleText,
+                aiEnabled: aiEnabledErtek === 1
+            })
+        );
 
-                    const ujModulId = modulResult.insertId;
+        console.log(`Új intézmény regisztrálva: ${intv} (Kód: ${intreg}, Csomag: ${pricing.csomagKod}, Fizetendő: ${pricing.totalPrice})`);
 
-                    const updateIntmodQuery = `
-                        UPDATE intezmeny
-                        SET intmod = ?
-                        WHERE id = ?;
-                    `;
+        return res.status(201).json({
+            message: 'Intézményi regisztráció sikeres',
+            intreg,
+            modulId: ujModulId,
+            fizetendoOsszeg: pricing.totalPrice,
+            fizetesiIdoszak: pricing.period,
+            osszesFelhasznalo: pricing.totalUsers
+        });
 
-                    db.query(updateIntmodQuery, [String(ujModulId), intezmenyId], (updateErr) => {
-                        if (updateErr) {
-                            console.error('Hiba az intézményi intmod frissítésekor:', updateErr);
-                            return res.status(500).json({ message: 'Az üres modul létrejött, de az intézményhez rendelés sikertelen volt.' });
-                        }
-
-                        const szamolasNev = szamolasErtek === 1 ? "Normál pontszámítás" : "Arányosított számítás";
-
-                        const uresRendszerHtmlContent = `
-                            <div style="font-family: 'Times New Roman', Times, serif; color: #333;">
-                                <h2><span style="color: #ff7c00;">K</span>edves ${escapeHtml(intv)},</h2>
-
-                                <p>Regisztrációja sikeresen megtörtént, és létrehoztuk az üres értékelő rendszerét.</p>
-
-                                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #ff7c00;">
-                                    <p><strong>Regisztrációs kód:</strong> <span style="color: #ff7c00;">${escapeHtml(intreg)}</span></p>
-                                    <p><strong>Új értékelési terület:</strong> ${escapeHtml(ujModulNev)}</p>
-                                    <p><strong>Leírás:</strong> ${escapeHtml(ujModulLeiras)}</p>
-                                    <p><strong>Számítási mód:</strong> ${escapeHtml(szamolasNev)}</p>
-                                </div>
-
-                                <p>
-                                    Ezt a regisztrációs kódot kell majd használni a felhasználói regisztrációnál.
-                                </p>
-
-                                <p style="color: #888; margin-top: 15px;">
-                                    IDE ÍROD MAJD A KÜLÖN ÜRES RENDSZERES E-MAIL SZÖVEGET.
-                                </p>
-
-                                <p style="font-size: 0.9em;">Üdvözlettel,<br>Az Értékek csapata</p>
-                            </div>
-                        `;
-
-                        sendEmail(mail2v, 'Regisztráció sikeres - Üres értékelő rendszer létrehozva - ÉRTÉKEK', uresRendszerHtmlContent);
-
-                        console.log(`Új intézmény regisztrálva üres rendszerrel: ${intv} (Kód: ${intreg}, Modul ID: ${ujModulId})`);
-
-                        return res.status(201).json({
-                            message: 'Intézményi regisztráció sikeres',
-                            intreg,
-                            modulId: ujModulId
-                        });
-                    });
-                });
-            }); 
-        }); 
-    }); 
+    } catch (err) {
+        console.error('[register/institution hiba]', err);
+        return res.status(500).json({ message: 'Hiba a regisztráció során.' });
+    }
 });
         // User regisztráció kezelése
 // regmodul.js
 // regmodul.js - Felhasználói regisztráció e-mail küldéssel
-router.post('/register/user', (req, res) => {
-    const {
-        userv, jelszomezov, vezeteknevv, mailv, telv,
-        intIdv, szerepv, 
-        usermods = []            
-    } = req.body;            
+router.post('/register/user', async (req, res) => {
+    try {
+        const {
+            userv,
+            jelszomezov,
+            vezeteknevv,
+            mailv,
+            telv
+        } = req.body;
 
-    // Audit adatok kinyerése
-    const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-    const userAgent = req.headers['user-agent'] || 'Ismeretlen';
+        const regCode = String(
+            req.body.regCode ||
+            req.body.regcode ||
+            req.body.regCodev ||
+            req.body.intreg ||
+            ""
+        ).trim();
 
-    bcrypt.hash(jelszomezov, 10, (err, hashedPassword) => {
-        if (err) return res.status(500).json({ message: 'Jelszó-hash hiba.' });
+        if (!userv || !jelszomezov || !vezeteknevv || !mailv || !regCode) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó regisztrációs adatok.'
+            });
+        }
 
-        // Felhasználó mentése (a szerepv-vel, ip_cim-mel és user_agent-tel együtt)
-        const userSQL = `
+        if (String(jelszomezov).length < 8) {
+            return res.status(400).json({
+                success: false,
+                message: 'A jelszónak legalább 8 karakteresnek kell lennie.'
+            });
+        }
+
+        const institutionRows = await q(
+            `
+            SELECT id, intfo, intnev, intmod, csomag_kod, idoszak, aktiv, validalva, fizetve, fizetes_beerkezett, trial_indul, trial_lejar
+            FROM intezmeny
+            WHERE intreg = ?
+            LIMIT 1
+            `,
+            [regCode]
+        );
+
+        if (!institutionRows.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'Érvénytelen regisztrációs kód.'
+            });
+        }
+
+        const institution = institutionRows[0];
+        const intIdv = Number(institution.id);
+
+        const countRows = await q(
+            `
+            SELECT COUNT(*) AS userCount
+            FROM felhasznalok
+            WHERE int_id = ?
+            `,
+            [intIdv]
+        );
+
+        const userCount = Number(countRows[0]?.userCount || 0);
+        const intFo = Number(institution.intfo || 0);
+        const institutionPackageCode = normalizePackageCode(institution.csomag_kod || institution.idoszak);
+        const isActiveInstitution = institution.aktiv === 1 || institution.aktiv === '1' || (institution.validalva && (institution.fizetes_beerkezett || institution.fizetve));
+
+        if (institutionPackageCode === 'demo' && userCount >= 1 && !isActiveInstitution) {
+            return res.status(403).json({
+                success: false,
+                message: 'Demo hozzáféréshez csak egy felhasználó regisztrálható.'
+            });
+        }
+
+        if (intFo > 0 && userCount >= intFo) {
+            return res.status(403).json({
+                success: false,
+                message: 'Az intézmény licencmennyisége elérve.'
+            });
+        }
+
+        const duplicateRows = await q(
+            `
+            SELECT id
+            FROM felhasznalok
+            WHERE fnev = ? OR mail = ?
+            LIMIT 1
+            `,
+            [userv, mailv]
+        );
+
+        if (duplicateRows.length) {
+            return res.status(409).json({
+                success: false,
+                message: 'A felhasználónév vagy e-mail cím már foglalt.'
+            });
+        }
+
+        const allowedModuleIds = parseIdList(institution.intmod);
+
+        if (!allowedModuleIds.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'Az intézményhez nincs aktív modul rendelve.'
+            });
+        }
+
+        const requestedModuleIds = parseIdList(req.body.usermods);
+
+        const finalModuleIds = requestedModuleIds.length
+            ? requestedModuleIds.filter(id => allowedModuleIds.includes(id))
+            : allowedModuleIds;
+
+        if (!finalModuleIds.length) {
+            return res.status(403).json({
+                success: false,
+                message: 'A kért modul nem tartozik ehhez az intézményhez.'
+            });
+        }
+
+        const allowedRoles = getAllowedRolesForPackage(institutionPackageCode);
+        const requestedRole = Number(req.body.szerepv || ROLE_ERTEKELO);
+        const szerepv = allowedRoles.includes(requestedRole)
+            ? requestedRole
+            : allowedRoles[0];
+
+        if (!allowedRoles.includes(szerepv)) {
+            return res.status(403).json({
+                success: false,
+                message: 'Ez a szerepkör a választott csomagban nem elérhető.'
+            });
+        }
+
+        const packageRowsForLimit = await q(
+            `
+            SELECT max_felhasznalo, max_ertekelo, max_elemzo, max_feltolto
+            FROM csomagok
+            WHERE kod = ?
+            LIMIT 1
+            `,
+            [institutionPackageCode]
+        );
+        const packageForLimit = normalizePackageRow(packageRowsForLimit[0], institutionPackageCode);
+        const extraSlots = Math.max(0, intFo - Number(packageForLimit.max_felhasznalo || 0));
+        const roleLimits = {
+            [ROLE_ERTEKELO]: Number(packageForLimit.max_ertekelo || 0) + extraSlots,
+            [ROLE_ELEMZO]: Number(packageForLimit.max_elemzo || 0),
+            [ROLE_ADMIN]: Number(packageForLimit.max_feltolto || 0)
+        };
+
+        const roleCountRows = await q(
+            `
+            SELECT role_id, COUNT(*) AS db
+            FROM felhasznalok
+            WHERE int_id = ?
+            GROUP BY role_id
+            `,
+            [intIdv]
+        );
+        const roleCounts = new Map(roleCountRows.map(row => [Number(row.role_id), Number(row.db || 0)]));
+        const selectedRoleLimit = Number(roleLimits[szerepv] || 0);
+
+        if (selectedRoleLimit > 0 && Number(roleCounts.get(szerepv) || 0) >= selectedRoleLimit) {
+            return res.status(403).json({
+                success: false,
+                message: 'A választott szerepkör kerete betelt ennél a csomagnál.'
+            });
+        }
+
+        const ipCim = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const userAgent = req.headers['user-agent'] || 'Ismeretlen';
+
+        const hashedPassword = await bcrypt.hash(jelszomezov, 10);
+
+        const userResult = await q(
+            `
             INSERT INTO felhasznalok
             (fnev, pass, vez, mail, tel, int_id, role_id, ip_cim, user_agent)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-        const userVals = [userv, hashedPassword, vezeteknevv, mailv, telv, intIdv, szerepv, ipCim, userAgent];
+            `,
+            [
+                userv,
+                hashedPassword,
+                vezeteknevv,
+                mailv,
+                telv,
+                intIdv,
+                szerepv,
+                ipCim,
+                userAgent
+            ]
+        );
 
-        db.query(userSQL, userVals, (err, result) => {
-            if (err) {
-                console.error('User-INSERT hiba:', err);
-                return res.status(500).json({ message: 'Felhasználó mentése sikertelen.' });
-            }
+        const newUserId = userResult.insertId;
 
-            const newUserId = result.insertId;
-            logger(req, newUserId, "regisztráció", "Új felhasználói regisztráció");
-            // Jogosultságok mentése
-            let modsTomb = Array.isArray(usermods) ? usermods : String(usermods).split(',');
-            modsTomb = modsTomb.map(s => s.trim()).filter(s => s.length);
+        const rightsVals = uniqueNumbers(finalModuleIds).map(modulId => [
+            newUserId,
+            modulId,
+            1
+        ]);
 
-            // Szerepkör megnevezése az e-mailhez
-            const szerepNeve = szerepv == 1 ? "Adminisztrátor" : (szerepv == 2 ? "Elemző" : "Értékelő");
+        if (rightsVals.length) {
+            await q(
+                `
+                INSERT INTO jogosultsagok
+                (user_id, modul_id, aktiv)
+                VALUES ?
+                `,
+                [rightsVals]
+            );
+        }
 
-            // --- VISSZAIGAZOLÓ E-MAIL ÖSSZEÁLLÍTÁSA ---
-            const htmlContent = `
-                <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-                    <h2 style="color: #ff7c00;">Sikeres regisztráció az ÉRTÉKEK rendszerében!</h2>
-                    <p>Kedves <strong>${vezeteknevv}</strong>!</p>
-                    <p>Örömmel értesítjük, hogy felhasználói fiókját sikeresen létrehoztuk az intézményi kereteken belül.</p>
-                    <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #ff7c00;">
-                        <p><strong>Belépési adatok:</strong></p>
-                        <ul style="list-style: none; padding: 0;">
-                            <li><strong>Felhasználónév:</strong> ${userv}</li>
-                            <li><strong>Szerepkör:</strong> ${szerepNeve}</li>
-                        </ul>
-                    </div>
-                    <p>Mostantól bejelentkezhet a <a href="https://ertekek.com" style="color: #ff7c00; font-weight: bold;">www.ertekek.com</a> oldalon.</p>
-                    <p>Teremtsünk együtt Értékeket!</p>
-                    <br>
-                    <p>Üdvözlettel,<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                </div>
-            `;
+        if (institutionPackageCode === 'demo' && userCount === 0 && !institution.trial_indul) {
+            await q(
+                `
+                UPDATE intezmeny
+                SET trial_indul = CURDATE(),
+                    trial_lejar = DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                WHERE id = ?
+                `,
+                [intIdv]
+            );
+        }
 
-            // Jogosultságok beszúrása és e-mail küldése
-            if (modsTomb.length > 0) {
-                const rightsVals = modsTomb.map(mid => [newUserId, mid, 1]); 
-                const rightsSQL  = 'INSERT INTO jogosultsagok (user_id, modul_id, aktiv) VALUES ?';
-
-                db.query(rightsSQL, [rightsVals], (err2) => {
-                    if (err2) console.error('Jogosultság-INSERT hiba:', err2);
-                    
-                    // E-mail küldése sikeres regisztráció után
-                    sendEmail(mailv, 'Sikeres regisztráció - ÉRTÉKEK', htmlContent);
-                    res.status(201).json({ success: true, message: 'Regisztráció sikeres' });
-                });
-            } else {
-                sendEmail(mailv, 'Sikeres regisztráció - ÉRTÉKEK', htmlContent);
-                res.status(201).json({ success: true, message: 'Regisztráció sikeres' });
-            }
+        logger(req, newUserId, "regisztráció", {
+            int_id: intIdv,
+            role_id: szerepv,
+            modulok: uniqueNumbers(finalModuleIds)
         });
-    });
+
+        const szerepNeve = szerepv === ROLE_ADMIN
+            ? "Feltöltő"
+            : szerepv === ROLE_ELEMZO
+                ? "Elemző"
+                : "Értékelő";
+
+        const htmlContent = `
+            <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+                <h2 style="color: #ff7c00;">Sikeres regisztráció az ÉRTÉKEK rendszerében!</h2>
+                <p>Kedves <strong>${escapeHtml(vezeteknevv)}</strong>!</p>
+                <p>Felhasználói fiókja sikeresen létrejött az alábbi intézményhez: <strong>${escapeHtml(institution.intnev)}</strong>.</p>
+                <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #ff7c00;">
+                    <p><strong>Belépési adatok:</strong></p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><strong>Felhasználónév:</strong> ${escapeHtml(userv)}</li>
+                        <li><strong>Szerepkör:</strong> ${escapeHtml(szerepNeve)}</li>
+                    </ul>
+                </div>
+                <p>Mostantól bejelentkezhet a <a href="https://ertekek.com" style="color: #ff7c00; font-weight: bold;">www.ertekek.com</a> oldalon.</p>
+                <p>Üdvözlettel,<br><strong>Az ÉRTÉKEK csapata</strong></p>
+            </div>
+        `;
+
+        sendEmail(mailv, 'Sikeres regisztráció - ÉRTÉKEK', htmlContent);
+
+        sendEmail(
+            REGISTRATION_NOTIFY_EMAIL,
+            `Új felhasználói regisztráció - ${institution.intnev} - ${vezeteknevv}`,
+            buildUserNotificationHtml({
+                institutionName: institution.intnev,
+                userName: vezeteknevv,
+                userEmail: mailv,
+                roleName: szerepNeve
+            })
+        );
+
+        return res.status(201).json({
+            success: true,
+            message: 'Regisztráció sikeres'
+        });
+
+    } catch (err) {
+        console.error('[register/user hiba]', err);
+        return res.status(500).json({
+            success: false,
+            message: 'Felhasználó mentése sikertelen.'
+        });
+    }
 });
 
 
@@ -376,7 +1254,11 @@ router.post('/register/user', (req, res) => {
             const regCode = req.body.regCode;
         
             // Első lekérdezés: Az intézmény adatai az 'intezmeny' táblából
-            const query = 'SELECT id, intfo, intnev, intmod FROM intezmeny WHERE intreg = ?';
+            const query = `
+                SELECT id, intfo, intnev, intmod, aktiv, validalva, fizetve, fizetes_beerkezett, csomag_kod, idoszak
+                FROM intezmeny
+                WHERE intreg = ?
+            `;
             db.query(query, [regCode], (err, results) => {
                 if (err) {
                     console.error('Adatbázis hiba:', err);
@@ -384,9 +1266,9 @@ router.post('/register/user', (req, res) => {
                 }
         
                 if (results.length > 0) {
-                    const { id, intnev, intfo, intmod } = results[0]; 
+                    const { id, intnev, intfo, intmod, csomag_kod, idoszak } = results[0];
+                    const packageCode = normalizePackageCode(csomag_kod || idoszak);
         
-                    // Második lekérdezés: Megszámoljuk, hány felhasználó van a 'felhasznalok' táblában az adott int_id alapján
                     const userCountQuery = 'SELECT COUNT(*) AS userCount FROM felhasznalok WHERE int_id = ?';
                     db.query(userCountQuery, [id], (err, userResults) => {
                         if (err) {
@@ -395,20 +1277,27 @@ router.post('/register/user', (req, res) => {
                         }
         
                         const userCount = userResults[0].userCount; 
-        
+
+                        const active = results[0].aktiv === 1 || results[0].aktiv === '1' || (results[0].validalva && (results[0].fizetes_beerkezett || results[0].fizetve));
+
+                        if (userCount >= 1 && !active) {
+                            return res.json({ success: false, message: 'Próbaidő alatt csak az elsődleges kapcsolattartói hozzáférés aktív. További felhasználók élesítés után adhatók hozzá.' });
+                        }
+
                         if (userCount >= intfo) {
                             return res.json({ success: false, message: 'Az intézménye licensz mennyisége elérve. Ha további felhasználókat kívánnak regisztrálni, bővítség csomagjukat.' });
                         }
-                            res.json({ 
-                            success: true,
-                            intMod: intmod,  //Intézményi modulok
-                            intNev: intnev,     // Intézmény neve
-                            intId: id,      //Intézményi id
-                            intFo: intfo,   //Felhasználók maximális száma 
-                            userCount: userCount // Felhasználók jelenlegi száma
-                        });
-                    });
-        
+                        res.json({ 
+                                success: true,
+                                intMod: intmod,
+                                intNev: intnev,
+                                intId: id,
+                                intFo: intfo,
+                                userCount: userCount,
+                                packageCode,
+                                allowedRoles: getAllowedRolesForPackage(packageCode)
+                            });
+                    }); 
                 } else {
                     // Ha nem található ilyen regisztrációs kód
                     res.json({ success: false, message: 'Érvénytelen regisztrációs kód.' });
@@ -449,73 +1338,193 @@ router.post('/register/user', (req, res) => {
         });
 
         
-        router.post('/insert_kitoltes', async (req, res) => {
-            const { kitoltesek } = req.body;
-        
-            if (!kitoltesek || !Array.isArray(kitoltesek) || kitoltesek.length === 0) {
-                return res.status(400).json({ success: false, message: 'Hibás adatok!' });
-            }
-        
-            const query = `INSERT INTO kitoltesek (felhasznalo_id, kitoltes_neve, idk, role, modul_id, vizsgalt_id) VALUES (?, ?, ?, ?, ?, ?)`;
-        
-            try {
-                // 🔹 Adatbázisba mentés
-                await Promise.all(kitoltesek.map(entry => {
-                    return new Promise((resolve, reject) => {
-                        db.query(query, [entry.felhasznalo_id, entry.kitoltes_neve, entry.idk, entry.role,entry.modul_id, entry.vizsgalt_id  ], (err) => {
-                            if (err) {
-                                console.error('Adatbázis hiba:', err);
-                                reject(err);
-                            } else {
-                                resolve();
-                            }
-                        });
-                    });
-                }));
-        
-                // 🔹 E-mail küldése minden felhasználónak
-                await Promise.all(kitoltesek.map(entry => {
-                    // Ha van üzenet, akkor azt is beleírjuk az e-mailbe
-                    const optionalMessage = entry.message ? `
-                        <br><hr>
-                        <p><strong>${entry.data_name} a következő üzenetet küldte önnek:</strong></p>
-                        <p style="font-style: italic; color: #555;">"${entry.message}"</p>
-                        <hr>
-                    ` : ''; 
-        
-                    const htmlContent = `
-                        <div style="font-family: Arial, sans-serif; color: #333;">
-                            <h2>Kedves ${entry.innerHTML}!</h2>
-                            <p>${entry.data_name} megosztott önnel egy készülő/már elkészült értékelést.</p>
-                            <p>Mostantól ön is szerkesztheti a <strong>${entry.kitoltes_neve}</strong> nevű értékelést. 
-                            Mivel ez egy megosztott értékelés, nem törölheti magát az értékelést illetve nem módosíthatja a címét. Ettől függetlenül szabadon adhat hozzá vagy vehet el belőle témákat, válaszokat.</p>
-                            
-                            ${optionalMessage}
-        
-                            <br>
-                            <p>Ha úgy érzi, hogy tévedés történt, vegye fel a kapcsolatot az értékelés szerzőjével, vagy az ügyfélszolgálatunkkal.</p>
-                            <br>
-                            <p>Jó munkát és szép napot kíván:</p>
-                            <p><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <a href="https://www.ertekek.com" style="color: #0056b3; text-decoration: none;">www.ertekek.com</a>
-                            
-                        </div>
-                    `;
-        
-                    return sendEmail(entry.data_mail, "Új értékelés megosztása", htmlContent);
-                    
+router.post(
+  '/insert_kitoltes',
+  requireLogin,
+  attachUserContext,
+  requireModuleAccess,
+  requireActiveLicense('share_evaluation'),
+  async (req, res) => {    try {
+        const { kitoltesek } = req.body;
 
-                }));
-        
-const megoszto_id = req.session ? req.session.userId : null;
-        logger(req, megoszto_id, 'megosztás', { megosztott_szemelyek_szama: kitoltesek.length });
+        if (!kitoltesek || !Array.isArray(kitoltesek) || kitoltesek.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hibás adatok.'
+            });
+        }
 
-        res.json({ success: true });        
-            } catch (error) {
-                console.error("Hiba történt:", error);
-                res.status(500).json({ success: false, message: 'Adatbázis vagy e-mail küldési hiba!' });
+        const idkValues = uniqueNumbers(kitoltesek.map(entry => entry.idk));
+
+        if (idkValues.length !== 1) {
+            return res.status(400).json({
+                success: false,
+                message: 'Egy megosztási kérésben pontosan egy értékelés szerepelhet.'
+            });
+        }
+
+        const idk = idkValues[0];
+
+        const targetUserIds = uniqueNumbers(
+            kitoltesek.map(entry => entry.felhasznalo_id)
+        ).filter(id => id !== req.auth.userId);
+
+        if (!targetUserIds.length) {
+            return res.status(400).json({
+                success: false,
+                message: 'Nincs érvényes címzett.'
+            });
+        }
+
+        /*
+          Itt ellenőrizzük, hogy a bejelentkezett user tényleg hozzáfér-e ehhez az értékeléshez.
+          Nem a kliensből jövő kitoltes_neve / modul_id / vizsgalt_id dönt.
+        */
+        const sourceRows = await q(
+            `
+            SELECT
+                k.idk,
+                k.kitoltes_neve,
+                k.modul_id,
+                k.vizsgalt_id,
+                f.vez AS megoszto_nev
+            FROM kitoltesek k
+            JOIN felhasznalok f ON f.id = k.felhasznalo_id
+            WHERE k.idk = ?
+              AND k.felhasznalo_id = ?
+              AND k.modul_id = ?
+            LIMIT 1
+            `,
+            [idk, req.auth.userId, req.auth.modulId]
+        );
+
+        if (!sourceRows.length) {
+            return res.status(403).json({
+                success: false,
+                message: 'Nincs jogosultságod ezt az értékelést megosztani.'
+            });
+        }
+
+        const source = sourceRows[0];
+
+        const placeholders = targetUserIds.map(() => '?').join(',');
+
+        const targetRows = await q(
+            `
+            SELECT DISTINCT
+                f.id,
+                f.vez,
+                f.mail
+            FROM felhasznalok f
+            JOIN jogosultsagok j
+                ON j.user_id = f.id
+               AND j.modul_id = ?
+               AND j.aktiv = 1
+            WHERE f.id IN (${placeholders})
+              AND f.int_id = ?
+            `,
+            [
+                req.auth.modulId,
+                ...targetUserIds,
+                req.auth.intId
+            ]
+        );
+
+        if (targetRows.length !== targetUserIds.length) {
+            return res.status(403).json({
+                success: false,
+                message: 'Van olyan címzett, aki nem tartozik az intézményhez vagy nincs moduljoga.'
+            });
+        }
+
+        const entryByUserId = new Map(
+            kitoltesek.map(entry => [Number(entry.felhasznalo_id), entry])
+        );
+
+        for (const target of targetRows) {
+            const alreadyRows = await q(
+                `
+                SELECT id
+                FROM kitoltesek
+                WHERE felhasznalo_id = ?
+                  AND idk = ?
+                  AND modul_id = ?
+                LIMIT 1
+                `,
+                [target.id, idk, req.auth.modulId]
+            );
+
+            if (!alreadyRows.length) {
+                await q(
+                    `
+                    INSERT INTO kitoltesek
+                    (felhasznalo_id, kitoltes_neve, idk, role, modul_id, vizsgalt_id)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    `,
+                    [
+                        target.id,
+                        source.kitoltes_neve,
+                        idk,
+                        'editor',
+                        req.auth.modulId,
+                        source.vizsgalt_id
+                    ]
+                );
             }
+
+            const entry = entryByUserId.get(Number(target.id)) || {};
+            const message = String(entry.message || '').trim();
+
+            const optionalMessage = message ? `
+                <br><hr>
+                <p><strong>${escapeHtml(source.megoszto_nev)} a következő üzenetet küldte önnek:</strong></p>
+                <p style="font-style: italic; color: #555;">"${escapeHtml(message)}"</p>
+                <hr>
+            ` : '';
+
+            const htmlContent = `
+                <div style="font-family: Arial, sans-serif; color: #333;">
+                    <h2>Kedves ${escapeHtml(target.vez)}!</h2>
+                    <p>${escapeHtml(source.megoszto_nev)} megosztott önnel egy készülő/már elkészült értékelést.</p>
+                    <p>
+                        Mostantól ön is szerkesztheti a
+                        <strong>${escapeHtml(source.kitoltes_neve)}</strong>
+                        nevű értékelést.
+                    </p>
+
+                    ${optionalMessage}
+
+                    <br>
+                    <p>Ha úgy érzi, hogy tévedés történt, vegye fel a kapcsolatot az értékelés szerzőjével.</p>
+                    <br>
+                    <p>Jó munkát és szép napot kíván:</p>
+                    <p><strong>Az ÉRTÉKEK csapata</strong></p>
+                    <a href="https://www.ertekek.com" style="color: #0056b3; text-decoration: none;">www.ertekek.com</a>
+                </div>
+            `;
+
+            sendEmail(target.mail, "Új értékelés megosztása", htmlContent);
+        }
+
+        logger(req, req.auth.userId, 'megosztás', {
+            idk,
+            modul_id: req.auth.modulId,
+            megosztott_szemelyek_szama: targetRows.length
         });
+
+        return res.json({
+            success: true,
+            message: 'Megosztás sikeres.'
+        });
+
+    } catch (error) {
+        console.error("[insert_kitoltes hiba]", error);
+        return res.status(500).json({
+            success: false,
+            message: 'Adatbázis vagy e-mail küldési hiba.'
+        });
+    }
+});
         
           // GET /api/modulok  ⇒  [{ id, nev, leiras }, …]
   router.get('/modulok', (req, res) => {
@@ -528,239 +1537,551 @@ const megoszto_id = req.session ? req.session.userId : null;
       res.json(rows);
     });
   });
-// --- ÚJ ENDPOINT: Csoportos határidő értesítő ---
-router.post('/api/notify-deadlines', async (req, res) => {
-    try {
-        const { ertesitesek, hatarido } = req.body; 
-        // ertesitesek: [{ email: 'a@a.hu', alkoto: '...', nev: '...', tipus: '...' }, ...]
+  function isSysadminReq(req) {
+    return req.auth?.isSysadmin === true || Number(req.auth?.realRoleId) === 4;
+}
 
-        // 1. Csoportosítás e-mail címek alapján
-        const groupedByEmail = {};
-        
-        for (const item of ertesitesek) {
-            // Ha nincs email (bár elvileg kéne lennie az adatbázisodból), kihagyjuk
-            if (!item.email) continue; 
-            
-            if (!groupedByEmail[item.email]) {
-                groupedByEmail[item.email] = [];
-            }
-            groupedByEmail[item.email].push(item);
-        }
+function currentRoleId(req) {
+    return Number(req.auth?.roleId || req.session?.roleId);
+}
 
-        // 2. E-mailek elküldése ciklusonként (mindenkinek 1 db levél)
-        const emailPromises = Object.keys(groupedByEmail).map(async (userEmail) => {
-            const userItems = groupedByEmail[userEmail];
-            
-            // HTML lista generálása a levélbe
-            let listHtml = '<ul style="padding-left: 20px;">';
-            userItems.forEach(i => {
-                listHtml += `<li><strong>${i.nev}</strong> (${i.tipus})</li>`;
-            });
-            listHtml += '</ul>';
+function getAuditIdsFromBody(req) {
+    const ids = [];
 
-       // Feltételezve, hogy a userItems tartalmazza az adott e-mail címhez tartozó adatokat
-        const addresseeName = userItems[0].alkoto || 'Felhasználó';
-
-        const htmlContent = `
-            <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
-                <h2 style="color: #ffbd16;">Értékek határidő</h2>
-                <h2>Kedves ${addresseeName}!</h2>
-                <p>Az alábbi értékelés(ek)hez új leadási határidőt állítottak be a rendszerben:</p>
-                
-                ${listHtml}
-                
-                <p><strong>A megadott határidő: <span style="color: #d9534f; font-size: 1.2em;">${hatarido}</span></strong></p>
-                <br>
-                <p>Jó munkát kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                <a href="www.ertekek.com">www.ertekek.com</a>
-            </div>
-        `;
-
-            return sendEmail(userEmail, "Új határidő beállítva - ÉRTÉKEK", htmlContent);
-        });
-
-        await Promise.all(emailPromises);
-        res.json({ success: true, message: 'Értesítések elküldve.' });
-
-    } catch (error) {
-        console.error("Hiba az e-mail küldésnél:", error);
-        res.status(500).json({ success: false, message: 'E-mail küldési hiba!' });
+    if (req.body.audit_id) {
+        ids.push(req.body.audit_id);
     }
-});
-// Értesítés auditációra jelölésről
-        router.post('/api/notify-audit-init', async (req, res) => {
-            const { email, userName, assessmentName, auditorName, message, deadline } = req.body;
 
-            if (!email) {
-                return res.status(400).json({ success: false, message: 'Nincs e-mail cím megadva.' });
+    if (Array.isArray(req.body.audit_ids)) {
+        ids.push(...req.body.audit_ids);
+    }
+
+    return uniqueNumbers(ids);
+}
+
+async function getCurrentUserDisplayName(req) {
+    const rows = await q(
+        `
+        SELECT vez
+        FROM felhasznalok
+        WHERE id = ?
+        LIMIT 1
+        `,
+        [req.auth.userId]
+    );
+
+    return rows?.[0]?.vez || 'Ismeretlen felhasználó';
+}
+
+async function loadAuditNotificationRows(req, auditIds) {
+    const cleanAuditIds = uniqueNumbers(auditIds);
+
+    if (!cleanAuditIds.length) {
+        const err = new Error('Hiányzó vagy hibás audit azonosító.');
+        err.status = 400;
+        throw err;
+    }
+
+    const placeholders = cleanAuditIds.map(() => '?').join(',');
+
+    const rows = await q(
+        `
+        SELECT
+            a.audit_id,
+            a.user_audit,
+            a.user_user,
+            a.audit_modul_id,
+            a.audit_int_id,
+            a.hatarido,
+            k.idk,
+            k.kitoltes_neve,
+            k.modul_id,
+            tulaj.id AS tulaj_id,
+            tulaj.vez AS tulaj_nev,
+            tulaj.mail AS tulaj_email,
+            tulaj.int_id AS tulaj_int_id,
+            auditor.id AS auditor_id,
+            auditor.vez AS auditor_nev,
+            auditor.mail AS auditor_email,
+            EXISTS (
+                SELECT 1
+                FROM kitoltesek sajat
+                WHERE sajat.idk = k.idk
+                  AND sajat.modul_id = k.modul_id
+                  AND sajat.felhasznalo_id = ?
+                  AND sajat.role IN ('admin', 'sysadmin', 'editor')
+                LIMIT 1
+            ) AS has_direct_access
+        FROM audit a
+        JOIN kitoltesek k
+            ON k.id = a.audit_id
+           AND k.modul_id = a.audit_modul_id
+        JOIN felhasznalok tulaj
+            ON tulaj.id = a.user_user
+        JOIN felhasznalok auditor
+            ON auditor.id = a.user_audit
+        WHERE a.audit_id IN (${placeholders})
+          AND a.audit_modul_id = ?
+        `,
+        [
+            req.auth.userId,
+            ...cleanAuditIds,
+            req.auth.modulId
+        ]
+    );
+
+    if (rows.length !== cleanAuditIds.length) {
+        const err = new Error('Van olyan auditáció, amely nem található vagy nem ehhez a modulhoz tartozik.');
+        err.status = 403;
+        throw err;
+    }
+
+    const roleId = currentRoleId(req);
+    const sysadmin = isSysadminReq(req);
+
+    const allowedRows = rows.filter(row => {
+        const sameInstitution = Number(row.tulaj_int_id) === Number(req.auth.intId);
+        const hasDirectAccess = Number(row.has_direct_access) === 1;
+        const isAuditor = Number(row.auditor_id) === Number(req.auth.userId);
+        const canInstitutionManage = [ROLE_ADMIN, ROLE_ELEMZO].includes(roleId) && sameInstitution;
+
+        return sysadmin || hasDirectAccess || isAuditor || canInstitutionManage;
+    });
+
+    if (allowedRows.length !== rows.length) {
+        const err = new Error('Nincs jogosultságod egy vagy több audit értesítéséhez.');
+        err.status = 403;
+        throw err;
+    }
+
+    return allowedRows;
+}
+
+function handleNotifyError(res, error, label) {
+    const status = Number(error.status) || 500;
+
+    if (status >= 500) {
+        console.error(label, error);
+    }
+
+    return res.status(status).json({
+        success: false,
+        message: error.message || 'Értesítési hiba.'
+    });
+}
+// --- ÚJ ENDPOINT: Csoportos határidő értesítő ---
+router.post(
+    '/api/notify-deadlines',
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    requireRole(ROLE_ADMIN, ROLE_ELEMZO),
+    async (req, res) => {
+        try {
+            const auditIds = getAuditIdsFromBody(req);
+            const hatarido = String(req.body.hatarido || req.body.deadline || '').trim();
+
+            if (!auditIds.length || !hatarido) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Hiányzó audit azonosító vagy határidő.'
+                });
             }
 
-            let deadlineHtml = '';
-            if (deadline) {
-                deadlineHtml = `<p><strong>Az értékeléshez tartozó határidő: <span style="color: #d9534f;">${deadline}</span></strong></p>`;
+            const rows = await loadAuditNotificationRows(req, auditIds);
+
+            const groupedByEmail = new Map();
+
+            for (const row of rows) {
+                if (!row.tulaj_email) continue;
+
+                if (!groupedByEmail.has(row.tulaj_email)) {
+                    groupedByEmail.set(row.tulaj_email, {
+                        email: row.tulaj_email,
+                        name: row.tulaj_nev || 'Felhasználó',
+                        items: []
+                    });
+                }
+
+                groupedByEmail.get(row.tulaj_email).items.push({
+                    nev: row.kitoltes_neve || 'Értékelés',
+                    auditor: row.auditor_nev || 'Auditor'
+                });
             }
 
-            const htmlContent = `
-                <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
-                    <h2 style="color: #ffbd16;">Értékelés auditációra jelölve</h2>
-                    <h2>Kedves ${userName}!</h2>
-                    <p>A(z) <strong>${assessmentName}</strong> nevű értékelését <strong>${auditorName}</strong> módosításra jelölte meg és a következő üzenetet küldte:</p>
-                    
-                    <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #ffbd16; margin: 15px 0; font-style: italic;">
-                        "${message}"
+            const emailPromises = [...groupedByEmail.values()].map(group => {
+                let listHtml = '<ul style="padding-left: 20px;">';
+
+                for (const item of group.items) {
+                    listHtml += `
+                        <li>
+                            <strong>${escapeHtml(item.nev)}</strong>
+                            <br>
+                            <span style="color: #666;">Auditor: ${escapeHtml(item.auditor)}</span>
+                        </li>
+                    `;
+                }
+
+                listHtml += '</ul>';
+
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+                        <h2 style="color: #ffbd16;">Értékelési határidő</h2>
+                        <h2>Kedves ${escapeHtml(group.name)}!</h2>
+
+                        <p>Az alábbi értékelés(ek)hez új leadási határidőt állítottak be a rendszerben:</p>
+
+                        ${listHtml}
+
+                        <p>
+                            <strong>
+                                A megadott határidő:
+                                <span style="color: #d9534f; font-size: 1.2em;">
+                                    ${escapeHtml(hatarido)}
+                                </span>
+                            </strong>
+                        </p>
+
+                        <br>
+                        <p>Jó munkát kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                        <a href="https://www.ertekek.com">www.ertekek.com</a>
                     </div>
-                    
-                    ${deadlineHtml}
-                    
-                    <p>További információkat a "Javaslatok" fülön talál, és az üzenetre is itt tud válaszolni. Fiókjába belépve a javaslatok fülön tekintheti meg a részleteket.</p>
-                    <br>
-                    <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                    <a href="www.ertekek.com">www.ertekek.com</a>
-                </div>
-            `;
+                `;
 
-            try {
-                await sendEmail(email, "Értékelés auditációra jelölve - ÉRTÉKEK", htmlContent);
-                res.json({ success: true, message: 'Audit e-mail sikeresen elküldve.' });
-            } catch (error) {
-                console.error("Hiba az audit e-mail küldésekor:", error);
-                res.status(500).json({ success: false, message: 'Hiba az e-mail küldésekor.' });
+                return sendEmail(
+                    group.email,
+                    'Új határidő beállítva - ÉRTÉKEK',
+                    htmlContent
+                );
+            });
+
+            await Promise.all(emailPromises);
+
+            return res.json({
+                success: true,
+                message: 'Határidő értesítések elküldve.'
+            });
+        } catch (error) {
+            return handleNotifyError(res, error, '[notify-deadlines hiba]');
+        }
+    }
+);
+// Értesítés auditációra jelölésről
+router.post(
+    '/api/notify-audit-init',
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    requireRole(ROLE_ADMIN, ROLE_ELEMZO),
+    async (req, res) => {
+        try {
+            const auditIds = getAuditIdsFromBody(req);
+            const message = String(req.body.message || req.body.uzenet || '').trim();
+            const deadline = String(req.body.deadline || req.body.hatarido || '').trim();
+
+            if (!auditIds.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Hiányzó audit azonosító.'
+                });
             }
-        });
+
+            const rows = await loadAuditNotificationRows(req, auditIds);
+            const senderName = await getCurrentUserDisplayName(req);
+
+            const emailPromises = rows.map(row => {
+                if (!row.tulaj_email) return Promise.resolve();
+
+                const deadlineText = deadline || row.hatarido || '';
+
+                const deadlineHtml = deadlineText
+                    ? `
+                        <p>
+                            <strong>
+                                Az értékeléshez tartozó határidő:
+                                <span style="color: #d9534f;">
+                                    ${escapeHtml(deadlineText)}
+                                </span>
+                            </strong>
+                        </p>
+                    `
+                    : '';
+
+                const messageHtml = message
+                    ? `
+                        <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #ffbd16; margin: 15px 0; font-style: italic;">
+                            "${escapeHtml(message)}"
+                        </div>
+                    `
+                    : '';
+
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; color: #333; max-width: 600px;">
+                        <h2 style="color: #ffbd16;">Értékelés auditációra jelölve</h2>
+                        <h2>Kedves ${escapeHtml(row.tulaj_nev)}!</h2>
+
+                        <p>
+                            A(z)
+                            <strong>${escapeHtml(row.kitoltes_neve || 'Értékelés')}</strong>
+                            nevű értékelését
+                            <strong>${escapeHtml(senderName)}</strong>
+                            auditációra / módosításra jelölte.
+                        </p>
+
+                        ${messageHtml}
+
+                        ${deadlineHtml}
+
+                        <p>
+                            További információkat a "Javaslatok" fülön talál, és az üzenetre is ott tud válaszolni.
+                        </p>
+
+                        <br>
+                        <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                        <a href="https://www.ertekek.com">www.ertekek.com</a>
+                    </div>
+                `;
+
+                return sendEmail(
+                    row.tulaj_email,
+                    'Értékelés auditációra jelölve - ÉRTÉKEK',
+                    htmlContent
+                );
+            });
+
+            await Promise.all(emailPromises);
+
+            return res.json({
+                success: true,
+                message: 'Audit e-mail sikeresen elküldve.'
+            });
+        } catch (error) {
+            return handleNotifyError(res, error, '[notify-audit-init hiba]');
+        }
+    }
+);
         // --- ÚJ VÉGPONT: Új audit üzenet e-mail értesítés ---
-        router.post('/api/notify-audit-message', async (req, res) => {
-            const { ertesitesek, uzenet, sender_name } = req.body;
+router.post(
+    '/api/notify-audit-message',
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    async (req, res) => {
+        try {
+            const auditIds = getAuditIdsFromBody(req);
+            const uzenet = String(req.body.uzenet || '').trim();
 
-            if (!ertesitesek || !Array.isArray(ertesitesek) || ertesitesek.length === 0) {
-                return res.status(400).json({ success: false, message: 'Nincsenek megadva értesítendő adatok.' });
+            if (!auditIds.length || !uzenet) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Hiányzó audit azonosító vagy üzenet.'
+                });
             }
 
-            try {
-                // Végigmegyünk a kapott tömbön, és mindenkinek elküldjük a saját e-mailjét
-                const emailPromises = ertesitesek.map(async (ertek) => {
-                    if (!ertek.email) return Promise.resolve(); // Ha nincs e-mail, ugrunk a következőre
+            const rows = await loadAuditNotificationRows(req, auditIds);
+            const senderName = await getCurrentUserDisplayName(req);
 
+            const emailJobs = [];
+
+            for (const row of rows) {
+                const recipients = [];
+
+                if (
+                    row.tulaj_email &&
+                    Number(row.tulaj_id) !== Number(req.auth.userId)
+                ) {
+                    recipients.push({
+                        email: row.tulaj_email,
+                        name: row.tulaj_nev,
+                        tipus: 'értékelés tulajdonosa'
+                    });
+                }
+
+                if (
+                    row.auditor_email &&
+                    Number(row.auditor_id) !== Number(req.auth.userId)
+                ) {
+                    recipients.push({
+                        email: row.auditor_email,
+                        name: row.auditor_nev,
+                        tipus: 'auditor'
+                    });
+                }
+
+                for (const recipient of recipients) {
                     const htmlContent = `
                         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
                             <h2 style="color: #0056b3;">Új üzenet érkezett az értékeléséhez</h2>
-                            <h2>Kedves ${ertek.alkoto}!</h2>
-                            <p>A(z) <strong>${ertek.nev} (${ertek.tipus})</strong> nevű értékeléséhez <strong>${sender_name}</strong> új üzenetet küldött:</p>
-                            
+                            <h2>Kedves ${escapeHtml(recipient.name || 'Felhasználó')}!</h2>
+
+                            <p>
+                                A(z)
+                                <strong>${escapeHtml(row.kitoltes_neve || 'Értékelés')}</strong>
+                                nevű értékeléshez
+                                <strong>${escapeHtml(senderName)}</strong>
+                                új üzenetet küldött.
+                            </p>
+
                             <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #0056b3; margin: 15px 0; font-style: italic;">
-                                "${uzenet}"
+                                "${escapeHtml(uzenet)}"
                             </div>
-                            
-                            <p>Fiókjába belépve a javaslatok fülön tekintheti meg a teljes beszélgetést, és itt is tud válaszolni rá.</p>
+
+                            <p>Fiókjába belépve a javaslatok fülön tekintheti meg a teljes beszélgetést, és ott tud válaszolni rá.</p>
+
                             <br>
                             <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
                             <a href="https://www.ertekek.com" style="color: #0056b3; text-decoration: none;">www.ertekek.com</a>
                         </div>
                     `;
 
-                    // Az existing sendEmail függvény használata
-                    return sendEmail(ertek.email, "Új üzenet az értékeléséhez - ÉRTÉKEK", htmlContent);
-                });
-
-                // Megvárjuk, amíg az összes levél kimegy
-                await Promise.all(emailPromises);
-
-                res.json({ success: true, message: 'Új üzenet e-mailek sikeresen elküldve.' });
-            } catch (error) {
-                console.error("Hiba az új üzenet e-mail küldésekor:", error);
-                res.status(500).json({ success: false, message: 'Szerverhiba az e-mail küldésekor.' });
-            }
-        });
-        // --- ÚJ VÉGPONT: Értesítés az elemzőnek (auditornak), ha a user válaszol ---
-        router.post('/api/notify-auditor-reply', (req, res) => {
-            // Itt már várjuk az assessment_name-et is a frontendtől
-            const { audit_id, uzenet, user_name, assessment_name } = req.body;
-
-            if (!audit_id || !uzenet) {
-                return res.status(400).json({ success: false, message: 'Hiányzó adatok' });
+                    emailJobs.push(
+                        sendEmail(
+                            recipient.email,
+                            'Új üzenet az értékeléséhez - ÉRTÉKEK',
+                            htmlContent
+                        )
+                    );
+                }
             }
 
-            // Egyszerűsített lekérdezés: csak az auditor e-mail címét és nevét kérjük le
-            const query = `
-                SELECT u.mail AS auditor_email, u.vez AS auditor_nev
-                FROM audit a
-                JOIN felhasznalok u ON a.user_audit = u.id
-                WHERE a.audit_id = ?
-                LIMIT 1
-            `;
+            await Promise.all(emailJobs);
 
-            db.query(query, [audit_id], async (err, results) => {
-                if (err) {
-                    console.error("Adatbázis hiba az auditor keresésekor:", err);
-                    return res.status(500).json({ success: false, message: 'Adatbázis hiba' });
-                }
-
-                if (results.length > 0) {
-                    const row = results[0];
-                    const biztonsagiNev = assessment_name || 'Értékelés';
-
-                    const htmlContent = `
-                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
-                            <h2 style="color: #28a745;">Új válasz érkezett egy auditált értékeléshez!</h2>
-                            <h2>Kedves ${row.auditor_nev}!</h2>
-                            <p>A(z) <strong>${biztonsagiNev}</strong> nevű értékeléshez <strong>${user_name}</strong> új üzenetet küldött:</p>
-                            
-                            <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; font-style: italic;">
-                                "${uzenet}"
-                            </div>
-                            
-                            <p>Fiókjába belépve a "Javaslatok" fülön tekintheti meg a teljes beszélgetést, és ott tud válaszolni vagy jóváhagyni az értékelést.</p>
-                            <br>
-                            <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <a href="https://www.ertekek.com" style="color: #28a745; text-decoration: none;">www.ertekek.com</a>
-                        </div>
-                    `;
-
-                    try {
-                        await sendEmail(row.auditor_email, "Új válasz érkezett (Auditáció) - ÉRTÉKEK", htmlContent);
-                        res.json({ success: true, message: 'Auditor értesítve.' });
-                    } catch (emailErr) {
-                        console.error("E-mail küldési hiba (auditor):", emailErr);
-                        res.status(500).json({ success: false, message: 'E-mail küldési hiba' });
-                    }
-                } else {
-                    res.status(404).json({ success: false, message: 'Nem található az auditor' });
-                }
+            return res.json({
+                success: true,
+                message: 'Új üzenet e-mailek sikeresen elküldve.'
             });
-        });
-        // --- ÚJ VÉGPONT: Értesítés a jóváhagyásról ---
-        router.post('/api/notify-audit-approved', async (req, res) => {
-            const { ertesitesek } = req.body;
+        } catch (error) {
+            return handleNotifyError(res, error, '[notify-audit-message hiba]');
+        }
+    }
+);
+        // --- ÚJ VÉGPONT: Értesítés az elemzőnek (auditornak), ha a user válaszol ---
+       router.post(
+    '/api/notify-auditor-reply',
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    async (req, res) => {
+        try {
+            const auditIds = getAuditIdsFromBody(req);
+            const uzenet = String(req.body.uzenet || '').trim();
 
-            if (!ertesitesek || !Array.isArray(ertesitesek) || ertesitesek.length === 0) {
-                return res.status(400).json({ success: false, message: 'Nincsenek adatok.' });
-            }
-
-            try {
-                const emailPromises = ertesitesek.map(async (ertek) => {
-                    if (!ertek.email) return Promise.resolve();
-
-                    const htmlContent = `
-                        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
-                            <h2 style="color: #28a745;">Értékelés Jóváhagyva! 🎉</h2>
-                            <h2>Kedves ${ertek.alkoto}!</h2>
-                            <p>Örömmel értesítjük, hogy a(z) <strong>${ertek.nev} (${ertek.tipus})</strong> nevű értékelését az auditor sikeresen jóváhagyta.</p>
-                            
-                            <p>Az értékelés ezzel lezárásra került, további teendője jelenleg nincs vele.</p>
-                            <br>
-                            <p>További jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
-                            <a href="https://www.ertekek.com" style="color: #2e2ee1; text-decoration: none;">www.ertekek.com</a>
-                        </div>
-                    `;
-                    return sendEmail(ertek.email, "Értékelés Jóváhagyva - ÉRTÉKEK", htmlContent);
+            if (!auditIds.length || !uzenet) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Hiányzó audit azonosító vagy üzenet.'
                 });
-
-                await Promise.all(emailPromises);
-                res.json({ success: true, message: 'Jóváhagyás e-mailek elküldve.' });
-            } catch (error) {
-                console.error("Hiba a jóváhagyás e-mail küldésekor:", error);
-                res.status(500).json({ success: false, message: 'Szerverhiba.' });
             }
-        });
+
+            const rows = await loadAuditNotificationRows(req, auditIds);
+            const senderName = await getCurrentUserDisplayName(req);
+
+            const emailPromises = rows.map(row => {
+                if (!row.auditor_email) return Promise.resolve();
+
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                        <h2 style="color: #28a745;">Új válasz érkezett egy auditált értékeléshez</h2>
+                        <h2>Kedves ${escapeHtml(row.auditor_nev)}!</h2>
+
+                        <p>
+                            A(z)
+                            <strong>${escapeHtml(row.kitoltes_neve || 'Értékelés')}</strong>
+                            nevű értékeléshez
+                            <strong>${escapeHtml(senderName)}</strong>
+                            új üzenetet küldött:
+                        </p>
+
+                        <div style="background-color: #f8f9fa; padding: 15px; border-left: 4px solid #28a745; margin: 15px 0; font-style: italic;">
+                            "${escapeHtml(uzenet)}"
+                        </div>
+
+                        <p>Fiókjába belépve a "Javaslatok" fülön tekintheti meg a teljes beszélgetést.</p>
+
+                        <br>
+                        <p>Jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                        <a href="https://www.ertekek.com" style="color: #28a745; text-decoration: none;">www.ertekek.com</a>
+                    </div>
+                `;
+
+                return sendEmail(
+                    row.auditor_email,
+                    'Új válasz érkezett (Auditáció) - ÉRTÉKEK',
+                    htmlContent
+                );
+            });
+
+            await Promise.all(emailPromises);
+
+            return res.json({
+                success: true,
+                message: 'Auditor értesítve.'
+            });
+        } catch (error) {
+            return handleNotifyError(res, error, '[notify-auditor-reply hiba]');
+        }
+    }
+);
+        // --- ÚJ VÉGPONT: Értesítés a jóváhagyásról ---
+    router.post(
+    '/api/notify-audit-approved',
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess,
+    requireRole(ROLE_ADMIN, ROLE_ELEMZO),
+    async (req, res) => {
+        try {
+            const auditIds = getAuditIdsFromBody(req);
+
+            if (!auditIds.length) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Hiányzó audit azonosító.'
+                });
+            }
+
+            const rows = await loadAuditNotificationRows(req, auditIds);
+
+            const emailPromises = rows.map(row => {
+                if (!row.tulaj_email) return Promise.resolve();
+
+                const htmlContent = `
+                    <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; padding: 20px; border-radius: 8px;">
+                        <h2 style="color: #28a745;">Értékelés jóváhagyva</h2>
+                        <h2>Kedves ${escapeHtml(row.tulaj_nev)}!</h2>
+
+                        <p>
+                            Örömmel értesítjük, hogy a(z)
+                            <strong>${escapeHtml(row.kitoltes_neve || 'Értékelés')}</strong>
+                            nevű értékelését az auditor jóváhagyta.
+                        </p>
+
+                        <p>Az értékelés ezzel lezárásra került, további teendője jelenleg nincs vele.</p>
+
+                        <br>
+                        <p>További jó munkát és szép napot kíván:<br><strong>Az ÉRTÉKEK csapata</strong></p>
+                        <a href="https://www.ertekek.com" style="color: #2e2ee1; text-decoration: none;">www.ertekek.com</a>
+                    </div>
+                `;
+
+                return sendEmail(
+                    row.tulaj_email,
+                    'Értékelés jóváhagyva - ÉRTÉKEK',
+                    htmlContent
+                );
+            });
+
+            await Promise.all(emailPromises);
+
+            return res.json({
+                success: true,
+                message: 'Jóváhagyás e-mailek elküldve.'
+            });
+        } catch (error) {
+            return handleNotifyError(res, error, '[notify-audit-approved hiba]');
+        }
+    }
+);
     return router;
 }
 

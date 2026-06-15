@@ -1,0 +1,606 @@
+/* ÉRTÉKEK – navmenü stílusok
+   A both.css-ből leválasztott, navmenühöz kapcsolódó szabályok.
+*/
+
+.nav {
+  width: 100%;
+  top: 0;
+  z-index: 5000;
+  position: sticky;
+}
+
+#navmenu {
+  width: 100%;
+  font-family: "Montserrat Subrayada", sans-serif;
+  color: rgb(255 255 255);
+}
+
+#navmenu a {
+  text-decoration: none;
+}
+
+#navmenu ul {
+  padding-left: 20px;
+}
+#navmenu li, #navmenu ul{margin: 0px;}
+#navmenu li a {
+  color: white;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+#navmenu li a:hover {
+  scale: 1.05;
+  text-shadow: 0 0 10px white;
+}
+
+#navmenu svg {
+  width: 30px;
+  height: 30px;
+  color: white;
+}
+
+#navmenu .nav-icon.material-symbols-rounded {
+  margin-right: 10px;
+}
+
+#navmenu .links li {
+  list-style: none;
+  cursor: pointer;
+  align-items: center;
+  display: flex;
+}
+
+#navmenu .navbar li {
+  cursor: pointer;
+}
+
+#navmenu li button,
+#navmenu .logout-btn {
+  background: transparent;
+  color: white;
+  border: none;
+  width: fit-content;
+  transition: all 0.3s;
+  margin: 0;
+  font-family: inherit;
+  font-size: initial;
+  cursor: pointer;
+}
+
+#navmenu li button:hover,
+#navmenu .logout-btn:hover {
+  scale: 1.01;
+  text-shadow: 0 0 10px whitesmoke;
+}
+
+#bejelentkezes {
+  cursor: pointer;
+}
+
+#fiokom.dobaktiv {
+  background-color: transparent;
+}
+
+/* Régebbi / alternatív nav-szerkezethez tartozó menüstílusok */
+#navmenu .menu,
+.menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#navmenu .menu div,
+.menu div {
+  position: relative;
+  margin: 10px 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+#navmenu .menu div::after,
+.menu div::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: currentColor;
+  transition: width 0.3s ease;
+}
+
+#navmenu .menu div:hover::after,
+.menu div:hover::after {
+  width: 100%;
+}
+
+#navmenu .menu div a,
+.menu div a {
+  text-decoration: none;
+  color: inherit;
+}
+#men{position: sticky; top: 0;}
+.ok{
+border-left-color:#FFC107 !important; background: #ffc10714 !important;
+} 
+/* Fő, asztali nav */
+#navmenu .navbar {
+  width: 100%;
+  height: 60px;
+  margin: 0 auto;
+  display: flex;
+  backdrop-filter: saturate(130%) blur(8px);
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg,#ff6600f7,#ffaa00ed);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+.modal-content {display: none;}
+#navmenu .navbar .motto a {
+  display: none;
+  font-family: "Montserrat Subrayada", sans-serif;
+}
+.action_btn{display: none;}
+#lepjenbe{display: none;}
+#navmenu .navbar .links {
+  display: flex;
+  gap: 2rem;
+}
+
+#navmenu .navbar .toggle_btn {
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: none;
+  margin: 5%;
+  transition: all 0.3s;
+}
+
+#navmenu .navbar .toggle_btn:hover {
+  scale: 1.1;
+}
+
+#navmenu .fa-solid.fa-bars,
+#navmenu .fa-solid.fa-xmark {
+  color: white;
+}
+
+
+
+#navmenu .action-btn:hover,
+#navmenu .action_btn:hover {
+  scale: 1.05;
+  color: white;
+}
+
+#navmenu .action-btn:active,
+#navmenu .action_btn:active {
+  scale: 0.95;
+}
+
+/* Mobil lenyíló nav */
+#navmenu .dropdown_menu {
+  display: none;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 500;
+  position: absolute;
+  right: 2rem;
+  top: 60px;
+  height: 0;
+  width: 300px;
+  background-color: #ff6500a3;
+  backdrop-filter: blur(15px);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: height 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#navmenu .dropdown_menu.open {
+  height: 300px;
+}
+
+#navmenu .dropdown_menu li {
+  padding: 0.7rem;
+  display: flex;
+  align-items: center;
+  font-family: "Montserrat Subrayada", sans-serif;
+  justify-content: center;
+}
+
+#navmenu .dropdown_menu .action-btn,
+#navmenu .dropdown_menu .action_btn {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#navmenu .kozepd {
+  display: none !important;
+}
+
+/* Mobil logó a lenyíló menüben */
+#navmenu .mobillogo {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  bottom: 0%;
+  position: relative;
+}
+
+#navmenu #mobillogokulso {
+  width: 130px;
+  height: 130px;
+  border-radius: 15px;
+  border: 3px solid white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: navRotateClock 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  position: absolute;
+  z-index: 1;
+}
+
+#navmenu #mobillogobelso {
+  z-index: 1;
+  position: relative;
+  animation: navShine 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  display: flex;
+  background: white;
+  border: 3px solid gold;
+  justify-content: center;
+  align-items: center;
+  font-family: "Montserrat Subrayada", sans-serif;
+  width: 110px;
+  height: 110px;
+  font-size: small;
+  border-radius: 15px;
+  color: black;
+}
+
+#navmenu #mobillogobelso .gold {
+  color: #ff6500;
+}
+
+@keyframes navShine {
+  0%, 50%, 100% {
+    box-shadow: 0 0 10px 5px gold;
+    background-color: rgba(255, 255, 255, 0.91);
+  }
+
+  12.5%, 23%, 25%, 37.5%, 62.5%, 75%, 87.5% {
+    box-shadow: none;
+    background-color: #ffffffcc;
+  }
+}
+
+@keyframes navRotateClock {
+  0% {
+    transform: rotate(0deg);
+    border-color: gold;
+  }
+
+  12.5% {
+    transform: rotate(45deg);
+    border-color: white;
+  }
+
+  25% {
+    transform: rotate(45deg);
+    border-color: white;
+  }
+
+  37.5% {
+    transform: rotate(90deg);
+    border-color: white;
+  }
+
+  50% {
+    transform: rotate(90deg);
+    border-color: gold;
+  }
+
+  62.5% {
+    transform: rotate(135deg);
+    border-color: white;
+  }
+
+  75% {
+    transform: rotate(135deg);
+    border-color: white;
+  }
+
+  87.5% {
+    transform: rotate(180deg);
+    border-color: white;
+  }
+
+  100% {
+    transform: rotate(180deg);
+    border-color: gold;
+  }
+}
+
+@media (max-width: 992px) {
+  #navmenu #ertnone {
+    display: none;
+  }
+
+  #navmenu .navbar {
+    justify-content: space-between;
+    background: linear-gradient(146deg, rgb(255 162 2) 51%, #ff6500);
+    backdrop-filter: none;
+  }
+
+  #navmenu .navbar .links,
+  #navmenu .navbar .action_btn,
+  #navmenu .navbar .action-btn {
+    display: none;
+  }
+
+  #navmenu .navbar .motto a {
+    display: flex;
+    text-shadow: 0 0 10px white;
+    font-size: 1.3rem;
+    color: whitesmoke;
+    font-family: "Montserrat Subrayada", sans-serif;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin: 0 30px;
+  }
+
+  #navmenu .navbar .toggle_btn {
+    display: block;
+  }
+
+  #navmenu .dropdown_menu {
+    display: flex;
+  }
+}
+
+@media (max-width: 567px) {
+  #navmenu .dropdown_menu {
+    left: 2rem;
+    width: unset;
+  }
+
+  #navmenu .dropdown_menu.open {
+    height: 500px;
+  }
+
+  #navmenu .mobillogo {
+    display: flex;
+    height: 35vh;
+  }
+}
+  #ertekek-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 999999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background:
+            radial-gradient(circle at 30% 20%, rgba(255,255,255,.28), transparent 28%),
+            radial-gradient(circle at 70% 80%, rgba(255,189,22,.28), transparent 30%),
+            linear-gradient(293deg, #ff3400 0%, #ffab02 100%);
+        transition: opacity .55s ease, visibility .55s ease;
+    }
+
+    #ertekek-loader::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px);
+        background-size: 38px 38px;
+        opacity: .35;
+        mask-image: radial-gradient(circle at center, black, transparent 72%);
+    }
+
+    #ertekek-loader.eltunik {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    #ertekek-loader-box {
+        position: relative;
+        width: 330px;
+        height: 330px;
+        display: grid;
+        place-items: center;
+        isolation: isolate;
+    }
+
+    #ertekek-loader-frame {
+        position: absolute;
+        width: 292px;
+        height: 292px;
+        border: 3px solid rgba(255,255,255,.92);
+        border-radius: 34px;
+        animation: rotateClockElegant 6.5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+        box-shadow:
+            0 0 0 1px rgba(255,255,255,.25),
+            0 0 38px rgba(255, 215, 0, .34),
+            inset 0 0 22px rgba(255,255,255,.16);
+    }
+
+    #ertekek-loader-frame::after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 25px;
+        border: 1px solid rgba(255,255,255,.42);
+    }
+
+    #ertekek-loader-inner {
+        position: relative;
+        z-index: 2;
+        width: 224px;
+        height: 224px;
+        border-radius: 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+        background:
+            linear-gradient(145deg, rgba(255,255,255,.94), rgba(255,247,237,.86));
+        border: 1px solid rgba(255,255,255,.85);
+        color: #2f2a24;
+        box-shadow:
+            0 24px 70px rgba(74, 28, 0, .28),
+            inset 0 1px 0 rgba(255,255,255,.9);
+        backdrop-filter: blur(10px);
+    }
+
+    #ertekek-loader-inner::before {
+        content: "";
+        position: absolute;
+        inset: -40%;
+        background: linear-gradient(
+            120deg,
+            transparent 35%,
+            rgba(255,255,255,.55) 48%,
+            transparent 62%
+        );
+        transform: translateX(-40%) rotate(12deg);
+        animation: loaderShine 3.4s ease-in-out infinite;
+    }
+
+    .loader-mark {
+        position: relative;
+        z-index: 1;
+        width: 100px;
+        height: 100px;
+        display: grid;
+        place-items: center;
+        margin-bottom: 12px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #ff6500, #ffbd16);
+        box-shadow: 0 12px 26px rgba(255,101,0,.28);
+        transform: rotate(45deg);
+    }
+
+    .loader-mark span {
+        display: block;
+        color: white;
+        font-family: "Montserrat Subrayada", Arial, sans-serif;
+        font-size: 2.1rem;
+        font-weight: 700;
+        transform: rotate(-45deg);
+    }
+
+    .loader-title {
+        position: relative;
+        z-index: 1;
+        font-family: "Montserrat Subrayada", Arial, sans-serif;
+        font-size: 1.48rem;
+        font-weight: 700;
+        letter-spacing: .06em;
+        color: #9a3412;
+    }
+
+    .loader-subtitle {
+        position: relative;
+        z-index: 1;
+        margin-top: 7px;
+        color: #7c2d12;
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        opacity: .72;
+    }
+
+    @keyframes loaderShine {
+        0%, 35% {
+            transform: translateX(-65%) rotate(12deg);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        75%, 100% {
+            transform: translateX(65%) rotate(12deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes rotateClockElegant {
+        0% {
+            transform: rotate(0deg);
+            border-color: gold;
+        }
+        12.5% {
+            transform: rotate(45deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        25% {
+            transform: rotate(45deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        37.5% {
+            transform: rotate(90deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        50% {
+            transform: rotate(90deg);
+            border-color: gold;
+        }
+        62.5% {
+            transform: rotate(135deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        75% {
+            transform: rotate(135deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        87.5% {
+            transform: rotate(180deg);
+            border-color: rgba(255,255,255,.95);
+        }
+        100% {
+            transform: rotate(180deg);
+            border-color: gold;
+        }
+    }
+
+    @media (max-width: 480px) {
+        #ertekek-loader-box {
+            width: 270px;
+            height: 270px;
+        }
+
+        #ertekek-loader-frame {
+            width: 240px;
+            height: 240px;
+            border-radius: 28px;
+        }
+
+        #ertekek-loader-inner {
+            width: 190px;
+            height: 190px;
+            border-radius: 28px;
+        }
+
+        .loader-mark {
+            width: 56px;
+            height: 56px;
+            border-radius: 17px;
+        }
+
+        .loader-mark span {
+            font-size: 1.8rem;
+        }
+
+        .loader-title {
+            font-size: 1.22rem;
+        }
+
+        .loader-subtitle {
+            font-size: .72rem;
+        }
+    }

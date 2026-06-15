@@ -3,11 +3,39 @@
 import { kerdesValaszok, szovegesValaszok } from './main_alap.js';
 import { KategoriaKezelo } from './main_quest.js';
 import { Focus} from './main_quest_focus.js';
+import { setFokuszKulcs, rogzitFokusz } from './main_focus_history.js';
 //Kérdés osztály 
 let hasNemAgMap = {}; // Az összes kérdéshez előre eltároljuk az adatokat
 let hasNemAgBatchPromise = null; // Megakadályozza a többszörös lekérdezést
+
+function showGlobalTooltip(targetElement, text) {
+    let tooltip = document.getElementById('global-tooltip');
+
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'global-tooltip';
+        tooltip.className = 'global-tooltip';
+        document.body.appendChild(tooltip);
+    }
+
+    tooltip.textContent = text;
+    tooltip.classList.remove('hidden');
+
+    const rect = targetElement.getBoundingClientRect();
+
+    tooltip.style.left = `${rect.left + rect.width / 2}px`;
+    tooltip.style.top = `${rect.top - 10}px`;
+}
+
+function hideGlobalTooltip() {
+    const tooltip = document.getElementById('global-tooltip');
+
+    if (!tooltip) return;
+
+    tooltip.classList.add('hidden');
+}
 export class Kerdes {
-    constructor(kindex, id, szoveg, parentId, valaszAg, negaltKerdesSzoveg, foKategoria, alKategoria, altTema, szoveges, ertek, negalt_ertek,ossz_ertek, maximalis_szint) {
+    constructor(kindex, id, szoveg, parentId, valaszAg, negaltKerdesSzoveg, foKategoria, alKategoria, altTema, szoveges, ertek, negalt_ertek,ossz_ertek, maximalis_szint, opcios = 0, kategoriaKapcsoloId = null) {
         this.kindex = kindex;
         this.id = id;
         this.szoveg = szoveg;
@@ -24,6 +52,8 @@ export class Kerdes {
         this.negalt_ertek = negalt_ertek;
         this.ossz_ertek = ossz_ertek; 
         this.maximalis_szint = maximalis_szint;
+        this.opcios = opcios === true || opcios === 1 || opcios === '1';
+        this.kategoriaKapcsoloId = kategoriaKapcsoloId;
     };
 
     // Létezik ez az adott alkérdésnem nem ága
@@ -65,6 +95,100 @@ const response = await fetch('/api/check-nem-ag-batch', {
     }
     
     
+    getOpcioGroupKey() {
+        if (!this.opcios) return null;
+
+        if (this.parentId) {
+            return `parent:${this.parentId}`;
+        }
+
+        if (this.kategoriaKapcsoloId) {
+            return `kapcsolo:${this.kategoriaKapcsoloId}`;
+        }
+
+        return `utvonal:${this.foKategoria || ''}||${this.alKategoria || ''}||${this.altTema || ''}`;
+    }
+
+    static setOpcioQuestionVisual(questionElem, valasz) {
+        if (!questionElem?.classList?.contains('opcios-question')) return;
+
+        const isIgen = valasz === 'igen';
+        const igenIcon = questionElem.querySelector('.igenszoveg');
+        const uresIcon = questionElem.querySelector('.uresszoveg');
+        const gomboc = questionElem.querySelector('.gomboc');
+
+        if (igenIcon) {
+            igenIcon.textContent = isIgen ? 'radio_button_checked' : 'radio_button_unchecked';
+            igenIcon.classList.toggle('igenteli', isIgen);
+            igenIcon.style.color = isIgen ? 'white' : 'grey';
+        }
+
+        if (uresIcon) {
+            uresIcon.style.color = isIgen ? 'grey' : 'black';
+        }
+
+        if (gomboc && !isIgen) {
+            gomboc.style.boxShadow = 'inset 0px 0px 3px 1px grey';
+            gomboc.style.background = 'transparent';
+            gomboc.style.transform = 'translate(-20px, 0px) rotate(45deg)';
+        }
+
+        if (!isIgen) {
+            questionElem.style.boxShadow = 'none';
+            questionElem.style.background = '';
+        }
+    }
+
+    clearOpcioCsoportTobbiValasza() {
+        if (!this.opcios) return;
+
+        const sajatCsoport = this.getOpcioGroupKey();
+        if (!sajatCsoport) return;
+
+        KategoriaKezelo.kerdesek
+            .filter(k => k && String(k.id) !== String(this.id) && k.opcios && k.getOpcioGroupKey?.() === sajatCsoport)
+            .forEach(k => {
+                kerdesValaszok[k.id] = 'ures';
+            });
+
+        document
+            .querySelectorAll(`.question.opcios-question[data-opcio-group="${CSS.escape(sajatCsoport)}"]`)
+            .forEach(questionElem => {
+                if (String(questionElem.dataset.id) === String(this.id)) return;
+
+                const uresRadio = questionElem.querySelector('input[value="ures"]');
+                const igenRadio = questionElem.querySelector('input[value="igen"]');
+
+                if (igenRadio) igenRadio.checked = false;
+
+                if (uresRadio) {
+                    uresRadio.checked = true;
+                    uresRadio.dispatchEvent(new Event('change', { bubbles: true }));
+                } else {
+                    Kerdes.setOpcioQuestionVisual(questionElem, 'ures');
+                }
+            });
+    }
+
+    static normalizeOpcioValaszok(kerdesLista = KategoriaKezelo.kerdesek) {
+        const foglaltCsoportok = new Set();
+
+        [...kerdesLista]
+            .filter(k => k && k.opcios && kerdesValaszok[k.id] === 'igen')
+            .sort((a, b) => (Number(a.kindex) || 0) - (Number(b.kindex) || 0))
+            .forEach(k => {
+                const csoportKulcs = k.getOpcioGroupKey?.();
+                if (!csoportKulcs) return;
+
+                if (foglaltCsoportok.has(csoportKulcs)) {
+                    kerdesValaszok[k.id] = 'ures';
+                    return;
+                }
+
+                foglaltCsoportok.add(csoportKulcs);
+            });
+    }
+
     //Kérdések létrehozása, igen-ures-nem pozíciok létrehozása és formázása
     async render(tartaly) {
         const kerdesmodul = document.createElement("div");
@@ -86,21 +210,44 @@ const response = await fetch('/api/check-nem-ag-batch', {
             kerdesmodul.appendChild(sorszamJelzo);
         }
         // --- ÚJ RÉSZ VÉGE ---
-        const div = document.createElement('div');
-        div.textContent = this.szoveg;
-        div.setAttribute('data-id', this.id);
-        div.setAttribute('data-value', this.ertek);
-        div.classList.add('question');
-        kerdesmodul.appendChild(div);
+      const div = document.createElement('div');
+div.setAttribute('data-id', this.id);
+div.setAttribute('data-value', this.ertek);
+div.setAttribute('data-opcios', this.opcios ? '1' : '0');
+div.setAttribute('data-opcio-group', this.getOpcioGroupKey() || '');
+div.classList.add('question');
+if (this.opcios) div.classList.add('opcios-question');
+const kerdesFokuszKulcs = setFokuszKulcs(div, {
+    tipus: this.parentId ? 'Alkérdés' : 'Kérdés',
+    id: this.id,
+    szoveg: this.szoveg,
+    utvonal: [this.foKategoria, this.alKategoria, this.altTema]
+});
+
+const questionBelso = document.createElement('div');
+questionBelso.classList.add('question-belso');
+
+const questionSzoveg = document.createElement('div');
+questionSzoveg.classList.add('question-szoveg');
+questionSzoveg.textContent = this.szoveg;
+
+const questionCsuszka = document.createElement('div');
+questionCsuszka.classList.add('question-csuszka');
+
+questionBelso.appendChild(questionSzoveg);
+questionBelso.appendChild(questionCsuszka);
+
+div.appendChild(questionBelso);
+kerdesmodul.appendChild(div);
         
         //HA szerkesztő mód...
      
         
         
         
-            const csuszka = document.createElement("div");
-            csuszka.classList.add("csuszka");
-            div.appendChild(csuszka);
+           const csuszka = document.createElement("div");
+csuszka.classList.add("csuszka");
+questionCsuszka.appendChild(csuszka);
             if (document.getElementById('szerkeszto')) {
                 // 🔸 Szerkesztő sáv létrehozása
                 const szerkesztolec = document.createElement("div");
@@ -168,17 +315,20 @@ const response = await fetch('/api/check-nem-ag-batch', {
             
             const labelIgenSzoveg = document.createElement('div');
             labelIgenSzoveg.classList.add("material-symbols-rounded")
-            labelIgenSzoveg.textContent = 'check';
+            labelIgenSzoveg.textContent = this.opcios ? (kerdesValaszok[this.id] === 'igen' ? 'radio_button_checked' : 'radio_button_unchecked') : 'check';
             labelIgenSzoveg.classList.add('igenszoveg');
 
             const labelIgenSzoveg2 = document.createElement('div');
             labelIgenSzoveg2.classList.add("tooltip")
-            labelIgenSzoveg2.innerHTML=`Igen, ${this.szoveg}`;
-            labelIgenSzoveg.addEventListener('mouseenter', () => {
-                labelIgenSzoveg2.style.opacity = '1';
-                labelIgenSzoveg2.style.visibility = 'visible';
-              });
-              
+labelIgenSzoveg2.textContent = this.opcios ? `Opció kiválasztása: ${this.szoveg || ''}` : `Igen, ${this.szoveg || ''}`;
+         labelIgenSzoveg.addEventListener('mouseenter', () => {
+    showGlobalTooltip(
+        labelIgenSzoveg,
+        this.opcios ? `Opció kiválasztása: ${this.szoveg || ''}` : `Igen, ${this.szoveg || ''}`
+    );
+});
+
+labelIgenSzoveg.addEventListener('mouseleave', hideGlobalTooltip);
               labelIgenSzoveg.addEventListener('mouseleave', () => {
                 labelIgenSzoveg2.style.opacity = '0';
                 labelIgenSzoveg2.style.visibility = 'hidden';              
@@ -234,11 +384,15 @@ const response = await fetch('/api/check-nem-ag-batch', {
                 labelNemSzoveg2.classList.add("tooltip2");
                 labelNem.appendChild(labelNemSzoveg2);
 
-                labelNemSzoveg2.innerHTML=`Nem, ${this.negaltKerdesSzoveg}`;
-                labelNemSzoveg.addEventListener('mouseenter', () => {
-                    labelNemSzoveg2.style.opacity = '1';
-                    labelNemSzoveg2.style.visibility = 'visible';
-                  });
+labelNemSzoveg2.textContent = `Nem, ${this.negaltKerdesSzoveg || ''}`;
+            labelNemSzoveg.addEventListener('mouseenter', () => {
+    showGlobalTooltip(
+        labelNemSzoveg,
+        `Nem, ${this.negaltKerdesSzoveg || ''}`
+    );
+});
+
+labelNemSzoveg.addEventListener('mouseleave', hideGlobalTooltip);
                   
                   labelNemSzoveg.addEventListener('mouseleave', () => {
                     labelNemSzoveg2.style.opacity = '0';
@@ -316,10 +470,12 @@ function getKerdesSzoveg(elem) {
 }
 
 inputMezo.addEventListener('input', (event) => {
-    const kerdesElem = event.target.closest('.question');
+const kerdesElem = event.target.closest('.question');
+const kerdesSzovegElem = kerdesElem?.querySelector('.question-szoveg');
 
-    // 🔹 CSAK a tényleges kérdés marad, a .szerkesztolec nélkül
-    const kerdesSzoveg = getKerdesSzoveg(kerdesElem);
+const kerdesSzoveg = kerdesSzovegElem
+    ? kerdesSzovegElem.textContent.trim()
+    : getKerdesSzoveg(kerdesElem);
 
     const value = event.target.value.trim();
     const questionId = Number(event.target.dataset.id);      // rövidebb, ugyanaz
@@ -331,6 +487,18 @@ inputMezo.addEventListener('input', (event) => {
 
     szovegesValaszok[questionId] =
         value === '' ? '' : `${kerdesSzoveg} ${value}`;
+
+    rogzitFokusz({
+        tipus: this.parentId ? 'Alkérdés' : 'Kérdés',
+        akcio: value === '' ? 'szöveges válasz törölve' : 'szöveges válasz módosítva',
+        szoveg: this.szoveg,
+        utvonal: [this.foKategoria, this.alKategoria, this.altTema],
+        elem: kerdesElem,
+        elemKulcs: kerdesFokuszKulcs,
+        valasz: value === '' ? 'ures' : 'szöveg',
+        event,
+        csakHaValodiEsemeny: true
+    });
 
     console.log(
         `Kérdés ID: ${questionId}, Szöveges válasz: ${szovegesValaszok[questionId] || 'törölve'}`
@@ -345,8 +513,9 @@ inputMezo.addEventListener('input', (event) => {
             
                 // Mezők hozzáadása a div-hez
                 div.appendChild(inputMezo);
-                div.removeChild(csuszka);
-            }
+if (questionCsuszka && questionCsuszka.parentNode) {
+    questionCsuszka.remove();
+}            }
             
             
         tartaly.appendChild(kerdesmodul);
@@ -358,6 +527,8 @@ inputMezo.addEventListener('input', (event) => {
                 selectedRadio.checked = true;
                 this.toggleValtozasKezeles({ target: selectedRadio });
             }
+        } else if (this.opcios) {
+            Kerdes.setOpcioQuestionVisual(div, 'ures');
         }
         return kerdesmodul;
     }
@@ -368,6 +539,13 @@ inputMezo.addEventListener('input', (event) => {
    toggleValtozasKezeles(event) {
         const valasz = event.target.value; // Radio button értéke
         kerdesValaszok[this.id] = valasz; // Mentjük az állapotot
+        const aktualisQuestion = event.target.closest('.question');
+        if (this.opcios) {
+            Kerdes.setOpcioQuestionVisual(aktualisQuestion, valasz);
+        }
+        if (this.opcios && valasz === 'igen') {
+            this.clearOpcioCsoportTobbiValasza();
+        }
         console.log(`Kérdés ID: ${this.id}, Állapot: ${valasz}`); // Állapot loggolása
         console.log('Aktuális kérdés-válasz állapot:', kerdesValaszok); // Teljes állapot loggolása
         
@@ -465,6 +643,22 @@ inputMezo.addEventListener('input', (event) => {
                 uresszoveg.style.color ="grey";
             }
         }
+        if (this.opcios) {
+            Kerdes.setOpcioQuestionVisual(kerdessav, valasz);
+        }
+
+        rogzitFokusz({
+            tipus: this.parentId ? 'Alkérdés' : 'Kérdés',
+            akcio: valasz === 'ures' ? 'válasz törölve' : 'válasz módosítva',
+            szoveg: this.szoveg,
+            utvonal: [this.foKategoria, this.alKategoria, this.altTema],
+            elem: kerdessav,
+            elemKulcs: kerdessav?.dataset?.fokuszKulcs || `kerdes:${this.id}`,
+            valasz,
+            event,
+            csakHaValodiEsemeny: true
+        });
+
         KategoriaKezelo.frissitErtekelesekContainer();
     }
     //A toggleValtozasKezeles() metódus hívja meg, amikor egy kérdésre a felhasználó másik választ ad, így az előző válaszok törlődnek.

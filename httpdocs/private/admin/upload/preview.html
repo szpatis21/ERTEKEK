@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animált Logó - Tükröződő Betűk</title>
+
+    <style>
+        .gold {
+            color: rgb(247, 180, 46);
+            text-shadow: rgb(243, 239, 113) 0px 1px 18px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            overflow: hidden;
+            background: #ffebdb;
+            background: radial-gradient(ellipse at center, #ffffff 30%, #555555 120%);
+        }
+
+        #kont {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #logo-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 320px;
+            height: 320px;
+            opacity: 0;
+            transform-origin: top left;
+            animation: logoTimeline 20s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+        }
+
+        #logokulso {
+            border-radius: 17px;
+            border: 2px solid rgb(186, 186, 186);
+            width: 320px;
+            height: 320px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: rotateClock 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+            position: absolute;
+            z-index: 2;
+        }
+
+        #logobelso {
+            z-index: 1;
+            animation: shine 7s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+            display: flex;
+            background: white;
+            letter-spacing: 1px;
+            border-radius: 17px;
+            border: 2px solid rgb(247, 180, 46);
+            width: 300px;
+            height: 300px;
+            justify-content: center;
+            text-shadow: 0px 0px 3px white;
+            align-items: center;
+            font-family: "Montserrat Subrayada";
+            font-size: 320%;
+            perspective: 500px;
+        }
+
+        #felirat {
+            display: flex;
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            font-weight: lighter;
+            animation: letterFlipBlur 0.5s ease-out forwards;
+            animation-delay: calc(30s + var(--i) * 0.07s);
+            transform-style: preserve-3d;
+        }
+
+        #teszt-felirat {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.92);
+            font-family: "Montserrat Subrayada", "Montserrat", Arial, sans-serif;
+            font-size: clamp(2rem, 6vw, 5rem);
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: rgb(247, 180, 46);
+            text-shadow:
+                0 2px 16px rgba(255, 255, 255, 0.8),
+                0 0 28px rgba(247, 180, 46, 0.45);
+            animation: tesztFeliratIn 0.8s ease-out 11s forwards;
+        }
+
+        @keyframes rotateClock {
+            0% { transform: rotate(0deg); }
+            12.5% { transform: rotate(45deg); }
+            25% { transform: rotate(45deg); }
+            37.5% { transform: rotate(90deg); }
+            50% { transform: rotate(90deg); }
+            62.5% { transform: rotate(135deg); }
+            75% { transform: rotate(135deg); }
+            87.5% { transform: rotate(180deg); }
+            100% { transform: rotate(180deg); }
+        }
+
+        @keyframes shine {
+            0%, 50%, 100% {
+                box-shadow: 0px 0px 4px 1px rgb(247, 180, 46);
+            }
+
+            12.5%, 25%, 37.5%, 62.5%, 75%, 87.5% {
+                background-color: white;
+                box-shadow: none;
+            }
+        }
+
+        @keyframes logoTimeline {
+            /* 0-5 mp: üres várakozás a logó beugrása előtt */
+            0% {
+                opacity: 0;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, calc(-50% + 400px)) scale(0.7);
+            }
+
+            45.45% {
+                opacity: 0;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, calc(-50% + 400px)) scale(0.7);
+            }
+
+            /* 5-5.9 mp: eredeti beugró animáció */
+            50.36% {
+                opacity: 1;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, calc(-50% - 25px)) scale(1.05);
+            }
+
+            52% {
+                opacity: 1;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, calc(-50% + 10px)) scale(0.97);
+            }
+
+            53.64% {
+                opacity: 1;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            /* 5.9-10 mp: középen marad */
+            90.91% {
+                opacity: 1;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            /* 10-11 mp: bal felső sarokba megy és kb. felére zsugorodik */
+            100% {
+                opacity: 1;
+                top: 24px;
+                left: 24px;
+                transform: translate(0, 0) scale(0.5);
+            }
+        }
+
+        @keyframes letterFlipBlur {
+            0% {
+                opacity: 0;
+                filter: blur(15px);
+                transform: rotateY(180deg) translateZ(-50px);
+            }
+
+            100% {
+                opacity: 1;
+                filter: blur(0px);
+                transform: rotateY(0deg) translateZ(0);
+            }
+        }
+
+        @keyframes tesztFeliratIn {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.92);
+                filter: blur(10px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+                filter: blur(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="kont">
+        <div id="logo-wrapper">
+            <div id="logokulso"></div>
+            <div id="logobelso">
+                <div id="felirat">
+                    <span class="gold letter" style="--i:0">É</span>
+                    <span class="letter" style="--i:1">R</span>
+                    <span class="letter" style="--i:2">T</span>
+                    <span class="letter" style="--i:3">É</span>
+                    <span class="letter" style="--i:4">K</span>
+                    <span class="letter" style="--i:5">E</span>
+                    <span class="letter" style="--i:6">K</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

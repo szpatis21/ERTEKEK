@@ -1,0 +1,228 @@
+/* Előzmények / utolsó fókusz jelölés
+   Külön fájlban marad, nem a meglévő fő CSS végén. */
+
+.fokusz-kovetheto-elem,
+.fokusz-naplo-van {
+    position: relative;
+}
+
+.fokusz-naplo-van {
+    z-index: 2;
+}
+
+.utolso-fokusz-marker {
+   
+    position: absolute;
+    top: 4px;
+    right: 5px;
+    z-index: 12;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #ff6500;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: rgb(255 255 255);
+    color: #ff6500ad;
+    cursor: pointer;
+    font-size: 24px;
+    line-height: 1;
+    opacity: 0.9;
+    box-shadow: 1px -1px 0px 1px #ff650099;
+    transition: all 0.3s;
+}
+
+.utolso-fokusz-marker:hover {
+    box-shadow: -1px 1px 0px 1px #ff650099;;
+    transform: translateY(-3px);
+    opacity: 1;
+}
+
+.utolso-fokusz-marker:focus-visible {
+    outline: 2px solid rgba(255, 189, 22, 0.85);
+    outline-offset: 2px;
+    box-shadow: none;
+    transform: none;
+}
+
+.fokusz-visszaugras-pulse {
+    animation: fokuszVisszaugrasPulse 1.6s ease-in-out 1;
+}
+
+@keyframes fokuszVisszaugrasPulse {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.015); }
+    100% { transform: scale(1); }
+}
+.global-tooltip {
+    position: fixed;
+    z-index: 999999;
+    max-width: 320px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: rgba(17, 24, 39, 0.95);
+    color: white;
+    font-size: 12px;
+    line-height: 1.35;
+    pointer-events: none;
+    transform: translate(-50%, -100%);
+    white-space: normal;
+}
+.service-pdf-meta{text-align: center;}
+.global-tooltip.hidden {
+    display: none;
+}
+.fokusz-elozmenyek-panel {
+    position: fixed;
+    top: 72px;
+    right: 18px;
+    z-index: 2000;
+    width: min(430px, calc(100vw - 36px));
+    max-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.20);
+    backdrop-filter: blur(12px);
+}
+
+.fokusz-elozmenyek-panel.hidden,
+.fokusz-elozmeny-tooltip.hidden {
+    display: none;
+}
+
+.fokusz-elozmenyek-fejlec {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px 10px 16px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.fokusz-elozmenyek-fejlec div{width: 85%;}
+
+.fokusz-elozmenyek-fejlec strong {
+    display: block;
+    color: #111827;
+    font-size: 0.98rem;
+}
+
+.fokusz-elozmenyek-fejlec span {
+    display: block;
+    margin-top: 2px;
+    color: #6b7280;
+    font-size: 0.78rem;
+}
+
+.fokusz-elozmenyek-zar {
+    width: 30px;
+    height: 30px;
+    border: 0;
+    border-radius: 8px;
+     background: #ff6500;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.fokusz-elozmenyek-lista {
+    display: grid;
+    gap: 8px;
+    overflow: auto;
+    padding: 12px;
+}
+
+.fokusz-elozmeny-item {
+    width: 100%;
+    text-align: left;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    background: #ffffff;
+    padding: 10px 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.fokusz-elozmeny-item:hover,
+.fokusz-elozmeny-item:focus-visible {
+    transform: translateY(-1px);
+    border-color: rgba(255, 189, 22, 0.65);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.10);
+    outline: none;
+}
+
+.fokusz-elozmeny-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 5px;
+    color: #6b7280;
+    font-size: 0.74rem;
+}
+
+.fokusz-elozmeny-meta b {
+    color: #374151;
+}
+
+.fokusz-elozmeny-utvonal {
+    display: block;
+    margin-bottom: 4px;
+    color: #9a3412;
+    font-size: 0.76rem;
+    line-height: 1.3;
+}
+
+.fokusz-elozmeny-szoveg {
+    display: block;
+    color: #111827;
+    font-weight: 700;
+    line-height: 1.32;
+}
+
+.fokusz-elozmeny-valasz {
+    display: inline-flex;
+    margin-top: 7px;
+    border-radius: 999px;
+    padding: 3px 8px;
+    background: #fff7ed;
+    color: #9a3412;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.fokusz-elozmeny-ures {
+    padding: 16px;
+    border-radius: 14px;
+    background: #f9fafb;
+    color: #6b7280;
+    text-align: center;
+    font-size: 0.86rem;
+}
+
+.fokusz-elozmeny-tooltip {
+    position: fixed;
+    z-index: 2100;
+    max-width: 300px;
+    white-space: pre-line;
+    border-radius: 14px;
+    padding: 10px 12px;
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    background: rgba(17, 24, 39, 0.94);
+    color: #ffffff;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.22);
+    font-size: 0.82rem;
+    line-height: 1.35;
+    pointer-events: none;
+}
+
+.elozmenyek-gomb {
+    cursor: pointer;
+}

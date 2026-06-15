@@ -3,10 +3,142 @@ import { initOlvas, initFrissites, initTorol } from '/private/user/dashCRUD.js';
 import { monitorozCheckek, loadColorMaps } from '/private/user/dashStatic.js'; 
 import { showAlert, customConfirm, customDatePrompt, customAuditPrompt } from "/both/alert.js";
 import { initAuditLista } from './dashAudit.js';
+import { escapeHTML, escapeAttr } from '/both/safeDom.js';
 
 console.log("Elemző modul aktív");
 
 export let modulId, modulNev, modulLeiras, userId, userName, intezmeny, intezmeny_id;
+
+function clearElement(el) {
+    if (el) el.replaceChildren();
+}
+
+function createEl(tag, className, text) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text !== undefined && text !== null) el.textContent = text;
+    return el;
+}
+
+function renderEmptyState(container) {
+    if (!container) return;
+    clearElement(container);
+
+    const wrapper = createEl('div', 'empty-state-wrapper');
+    const iconBox = createEl('div', 'empty-icon-box');
+    const icon = createEl('span', 'material-symbols-rounded', 'note_stack_add');
+    const title = createEl('h2', 'empty-title', 'Üres a munkaterület');
+    const subtitle = createEl('p', 'empty-subtitle', 'Az intézményben még senki nem hozott létre egyetlen értékelést sem. Amint valaki megteszi, itt megjelenik!');
+
+    iconBox.appendChild(icon);
+    wrapper.append(iconBox, title, subtitle);
+    container.appendChild(wrapper);
+}
+
+function appendAuditMessage(messengerDiv, currentUserName, message, className = 'uzenet2') {
+    if (!messengerDiv) return;
+
+    const now = new Date();
+    const idoHover = now.toLocaleString('hu-HU');
+    const isoIdo = now.toISOString();
+
+    const row = createEl('div', className);
+    row.title = idoHover;
+    row.dataset.ido = isoIdo;
+
+    const nameEl = createEl('div', 'nev1', currentUserName);
+    const messageEl = createEl('div', 'audit-messages1', message);
+
+    row.append(nameEl, messageEl);
+    messengerDiv.appendChild(row);
+}
+
+function renderWarmDeadline(warmDiv, formatDatum) {
+    if (!warmDiv) return;
+
+    warmDiv.style.display = 'flex';
+    warmDiv.classList.add('warm-item');
+    clearElement(warmDiv);
+
+    const note = createEl('span', 'warmnote');
+    note.append(
+        document.createTextNode('Határidő lett beállítva ehhez az értékeléshez:'),
+        document.createElement('br')
+    );
+    const label = document.createElement('span');
+    label.style.color = '#ffbd16';
+    label.textContent = 'Határidő:';
+    note.append(label, document.createTextNode(` ${formatDatum}`));
+
+    const icon = createEl('span', 'material-symbols-outlined warm-icon', 'calendar_clock');
+    icon.style.marginLeft = '4px';
+
+    warmDiv.append(note, icon);
+}
+
+function renderWarmAuditMessage(warmDiv, message, deadline) {
+    if (!warmDiv) return;
+
+    warmDiv.style.display = 'flex';
+    warmDiv.classList.add('warm-item');
+    clearElement(warmDiv);
+
+    const note = createEl('span', 'warmnote');
+    note.appendChild(document.createTextNode(message || ''));
+
+    const icons = [];
+    const warnIcon = createEl('div', 'warm-icon', '!');
+    warnIcon.style.fontWeight = 'bold';
+    icons.push(warnIcon);
+
+    if (deadline) {
+        const formatDatum = new Date(deadline).toLocaleDateString('hu-HU', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+        });
+
+        note.append(document.createElement('br'), document.createElement('br'));
+        const label = document.createElement('span');
+        label.style.color = '#ffbd16';
+        label.textContent = 'Határidő:';
+        note.append(label, document.createTextNode(` ${formatDatum}`));
+
+        const clockIcon = createEl('span', 'material-symbols-outlined warm-icon', 'calendar_clock');
+        clockIcon.style.marginLeft = '4px';
+        icons.push(clockIcon);
+    }
+
+    warmDiv.append(note, ...icons);
+}
+
+function setAuditTitle(titleEl, suffixText) {
+    if (!titleEl) return;
+    clearElement(titleEl);
+
+    const span = createEl('span', 'ertnev', 'Kiválasztott');
+    titleEl.append(span, document.createTextNode(suffixText));
+}
+
+function setMessengerPlaceholder(messengerDiv) {
+    if (!messengerDiv) return;
+    clearElement(messengerDiv);
+
+    const p = document.createElement('p');
+    p.style.textAlign = 'center';
+    p.style.color = 'gray';
+    p.style.padding = '20px';
+    p.textContent = 'Válasszon ki egy értékelést...';
+    messengerDiv.appendChild(p);
+}
+
+function setGroupButtonProcessing(button) {
+    clearElement(button);
+    const icon = createEl('span', 'material-symbols-rounded', 'hourglass_empty');
+    const text = createEl('span', null, 'Feldolgozás...');
+    button.append(icon, document.createTextNode(' '), text);
+}
+
 
 loadInfoAndInit();
 getUserAndLoadAllKitoltesek();
@@ -28,8 +160,8 @@ async function getUserAndLoadAllKitoltesek() {
         intezmeny = data.intnev;
         intezmeny_id = data.int_id;
         
-        document.querySelector("#sajatnev").innerHTML = "&nbsp;" + userName;
-        document.querySelector('.holvagyok').innerHTML = modulLeiras;
+     document.querySelector("#sajatnev").textContent = ` ${userName || ''}`;
+    document.querySelector('.holvagyok').textContent = modulLeiras || '';
         
         await loadAllKitoltesek();
     } catch (error) {
@@ -48,15 +180,7 @@ async function loadAllKitoltesek() {
         const kitoltesek = data.kitoltesek;
 
         if (!kitoltesek.length) {
-            document.querySelector(".inner-div").innerHTML =`
-                <div class="empty-state-wrapper">
-            <div class="empty-icon-box">
-                <span class="material-symbols-rounded">note_stack_add</span>
-            </div>
-            <h2 class="empty-title">Üres a munkaterület</h2>
-            <p class="empty-subtitle">Az intézményben még senki nem hozott létre egyetlen értékelést sem. Amint valaki megteszi, itt megjelenik!</p>
-         
-        </div>`
+            renderEmptyState(document.querySelector(".inner-div"));
             return;
         }
 
@@ -101,46 +225,62 @@ function renderExpiringModal(lejaro) {
     const modalOverlay = document.createElement('div');
     modalOverlay.id = 'expiring-audit-modal';
     modalOverlay.className = 'expiring-modal-overlay';
-    
-    let listaHtml = '';
+
+    const content = createEl('div', 'expiring-modal-content');
+
+    const title = createEl('h2', 'expiring-modal-title');
+    const titleIcon = createEl('span', 'material-symbols-outlined', 'alarm');
+    title.append(titleIcon, document.createTextNode(' Holnap lejáró határidők!'));
+
+    const desc = createEl('p', 'expiring-modal-desc');
+    desc.append(
+        document.createTextNode('Az alábbi '),
+        (() => { const b = document.createElement('b'); b.textContent = `${lejaro.length} db`; return b; })(),
+        document.createTextNode(' értékelés határideje holnap lejár. Jelölje ki azokat, amelyekkel műveletet szeretne végezni:')
+    );
+
+    const list = createEl('div', 'expiring-modal-list');
     lejaro.forEach(k => {
-        const nev = k.vizsgalt_nev || 'Ismeretlen';
-        const formazottCim = (k.kitoltes_neve || '').replace(/~/g, ' - ').replace(/-/g, ' - ');
-        listaHtml += `
-            <label class="expiring-modal-item">
-                <input type="checkbox" class="expiring-cb" value="${k.idk || k.id}" checked>
-                <strong>${nev}</strong> <span>(${formazottCim})</span>
-            </label>
-        `;
+        const label = createEl('label', 'expiring-modal-item');
+        const cb = document.createElement('input');
+        cb.type = 'checkbox';
+        cb.className = 'expiring-cb';
+        cb.value = String(k.idk || k.id || '');
+        cb.checked = true;
+
+        const strong = document.createElement('strong');
+        strong.textContent = k.vizsgalt_nev || 'Ismeretlen';
+
+        const span = document.createElement('span');
+        span.textContent = `(${String(k.kitoltes_neve || '').replace(/~/g, ' - ').replace(/-/g, ' - ')})`;
+
+        label.append(cb, strong, document.createTextNode(' '), span);
+        list.appendChild(label);
     });
 
-    modalOverlay.innerHTML = `
-        <div class="expiring-modal-content">
-            <h2 class="expiring-modal-title">
-                <span class="material-symbols-outlined">alarm</span> Holnap lejáró határidők!
-            </h2>
-            <p class="expiring-modal-desc">Az alábbi <b>${lejaro.length} db</b> értékelés határideje holnap lejár. Jelölje ki azokat, amelyekkel műveletet szeretne végezni:</p>
-            <div class="expiring-modal-list">${listaHtml}</div>
-            <div class="expiring-modal-actions">
-                <button id="btn-exp-approve" class="expiring-btn expiring-btn-approve">Kiválasztott értékelések Jóváhagyása</button>
-                <button id="btn-exp-extend" class="expiring-btn expiring-btn-extend"> Kiválasztott határidők Hosszabbítása</button>
-                <button id="btn-exp-cancel" class="expiring-btn expiring-btn-cancel"> Mégsem (Később döntöm el)</button>
-            </div>
-        </div>
-    `;
-    
+    const actions = createEl('div', 'expiring-modal-actions');
+    const approveBtn = createEl('button', 'expiring-btn expiring-btn-approve', 'Kiválasztott értékelések Jóváhagyása');
+    approveBtn.id = 'btn-exp-approve';
+    const extendBtn = createEl('button', 'expiring-btn expiring-btn-extend', ' Kiválasztott határidők Hosszabbítása');
+    extendBtn.id = 'btn-exp-extend';
+    const cancelBtn = createEl('button', 'expiring-btn expiring-btn-cancel', ' Mégsem (Később döntöm el)');
+    cancelBtn.id = 'btn-exp-cancel';
+    actions.append(approveBtn, extendBtn, cancelBtn);
+
+    content.append(title, desc, list, actions);
+    modalOverlay.appendChild(content);
     document.body.appendChild(modalOverlay);
 
     const getSelectedIds = () => Array.from(modalOverlay.querySelectorAll('.expiring-cb:checked')).map(cb => cb.value);
 
-    document.getElementById('btn-exp-cancel').addEventListener('click', () => modalOverlay.remove());
-    
-    document.getElementById('btn-exp-approve').addEventListener('click', async () => {
+    cancelBtn.addEventListener('click', () => modalOverlay.remove());
+
+    approveBtn.addEventListener('click', async () => {
         const selectedIds = getSelectedIds();
         if (selectedIds.length === 0) return showAlert('Kérem, jelöljön ki legalább egy értékelést!');
-        
-        document.getElementById('btn-exp-approve').textContent = '⏳ Feldolgozás...';
-        
+
+        approveBtn.textContent = '⏳ Feldolgozás...';
+
         try {
             const response = await fetch('/api/set-audit-status', {
                 method: 'POST',
@@ -148,7 +288,7 @@ function renderExpiringModal(lejaro) {
                 body: JSON.stringify({ audit_ids: selectedIds, new_status: 2 })
             });
             const data = await response.json();
-            
+
             if (data.success) {
                 showAlert(`${selectedIds.length} db értékelés sikeresen jóváhagyva!`);
                 let emailAdatok = selectedIds.map(id => {
@@ -168,19 +308,19 @@ function renderExpiringModal(lejaro) {
         } catch (err) {
             console.error(err);
             showAlert('Hiba történt a jóváhagyáskor.');
-            document.getElementById('btn-exp-approve').textContent = '✔️ Kiválasztott értékelések Jóváhagyása';
+            approveBtn.textContent = '✔️ Kiválasztott értékelések Jóváhagyása';
         }
     });
 
-    document.getElementById('btn-exp-extend').addEventListener('click', async () => {
+    extendBtn.addEventListener('click', async () => {
         const selectedIds = getSelectedIds();
         if (selectedIds.length === 0) return showAlert('Kérem, jelöljön ki legalább egy értékelést!');
-        
-        modalOverlay.style.display = 'none'; 
+
+        modalOverlay.style.display = 'none';
         const valasztottDatum = await customDatePrompt(`${selectedIds.length} db értékelés hosszabbítása`);
-        
+
         if (!valasztottDatum) {
-            modalOverlay.style.display = 'flex'; 
+            modalOverlay.style.display = 'flex';
             return;
         }
 
@@ -190,11 +330,11 @@ function renderExpiringModal(lejaro) {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    audit_id: id, user_audit: userId, audit_modul_id: modulId, 
-                    audit_int_id: intezmeny_id, hatarido: valasztottDatum       
+                    audit_id: id, user_audit: userId, audit_modul_id: modulId,
+                    audit_int_id: intezmeny_id, hatarido: valasztottDatum
                 })
             }).then(res => res.json()));
-            
+
             await Promise.all(promises);
             showAlert(`Sikeresen meghosszabbítva! Az új határidő: ${valasztottDatum}`);
             modalOverlay.remove();
@@ -280,14 +420,13 @@ const activeRow = document.querySelector('.inner-div-notok .meglevok.kijelolt, .
             
             if (auditIds.length === 1) {
                 const messengerDiv = document.querySelector('.messengerdiv');
-                if (messengerDiv.querySelector('p')) messengerDiv.innerHTML = '';
+                if (messengerDiv.querySelector('p')) clearElement(messengerDiv);
                 
                 const now = new Date();
-                messengerDiv.insertAdjacentHTML('beforeend', `
-                <div class="uzenet2" title="${now.toLocaleString('hu-HU')}" data-ido="${now.toISOString()}">
-                    <div class="nev1">${currentUserName}</div>
-                    <div class="audit-messages1">${message}</div>
-                </div>`);
+                const idoHover = now.toLocaleString('hu-HU');
+                const isoIdo = now.toISOString();
+
+                appendAuditMessage(messengerDiv, currentUserName, message);
                 messengerDiv.scrollTop = messengerDiv.scrollHeight; 
             } else {
                 alert(`Sikeresen elküldve ${auditIds.length} db értékeléshez!`);
@@ -318,13 +457,16 @@ async function handleGroupDeadline(e) {
     
     checkedBoxes.forEach(cb => {
         const data = getCardData(cb);
-        kivalasztottListaHTML += `<li style="margin-bottom: 5px; color: #333;"><strong>${data.alkoto}</strong> - ${data.nev} <span style="color: gray;">(${data.tipus})</span></li>`;
+    kivalasztottListaHTML += `
+    <li style="margin-bottom: 5px; color: #333;">
+        <strong>${escapeHTML(data.alkoto)}</strong> - ${escapeHTML(data.nev)}
+        <span style="color: gray;">(${escapeHTML(data.tipus)})</span>
+    </li>`;
     });
     kivalasztottListaHTML += '</ul>';
 
-    const megerosites = await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${valasztottDatum}</b> határidőt az alábbi <b>${db} db</b> értékeléshez? ${kivalasztottListaHTML}`);
+    const megerosites = await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${escapeHTML(valasztottDatum)}</b> határidőt az alábbi <b>${db} db</b> értékeléshez? ${kivalasztottListaHTML}`);    
     if (!megerosites) return; 
-
     groupDeadlineBtn.style.pointerEvents = 'none';
     groupDeadlineBtn.style.opacity = '0.5';
 
@@ -347,9 +489,7 @@ async function handleGroupDeadline(e) {
             let warmDiv = data.cardElement.querySelector('.warm');
             if (warmDiv) {
                 const formatDatum = new Date(valasztottDatum).toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                warmDiv.style.display = 'flex';
-                warmDiv.classList.add('warm-item');
-                warmDiv.innerHTML = `<span class="warmnote">Határidő lett beállítva ehhez az értékeléshez:<br><span style="color: #ffbd16;">Határidő:</span> ${formatDatum}</span><span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
+                renderWarmDeadline(warmDiv, formatDatum);
             }
 
             if (window.elemzoKitoltesek) {
@@ -410,8 +550,11 @@ const activeRow = document.querySelector('.inner-div-notok .meglevok.kijelolt, .
     const newStatus = isApprovedList ? 1 : 2; 
     const actionText = isApprovedList ? "visszanyitja auditálásra" : "jóváhagyja";
     const futureText = isApprovedList ? "A későbbiekben a 'Jóváhagyásra váró' fülön találja meg." : "A későbbiekben a 'Jóváhagyott Értékelések' fülön visszanyithatja auditálásra.";
-    const nameListHtml = selectedNames.length > 1 ? `<br><br><b>Érintett értékelések (${selectedNames.length} db):</b><br>${selectedNames.join(', ')}` : ` az <b>${selectedNames[0]}</b> nevű értékelést`;
+    const safeSelectedNames = selectedNames.map(n => escapeHTML(n));
 
+    const nameListHtml = selectedNames.length > 1
+        ? `<br><br><b>Érintett értékelések (${selectedNames.length} db):</b><br>${safeSelectedNames.join(', ')}`
+        : ` az <b>${escapeHTML(selectedNames[0] || '')}</b> nevű értékelést`;
     if (!(await customConfirm(`Biztosan ${actionText}${nameListHtml}?<br><br>${futureText}`))) return;
 
     approveBtn.disabled = true;
@@ -432,11 +575,12 @@ const activeRow = document.querySelector('.inner-div-notok .meglevok.kijelolt, .
             
             const h3Titles = document.querySelectorAll('.messageouter h3');
             if (h3Titles.length >= 2) {
-                h3Titles[0].style.display = ''; h3Titles[0].innerHTML = `<span class="ertnev">Kiválasztott</span> értékeléséhez tartozó határidő`;
-                h3Titles[1].innerHTML = `<span class="ertnev">Kiválasztott</span> értékeléséhez tartozó üzenetek`;
+                h3Titles[0].style.display = '';
+                setAuditTitle(h3Titles[0], ' értékeléséhez tartozó határidő');
+                setAuditTitle(h3Titles[1], ' értékeléséhez tartozó üzenetek');
             }
             const messengerDiv = document.querySelector('.messengerdiv');
-            if (messengerDiv) messengerDiv.innerHTML = '<p style="text-align:center; color:gray; padding: 20px;">Válasszon ki egy értékelést...</p>';
+            if (messengerDiv) setMessengerPlaceholder(messengerDiv);
             
             const calendarBtnArea = document.querySelector('.calendardiv');
             const msgInputArea = document.getElementById('audit-msg-input') ? document.getElementById('audit-msg-input').closest('.audit-input-area') : null;
@@ -474,8 +618,12 @@ async function handleGroupApprove(e) {
         if (data.id && data.id !== "undefined") {
             auditIds.push(data.id);
             emailAdatok.push(getCleanEmailData(data));
-            kivalasztottListaHTML += `<li style="margin-bottom: 5px; color: #333;"><strong>${data.alkoto}</strong> - ${data.nev} <span style="color: gray;">(${data.tipus})</span></li>`;
-        }
+            kivalasztottListaHTML += `
+                <li style="margin-bottom: 5px; color: #333;">
+                    <strong>${escapeHTML(data.alkoto)}</strong> - ${escapeHTML(data.nev)}
+                    <span style="color: gray;">(${escapeHTML(data.tipus)})</span>
+                </li>`;        
+            }
     });
     kivalasztottListaHTML += '</ul>';
 
@@ -484,8 +632,8 @@ async function handleGroupApprove(e) {
 
     groupApproveBtn.style.opacity = '0.5';
     groupApproveBtn.style.pointerEvents = 'none';
-    const originalText = groupApproveBtn.innerHTML;
-    groupApproveBtn.innerHTML = '<span class="material-symbols-rounded">hourglass_empty</span> <span>Feldolgozás...</span>';
+    const originalNodes = Array.from(groupApproveBtn.childNodes).map(node => node.cloneNode(true));
+    setGroupButtonProcessing(groupApproveBtn);
 
     try {
         const response = await fetch('/api/set-audit-status', {
@@ -509,7 +657,7 @@ async function handleGroupApprove(e) {
     } finally {
         groupApproveBtn.style.opacity = '1';
         groupApproveBtn.style.pointerEvents = 'auto';
-        groupApproveBtn.innerHTML = originalText;
+        groupApproveBtn.replaceChildren(...originalNodes.map(node => node.cloneNode(true)));
     }
 }
 
@@ -526,8 +674,12 @@ async function handleGroupAudit(e) {
     kijeloltSorok.forEach(sor => {
         const data = getCardData(sor);
         const marJelolveInfo = (Number(sor.dataset.auditId) > 0 || sor.classList.contains('figyelmeztetve')) ? ' <span style="color:#d9534f; font-weight:bold;">(Már audit alatt)</span>' : '';
-        kivalasztottListaHTML += `<li style="margin-bottom: 5px; color: #333;"><strong>${data.alkoto}</strong> - ${data.nev} <span style="color: gray;">(${data.tipus})</span>${marJelolveInfo}</li>`;
-    });
+        kivalasztottListaHTML += `
+            <li style="margin-bottom: 5px; color: #333;">
+                <strong>${escapeHTML(data.alkoto)}</strong> - ${escapeHTML(data.nev)}
+                <span style="color: gray;">(${escapeHTML(data.tipus)})</span>${marJelolveInfo}
+            </li>`;    
+        });
     kivalasztottListaHTML += '</ul>';
 
     let warningText = marAuditDb > 0 ? `<br><br><span style="color:#d9534f; font-size: 0.9em; font-weight:bold;">Figyelem: A kijelöltekből ${marAuditDb} db értékelés már ki van jelölve auditációra. Valóban szeretne hozzájuk is új üzenetet (és határidőt) küldeni?</span>` : '';
@@ -584,16 +736,7 @@ async function handleGroupAudit(e) {
 
             let warmDiv = sor.querySelector('.warm');
             if (warmDiv) {
-                warmDiv.style.display = 'flex';
-                warmDiv.classList.add('warm-item');
-                let warmText = auditData.message;
-                let iconsHtml = `<div class="warm-icon" style="font-weight: bold;">!</div>`;
-                if (auditData.deadline) {
-                    const formatDatum = new Date(auditData.deadline).toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                    warmText += `<br><br><span style="color: #ffbd16;">Határidő:</span> ${formatDatum}`;
-                    iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
-                }
-                warmDiv.innerHTML = `<span class="warmnote">${warmText}</span>${iconsHtml}`;
+                renderWarmAuditMessage(warmDiv, auditData.message || '', auditData.deadline);
             }
 
             const cb = sor.querySelector('input.cheking');
@@ -634,12 +777,15 @@ async function handleCalendarBtn(e) {
             let kivalasztottListaHTML = '<ul style="text-align: left; font-size: 0.85em; max-height: 200px; overflow-y: auto; background: rgba(0,0,0,0.05); padding: 10px 10px 10px 30px; border-radius: 5px; margin-top: 15px; border: 1px solid #ddd;">';
             checkedBoxes.forEach(cb => {
                 const data = getCardData(cb);
-                kivalasztottListaHTML += `<li style="margin-bottom: 5px; color: #333;"><strong>${data.nev}</strong> <span style="color: gray;">(${data.tipus})</span></li>`;
-            });
+                kivalasztottListaHTML += `
+                    <li style="margin-bottom: 5px; color: #333;">
+                        <strong>${escapeHTML(data.nev)}</strong>
+                        <span style="color: gray;">(${escapeHTML(data.tipus)})</span>
+                    </li>`;           
+                 });
             kivalasztottListaHTML += '</ul>';
 
-            if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${kivalasztottDatum}</b> határidőt az alábbi <b>${db} db</b> értékeléshez? ${kivalasztottListaHTML}`))) return;
-
+        if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${escapeHTML(kivalasztottDatum)}</b> határidőt az alábbi <b>${db} db</b> értékeléshez? ${kivalasztottListaHTML}`))) return;
             try {
                 const promises = Array.from(checkedBoxes).map(cb => fetch('/api/set-audit-deadline', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -665,8 +811,7 @@ const kijeloltSor = document.querySelector('.inner-div-ok .meglevok.kijelolt, .i
             const kivalasztottDatum = await customDatePrompt(teljesNev);
             if (!kivalasztottDatum) return;
 
-            if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${kivalasztottDatum}</b> határidőt ehhez az értékeléshez?<br><br><b>${teljesNev}</b>`))) return;
-
+            if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${escapeHTML(kivalasztottDatum)}</b> határidőt ehhez az értékeléshez?<br><br><b>${escapeHTML(teljesNev)}</b>`))) return;
             try {
                 const response = await fetch('/api/set-audit-deadline', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -698,8 +843,7 @@ const kijeloltSor = document.querySelector('.inner-div-ok .meglevok.kijelolt, .i
         const valasztottDatum = await customDatePrompt(teljesNev);
         if (!valasztottDatum) return;
 
-        if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${valasztottDatum}</b> határidőt az alábbi értékeléshez?<br><br><b style="color: #333;">${teljesNev}</b>`))) return; 
-
+if (!(await customConfirm(`Biztos, hogy beállítja a(z) <b style="color:#ffbd16;">${escapeHTML(valasztottDatum)}</b> határidőt az alábbi értékeléshez?<br><br><b style="color: #333;">${escapeHTML(teljesNev)}</b>`))) return;
         try {
             const response = await fetch('/api/set-audit-deadline', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },

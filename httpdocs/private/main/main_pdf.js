@@ -1,5 +1,75 @@
 //PDF Generálási beállítások - Ez exportátva van a dashboard felületre
 import { KategoriaKezelo } from './main_quest.js';
+import './main_focus_history.js';
+import { generateDocxTemplateExport } from './main_docx.js';
+
+
+function exportFormatumValaszto() {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.inset = '0';
+    overlay.style.zIndex = '99999';
+    overlay.style.background = 'rgba(0, 0, 0, 0.35)';
+    overlay.style.display = 'flex';
+    overlay.style.alignItems = 'center';
+    overlay.style.justifyContent = 'center';
+    overlay.style.backdropFilter = 'blur(3px)';
+
+    const box = document.createElement('div');
+  box.classList.add("dokidiv");
+    box.innerHTML = `
+      <h3 style="margin:0 0 8px;color:#b94700;font-size:1.2rem;">Letöltés formátuma</h3>
+      <p style="margin:0 0 18px;line-height:1.45;">Milyen formátumban készüljön el az értékelés?</p>
+      <div class="dokdiv">
+        <button type="button" data-export-format="cancel" class="export-format-btn export-format-cancel">
+    X
+</button>
+
+<button type="button" data-export-format="pdf" class="export-format-btn export-format-pdf">
+    PDF
+</button>
+
+<button type="button" data-export-format="docx" class="export-format-btn export-format-docx">
+    DOCX
+</button>
+      </div>
+    `;
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+
+    function close(value) {
+      overlay.remove();
+      resolve(value);
+    }
+
+    overlay.addEventListener('click', event => {
+      if (event.target === overlay) close(null);
+      const btn = event.target.closest('[data-export-format]');
+      if (!btn) return;
+      const value = btn.dataset.exportFormat;
+      close(value === 'cancel' ? null : value);
+    });
+
+    document.addEventListener('keydown', function escHandler(event) {
+      if (event.key === 'Escape') {
+        document.removeEventListener('keydown', escHandler);
+        close(null);
+      }
+    }, { once: true });
+  });
+}
+
+export async function exportErtekelesValasztoval(nyomtataskent = false, meglevok = null) {
+  if (nyomtataskent) {
+    return generatePdfMakePDF(true, meglevok);
+  }
+
+  const formatum = await exportFormatumValaszto();
+  if (formatum === 'pdf') return generatePdfMakePDF(false, meglevok);
+  if (formatum === 'docx') return generateDocxTemplateExport(meglevok);
+}
 
 export async function generatePdfMakePDF(nyomtataskent = false, meglevok = null) {
 
@@ -69,92 +139,160 @@ const chartCanvas = document.getElementById('fokategoriaChart');
   }
 
   
-    const foKategoriak = keszulo.querySelectorAll('.fo-kategoria');
-    foKategoriak.forEach(foDiv => {
-      const blokkTartalom = [];
-  
-      // Főkategória cím
-      const h3 = foDiv.querySelector('h3');
-      if (h3) {
-        blokkTartalom.push({ text: h3.childNodes[0].textContent.trim(), style: 'foKategoria' });
-      }
-  
-      // Sorok a táblázatban
-      const sorok = foDiv.querySelectorAll('tbody > tr');
-      sorok.forEach(sor => {
-        if (sor.classList.contains('al-kategoria')) {
-          const td = sor.querySelector('td');
-          if (td) blokkTartalom.push({ text: td.textContent.trim(), style: 'alKategoria' });
-  
-        } else if (sor.classList.contains('alt-tema')) {
-          const altNev = sor.querySelector('td.alt-tema')?.childNodes[0]?.textContent.trim() || '';
-          blokkTartalom.push({
-            text: [
-              { text: altNev, decoration: 'underline' },
-              { text: '' }
-            ],
-            style: 'altTema'
-          });
-  
-          const kerdesek = sor.querySelectorAll('.kerdes-container');
-          kerdesek.forEach(kont => {
-            kont.querySelectorAll('p.fokerd').forEach(p => {
-              const fokerdesSzoveg = Array.from(p.childNodes)
-                .filter(n => n.nodeType === Node.TEXT_NODE)
-                .map(n => n.textContent.trim())
-                .join(' ');
-            
-              const alkerdesek = Array.from(kont.querySelectorAll('p.alkerd'))
-                .map(p => Array.from(p.childNodes)
-                  .filter(n => n.nodeType === Node.TEXT_NODE)
-                  .map(n => n.textContent.trim())
-                  .join(' ')
-                )
-                .filter(szoveg => szoveg.length > 0);
-            
-              if (alkerdesek.length > 0) {
-                const alkMondat = alkerdesek
-                  .map((s, i) => i === alkerdesek.length - 1 ? s + '.' : s + ',')
-                  .join(' ');
-            
-                  blokkTartalom.push({
-                    text: [
-                      { text: fokerdesSzoveg + ': ', style: 'fokerdes' },
-                      { text: alkMondat, style: 'alkerdes' }
-                    ],
-                    margin: [15, 2, 0, 2]
-                  });
-              } else {
-                blokkTartalom.push({
-                  text: fokerdesSzoveg,
-                  style: 'fokerdes',
-                  margin: [15, 2, 0, 2]
-                });
-              }
-            });
+ const getSajatSzoveg = (elem) => {
+  if (!elem) return '';
 
-          });
-        }
+  return Array.from(elem.childNodes)
+    .filter(node => node.nodeType === Node.TEXT_NODE)
+    .map(node => node.textContent.trim())
+    .join(' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+};
+
+const kerdesBlokkPdfbe = (kont, blokkTartalom, marginLeft = 15) => {
+  const fokerdesek = Array.from(kont.children)
+    .filter(elem => elem.matches && elem.matches('p.fokerd'));
+
+  const alkerdesek = Array.from(kont.children)
+    .filter(elem => elem.matches && elem.matches('p.alkerd'))
+    .map(p => getSajatSzoveg(p))
+    .filter(szoveg => szoveg.length > 0);
+
+  fokerdesek.forEach(p => {
+    const fokerdesSzoveg = getSajatSzoveg(p);
+
+    if (!fokerdesSzoveg) return;
+
+    if (alkerdesek.length > 0) {
+    const alkMondat = alkerdesek
+  .map((s, i) => {
+    const tiszta = String(s || '').trim();
+    const zaroIrasjelVan = /[.!?]$/.test(tiszta);
+
+    if (i === alkerdesek.length - 1) {
+      return zaroIrasjelVan ? tiszta : tiszta + '.';
+    }
+
+    return zaroIrasjelVan ? tiszta : tiszta + ',';
+  })
+  .join(' ');
+
+      blokkTartalom.push({
+        text: [
+          { text: fokerdesSzoveg + ': ', style: 'fokerdes' },
+          { text: alkMondat, style: 'alkerdes' }
+        ],
+        margin: [marginLeft, 2, 0, 2]
       });
-  
-      // Főkategória blokk keretbe
-      content.push({
-        table: {
-          widths: ['*'],
-          body: [[{ stack: blokkTartalom }]]
-        },
-        layout: {
-          hLineWidth: () => 0,
-          vLineWidth: (i) => (i === 0 ? 1 : 0),
-          vLineColor: () => '#444444',
-          paddingLeft: () => 10,
-          paddingRight: () => 5,
-          paddingTop: () => 5,
-          paddingBottom: () => 5
-        },
-        margin: [0, 10, 0, 10]
+    } else {
+      blokkTartalom.push({
+        text: fokerdesSzoveg,
+        style: 'fokerdes',
+        margin: [marginLeft, 2, 0, 2]
       });
-    });
+    }
+  });
+};
+
+const sorKerdesekPdfbe = (sor, blokkTartalom, marginLeft = 15) => {
+  const kerdesKontenerek = sor.querySelectorAll('.kerdes-container');
+
+  kerdesKontenerek.forEach(kont => {
+    kerdesBlokkPdfbe(kont, blokkTartalom, marginLeft);
+  });
+};
+
+const foKategoriak = keszulo.querySelectorAll('.fo-kategoria');
+
+foKategoriak.forEach(foDiv => {
+  const blokkTartalom = [];
+
+  // Főkategória cím
+  const h3 = foDiv.querySelector('h3');
+  if (h3) {
+    const foNev = h3.childNodes[0]?.textContent?.trim() || '';
+    if (foNev) {
+      blokkTartalom.push({
+        text: foNev,
+        style: 'foKategoria'
+      });
+    }
+  }
+
+  const sorok = foDiv.querySelectorAll('tbody > tr');
+
+  sorok.forEach(sor => {
+    // Alkategória címsor
+    if (sor.classList.contains('al-kategoria')) {
+      const td = sor.querySelector('td.al-kategoria') || sor.querySelector('td');
+      const alNev = td?.childNodes[0]?.textContent?.trim() || '';
+
+      if (alNev) {
+        blokkTartalom.push({
+          text: alNev,
+          style: 'alKategoria'
+        });
+      }
+
+      return;
+    }
+
+    // Altéma címsor + kérdések
+    if (sor.classList.contains('alt-tema')) {
+      const altNev = sor.querySelector('td.alt-tema')?.childNodes[0]?.textContent?.trim()?.replace(/:$/, '') || '';
+
+      if (altNev) {
+        blokkTartalom.push({
+          text: [
+            { text: altNev, decoration: 'underline' },
+            { text: '' }
+          ],
+          style: 'altTema'
+        });
+      }
+
+      sorKerdesekPdfbe(sor, blokkTartalom, 15);
+      return;
+    }
+
+    // ÚJ: Főkategória → Kérdés
+    if (sor.classList.contains('fo-kozvetlen-kerdesek')) {
+      sorKerdesekPdfbe(sor, blokkTartalom, 15);
+      return;
+    }
+
+    // ÚJ: Főkategória → Alkategória → Kérdés
+    if (sor.classList.contains('al-kozvetlen-kerdesek')) {
+      sorKerdesekPdfbe(sor, blokkTartalom, 15);
+      return;
+    }
+
+    // Biztonsági fallback minden új kérdéssorra
+    if (sor.classList.contains('kerdes-sor')) {
+      sorKerdesekPdfbe(sor, blokkTartalom, 15);
+    }
+  });
+
+  if (blokkTartalom.length === 0) return;
+
+  content.push({
+    table: {
+      widths: ['*'],
+      body: [[{ stack: blokkTartalom }]]
+    },
+    layout: {
+      hLineWidth: () => 0,
+      vLineWidth: (i) => (i === 0 ? 1 : 0),
+      vLineColor: () => '#444444',
+      paddingLeft: () => 10,
+      paddingRight: () => 5,
+      paddingTop: () => 5,
+      paddingBottom: () => 5
+    },
+    margin: [0, 10, 0, 10]
+  });
+});
   
     const docDefinition = {
       content,
@@ -284,7 +422,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = document.querySelector('#mainart');
     const diagramm = document.querySelector(".charts");
     const maininf = document.querySelector("#maininf");
-  
+  if (!ertekelesekContainer2 || !container || !diagramm || !maininf) {
+    return;
+}
     let fullView = false;
   
     const generalt = document.createElement('button');
@@ -295,21 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
   
     // Mentés
   const navment = document.querySelectorAll(".navment");
-  navment.forEach(elem => {
-    elem.addEventListener('click', () => {
-      generatePdfMakePDF(); // új, szöveges PDF generálás
-      KategoriaKezelo.frissitErtekelesekContainer();
-
-    });
+ navment.forEach(elem => {
+  elem.addEventListener('click', () => {
+    KategoriaKezelo.frissitErtekelesekContainer();
+    exportErtekelesValasztoval(false);
   });
+});
   
-  // Nyomtatás
-  const navnyomGombok = document.querySelectorAll(".navnyom");
-  navnyomGombok.forEach(navnyom => {
-    navnyom.addEventListener('click', () => {
-      generatePdfMakePDF(true); // közvetlen nyomtatás
-    });
-  });
+  // A .navnyom gombot a main_focus_history.js alakítja Előzmények gombbá.
+  // A nyomtatás továbbra is a navmenüből érhető el.
   
     //CÍM
           let fejlec = document.createElement("div");
@@ -403,8 +537,9 @@ let kattintasSzamlalo = 0;
 
 
 // Feltételezve, hogy a 'diagramm' és 'maininf' változók már definiálva vannak
-  const chartSelector = document.getElementById('chartTypeOff');
+ const chartSelector = document.getElementById('chartTypeOff');
 
+if (chartSelector) {
   chartSelector.addEventListener('change', (event) => {
     if (event.target.value === 'on') {
       diagramm.style.display = 'flex';
@@ -413,6 +548,7 @@ let kattintasSzamlalo = 0;
       diagramm.style.display = 'none';
     }
   });
+}
 });
 
 //  MELLÉKLET PDF (FEKTETETT DIAGRAMMOK) ---

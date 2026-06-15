@@ -1,56 +1,97 @@
 import { showAlert } from '/both/alert.js';
 
+function applyStyles(element, styles) {
+    Object.assign(element.style, styles);
+    return element;
+}
+
+function createElement(tagName, options = {}) {
+    const element = document.createElement(tagName);
+
+    if (options.className) element.className = options.className;
+    if (options.id) element.id = options.id;
+    if (options.text !== undefined) element.textContent = String(options.text ?? '');
+    if (options.type) element.type = options.type;
+    if (options.placeholder !== undefined) element.placeholder = String(options.placeholder ?? '');
+    if (options.value !== undefined) element.value = String(options.value ?? '');
+    if (options.styles) applyStyles(element, options.styles);
+
+    return element;
+}
+
 export class BasicEditor {
     static open(ablakCim, jelenlegiCim) {
         return new Promise((resolve) => {
-            const overlay = document.createElement('div');
-            overlay.className = 'color-picker-overlay';
+            const overlay = createElement('div', { className: 'color-picker-overlay' });
 
-            const modal = document.createElement('div');
-            modal.className = 'color-picker-modal';
+            const modal = createElement('div', { className: 'color-picker-modal' });
             modal.style.width = '350px';
 
-            modal.innerHTML = `
-                <h3 class="color-picker-title">${ablakCim}</h3>
-                
-                <div class="color-picker-input-container">
-                    <label class="color-picker-label">Név:</label>
-                    <input type="text" id="basic-cim" value="${jelenlegiCim}" placeholder="Írja be a nevet..." style="width: 100%; color: black; font-family: inherit; padding: 5px; font-size: 15px;">
-                </div>
+            const title = createElement('h3', {
+                className: 'color-picker-title',
+                text: ablakCim || 'Szerkesztés'
+            });
 
-                <div class="color-picker-btn-container">
-                    <button id="basic-megse" class="color-picker-btn-cancel">Mégse</button>
-                    <button id="basic-ok" class="color-picker-btn-save">Mentés</button>
-                </div>
-            `;
+            const inputContainer = createElement('div', { className: 'color-picker-input-container' });
+            const label = createElement('label', {
+                className: 'color-picker-label',
+                text: 'Név:'
+            });
 
+            const inputCim = createElement('input', {
+                id: 'basic-cim',
+                type: 'text',
+                value: jelenlegiCim || '',
+                placeholder: 'Írja be a nevet...',
+                styles: {
+                    width: '100%',
+                    color: 'black',
+                    fontFamily: 'inherit',
+                    padding: '5px',
+                    fontSize: '15px'
+                }
+            });
+
+            inputContainer.append(label, inputCim);
+
+            const buttonContainer = createElement('div', { className: 'color-picker-btn-container' });
+            const btnMegse = createElement('button', {
+                id: 'basic-megse',
+                className: 'color-picker-btn-cancel',
+                text: 'Mégse'
+            });
+
+            const btnOk = createElement('button', {
+                id: 'basic-ok',
+                className: 'color-picker-btn-save',
+                text: 'Mentés'
+            });
+
+            buttonContainer.append(btnMegse, btnOk);
+            modal.append(title, inputContainer, buttonContainer);
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            const inputCim = modal.querySelector('#basic-cim');
-            const btnOk = modal.querySelector('#basic-ok');
-            const btnMegse = modal.querySelector('#basic-megse');
-
-            // Fókuszáljunk a beviteli mezőre azonnal
             setTimeout(() => inputCim.focus(), 10);
 
             const close = (valasz) => {
-                document.body.removeChild(overlay);
+                if (overlay.parentElement) {
+                    overlay.remove();
+                }
                 resolve(valasz);
             };
 
             btnMegse.addEventListener('click', () => close(null));
-            
+
             btnOk.addEventListener('click', () => {
                 const cim = inputCim.value.trim();
                 if (!cim) {
-                    showAlert("A név megadása kötelező!"); // alert() helyett
+                    showAlert('A név megadása kötelező!');
                     return;
                 }
                 close(cim);
             });
 
-            // Kényelmi funkció: Enter gomb lekezelése
             inputCim.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') btnOk.click();
             });

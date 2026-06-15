@@ -3,256 +3,544 @@ const express = require('express');
 module.exports = function(db) {
     const router = express.Router();
 
-    // Üzenetek lekérése egy adott értékeléshez
-   router.get('/api/get-audit-messages', async (req, res) => {
-        const { kitoltes_id } = req.query;
+    const {
+        requireLogin,
+        attachUserContext,
+        requireModuleAccess
+    } = require('./security')(db);
 
-        if (!kitoltes_id) {
-            return res.json({ success: false, message: 'Hiányzó kitöltés ID' });
+const auditProtectedPatterns = [
+    /^\/api\/get-audit-messages\/?$/,
+    /^\/api\/set-audit-deadline\/?$/,
+    /^\/api\/set-audit-init\/?$/,
+    /^\/api\/add-audit-message\/?$/,
+    /^\/api\/set-audit-status\/?$/
+];
+
+const auditAuth = [
+    requireLogin,
+    attachUserContext,
+    requireModuleAccess
+];
+
+router.use((req, res, next) => {
+    const shouldProtect = auditProtectedPatterns.some(pattern => pattern.test(req.path));
+    if (!shouldProtect) return next();
+
+    let index = 0;
+
+    const runNext = (err) => {
+        if (err) return next(err);
+
+        const middleware = auditAuth[index++];
+        if (!middleware) return next();
+
+        middleware(req, res, runNext);
+    };
+
+    runNext();
+});
+
+    function toPositiveInt(value) {
+        const n = Number(value);
+        return Number.isInteger(n) && n > 0 ? n : null;
+    }
+
+    function uniquePositiveInts(values) {
+        if (!Array.isArray(values)) return [];
+
+        return [...new Set(
+            values
+                .map(value => Number(value))
+                .filter(value => Number.isInteger(value) && value > 0)
+        )];
+    }
+
+    async function getUserDisplayName(userId) {
+        const [rows] = await db.promise().query(
+            'SELECT vez FROM felhasznalok WHERE id = ? LIMIT 1',
+            [userId]
+        );
+
+        return rows?.[0]?.vez || 'Ismeretlen felhasználó';
+    }
+
+    function canManageAudit(req) {
+        const roleId = Number(req.auth.roleId);
+        return roleId === 1 || roleId === 2 || req.auth.isSysadmin === true;
+    }
+
+    async function getKitoltesForAudit(req, auditId) {
+        const userId = req.auth.userId;
+        const modulId = req.auth.modulId;
+        const intId = req.auth.intId;
+        const roleId = Number(req.auth.roleId);
+        const isSysadmin = req.auth.isSysadmin ? 1 : 0;
+
+        const [rows] = await db.promise().query(
+            `
+            SELECT
+                k.id,
+                k.idk,
+                k.felhasznalo_id,
+                k.modul_id,
+                k.audit,
+                tulaj.int_id AS tulaj_int_id,
+                a.user_audit,
+                a.user_user,
+                a.audit_modul_id,
+                a.audit_int_id,
+                a.uzenet,
+                a.hatarido,
+                a.warm
+            FROM kitoltesek k
+            JOIN felhasznalok tulaj
+                ON tulaj.id = k.felhasznalo_id
+            LEFT JOIN audit a
+                ON a.audit_id = k.id
+            WHERE k.id = ?
+              AND k.modul_id = ?
+            LIMIT 1
+            `,
+            [auditId, modulId]
+        );
+
+        if (!rows.length) return null;
+
+        const row = rows[0];
+
+        const isOwner = Number(row.felhasznalo_id) === Number(userId);
+        const isAuditor = Number(row.user_audit) === Number(userId);
+        const sameInstitution = Number(row.tulaj_int_id) === Number(intId);
+        const isInstitutionAnalyst = (roleId === 1 || roleId === 2) && sameInstitution;
+        const sysadminAllowed = isSysadmin === 1;
+
+        row.__access = {
+            isOwner,
+            isAuditor,
+            sameInstitution,
+            isInstitutionAnalyst,
+            sysadminAllowed,
+            canRead: isOwner || isAuditor || isInstitutionAnalyst || sysadminAllowed,
+            canManage: isInstitutionAnalyst || sysadminAllowed
+        };
+
+        return row;
+    }
+
+    async function requireReadableAudit(req, res, auditId) {
+        const row = await getKitoltesForAudit(req, auditId);
+
+        if (!row || !row.__access.canRead) {
+            res.status(403).json({
+                success: false,
+                message: 'Nincs jogosultságod ehhez az auditációhoz.'
+            });
+            return null;
+        }
+
+        return row;
+    }
+
+    async function requireManageableAudit(req, res, auditId) {
+        if (!canManageAudit(req)) {
+            res.status(403).json({
+                success: false,
+                message: 'Nincs jogosultságod auditációs művelethez.'
+            });
+            return null;
+        }
+
+        const row = await getKitoltesForAudit(req, auditId);
+
+        if (!row || !row.__access.canManage) {
+            res.status(403).json({
+                success: false,
+                message: 'Nincs jogosultságod ehhez az auditációs művelethez.'
+            });
+            return null;
+        }
+
+        return row;
+    }
+
+    // Üzenetek lekérése egy adott értékeléshez
+    router.get('/api/get-audit-messages', async (req, res) => {
+        const auditId = toPositiveInt(req.query.kitoltes_id);
+
+        if (!auditId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó vagy hibás kitöltés ID.'
+            });
         }
 
         try {
-            // Hozzáadjuk az a.hatarido-t a lekérdezéshez
-           const sql = `
-                SELECT 
+            const accessRow = await requireReadableAudit(req, res, auditId);
+            if (!accessRow) return;
+
+            const [rows] = await db.promise().query(
+                `
+                SELECT
                     a.uzenet,
-                    a.hatarido, 
+                    a.hatarido,
                     f1.vez AS auditor_name,
                     f2.vez AS user_name
                 FROM audit a
-                LEFT JOIN felhasznalok f1 ON a.user_audit = f1.id
-                LEFT JOIN felhasznalok f2 ON a.user_user = f2.id
-                WHERE a.audit_id = ? 
+                LEFT JOIN felhasznalok f1
+                    ON a.user_audit = f1.id
+                LEFT JOIN felhasznalok f2
+                    ON a.user_user = f2.id
+                WHERE a.audit_id = ?
+                  AND a.audit_modul_id = ?
                 LIMIT 1
-            `;
-            
-            const [rows] = await db.promise().query(sql, [kitoltes_id]); 
-            
+                `,
+                [auditId, req.auth.modulId]
+            );
+
             if (rows.length > 0) {
-                // Visszaküldjük a határidőt is a JSON mellé!
-                res.json({ 
-                    success: true, 
+                return res.json({
+                    success: true,
                     uzenetek: rows[0].uzenet,
                     auditor_name: rows[0].auditor_name,
                     user_name: rows[0].user_name,
-                    hatarido: rows[0].hatarido // ÚJ ADAT
+                    hatarido: rows[0].hatarido
                 });
-            } else {
-                res.json({ success: true, uzenetek: null, hatarido: null }); 
             }
+
+            res.json({
+                success: true,
+                uzenetek: null,
+                hatarido: null
+            });
         } catch (error) {
-            console.error("Hiba az üzenetek lekérésekor:", error);
-            res.status(500).json({ success: false, message: 'Szerver hiba' });
+            console.error('Hiba az üzenetek lekérésekor:', error);
+            res.status(500).json({
+                success: false,
+                message: 'Szerver hiba.'
+            });
         }
     });
-// Határidő beállítása az elemzőtől
-    router.post('/api/set-audit-deadline', async (req, res) => {
-        const { audit_id, user_audit, audit_modul_id, audit_int_id, hatarido } = req.body;
 
-        if (!audit_id || !user_audit || !hatarido) {
-            return res.status(400).json({ success: false, message: 'Hiányzó adatok!' });
+    // Határidő beállítása az elemzőtől
+    router.post('/api/set-audit-deadline', async (req, res) => {
+        const auditId = toPositiveInt(req.body.audit_id);
+        const { hatarido } = req.body;
+
+        const userAudit = req.auth.userId;
+        const auditModulId = req.auth.modulId;
+        const auditIntId = req.auth.intId;
+
+        if (!auditId || !hatarido) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó vagy hibás adatok.'
+            });
         }
 
         try {
-            // 1. Biztonsági okokból a backendből keressük ki, ki az értékelés eredeti tulajdonosa (user_user)
-            // JAVÍTVA: Itt is az 'id' oszlopot vizsgáljuk az 'idk' helyett!
-            const [kitoltesRows] = await db.promise().query(
-                'SELECT felhasznalo_id FROM kitoltesek WHERE id = ? LIMIT 1', 
-                [audit_id]
-            );
+            const accessRow = await requireManageableAudit(req, res, auditId);
+            if (!accessRow) return;
 
-            if (kitoltesRows.length === 0) {
-                return res.status(404).json({ success: false, message: 'Az értékelés nem található!' });
-            }
+            const userUser = accessRow.felhasznalo_id;
 
-            const user_user = kitoltesRows[0].felhasznalo_id;
-
-            // 2. Létrehozzuk, vagy frissítjük az audit rekordot
             const sqlAudit = `
-                INSERT INTO audit 
-                (audit_id, user_audit, user_user, audit_modul_id, audit_int_id, hatarido)
+                INSERT INTO audit
+                    (audit_id, user_audit, user_user, audit_modul_id, audit_int_id, hatarido)
                 VALUES (?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                user_audit = VALUES(user_audit),
-                audit_modul_id = VALUES(audit_modul_id),
-                audit_int_id = VALUES(audit_int_id),
-                hatarido = VALUES(hatarido)
+                ON DUPLICATE KEY UPDATE
+                    user_audit = VALUES(user_audit),
+                    user_user = VALUES(user_user),
+                    audit_modul_id = VALUES(audit_modul_id),
+                    audit_int_id = VALUES(audit_int_id),
+                    hatarido = VALUES(hatarido)
             `;
 
             await db.promise().query(sqlAudit, [
-                audit_id, user_audit, user_user, audit_modul_id, audit_int_id, hatarido
+                auditId,
+                userAudit,
+                userUser,
+                auditModulId,
+                auditIntId,
+                hatarido
             ]);
 
-            // 3. JAVÍTVA: A kitoltesek táblában átállítjuk az audit oszlopot 1-re az 'id' alapján
             await db.promise().query(
-                'UPDATE kitoltesek SET audit = 1 WHERE id = ?',
-                [audit_id]
+                `
+                UPDATE kitoltesek
+                SET audit = 1
+                WHERE id = ?
+                  AND modul_id = ?
+                `,
+                [auditId, auditModulId]
             );
 
-            res.json({ success: true, message: 'Határidő sikeresen rögzítve.' });
-
+            res.json({
+                success: true,
+                message: 'Határidő sikeresen rögzítve.'
+            });
         } catch (error) {
             console.error('Hiba a határidő beállításakor:', error);
-            res.status(500).json({ success: false, message: 'Adatbázis hiba történt a határidő mentésekor!' });
+            res.status(500).json({
+                success: false,
+                message: 'Adatbázis hiba történt a határidő mentésekor.'
+            });
         }
     });
-    //Auditáció beálítása 
-router.post('/api/set-audit-init', async (req, res) => {
-        // 1. audit_int_id hozzáadása a bejövő adatokhoz
-        const { audit_id, user_audit, audit_modul_id, audit_int_id, sender_name, uzenet, hatarido } = req.body;
 
-        if (!audit_id || !user_audit || !uzenet) {
-            return res.status(400).json({ success: false, message: 'Hiányzó adatok (üzenet megadása kötelező)!' });
+    // Auditáció beállítása
+    router.post('/api/set-audit-init', async (req, res) => {
+        const auditId = toPositiveInt(req.body.audit_id);
+        const { uzenet, hatarido } = req.body;
+
+        const userAudit = req.auth.userId;
+        const auditModulId = req.auth.modulId;
+        const auditIntId = req.auth.intId;
+
+        if (!auditId || !uzenet) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó vagy hibás adatok. Üzenet megadása kötelező.'
+            });
         }
 
         try {
-            const [kitoltesRows] = await db.promise().query(
-                'SELECT felhasznalo_id FROM kitoltesek WHERE id = ? LIMIT 1', 
-                [audit_id]
-            );
+            const accessRow = await requireManageableAudit(req, res, auditId);
+            if (!accessRow) return;
 
-            if (kitoltesRows.length === 0) {
-                return res.status(404).json({ success: false, message: 'Az értékelés nem található!' });
-            }
-
-            const user_user = kitoltesRows[0].felhasznalo_id;
+            const userUser = accessRow.felhasznalo_id;
+            const senderName = await getUserDisplayName(userAudit);
 
             const elsoUzenet = [{
                 text: uzenet,
                 timestamp: new Date().toISOString(),
-                sender_name: sender_name,
-                sender_type: "audit"
+                sender_name: senderName,
+                sender_type: 'audit'
             }];
+
             const jsonUzenetDb = JSON.stringify(elsoUzenet);
 
             await db.promise().query(
-                'UPDATE kitoltesek SET audit = 1 WHERE id = ?',
-                [audit_id]
+                `
+                UPDATE kitoltesek
+                SET audit = 1
+                WHERE id = ?
+                  AND modul_id = ?
+                `,
+                [auditId, auditModulId]
             );
 
-            // 2. Az audit_int_id beépítése az INSERT és UPDATE részekbe
             const sqlAudit = `
-                INSERT INTO audit 
-                (audit_id, user_audit, user_user, audit_modul_id, audit_int_id, uzenet, hatarido, warm)
+                INSERT INTO audit
+                    (audit_id, user_audit, user_user, audit_modul_id, audit_int_id, uzenet, hatarido, warm)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                ON DUPLICATE KEY UPDATE 
-                user_audit = VALUES(user_audit),
-                audit_modul_id = VALUES(audit_modul_id),
-                audit_int_id = VALUES(audit_int_id),
-                uzenet = VALUES(uzenet),
-                hatarido = VALUES(hatarido),
-                warm = VALUES(warm)
+                ON DUPLICATE KEY UPDATE
+                    user_audit = VALUES(user_audit),
+                    user_user = VALUES(user_user),
+                    audit_modul_id = VALUES(audit_modul_id),
+                    audit_int_id = VALUES(audit_int_id),
+                    uzenet = VALUES(uzenet),
+                    hatarido = VALUES(hatarido),
+                    warm = VALUES(warm)
             `;
 
-            // 3. A paraméter tömbbe is betehetjük az audit_int_id-t a megfelelő helyre
             await db.promise().query(sqlAudit, [
-                audit_id, 
-                user_audit, 
-                user_user, 
-                audit_modul_id, 
-                audit_int_id,  // <-- ITT ADJUK ÁT
-                jsonUzenetDb, 
-                hatarido || null, 
-                uzenet 
+                auditId,
+                userAudit,
+                userUser,
+                auditModulId,
+                auditIntId,
+                jsonUzenetDb,
+                hatarido || null,
+                uzenet
             ]);
 
-            res.json({ success: true, message: 'Auditáció sikeresen elindítva.' });
-
+            res.json({
+                success: true,
+                message: 'Auditáció sikeresen elindítva.'
+            });
         } catch (error) {
             console.error('Hiba az auditáció inicializálásakor:', error);
-            res.status(500).json({ success: false, message: 'Szerver hiba történt az auditáció mentésekor!' });
+            res.status(500).json({
+                success: false,
+                message: 'Szerver hiba történt az auditáció mentésekor.'
+            });
         }
     });
-// Új üzenet hozzáadása az auditációhoz (Egyéni és Csoportos)
-    router.post('/api/add-audit-message', async (req, res) => {
-        const { audit_ids, sender_name, message, sender_type } = req.body;
 
-        if (!audit_ids || !audit_ids.length || !message) {
-            return res.status(400).json({ success: false, message: 'Hiányzó adatok (ID-k vagy üzenet)!' });
+    // Új üzenet hozzáadása az auditációhoz
+    router.post('/api/add-audit-message', async (req, res) => {
+        const auditIds = uniquePositiveInts(req.body.audit_ids);
+        const { message } = req.body;
+
+        const userId = req.auth.userId;
+
+        if (!auditIds.length || !message) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó vagy hibás adatok. ID-k és üzenet szükséges.'
+            });
         }
 
         try {
-            // Eldöntjük, hogy ki a feladó (alapértelmezetten "audit")
-            const veglegesSenderType = sender_type || "audit";
+            const senderName = await getUserDisplayName(userId);
+            let updatedCount = 0;
 
-            const ujUzenetObj = {
-                text: message,
-                timestamp: new Date().toISOString(),
-                sender_name: sender_name,
-                sender_type: veglegesSenderType
-            };
+            for (const auditId of auditIds) {
+                const accessRow = await requireReadableAudit(req, res, auditId);
+                if (!accessRow) return;
 
-            // Végigmegyünk a kapott ID-kon
-            for (const audit_id of audit_ids) {
-                // 1. Lekérjük a meglévő üzeneteket az audit táblából
-                const [rows] = await db.promise().query('SELECT uzenet FROM audit WHERE audit_id = ? LIMIT 1', [audit_id]);
-                
+                /*
+                  A sender_type nem jöhet a kliensből jogosultsági döntésként.
+                  Ha a tulajdonos / auditált user ír, akkor user.
+                  Ha auditáló vagy jogosult elemző ír, akkor audit.
+                */
+                const veglegesSenderType =
+                    accessRow.__access.isOwner && !accessRow.__access.canManage
+                        ? 'user'
+                        : 'audit';
+
+                const [rows] = await db.promise().query(
+                    `
+                    SELECT uzenet
+                    FROM audit
+                    WHERE audit_id = ?
+                      AND audit_modul_id = ?
+                    LIMIT 1
+                    `,
+                    [auditId, req.auth.modulId]
+                );
+
+                if (!rows.length) {
+                    return res.status(404).json({
+                        success: false,
+                        message: 'Az auditáció nem található.'
+                    });
+                }
+
                 let eddigiUzenetek = [];
-                if (rows.length > 0 && rows[0].uzenet) {
+
+                if (rows[0].uzenet) {
                     try {
-                        eddigiUzenetek = typeof rows[0].uzenet === 'string' ? JSON.parse(rows[0].uzenet) : rows[0].uzenet;
+                        eddigiUzenetek =
+                            typeof rows[0].uzenet === 'string'
+                                ? JSON.parse(rows[0].uzenet)
+                                : rows[0].uzenet;
+
+                        if (!Array.isArray(eddigiUzenetek)) {
+                            eddigiUzenetek = [];
+                        }
                     } catch (e) {
                         eddigiUzenetek = [];
                     }
                 }
-                
-                // 2. Hozzáfűzzük az új üzenetet a JSON tömbhöz
+
+                const ujUzenetObj = {
+                    text: message,
+                    timestamp: new Date().toISOString(),
+                    sender_name: senderName,
+                    sender_type: veglegesSenderType
+                };
+
                 eddigiUzenetek.push(ujUzenetObj);
                 const ujUzenetJson = JSON.stringify(eddigiUzenetek);
 
-                // 3. JAVÍTÁS: Feltételes adatbázis frissítés!
-                if (veglegesSenderType === "user") {
-                    // Ha a DOLGOZÓ küldi: CSAK a JSON chattet frissítjük, a warm (figyelmeztetés) marad az eredeti!
+                if (veglegesSenderType === 'user') {
                     await db.promise().query(
-                        'UPDATE audit SET uzenet = ? WHERE audit_id = ?',
-                        [ujUzenetJson, audit_id]
+                        `
+                        UPDATE audit
+                        SET uzenet = ?
+                        WHERE audit_id = ?
+                          AND audit_modul_id = ?
+                        `,
+                        [ujUzenetJson, auditId, req.auth.modulId]
                     );
                 } else {
-                    // Ha az ELEMZŐ küldi: a JSON-t ÉS a warm oszlopot is felülírjuk az új instrukcióval!
                     await db.promise().query(
-                        'UPDATE audit SET uzenet = ?, warm = ? WHERE audit_id = ?',
-                        [ujUzenetJson, message, audit_id]
+                        `
+                        UPDATE audit
+                        SET uzenet = ?, warm = ?
+                        WHERE audit_id = ?
+                          AND audit_modul_id = ?
+                        `,
+                        [ujUzenetJson, message, auditId, req.auth.modulId]
                     );
                 }
+
+                updatedCount++;
             }
 
-            res.json({ success: true, message: 'Üzenet(ek) sikeresen rögzítve.' });
+            res.json({
+                success: true,
+                message: 'Üzenet(ek) sikeresen rögzítve.',
+                updated: updatedCount
+            });
         } catch (error) {
             console.error('Hiba az üzenet küldésekor:', error);
-            res.status(500).json({ success: false, message: 'Szerver hiba történt az üzenet mentésekor!' });
+            res.status(500).json({
+                success: false,
+                message: 'Szerver hiba történt az üzenet mentésekor.'
+            });
         }
     });
-    // Audit státusz módosítása (Jóváhagyás = 2, Visszanyitás = 1)
-    router.post('/api/set-audit-status', async (req, res) => {
-        const { audit_ids, new_status } = req.body;
 
-        if (!audit_ids || !audit_ids.length || !new_status) {
-            return res.status(400).json({ success: false, message: 'Hiányzó adatok!' });
+    // Audit státusz módosítása
+    router.post('/api/set-audit-status', async (req, res) => {
+        const auditIds = uniquePositiveInts(req.body.audit_ids);
+        const newStatus = Number(req.body.new_status);
+
+        if (!auditIds.length || ![1, 2].includes(newStatus)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Hiányzó vagy hibás adatok.'
+            });
         }
 
         try {
-            // Végigmegyünk az összes kapott ID-n (lehet egy, vagy több is)
-            for (const audit_id of audit_ids) {
-                // 1. Kitöltések tábla frissítése (audit oszlop)
+            let updatedCount = 0;
+
+            for (const auditId of auditIds) {
+                const accessRow = await requireManageableAudit(req, res, auditId);
+                if (!accessRow) return;
+
                 await db.promise().query(
-                    'UPDATE kitoltesek SET audit = ? WHERE id = ?',
-                    [new_status, audit_id]
+                    `
+                    UPDATE kitoltesek
+                    SET audit = ?
+                    WHERE id = ?
+                      AND modul_id = ?
+                    `,
+                    [newStatus, auditId, req.auth.modulId]
                 );
 
-                // 2. Ha jóváhagyás történik (new_status == 2), töröljük a warm üzenetet az audit táblából
-                if (new_status == 2) {
+                if (newStatus === 2) {
                     await db.promise().query(
-                        'UPDATE audit SET warm = NULL WHERE audit_id = ?',
-                        [audit_id]
+                        `
+                        UPDATE audit
+                        SET warm = NULL
+                        WHERE audit_id = ?
+                          AND audit_modul_id = ?
+                        `,
+                        [auditId, req.auth.modulId]
                     );
                 }
+
+                updatedCount++;
             }
 
-            res.json({ success: true, message: 'Státusz sikeresen módosítva.' });
+            res.json({
+                success: true,
+                message: 'Státusz sikeresen módosítva.',
+                updated: updatedCount
+            });
         } catch (error) {
             console.error('Hiba az audit státusz váltásakor:', error);
-            res.status(500).json({ success: false, message: 'Szerver hiba történt a státusz frissítésekor!' });
+            res.status(500).json({
+                success: false,
+                message: 'Szerver hiba történt a státusz frissítésekor.'
+            });
         }
     });
+
     return router;
 };

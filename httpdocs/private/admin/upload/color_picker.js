@@ -1,23 +1,58 @@
 // color_picker.js
 
+function applyStyles(element, styles) {
+    Object.assign(element.style, styles);
+    return element;
+}
+
+function createElement(tagName, options = {}) {
+    const element = document.createElement(tagName);
+
+    if (options.id) element.id = options.id;
+    if (options.className) element.className = options.className;
+    if (options.text !== undefined) element.textContent = String(options.text ?? '');
+    if (options.type) element.type = options.type;
+    if (options.value !== undefined) element.value = String(options.value ?? '');
+    if (options.htmlFor) element.htmlFor = options.htmlFor;
+    if (options.styles) applyStyles(element, options.styles);
+
+    return element;
+}
+
+function normalizeHexColor(value, fallback = '#ffffff') {
+    const clean = String(value || '').trim();
+    return /^#[0-9a-fA-F]{6}$/.test(clean) ? clean : fallback;
+}
+
+function normalizePreviewBackground(value, fallback = '#ffffff') {
+    const clean = String(value || '').trim();
+
+    if (/^#[0-9a-fA-F]{6}$/.test(clean)) return clean;
+    if (/^rgb\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*\)$/.test(clean)) return clean;
+    if (/^rgba\(\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*\d{1,3}\s*,\s*(0|1|0?\.\d+)\s*\)$/.test(clean)) return clean;
+
+    return fallback;
+}
+
 export class ColorPicker {
     // --- Színkonvertáló Helpelek (Ugyanaz a matek, mint a szamitasok.js-ben) ---
     static rgbToHex(rgbStr) {
-        if (!rgbStr || rgbStr.startsWith('#')) return rgbStr || '#ffffff';
-        const match = rgbStr.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+        if (!rgbStr || rgbStr.startsWith('#')) return normalizeHexColor(rgbStr, '#ffffff');
+        const match = String(rgbStr).match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
         if (!match) return '#ffffff';
-        const r = parseInt(match[1], 10).toString(16).padStart(2, '0');
-        const g = parseInt(match[2], 10).toString(16).padStart(2, '0');
-        const b = parseInt(match[3], 10).toString(16).padStart(2, '0');
+        const r = Math.max(0, Math.min(255, parseInt(match[1], 10))).toString(16).padStart(2, '0');
+        const g = Math.max(0, Math.min(255, parseInt(match[2], 10))).toString(16).padStart(2, '0');
+        const b = Math.max(0, Math.min(255, parseInt(match[3], 10))).toString(16).padStart(2, '0');
         return `#${r}${g}${b}`;
     }
 
     static hexToRgb(hex) {
         let r = 0, g = 0, b = 0;
-        if (hex.length === 7) {
-            r = parseInt(hex.substring(1, 3), 16);
-            g = parseInt(hex.substring(3, 5), 16);
-            b = parseInt(hex.substring(5, 7), 16);
+        const safeHex = normalizeHexColor(hex, '#000000');
+        if (safeHex.length === 7) {
+            r = parseInt(safeHex.substring(1, 3), 16);
+            g = parseInt(safeHex.substring(3, 5), 16);
+            b = parseInt(safeHex.substring(5, 7), 16);
         }
         return [r, g, b];
     }
@@ -47,29 +82,30 @@ export class ColorPicker {
             const hue2rgb = (p, q, t) => {
                 if (t < 0) t += 1;
                 if (t > 1) t -= 1;
-                if (t < 1/6) return p + (q - p) * 6 * t;
-                if (t < 1/2) return q;
-                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                if (t < 1 / 6) return p + (q - p) * 6 * t;
+                if (t < 1 / 2) return q;
+                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
                 return p;
             };
             const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
             const p = 2 * l - q;
-            r = hue2rgb(p, q, h + 1/3);
+            r = hue2rgb(p, q, h + 1 / 3);
             g = hue2rgb(p, q, h);
-            b = hue2rgb(p, q, h - 1/3);
+            b = hue2rgb(p, q, h - 1 / 3);
         }
         return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
     }
 
     static kalkulaldDiagramSzineket(hexColor, numSegments) {
-        const [r, g, b] = this.hexToRgb(hexColor);
+        const safeHexColor = normalizeHexColor(hexColor, '#ffffff');
+        const [r, g, b] = this.hexToRgb(safeHexColor);
         const [h, s, l] = this.rgbToHsl(r, g, b);
-        
+
         const backgroundColors = [];
         for (let index = 0; index < numSegments; index++) {
             // Ez pontosan az a kalkuláció, amit a szamitasok.js letrehozAlkategoriaChart csinál
-            const lightnessStep = 0.4 / (numSegments || 1); 
-            const newL = Math.max(0.1, Math.min(0.9, l + (index * lightnessStep) - 0.2)); 
+            const lightnessStep = 0.4 / (numSegments || 1);
+            const newL = Math.max(0.1, Math.min(0.9, l + (index * lightnessStep) - 0.2));
             const [newR, newG, newB] = this.hslToRgb(h, s, newL);
             backgroundColors.push(`rgba(${newR}, ${newG}, ${newB}, 0.8)`);
         }
@@ -78,65 +114,110 @@ export class ColorPicker {
 
     static open(kategoriaNev, leiras, jelenlegiHatter) {
         return new Promise((resolve) => {
-            const hexSzin = this.rgbToHex(jelenlegiHatter);
+            const hexSzin = normalizeHexColor(this.rgbToHex(jelenlegiHatter), '#ffffff');
+            const previewBackground = normalizePreviewBackground(jelenlegiHatter, hexSzin);
 
-            const overlay = document.createElement('div');
-            overlay.className = 'color-picker-overlay';
+            const overlay = createElement('div', { className: 'color-picker-overlay' });
 
-            const modal = document.createElement('div');
-            modal.className = 'color-picker-modal';
+            const modal = createElement('div', { className: 'color-picker-modal' });
             // Picit szélesebb modal, hogy elférjen a diagram is
-            modal.style.width = "fit-content"; 
+            modal.style.width = 'fit-content';
 
-            modal.innerHTML = `
-                <h3 class="color-picker-title">
-                    Témakör színének módosítása
-                </h3>
-                
-                <div class="minta"">
-                    <div class="minta_k">
-                        <p class="color-picker-preview-label">Kártya:</p>
-                        <div id="live-preview-card" class="category fo color-picker-preview-card" data-id="${kategoriaNev}" style="background: ${jelenlegiHatter}; min-height: 100px;">
-                            <div class="cim">${kategoriaNev}</div>
-                            <div class="leiras" style="font-size: 0.85em; margin-top: 5px;">${leiras}</div>
-                        </div>
-                    </div>
-                    
-                    <div class="minta_d">
-                        <p class="color-picker-preview-label">Diagram (Árnyalatok):</p>
-                        <div style="position: relative; height: 120px; width: 100%;">
-                            <canvas id="picker-preview-chart"></canvas>
-                        </div>
-                    </div>
-                </div>
+            const title = createElement('h3', {
+                className: 'color-picker-title',
+                text: 'Témakör színének módosítása'
+            });
 
-                <div class="color-picker-input-container">
-                    <label for="picker-input" class="color-picker-label">Új szín kiválasztása:</label>
-                    <input type="color" id="picker-input" class="color-picker-input" value="${hexSzin}">
-                </div>
+            const previewWrapper = createElement('div', { className: 'minta' });
 
-                <div class="color-picker-btn-container">
-                    <button id="picker-megse" class="color-picker-btn-cancel">Mégse</button>
-                    <button id="picker-ok" class="color-picker-btn-save">Mentés</button>
-                </div>
-            `;
+            const cardColumn = createElement('div', { className: 'minta_k' });
+            const cardLabel = createElement('p', {
+                className: 'color-picker-preview-label',
+                text: 'Kártya:'
+            });
 
+            const previewCard = createElement('div', {
+                id: 'live-preview-card',
+                className: 'category fo color-picker-preview-card',
+                styles: {
+                    background: previewBackground,
+                    minHeight: '100px'
+                }
+            });
+            previewCard.dataset.id = String(kategoriaNev ?? '');
+
+            const previewTitle = createElement('div', {
+                className: 'cim',
+                text: kategoriaNev || ''
+            });
+
+            const previewDescription = createElement('div', {
+                className: 'leiras',
+                text: leiras || '',
+                styles: {
+                    fontSize: '0.85em',
+                    marginTop: '5px'
+                }
+            });
+
+            previewCard.append(previewTitle, previewDescription);
+            cardColumn.append(cardLabel, previewCard);
+
+            const chartColumn = createElement('div', { className: 'minta_d' });
+            const chartLabel = createElement('p', {
+                className: 'color-picker-preview-label',
+                text: 'Diagram (Árnyalatok):'
+            });
+            const chartBox = createElement('div', {
+                styles: {
+                    position: 'relative',
+                    height: '120px',
+                    width: '100%'
+                }
+            });
+            const canvas = createElement('canvas', { id: 'picker-preview-chart' });
+            chartBox.appendChild(canvas);
+            chartColumn.append(chartLabel, chartBox);
+
+            previewWrapper.append(cardColumn, chartColumn);
+
+            const inputContainer = createElement('div', { className: 'color-picker-input-container' });
+            const inputLabel = createElement('label', {
+                className: 'color-picker-label',
+                htmlFor: 'picker-input',
+                text: 'Új szín kiválasztása:'
+            });
+            const input = createElement('input', {
+                id: 'picker-input',
+                className: 'color-picker-input',
+                type: 'color',
+                value: hexSzin
+            });
+            inputContainer.append(inputLabel, input);
+
+            const buttonContainer = createElement('div', { className: 'color-picker-btn-container' });
+            const btnMegse = createElement('button', {
+                id: 'picker-megse',
+                className: 'color-picker-btn-cancel',
+                text: 'Mégse'
+            });
+            const btnOk = createElement('button', {
+                id: 'picker-ok',
+                className: 'color-picker-btn-save',
+                text: 'Mentés'
+            });
+            buttonContainer.append(btnMegse, btnOk);
+
+            modal.append(title, previewWrapper, inputContainer, buttonContainer);
             overlay.appendChild(modal);
             document.body.appendChild(overlay);
 
-            // Gombok és inputok
-            const input = modal.querySelector('#picker-input');
-            const previewCard = modal.querySelector('#live-preview-card');
-            const btnOk = modal.querySelector('#picker-ok');
-            const btnMegse = modal.querySelector('#picker-megse');
-
             // --- Chart.js Inicializálása a Modalban ---
-            const canvas = modal.querySelector('#picker-preview-chart');
             const ctx = canvas.getContext('2d');
-            
+
             const dummyLabels = ['Alk. 1', 'Alk. 2', 'Alk. 3'];
             const dummyData = [80, 60, 95];
-            
+
             // Létrehozunk egy minta diagramot (Alapból polarArea, mint a te rendszeredben)
             const previewChart = new Chart(ctx, {
                 type: 'polarArea', // Vagy 'doughnut', ami épp a kedvenced
@@ -165,11 +246,11 @@ export class ColorPicker {
 
             // Eseményfigyelő: Szín módosítása élőben
             input.addEventListener('input', (e) => {
-                const ujHex = e.target.value;
-                
+                const ujHex = normalizeHexColor(e.target.value, hexSzin);
+
                 // 1. Kártya háttérszín frissítése
                 previewCard.style.background = ujHex;
-                
+
                 // 2. Chart árnyalatok frissítése
                 previewChart.data.datasets[0].backgroundColor = this.kalkulaldDiagramSzineket(ujHex, dummyLabels.length);
                 previewChart.update();
@@ -177,7 +258,9 @@ export class ColorPicker {
 
             const close = (valasz) => {
                 if (previewChart) previewChart.destroy(); // Memóriaszivárgás elkerülése
-                document.body.removeChild(overlay);
+                if (overlay.parentElement) {
+                    overlay.remove();
+                }
                 resolve(valasz);
             };
 

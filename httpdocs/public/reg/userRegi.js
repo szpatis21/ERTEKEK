@@ -1,4 +1,5 @@
 import {showAndHideErrorMessages, ElfogadasAdatokIntezmenyi, IntezmenynevAdatok2, KapcsolatiAdatok, Gombok, ElfogadasAdatok, FelhasznaloAdatok, alap, al_alap, vissza, handleRegistrationChange, validacio, passwordRegex, nameRegex, regcode, regi, regifin} from './regifo.js';
+import { showAlert } from '/both/alert.js';
 // Változók
 const maganradio = document.querySelector("#contactChoice1");
 const usere = document.querySelector("#user");
@@ -91,6 +92,7 @@ let intFo = "";
 let userCount = ""; 
 let hanyadik = "";
 let allowedModuleIds = [];
+let allowedRoleIds = [];
 
 kode.addEventListener("input", function() {
     const regmail = document.querySelector("#regmail");
@@ -113,7 +115,11 @@ kode.addEventListener("input", function() {
                     .split(',')
                     .map(s => s.trim())
                     .filter(s => s.length);
-                renderUserModuleChoices(allowedModuleIds); 
+                allowedRoleIds = Array.isArray(data.allowedRoles)
+                    ? data.allowedRoles.map(Number).filter(n => Number.isInteger(n) && n > 0)
+                    : [];
+                renderUserModuleChoices(allowedModuleIds);
+                renderRoleAvailability(allowedRoleIds, data.packageCode || ''); 
                 hanyadik = (data.intFo - data.userCount) - 1;
 
                 ragmailerr.textContent = "";
@@ -169,6 +175,40 @@ function renderUserModuleChoices(ids) {
             });
         })
         .catch(err => console.error('Modul-betöltési hiba:', err));
+}
+
+function renderRoleAvailability(ids, packageCode = '') {
+    const allowed = Array.isArray(ids) && ids.length
+        ? new Set(ids.map(Number))
+        : new Set([3]);
+
+    document.querySelectorAll('input[name="szerepkor_reg"]').forEach(input => {
+        const roleId = Number(input.value);
+        const card = input.closest('.reg-role-card') || input.closest('.editbut2');
+        const enabled = allowed.has(roleId);
+
+        input.disabled = !enabled;
+        input.checked = enabled && input.checked;
+
+        if (card) {
+            // Üzleti kérés: a nem elérhető szerepkörök ne csak szürküljenek, hanem tűnjenek el.
+            card.style.display = enabled ? '' : 'none';
+            card.style.opacity = '1';
+            card.style.filter = '';
+            card.style.cursor = enabled ? 'pointer' : 'not-allowed';
+            card.title = enabled ? '' : 'Ez a szerepkör a választott csomagban nem elérhető.';
+        }
+    });
+
+    const selected = document.querySelector('input[name="szerepkor_reg"]:checked');
+    if (!selected || selected.disabled) {
+        const firstAllowed = Array.from(document.querySelectorAll('input[name="szerepkor_reg"]'))
+            .find(input => !input.disabled);
+        if (firstAllowed) firstAllowed.checked = true;
+    }
+
+    const wrapper = document.querySelector('#roles-wrapper');
+    if (wrapper) wrapper.dataset.packageCode = packageCode || '';
 }
 
 // --- REGISZTRÁCIÓ ---    
@@ -346,9 +386,9 @@ const data = {
     mailv, 
     telv, 
     vezeteknevv, 
-    intIdv: intId, // Itt volt a hiba: intIdv helyett intId kell a jobb oldalra!
-    usermods: selectedUserMods.join(','),
-    szerepv
+    regCode,
+    szerepv,
+    usermods: selectedUserMods
 };
     
     fetch('/register/user', {
@@ -362,15 +402,16 @@ const data = {
     })
    .then(data => {
         if (data.message === 'Regisztráció sikeres') {
-           alert('Sikeres regisztráció! A belépési adatokat elküldtük e-mailben.'); 
+            showAlert('Sikeres regisztráció! A belépési adatokat elküldtük e-mailben.');
             alap.removeChild(ellenorzes);
             regifin.style.display = 'flex';
-            setTimeout(() => { location.reload(); }, 5000); 
+            setTimeout(() => { location.reload(); }, 5000);
         }
     })
     .catch(error => {
         regifin.style.display = 'flex';
         regifin.innerHTML ="Hiba történt:" + error.message;
+        showAlert("Hiba történt: " + error.message);
     });
 });
     });

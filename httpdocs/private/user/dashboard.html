@@ -139,6 +139,46 @@ canvas {image-rendering: auto;}
 </style>
 </head>
 <body>
+    <div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
     <div style="display: none;" id="foglalt"></div>
 
     <input type="hidden" id="menu-type" value="dashd">
@@ -194,6 +234,7 @@ canvas {image-rendering: auto;}
                 <div id="fulek">
                     <div id="lista"></div>
                     <div id="maininf" class="outer-div">
+                        <div class="nagyit"> <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M120-120v-240h80v104l124-124 56 56-124 124h104v80H120Zm480 0v-80h104L580-324l56-56 124 124v-104h80v240H600ZM324-580 200-704v104h-80v-240h240v80H256l124 124-56 56Zm312 0-56-56 124-124H600v-80h240v240h-80v-104L636-580Z"/></svg></div>
                            <div class="muveletek">
            
               
@@ -202,41 +243,47 @@ canvas {image-rendering: auto;}
               </div>
 
                             </div>
-                    <div class="diag" style=" position: relative;">
-<div class="diaggombok-kulso">
-    <div class="diaggombok-fejlec" id="diagToggle">
-        Diagram beállítások <span class="nyil">▼</span>
-    </div>
+                    <div class="diag" style="position: relative;">
+                         <div class="modulebuttd valtosd">
+    <label class="switchd-label" for="chartTypeOff1">
+        <span class="switchd-text">Diagrammok:</span>
 
-    <div class="diaggombok-tartalom" id="diagContent">
-        <div class="valtos modulebutt">
-            <label for="chartTypeSelector"></label>
-            <select id="chartTypeSelector">
-                <option value="polarArea" selected="">Kördiagram</option>
-                <option value="bar">Oszlopdiagram</option>
-                <option value="line">Fánkdiagram</option>
-                <option value="radar">Radardiagram</option>
-            </select>
-        </div>
-        
-        <div class="valtos modulebutt" id="melletolt">
-            <span>Melléklet letöltése</span>
-        </div>
-        
-        <div class="valtos modulebutt" id="melprint">
-            <span>Melléklet nyomtatása</span>
-        </div>
-        
-        <div class="modulebutt valtos">
-            <label for="chartTypeOff"></label>
-            <select id="chartTypeOff">
-                <option value="on" selected="">Diagrammok: Be</option>
-                <option value="off">Diagrammok: Ki</option>
-            </select>
-        </div>
-    </div>
+        <span class="switchd">
+            <input type="checkbox" id="chartTypeOff1" checked>
+            <span class="sliderd"></span>
+        </span>
+
+        <span id="chartTypeOff1Text" class="switchd-state">Be</span>
+    </label>
 </div>
-                        <div class="charts">
+                        <div class="diaggombok-kulso">
+                                <div class="diaggombok-fejlec" id="diagToggle">
+                                    Diagram beállítások <span class="nyil">▼</span>
+                                </div>
+
+                                <div class="diaggombok-tartalom" id="diagContent">
+                                    <div class="valtos modulebutt">
+                                        <label for="chartTypeSelector"></label>
+                                        <select id="chartTypeSelector">
+                                            <option value="polarArea" selected="">Kördiagram</option>
+                                            <option value="bar">Oszlopdiagram</option>
+                                            <option value="line">Fánkdiagram</option>
+                                            <option value="radar">Radardiagram</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="valtos modulebutt" id="melletolt">
+                                        <span>Melléklet letöltése</span>
+                                    </div>
+                                    
+                                    <div class="valtos modulebutt" id="melprint">
+                                        <span>Melléklet nyomtatása</span>
+                                    </div>
+                                    
+                                   
+                                </div>
+                            </div>
+                            <div class="charts">
                             <div id="chart-container">
                                 <canvas id="fokategoriaChart"></canvas>
                             </div> 
@@ -297,12 +344,7 @@ canvas {image-rendering: auto;}
                                         
                                                 
                                         </div>
-                                
                             
-
-                                
-                      
-                                
                                 
                                 </div>
                             </div>
@@ -527,7 +569,7 @@ canvas {image-rendering: auto;}
         </div>
     </div>
 </div>
-
+<script src="/both/csrfFetch.js"></script>
     <script>document.addEventListener('DOMContentLoaded', () => {
         const elemek = document.querySelectorAll('.category-container .fo');
         elemek.forEach((elem, index) => {
@@ -538,11 +580,10 @@ canvas {image-rendering: auto;}
     });
 
     </script>
-    <script type="module" src="/both/both.js?v=3.3"></script>
-    <script type="module" src="/private/user/dashMain.js?v=3.3"></script>
+    <script type="module" src="/both/both.js"></script>
+    <script type="module" src="/private/user/dashMain.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
 
 
 </body> 

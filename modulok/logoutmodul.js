@@ -8,7 +8,7 @@ module.exports = (db) => {
             if (err) {
                 return res.status(500).json({ message: 'Hiba történt a kijelentkezés során.' });
             }
-            res.clearCookie('connect.sid'); // Session cookie törlése
+res.clearCookie('ertekek.sid');
             res.redirect('/index.html');
         });
     });

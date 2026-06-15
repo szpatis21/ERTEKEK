@@ -158,6 +158,7 @@ input {
     display: none;
     flex-direction: column;
     align-items: center;
+        height: 25vh;
 }
 
 #log label {
@@ -203,8 +204,8 @@ input {
 
 .toggle-jelszo {
     position: absolute;
-    top: 22%;
-    left: 65%;
+    top: 28%;
+    left: 78%;
     color: #ff6e01;
     cursor: pointer;
 }
@@ -692,6 +693,22 @@ input {
     line-height: 1.45;
     font-family: system-ui, sans-serif;
 }
+.reg-choice-card{
+        display: flex;
+    cursor: pointer;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    align-items: center;
+    border: 1px solid #4b55638f;
+    border-radius: 12px;
+    padding: 10px;
+    transition: all 0.8s;
+    box-shadow: 2px 2px 2px 1px #8080803d;
+}
+.reg-choice-card:hover{   border: 1px solid #ff6500;
+ color: #ff6500;
+    box-shadow: 0px 0px 5px 1px #ff6500;}
 
 /* =========================================================
    MODULVÁLASZTÁS / ÜRES RENDSZER
@@ -836,7 +853,8 @@ input {
 }
 
 .regi-summary-box {
-    width: fit-content;
+    width: 100%;
+    text-align: left;
     max-width: 90%;
     margin: auto;
     padding: 10px 16px;
@@ -851,8 +869,7 @@ input {
 ========================================================= */
 
 .reg-period-grid {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    display: flex;
     gap: 12px;
     width: 100%;
 }
@@ -925,8 +942,27 @@ input {
 
 .reg-fo-field {
     margin-top: 16px;
-}
 
+
+}
+#priceSummary{width: 100%;
+margin-top:14px; padding:14px; border-radius:12px; background:#fff; border-left:5px solid #ff7c00;
+}
+.felhasznalos{
+        display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+}
+.reg-fo-field2{
+        display: flex;
+    flex-direction: row !important;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap;
+}
 #regi #fo {
     width: 100%;
     margin: 0;
@@ -1482,12 +1518,14 @@ body.fade-out {
     .opening {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: space-around;
         align-content: center;
         align-items: center;
         margin: 1vh;
     }
+.reg-fo-field2 {
 
+    flex-wrap: wrap;}
     .kulso {
         width: 27vh;
         height: 27vh;
@@ -1552,7 +1590,7 @@ body.fade-out {
     }
 
     .toggle-jelszo {
-        top: 23%;
+        top: 35%;
         left: 70%;
     }
 

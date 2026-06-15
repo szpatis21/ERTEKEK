@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="both/both.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-
+ <link rel="stylesheet" href="../private/main/main_quest_search.css">
+        <link rel="stylesheet" href="../private/main/main_quest_ertekeles_navigator.css">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
@@ -21,16 +22,35 @@
       crossorigin="anonymous" referrerpolicy="no-referrer">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
 <style>
-    #mainart{
-overflow-y: scroll;
+#mainart {
+
     height: 86vh;
     width: 50%;
-    border: 1px solid #80808038;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px 4px rgb(255, 140, 0);
-    padding-top: 1vh;
-    backdrop-filter: blur(0.7px);
-    background: #27272714;
+
+    /* Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: #f2f2f2 rgba(255, 255, 255, 0.08);
+}
+
+/* Chrome, Edge, Safari */
+#mainart::-webkit-scrollbar {
+    width: 10px;
+}
+
+#mainart::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+}
+
+#mainart::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #ffffff, #ffea00);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.08);
+}
+
+#mainart::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #d6d6d6, #d9a128);
 }
     body{flex-direction: column};
 .diag{display: flex;position: relative;border: 3px solid grey;border-radius: 15px;text-align: center;flex-direction: row !important;}
@@ -43,7 +63,9 @@ margin:0px ;
         width: 20vh;
 margin: 0px;    }
 .al .cim{height: 100%;}
-.alal-gombok{margin-left: 3vh; display: flex;}
+.alal{width: 100px;}
+.alal-gombok{display: flex; flex-direction: column; justify-content: space-evenly;
+    background: #ffeacd; height: 100%;}
 
 #creator-preview-card{height: 140px; width: 140px;}
 #fo_kategoriak, #al_kategoriak {padding: 1%;
@@ -72,11 +94,14 @@ margin: 0px;    }
   position: relative;
   border-radius: 15px;
   margin-bottom: 5px;}
-       .alal.active {    width: fit-content !important;
-    margin: 5px 10px !important;
-    border-radius: 5px !important;}
+       .alal.active {    width: fit-content !important;padding: 0px; min-width: 100px;}
     .alal.active .szoveg-kontener {width: 100%;}
-
+.passive.alal{
+    min-width: 100px;
+    justify-content: space-between;
+    height: fit-content;
+    padding: 0px;
+}
   #fokategoriaChart {
     width: 100% !important;
     height: 100% !important;
@@ -85,6 +110,8 @@ margin: 0px;    }
 }
   #alkategoriaChartContainer{display: none; max-width: 50%;}
     .pontA, .pontB, .pontC, .pontD, .pontE, .pontF{display: block !important;}
+
+
  @media (max-width: 900px) {
 #keszulo{ width: 100% !important;}
 #mainart{height: fit-content !important;}
@@ -92,6 +119,46 @@ margin: 0px;    }
 }
 </style>
 </head>
+<div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
 <body>
     <input type="hidden" id="menu-type" value="view2">
 <div class="hero-bg" aria-hidden="true"></div>
@@ -112,7 +179,17 @@ margin: 0px;    }
                     
     </div>
 
-    <div style="display: flex;" class="mainartdiv">
+    <div style="display: flex;" class="mainartdiv layout">
+        <div class="sav" id="szerkeszto-sav" aria-label="Szerkesztő műveletek">
+            <div id="sav-context-action" role="button" tabindex="0">Új főkategória</div>
+                        <span class="alsosav">
+                            <span class="cimgom" id="ertnone">
+                                Nézet
+                            </span>
+                            <span class="cimgom help"> Pontrendszer</span>
+                            </span>
+
+        </div>
         <article id="mainart">
         
 
@@ -198,6 +275,7 @@ margin: 0px;    }
     </div>
 
 </script>
+<script src="/both/csrfFetch.js"></script>
     <script type="module" src="/both/both.js"></script>
   <script type="module" src="/private/main/main_alap.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>

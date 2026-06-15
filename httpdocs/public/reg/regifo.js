@@ -55,6 +55,25 @@ export const afsz4 = document.getElementById("afsz4");
     }
 }
 
+
+function clearRegErrorForField(field) {
+    if (!field) return;
+
+    field.classList.remove("borderr");
+
+    const wrapper = field.closest(".allabel, .reg-field, #regcode, .reg-card");
+    if (wrapper) {
+        const errors = wrapper.querySelectorAll(".err");
+        errors.forEach(err => { err.textContent = ""; });
+        wrapper.classList.remove("has-reg-error-tip");
+    }
+
+    const directNextErr = field.parentElement?.querySelector?.(".err");
+    if (directNextErr) directNextErr.textContent = "";
+
+    setTimeout(syncRegErrorTooltips, 0);
+}
+
 function getErrorTooltipTarget(errorDiv) {
     const fieldWrapper = errorDiv.closest(".allabel, .reg-field, #regcode");
 
@@ -184,13 +203,13 @@ export function initRegErrorTooltips() {
 
     document.addEventListener("input", function(event) {
         if (event.target.matches("#regi input, #regi textarea, #regi select")) {
-            setTimeout(syncRegErrorTooltips, 0);
+            clearRegErrorForField(event.target);
         }
     });
 
     document.addEventListener("change", function(event) {
         if (event.target.matches("#regi input, #regi textarea, #regi select")) {
-            setTimeout(syncRegErrorTooltips, 0);
+            clearRegErrorForField(event.target);
         }
     });
 
@@ -658,39 +677,42 @@ Kijelentem, hogy az általam megadott adatok a valóságnak megfelelnek. Intézm
         }
     }
     
- // csak EGY ilyet hagyj bent!
-document.querySelector('#llog').addEventListener('click', async (event) => {
-  event.preventDefault();
+const legacyLoginButton = document.querySelector('#llog');
+const legacyTemakorSelect = document.querySelector('#temakor');
 
-  // ── adatok össze­szedése ─────────────────────────────────────────────
-  const fnev     = document.querySelector('#fnev').value.trim();
-  const pass     = document.querySelector('#pass').value.trim();
-  const modul_id = document.querySelector('#temakor').value;          // <-- új
-  const feltolto = document.querySelector('.check').checked;
+if (legacyLoginButton && legacyTemakorSelect) {
+  legacyLoginButton.addEventListener('click', async (event) => {
+    event.preventDefault();
 
-  // kliens-oldali validálás
-  if (!fnev || !pass || !modul_id) {
-    return showLoginError('Tölts ki minden mezőt és válassz témakört!');
-  }
+    const fnev = document.querySelector('#fnev')?.value.trim() || '';
+    const pass = document.querySelector('#pass')?.value.trim() || '';
+    const modul_id = legacyTemakorSelect.value;
+    const feltolto = document.querySelector('.check')?.checked === true;
 
-  try {
-    const resp = await fetch('/login', {
-      method : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body   : JSON.stringify({ fnev, pass, modul_id, feltolto })
-    });
-    const data = await resp.json();
-
-    if (data.success) {
-      window.location.href = data.redirect;          // átirányítás
-    } else {
-                document.querySelector("#error-message").textContent = data.message;
+    if (!fnev || !pass || !modul_id) {
+      return showLoginError('Tölts ki minden mezőt és válassz témakört!');
     }
-  } catch (err) {
-    console.error('Login fetch-hiba:', err);
-    showLoginError('Belső szerverhiba. Próbáld újra.');
-  }
-});
+
+    try {
+      const resp = await fetch('/login', {
+        method : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body   : JSON.stringify({ fnev, pass, modul_id, feltolto })
+      });
+
+      const data = await resp.json();
+
+      if (data.success) {
+        window.location.href = data.redirect;
+      } else {
+        document.querySelector("#error-message").textContent = data.message;
+      }
+    } catch (err) {
+      console.error('Login fetch-hiba:', err);
+      showLoginError('Belső szerverhiba. Próbáld újra.');
+    }
+  });
+}
 
 // ── egységes hiba-/animáció-függvény ───────────────────────────────────
 function showLoginError(msg) {

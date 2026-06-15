@@ -1,0 +1,533 @@
+.package-upgrade-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(17, 24, 39, .72);
+    backdrop-filter: blur(5px);
+}
+
+.package-upgrade-modal-box {
+    position: relative;
+    width: min(1180px, calc(100vw - 28px));
+    max-height: min(88vh, 920px);
+    overflow: auto;
+    border-radius: 26px;
+    background: rgba(255, 255, 255, .98);
+    border: 1px solid rgba(255, 101, 0, .22);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .36);
+    color: #273142;
+    font-family: Arial, sans-serif;
+}
+
+.package-upgrade-modal-head {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    justify-content: space-between;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 5px 26px;
+    background: linear-gradient(135deg, #fff7ed, #ffffff);
+    border-bottom: 1px solid #fed7aa;
+}
+
+.package-upgrade-modal-head h2 {
+    margin: 0;
+    color: #ff6500;
+    font-size: 1.45rem;
+}
+.package-upgrade-modal-head div{
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    flex-direction: row;
+    align-content: flex-start;
+    justify-content: space-between;
+    align-items: center;
+}
+.package-upgrade-modal-head p {
+    color: #667085;
+    line-height: 1.45;
+}
+
+.package-upgrade-modal-close {
+      margin-right: 0%;
+    border: none;
+    background: #ff6500;
+    color: rgba(255, 255, 255, .95);
+    border-radius: 999px;
+    width: 42px;
+    height: 42px;
+    font-size: 25px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(255, 101, 0, .16);
+}
+
+.package-upgrade-modal-body {
+    padding: 24px 26px 28px;
+}
+
+.package-upgrade-loading,
+.package-upgrade-error,
+.package-upgrade-locked,
+.package-upgrade-empty {
+    padding: 28px;
+    border-radius: 20px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #7c2d12;
+    font-weight: 700;
+    line-height: 1.55;
+}
+
+.package-upgrade-loading h3,
+.package-upgrade-error h3,
+.package-upgrade-locked h3,
+.package-upgrade-empty h3 {
+    margin: 0 0 8px;
+}
+
+.package-upgrade-modal .pricing-section {
+    padding: 0;
+}
+
+.package-upgrade-modal .section-head {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.package-upgrade-modal .section-step {
+    flex: 0 0 auto;
+    display: inline-grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background: #ff6500;
+    color: #fff;
+    font-weight: 900;
+}
+
+.package-upgrade-modal .hatos {
+ display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.package-upgrade-modal .hatdiv {
+    flex: 1 1 auto;
+}
+
+.package-upgrade-modal .section-head h2 {
+    margin: 0 0 7px;
+    color: #273142;
+    font-size: 1.45rem;
+}
+
+.package-upgrade-modal .section-head p {
+    margin: 0;
+    color: #667085;
+    line-height: 1.5;
+}
+
+.package-upgrade-modal .billing-switch {
+display: flex;
+flex-wrap: wrap;
+      padding: 16px;
+      width: 100%;
+      justify-content: space-between;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-radius: 20px;
+    }
+
+
+.package-upgrade-modal .billing-switch-title {
+    font-weight: 900;
+    color: #9a3412;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.package-upgrade-modal .billing-options {
+      display: flex;
+      width: 55%;
+      gap: 10px;
+    }
+
+.package-upgrade-modal .billing-options button {
+    border: 1px solid #fdba74;
+      background: #fff;
+      color: #9a3412;
+      width: 100%;
+      max-width: 200px;
+      border-radius: 999px;
+      margin: 0px;
+      padding: 12px 10px;
+      cursor: pointer;
+      font-weight: 900;
+      transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.package-upgrade-modal .billing-options button.active {
+    background: #ff6500;
+    color: #fff;
+    border-color: #ff6500;
+    box-shadow: 0 10px 24px rgba(255, 101, 0, .22);
+}
+
+.package-upgrade-modal .billing-hint {
+    margin-top: 9px;
+    color: #7c2d12;
+    font-size: .9rem;
+    font-weight: 700;
+}
+
+.package-upgrade-modal .pricing-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.package-upgrade-modal .pricing-card {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    min-height: 100%;
+    padding: 20px;
+    border-radius: 22px;
+    background: #fff;
+    border: 1px solid #fed7aa;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, .08);
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    transition: all 0.3s;
+}
+ .pricing-card:hover{    box-shadow: 0px 0px 5px 1px orange;
+    border: 1px solid orange;}
+    button:hover{
+    
+    background:#ff6500;
+    transform: translateY(-5px);
+    }
+.package-upgrade-modal .pricing-card.featured {
+    border: 2px solid #ff6500;
+    box-shadow: 0 18px 38px rgba(255, 101, 0, .16);
+}
+
+.package-upgrade-modal .badge,
+.package-upgrade-modal .addon-package-badge,
+.package-upgrade-modal .upgrade-route-badge {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: .78rem;
+    font-weight: 900;
+    margin-bottom: 10px;
+}
+
+.package-upgrade-modal .badge,
+.package-upgrade-modal .upgrade-route-badge {
+    background: #ff6500;
+    color: #fff;
+}
+
+.package-upgrade-modal .addon-package-badge {
+    background: #7c2d12;
+    color: #fff;
+}
+
+.package-upgrade-modal .pricing-card h2 {
+    margin: 0 0 14px;
+    color: #273142;
+    font-size: 1.18rem;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.package-upgrade-modal .price {
+    color: #ff6500;
+    font-size: 1.55rem;
+    font-weight: 900;
+    margin-bottom: 4px;
+}
+
+.package-upgrade-modal .price small {
+    color: #667085;
+    font-size: .85rem;
+    font-weight: 700;
+}
+
+.package-upgrade-modal .billing-note,
+.package-upgrade-modal .package-small-title {
+    color: #667085;
+    font-size: .9rem;
+}
+
+.package-upgrade-modal .package-role {
+    margin: 16px 0;
+    padding: 13px;
+    width: 50%;
+    border-radius: 16px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    line-height: 1.45;
+}
+
+.package-upgrade-modal .pricing-card ul {
+    padding-left: 20px;
+    margin: 0 0 18px;
+    color: #4b5563;
+    line-height: 1.45;
+}
+
+.package-upgrade-modal .pricing-card li {
+    margin-bottom: 7px;
+}
+
+.package-upgrade-modal .pricing-card a,
+.package-upgrade-modal .pricing-card button.package-upgrade-action {
+    margin-top: auto;
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 14px;
+    background: #9a3412;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-weight: 900;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.package-extra-users-box {
+    margin: 0 0 22px;
+    padding: 18px;
+    border-radius: 20px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+}
+
+.package-extra-users-box h3 {
+    margin: 0;
+    color: #9a3412;
+}
+
+.package-extra-users-box p {
+    color: #7c2d12;
+    line-height: 1.45;
+}
+.package-extra-users-actions{
+    display: flex;
+}
+.package-extra-users-actions button{
+    
+    width: 35%;
+    background: #ff6500;
+    color: white;
+    font-family: system-ui;
+    font-size: medium;
+    border-radius: 55px;
+    font-weight: bold;
+    padding: 10px;
+
+}
+.package-extra-users-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.package-extra-users-row label {
+    font-weight: 900;
+    color: #7c2d12;
+}
+
+.package-extra-users-row input {
+    width: 92px;
+    border: 1px solid #fdba74;
+    border-radius: 12px;
+    padding: 10px;
+    font-weight: 900;
+}
+
+.package-extra-users-row button {
+    border: none;
+    border-radius: 999px;
+    padding: 11px 15px;
+    background: #ff6500;
+    color: #fff;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.package-extra-users-row button:disabled,
+.package-upgrade-modal button:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.package-downgrade-note {
+    margin: 18px 0 0;
+    padding: 14px 16px;
+    border-radius: 18px;
+    background: #f8fafc;
+    color: #475569;
+    border: 1px solid #e2e8f0;
+    line-height: 1.45;
+}
+
+.package-confirm-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    background: rgba(15, 23, 42, .62);
+}
+
+.package-confirm-box {
+    width: min(560px, calc(100vw - 28px));
+    border-radius: 24px;
+    background: #fff;
+    color: #273142;
+    border: 1px solid #fed7aa;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .34);
+    padding: 24px;
+}
+
+.package-confirm-box h3 {
+    margin: 0 0 12px;
+    color: #ff6500;
+}
+
+.package-confirm-summary {
+    margin: 0 0 16px;
+    padding: 14px;
+    border-radius: 16px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    line-height: 1.55;
+}
+
+.package-confirm-benefits {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    color: #4b5563;
+    line-height: 1.45;
+}
+
+.package-confirm-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.package-confirm-cancel,
+.package-confirm-submit {
+    border: none;
+    border-radius: 999px;
+    padding: 11px 16px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.package-confirm-cancel {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.package-confirm-submit {
+    background: #ff6500;
+    color: #fff;
+}
+
+@media (max-width: 980px) {
+    .package-upgrade-modal .hatos {
+        flex-direction: column;
+    }
+    .package-upgrade-modal-head h2 {
+font-size: smaller};
+.package-upgrade-modal-head div{
+    width: 75% !important;
+}
+.package-extra-users-actions button{
+    width: 100%;
+    margin-top: 10px;
+    font-size: small;
+}
+.package-upgrade-modal .package-role{
+    width: 100%;
+}
+.package-extra-users-box p {
+font-size: small;}
+    .package-upgrade-modal-head{
+        padding-bottom: 0px;
+    }
+    .package-upgrade-modal .billing-switch {
+        flex: 1 1 auto;
+    }
+
+    .package-upgrade-modal .pricing-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+        .package-extra-users-row {
+               align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;
+        justify-content: center;
+    }
+   .package-extra-users-row input, .package-extra-users-row button {width: 25% !important};
+
+}
+
+@media (max-width: 680px) {
+    .package-upgrade-modal {
+        align-items: stretch;
+        padding: 10px;
+    }
+
+    .package-upgrade-modal-box {
+        width: 100%;
+        max-height: 96vh;
+        border-radius: 20px;
+    }
+
+    .package-upgrade-modal-head,
+    .package-upgrade-modal-body {
+        padding: 18px;
+    }
+
+    .package-upgrade-modal .pricing-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+
+    .package-extra-users-row input,
+    .package-extra-users-row button {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}

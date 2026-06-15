@@ -1,261 +1,263 @@
 <!DOCTYPE html>
+
 <html lang="hu">
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Értékek - Regisztráció</title>
-        <link rel="stylesheet" href="../both/both.css">
-        <link rel="stylesheet"  href="/reg/stylereg.css">
-        <link rel="stylesheet" href="/private/main/main.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
-
-<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
-
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
-      integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" 
-      crossorigin="anonymous" referrerpolicy="no-referrer">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Értékek - Regisztráció</title>
+<link href="../both/both.css" rel="stylesheet"/>
+<link href="/public/reg/stylereg.css" rel="stylesheet"/>
+<link href="/private/main/main.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" referrerpolicy="no-referrer" rel="stylesheet"/>
 </head>
 <style>
     
     .navbar {background: #ff7c00a6;
     }
+
+    input[name="csomagKod"]:checked + .reg-package-card {
+        outline: 3px solid #ff6500;
+        box-shadow: 0 0 0 4px rgba(255,101,0,0.13);
+        background: #fff7ed;
+    }
+
 </style>
 <body>
-       <input type="hidden" id="menu-type" value="public">
+    <div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
 
-<div class="hero-bg" aria-hidden="true"></div>
-  <header class="nav">
-    <men id="men"></men>
- </header>
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
+<input id="menu-type" type="hidden" value="public"/>
+<div aria-hidden="true" class="hero-bg"></div>
+<header class="nav">
+<men id="men"></men>
+</header>
 <article style="width: 100%; height: 100%;">
-    <article class="opening" >
-                <div>
-                    <div class="kulso felt">
-                            <div class="belso" id="login">
-                                <div class="szoveg">
-                                    <span id="bejbutt"><span class="gold">B</span>ejelentkezek</span>
-                                    <div id="log">
-                                        <div class="inputs">
-                                            <input type="text" id="fnev" name="fnev" required placeholder="Felhasználónév" autocomplete="username">
-                                        </div>
-                                       <div class="inputs jelszo-wrapper">
-                                            <input type="password" id="pass" name="pass" required placeholder="Jelszó:" autocomplete="current-password">
-                                            <span class="material-symbols-rounded toggle-jelszo">visibility</span>
-                                        </div>
-                                         <div class="lehetosegek">
-                           <select name="temakor" id="temakor" required>
-                                <option value="" disabled selected>Kérem válasszon témakört</option>
-                                <option value="1">Fejlesztő-nevelő oktatás</option>
-                                 <option value="2">Tanulásban akadályozottak</option>
-                                <option value="3">Értelmileg akadályoztatottak</option> 
-                            </select>
-                            <select name="szerepkor" id="szerepkor" required>
-                                <option value="3">Értékelő</option>
-                                 <option value="2">Elemző</option>
-                                <option value="1">Adminisztrátor</option> 
-                            </select>
-                        </div>
-                        <div id="error-message" style="color: whitesmoke; font-family: 'Times New Roman', Times, serif; font-size: x-small; text-align: center;"></div>
-
-                                        <button id="llog">Bejelentkezek</button>
-                                  
-                                        <button id="whbutt">Mi is a jelszavam...?</button>
-                                    </div>
-                                </div>
-                                
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <div class="kulso" >
-                        <div id="regi0"  class="belso belso2">
-                            <div class="szoveg szoveg2"><span class="gold">R</span>egisztrálok</div>
-                        </div>
-                    </div>
-                </div>
-    </article>
-
-    <section class="alap">
-        <div class="al-alap">
-          <article class="kulso regi-shell" id="regi">
-
-    <div class="regi-hero">
-        <div class="regi-hero-mark">
-            <span class="gold">É</span>
-        </div>
-
-        <div class="regi-hero-text">
-            <p class="regi-kicker">ÉRTÉKEK regisztráció</p>
-            <h2>Hozzáférés létrehozása</h2>
-            <p>
+<article class="opening">
+<div>
+<div class="kulso felt">
+<div class="belso" id="login">
+<div class="szoveg">
+<span id="bejbutt"><span class="gold">B</span>ejelentkezek</span>
+<div id="log">
+<div class="inputs">
+<input autocomplete="username" id="fnev" name="fnev" placeholder="Felhasználónév" required="" type="text"/>
+</div>
+<div class="inputs jelszo-wrapper">
+<input autocomplete="current-password" id="pass" name="pass" placeholder="Jelszó:" required="" type="password"/>
+<span class="material-symbols-rounded toggle-jelszo">visibility</span>
+</div>
+<div id="error-message" style="color: whitesmoke; font-family: 'Times New Roman', Times, serif; font-size: x-small; text-align: center;"></div>
+<button id="llog">Bejelentkezek</button>
+<button id="whbutt">Mi is a jelszavam...?</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<div class="kulso">
+<div class="belso belso2" id="regi0">
+<div class="szoveg szoveg2"><span class="gold">R</span>egisztrálok</div>
+</div>
+</div>
+</div>
+</article>
+<section class="alap">
+<div class="al-alap">
+<article class="kulso regi-shell" id="regi">
+<div class="regi-hero">
+<div class="regi-hero-mark">
+<span class="gold">É</span>
+</div>
+<div class="regi-hero-text">
+<p class="regi-kicker">ÉRTÉKEK regisztráció</p>
+<h2>Hozzáférés létrehozása</h2>
+<p>
                 Válassza ki, hogy meglévő intézményi kóddal regisztrál felhasználóként,
-                vagy új intézményi hozzáférést hoz létre.
+                vagy új intézményt regisztrálna.
             </p>
-        </div>
-    </div>
-
-    <div class="choos regi-switch">
-        <legend>Regisztráció típusa</legend>
-
-        <div class="regi-choice-grid">
-            <input type="radio" id="contactChoice1" name="contact" value="felh" />
-            <label for="contactChoice1" class="regi-choice-card">
-                <span class="material-symbols-rounded">person_add</span>
-                <strong>Felhasználói regisztráció</strong>
-                <small>Van intézményi kódom, saját fiókot hozok létre.</small>
-            </label>
-
-            <input type="radio" id="contactChoice2" name="contact" value="ceg" />
-            <label for="contactChoice2" class="regi-choice-card">
-                <span class="material-symbols-rounded">domain_add</span>
-                <strong>Intézményi regisztráció</strong>
-                <small>Új intézményi hozzáférést és regisztrációs kódot kérek.</small>
-            </label>
-        </div>
-    </div>
-
-    <form id="userRegi">
-        <div id="magan" class="regi-form-panel">
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">01</span>
-                    <div>
-                        <legend>Intézményi kód</legend>
-                        <p>Adja meg az e-mailben kapott intézményi regisztrációs kódot.</p>
-                    </div>
-                </div>
-
-                <div id="choicelabel"></div>
-
-                <div id="regcode" class="reg-field wide">
-                    <label for="regmail">Intézményi kód</label>
-                    <input type="text" id="regmail" placeholder="Például: INT123202605">
-                    <div class="err" id="ragmailerr"></div>
-                    <div id="szakmaiuser" class="reg-module-box"></div>
-                </div>
-            </section>
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">02</span>
-                    <div>
-                        <legend>Felhasználói alapadatok</legend>
-                        <p>A belépéshez szükséges adatok és szerepkör megadása.</p>
-                    </div>
-                </div>
-
-                <div class="reg-grid">
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="user">Felhasználónév</label>
-                            <input type="text" id="user" required autocomplete="username">
-                        </div>
-                        <div class="err" id="felerr"></div>
-                    </div>
-
-                    <div class="allabel reg-field password-field">
-                        <div>
-                            <label for="password">Jelszó</label>
-                            <input type="password" id="password" placeholder="min. 8 karakter, kisbetű, nagybetű, szám" required autocomplete="new-password">
-                            <span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
-                        </div>
-                        <div class="err" id="passerr"></div>
-                    </div>
-
-                    <div class="allabel reg-field password-field">
-                        <div>
-                            <label for="pass2">Jelszó megerősítése</label>
-                            <input type="password" id="pass2" required autocomplete="new-password">
-                            <span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
-                        </div>
-                        <div class="err" id="passerr2"></div>
-                    </div>
-                </div>
-
-                <div class="reg-role-area">
-                    <legend>Szerepkör</legend>
-
-                    <div id="roles-wrapper" class="reg-role-grid">
-                        <div class="editbut2 reg-role-card">
-                            <div class="reg-role-radio">
-                                <input type="radio" id="role3" name="szerepkor_reg" value="3" checked>
-                                <label for="role3">Értékelő</label>
-                            </div>
-                            <div class="rolebox">
+</div>
+</div>
+<div class="choos regi-switch">
+<legend>Regisztráció típusa</legend>
+<div class="regi-choice-grid">
+<input id="contactChoice1" name="contact" type="radio" value="felh">
+<label class="regi-choice-card" for="contactChoice1">
+<span class="material-symbols-rounded">person_add</span>
+<strong>Felhasználói regisztráció</strong>
+<small>Van intézményi kódom, saját fiókot szeretnék.</small>
+</label>
+<input id="contactChoice2" name="contact" type="radio" value="ceg">
+<label class="regi-choice-card" for="contactChoice2">
+<span class="material-symbols-rounded">domain_add</span>
+<strong>Intézményi regisztráció</strong>
+<small>Új intézményt regisztrálok.</small>
+</label>
+</input></input></div>
+</div>
+<form id="userRegi">
+<div class="regi-form-panel" id="magan">
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">01</span>
+<div>
+<legend>Intézményi kód</legend>
+<p>Adja meg az e-mailben kapott intézményi regisztrációs kódot.</p>
+</div>
+</div>
+<div id="choicelabel"></div>
+<div class="reg-field wide" id="regcode">
+<label for="regmail">Intézményi kód</label>
+<input id="regmail" placeholder="Például: INT123202605" type="text"/>
+<div class="err" id="ragmailerr"></div>
+<div class="reg-module-box" id="szakmaiuser"></div>
+</div>
+</section>
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">02</span>
+<div>
+<legend>Felhasználói alapadatok</legend>
+<p>A belépéshez szükséges adatok és szerepkör megadása.</p>
+</div>
+</div>
+<div class="reg-grid">
+<div class="allabel reg-field">
+<div>
+<label for="user">Felhasználónév</label>
+<input autocomplete="username" id="user" required="" type="text"/>
+</div>
+<div class="err" id="felerr"></div>
+</div>
+<div class="allabel reg-field password-field">
+<div>
+<label for="password">Jelszó</label>
+<input autocomplete="new-password" id="password" placeholder="min. 8 karakter, kisbetű, nagybetű, szám" required="" type="password"/>
+<span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
+</div>
+<div class="err" id="passerr"></div>
+</div>
+<div class="allabel reg-field password-field">
+<div>
+<label for="pass2">Jelszó megerősítése</label>
+<input autocomplete="new-password" id="pass2" required="" type="password"/>
+<span class="material-symbols-rounded toggle-jelszo elegemvan">visibility</span>
+</div>
+<div class="err" id="passerr2"></div>
+</div>
+</div>
+<div class="reg-role-area">
+<legend>Szerepkör</legend>
+<div class="reg-role-grid" id="roles-wrapper">
+<div class="editbut2 reg-role-card">
+<div class="reg-role-radio">
+<input checked="" id="role3" name="szerepkor_reg" type="radio" value="3"/>
+<label for="role3">Értékelő</label>
+</div>
+<div class="rolebox">
                                 Értékeléseket hozhat létre, oszthat meg kollágáival és elemezheti azok eredményeit.
                             </div>
-                        </div>
-
-                        <div class="editbut2 reg-role-card">
-                            <div class="reg-role-radio">
-                                <input type="radio" id="role2" name="szerepkor_reg" value="2">
-                                <label for="role2">Elemző</label>
-                            </div>
-                            <div class="rolebox">
+</div>
+<div class="editbut2 reg-role-card">
+<div class="reg-role-radio">
+<input id="role2" name="szerepkor_reg" type="radio" value="2"/>
+<label for="role2">Elemző</label>
+</div>
+<div class="rolebox">
                                 Nem hozhat létre értékeléseket, de elemezheti az intézményben lévő összes kész értékelést.
                                 Határidőket oszthat ki és mentorálhat kollégákat. Értékelőként is beléphet.
                             </div>
-                        </div>
-                        <div class="editbut2 reg-role-card">
-    <div class="reg-role-radio">
-        <input type="radio" id="role1" name="szerepkor_reg" value="1">
-        <label for="role1">Feltöltő</label>
-    </div>
-    <div class="rolebox">
+</div>
+<div class="editbut2 reg-role-card">
+<div class="reg-role-radio">
+<input id="role1" name="szerepkor_reg" type="radio" value="1"/>
+<label for="role1">Feltöltő</label>
+</div>
+<div class="rolebox">
         Hozzáfér az értékelői, elemzői és feltöltői felülethez. Szakmai anyagokat, kérdésstruktúrákat és intézményi beállításokat kezelhet.
     </div>
 </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">03</span>
-                    <div>
-                        <legend>Kapcsolattartó adatok</legend>
-                        <p>Az elérhetőségi adatok a fiókhoz kapcsolódnak.</p>
-                    </div>
-                </div>
-
-                <div class="reg-grid">
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="vez">Név</label>
-                            <input type="text" id="vez" required>
-                        </div>
-                        <div class="err" id="vezerr"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="mail">E-mail cím</label>
-                            <input type="email" id="mail" required autocomplete="email">
-                        </div>
-                        <div class="err" id="mailerr"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="tel">Telefonszám</label>
-                            <input type="tel" id="tel" placeholder="+36301234567">
-                        </div>
-                        <div class="err" id="telerr"></div>
-                    </div>
-                </div>
-            </section>
-
-            <div id="kotelezo" class="reg-action-area">
-                <div id="szakmai"></div>
-
-                <div id="szamla">
-                 <!--    <div id="alszamla">
+</div>
+</div>
+</section>
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">03</span>
+<div>
+<legend>Kapcsolattartó adatok</legend>
+<p>Az elérhetőségi adatok a fiókhoz kapcsolódnak.</p>
+</div>
+</div>
+<div class="reg-grid">
+<div class="allabel reg-field">
+<div>
+<label for="vez">Név</label>
+<input id="vez" required="" type="text"/>
+</div>
+<div class="err" id="vezerr"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="mail">E-mail cím</label>
+<input autocomplete="email" id="mail" required="" type="email"/>
+</div>
+<div class="err" id="mailerr"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="tel">Telefonszám</label>
+<input id="tel" placeholder="+36301234567" type="tel"/>
+</div>
+<div class="err" id="telerr"></div>
+</div>
+</div>
+</section>
+<div class="reg-action-area" id="kotelezo">
+<div id="szakmai"></div>
+<div id="szamla">
+<!--    <div id="alszamla">
                         <div>
                             <legend>Számlázási időszak</legend>
                         </div>
@@ -276,237 +278,265 @@
                             </div>
                         </div>
                     </div> -->
-                    <div class="err" id="szamerr"></div>
-                </div>
+<div class="err" id="szamerr"></div>
+</div>
+<div class="reg-submit-row" id="regind">
+<button class="editbut reg-primary-button" id="regMagan">Regisztrálok</button>
+<div class="err" id="eredmenyelem"></div>
+</div>
+</div>
+</div>
+</form>
+<form id="cegesRegi">
+<div class="regi-form-panel" id="ceg">
 
-                <div id="regind" class="reg-submit-row">
-                    <button class="editbut reg-primary-button" id="regMagan">Regisztrálok</button>
-                    <div class="err" id="eredmenyelem"></div>
-                </div>
-            </div>
 
-        </div>
-    </form>
 
-    <form id="cegesRegi">
-        <div id="ceg" class="regi-form-panel">
 
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">01</span>
-                    <div>
-                        <legend>Választott szakmai anyagok</legend>
-                        <p>Válasszon meglévő szakmai anyagot, vagy hozzon létre üres értékelő rendszert.</p>
-                    </div>
-                </div>
 
-                <div id="szakmaiceg" class="reg-module-box"></div>
 
-                <div class="reg-hidden-compat">
-                    <input type="email" id="mailCeg">
-                    <input type="tel" id="telCeg">
-                    <div class="err" id="malilcegerr"></div>
-                    <div class="err" id="telcegerr"></div>
-                </div>
-            </section>
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">02</span>
-                    <div>
-                        <legend>Intézményi alapadatok</legend>
-                        <p>Az intézmény azonosításához és számlázásához szükséges adatok.</p>
-                    </div>
-                </div>
-
-                <div class="reg-grid">
-                    <div class="allabel reg-field wide">
-                        <div>
-                            <label for="int">Intézmény/cég neve</label>
-                            <input type="text" id="int" required>
-                        </div>
-                        <div class="err" id="interr"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="orsz2">Ország</label>
-                            <input type="text" id="orsz2" required>
-                        </div>
-                        <div class="err" id="orrErr2"></div>
-                    </div>
-
-                    <div id="egybe" class="reg-inline-grid">
-                        <div class="allabel reg-field">
-                            <div>
-                                <label for="irsz2">Irányítószám</label>
-                                <input type="number" id="irsz2" required>
-                            </div>
-                            <div class="err" id="irszErr2"></div>
-                        </div>
-
-                        <div class="allabel reg-field">
-                            <div>
-                                <label for="szekhely">Település</label>
-                                <input type="text" id="szekhely" required>
-                            </div>
-                            <div class="err" id="Err"></div>
-                        </div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="cim">Utca, házszám</label>
-                            <input type="text" id="cim" required>
-                        </div>
-                        <div class="err" id="cimerr"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="adosz">Adószám</label>
-                            <input type="text" id="adosz" placeholder="12345678-9-10" required>
-                        </div>
-                        <div class="err" id="aderr"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">03</span>
-                    <div>
-                        <legend>Kapcsolattartó adatai</legend>
-                        <p>Ide érkezik a regisztrációs visszaigazolás és az intézményi kód.</p>
-                    </div>
-                </div>
-
-                <div class="reg-grid">
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="vez2">Kapcsolattartó</label>
-                            <input type="text" id="vez2" required>
-                        </div>
-                        <div class="err" id="vez2err"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="mail2">E-mail cím</label>
-                            <input type="email" id="mail2" autocomplete="email">
-                        </div>
-                        <div class="err" id="mailceg2err"></div>
-                    </div>
-
-                    <div class="allabel reg-field">
-                        <div>
-                            <label for="tel2">Telefonszám</label>
-                            <input type="tel" id="tel2" placeholder="+36301234567">
-                        </div>
-                        <div class="err" id="telceg2err"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="reg-card">
-                <div class="reg-section-head">
-                    <span class="reg-step">04</span>
-                    <div>
-                        <legend>Regisztrációs alapadatok</legend>
-                        <p>A tesztidőszakban megadható felhasználói keret</p>
-                    </div>
-                </div>
-
-                <div id="kotelezo" class="reg-action-area">
-                    <div id="szamla2">
-                        <!-- <div id="alszamla2">
-                            <div class="reg-period-grid">
-                                <div class="editbut reg-period-card">
-                                    <input type="radio" id="ihoi" value="1" name="elofizI">
-                                    <label for="ihoi">Havi<span> - x0000 forint/1 hó/fő</span></label>
-                                </div>
-
-                                <div class="editbut reg-period-card">
-                                    <input type="radio" id="vihoi" value="6" name="elofizI">
-                                    <label for="vihoi">Fél éves<span> - x0000 forint/6 hó/fő</span></label>
-                                </div>
-
-                                <div class="editbut reg-period-card">
-                                    <input type="radio" id="x12hoi" value="12" name="elofizI">
-                                    <label for="x12hoi">Éves<span> - x0000 forint/12 hó/fő</span></label>
-                                </div>
-                            </div>
-                        </div> -->
-
-                        <div class="allabel reg-field wide reg-fo-field">
-                            <div>
-                                <label for="fo">Felhasználók száma</label>
-                                <input type="text" id="fo" placeholder="Hány fő használja majd a programot?" required>
-                            </div>
-                            <div class="err" id="foerr"></div>
-                        </div>
-
-                        <div class="err" id="szam2err"></div>
-                    </div>
-
-                    <div id="regind2" class="reg-submit-row">
-                        <button class="editbut reg-primary-button" id="regCeg">Regisztrálok</button>
-                        <p id="kalkulacioEredmeny" class="errorlog2"></p>
-                    </div>
-                </div>
-            </section>
-
-        </div>
-    </form>
-
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">01</span>
+<div>
+<legend>Választott szakmai anyag</legend>
+<p>Válasszon meglévő szakmai anyagot, vagy hozzon létre üres értékelő rendszert.</p>
+</div>
+</div>
+<div class="reg-module-box" id="szakmaiceg"></div>
+<div class="reg-hidden-compat">
+<input id="mailCeg" type="email"/>
+<input id="telCeg" type="tel"/>
+<div class="err" id="malilcegerr"></div>
+<div class="err" id="telcegerr"></div>
+</div>
+</section>
+<section class="reg-card" id="csomagValasztasPanel">
+<div class="reg-section-head">
+<span class="reg-step">02</span>
+<div>
+<legend>Választott csomag, ár és felhasználói keret</legend>
+<p>Tudjon meg többet az elérhető csomagokról vagy szerepkörökről az <a href="./araink.html">Áraink</a> oldalon</p>
+</div>
+</div>
+<div class="reg-package-grid" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:12px; margin-top:12px;">
+<input id="csomagDemo" name="csomagKod" style="display:none;" type="radio" value="demo"/>
+<label class="reg-choice-card reg-package-card" for="csomagDemo" style="cursor:pointer;">
+<span class="material-symbols-rounded">science</span>
+<strong>Demo</strong>
+<small> Ingyenes 3 napos próba, a szakmai anyag egy részével.</small>
+</label>
+<input id="csomagStart" name="csomagKod" style="display:none;" type="radio" value="start"/>
+<label class="reg-choice-card reg-package-card" for="csomagStart" style="cursor:pointer;">
+<span class="material-symbols-rounded">school</span>
+<strong>Start</strong>
+<small>2 értékelő felhasználó. Teljes szakmai anyag</small>
+</label>
+<input id="csomagPro" name="csomagKod" style="display:none;" type="radio" value="pro"/>
+<label class="reg-choice-card reg-package-card" for="csomagPro" style="cursor:pointer;">
+<span class="material-symbols-rounded">workspace_premium</span>
+<strong>Pro</strong>
+<small>3 értékelő + 2 elemző. Audit, határidő, csoportos elemzés és értékelés megosztás.</small>
+</label>
+<input id="csomagSajat" name="csomagKod" style="display:none;" type="radio" value="sajat"/>
+<label class="reg-choice-card reg-package-card" for="csomagSajat" style="cursor:pointer;">
+<span class="material-symbols-rounded">build</span>
+<strong>Saját rendszer</strong>
+<small>3 feltöltő. Saját szakmai anyag / saját kérdésrendszer építése.</small>
+</label>
+</div>
+<div class="err" id="csomagKodErr" style="margin-top:10px; color:#c2410c; font-weight:bold;"></div>
+<div class="reg-action-area" id="kotelezo" style="margin-top:16px;">
+<div id="szamla2">
+<div class="reg-pricing-panel" style="padding:16px; border:1px solid #ffd6a0; border-radius:14px; background:#fffaf3; color:#333; line-height:1.55;">
+<div id="basePackageInfo" style="font-weight:bold; margin-bottom:12px;">Válasszon csomagot az ár megjelenítéséhez.</div>
+<legend>Árkalkulátor</legend>
+<div class="reg-period-grid">
+<div class="editbut reg-period-card">
+<input checked="" id="fizHavi" name="fizetesiIdoszak" type="radio" value="havi"/>
+<label for="fizHavi">Havi</label>
+</div>
+<div class="editbut reg-period-card">
+<input id="fizNegyedeves" name="fizetesiIdoszak" type="radio" value="negyedeves"/>
+<label for="fizNegyedeves">Negyedéves</label>
+</div>
+<div class="editbut reg-period-card">
+<input id="fizEves" name="fizetesiIdoszak" type="radio" value="eves"/>
+<label for="fizEves">Éves</label>
+</div>
+</div>
+<div class="allabel reg-field wide reg-fo-field reg-fo-field2">
+    <div>
+    <div class="felhasznalos">
+    <label for="extraFelhasznalo">Plusz felhasználók száma az alapcsomagon felül</label>
+    <input id="extraFelhasznalo" inputmode="numeric" max="20" min="0" step="1" style="max-width:140px;" type="number" value="0"/>
+    </div>
+    <div class="err" id="foerr"></div>
+    </div>
+    <div id="priceSummary">
+    </div>
+<div class="err" id="szam2err"></div>
+</div>
+</div>
+</div>
+</div>
+<p style="margin-top:10px; font-size:0.9em; color:#555; line-height:1.45;">
+            Sikeres regisztráció után hamarosan jelentkezünk a szükséges dokumentumokkal!
+                </p>
+</section>
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">03</span>
+<div>
+<legend>Intézményi adatok</legend>
+<p>Az intézmény azonosításához és számlázásához szükséges adatok.</p>
+</div>
+</div>
+<div class="reg-grid">
+<div class="allabel reg-field wide">
+<div>
+<label for="int">Intézmény/cég neve</label>
+<input id="int" required="" type="text"/>
+</div>
+<div class="err" id="interr"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="orsz2">Ország</label>
+<input id="orsz2" required="" type="text"/>
+</div>
+<div class="err" id="orrErr2"></div>
+</div>
+<div class="reg-inline-grid" id="egybe">
+<div class="allabel reg-field">
+<div>
+<label for="irsz2">Irányítószám</label>
+<input id="irsz2" required="" type="number"/>
+</div>
+<div class="err" id="irszErr2"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="szekhely">Település</label>
+<input id="szekhely" required="" type="text"/>
+</div>
+<div class="err" id="Err"></div>
+</div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="cim">Utca, házszám</label>
+<input id="cim" required="" type="text"/>
+</div>
+<div class="err" id="cimerr"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="adosz">Adószám</label>
+<input id="adosz" placeholder="12345678-9-10" required="" type="text"/>
+</div>
+<div class="err" id="aderr"></div>
+</div>
+</div>
+</section>
+<section class="reg-card">
+<div class="reg-section-head">
+<span class="reg-step">04</span>
+<div>
+<legend>Kapcsolattartói adatok</legend>
+<p>Ide érkezik a regisztrációs visszaigazolás és az intézményi kód.</p>
+</div>
+</div>
+<div class="reg-grid">
+<div class="allabel reg-field">
+<div>
+<label for="vez2">Kapcsolattartó</label>
+<input id="vez2" required="" type="text"/>
+</div>
+<div class="err" id="vez2err"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="mail2">E-mail cím</label>
+<input autocomplete="email" id="mail2" type="email"/>
+</div>
+<div class="err" id="mailceg2err"></div>
+</div>
+<div class="allabel reg-field">
+<div>
+<label for="tel2">Telefonszám</label>
+<input id="tel2" placeholder="+36301234567" type="tel"/>
+</div>
+<div class="err" id="telceg2err"></div>
+</div>
+</div>
+</section>
+<section class="reg-ai-consent-card" style="margin-top:18px; padding:16px; border:1px solid #ffcc80; border-radius:14px; background:#fff8ef; line-height:1.55;">
+<label for="regAiEnabled" style="display:flex; gap:12px; align-items:flex-start; cursor:pointer; color:#333;">
+<input id="regAiEnabled" style="margin-top:5px; transform:scale(1.15);" type="checkbox"/>
+<span>
+<strong>Engedélyezem az MI-alapú szövegezési segédfunkciót az intézmény számára.</strong><br/>
+<small>
+                                    Bekapcsolás esetén a rendszer név és közvetlen azonosító nélkül, kizárólag a kérdőívből származó strukturált szakmai adatokat továbbít külső MI-szolgáltató felé szövegezési segítség céljából.
+                                    Szabad szöveges megjegyzések nem kerülnek továbbításra.
+                                    Az MI által generált szöveg nem minősül szakvéleménynek, annak ellenőrzése és felhasználása az intézményi felhasználó felelőssége.
+                                    A funkció később a feltöltő modul A.I. fülén kikapcsolható vagy engedélyezhető, illetve választott szakmai anyag esetén kifejezett, írásban megfogalmazott kérés esetén be/ki kapcsolgaható.
+                                </small>
+</span>
+</label>
+</section>
+<div class="reg-submit-row" id="regind2">
+<button class="editbut reg-primary-button" id="regCeg">Regisztrálok</button>
+<p class="errorlog2" id="kalkulacioEredmeny"></p>
+</div>
+</div>
+</form>
 </article>
-
-            <article class="kulso" id="segedlet"> 
-                <div>
-                    <div class="csomagok0">
-                        <div class="csomagI" id="csomagi0">
-                            <div class="cscim">Hóközi csomag</div>
-                            <div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
-                                        <li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
-                                        <li>Kislétszámú csoportok értékelésére illetve jellemzésére</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta</div>
-                        </div>
-                        <div class="csomagI" id="csomagii0">
-                            <div class="cscim">Fél éves csomag</div>
-                            <div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Arany középút kedvezménnyel</li>
-                                        <li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
-                                        <li>Több feflhasználóval könnyebb</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta</div>
-                        </div>
-                        <div class="csomagI" id="csomagiii0">
-                            <div class="cscim">Éves csomag</div>
-                            <div class="csalcim">Ajánjuk nagy létszámú csoportoknak, ahol heti vagy havi szintű az adminisztráció</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
-                                        <li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
-                                        <li>Akiknek fontos az egész éves rendelkezésre állás</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta</div>
-                        </div>
-                    </div>
-                </div>
-
-               <!--  <div>
+<article class="kulso" id="segedlet">
+<div>
+<div class="csomagok0">
+<div class="csomagI" id="csomagi0">
+<div class="cscim">Hóközi csomag</div>
+<div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
+<li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
+<li>Kislétszámú csoportok értékelésére illetve jellemzésére</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta</div>
+</div>
+<div class="csomagI" id="csomagii0">
+<div class="cscim">Fél éves csomag</div>
+<div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Arany középút kedvezménnyel</li>
+<li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
+<li>Több feflhasználóval könnyebb</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta</div>
+</div>
+<div class="csomagI" id="csomagiii0">
+<div class="cscim">Éves csomag</div>
+<div class="csalcim">Ajánjuk nagy létszámú csoportoknak, ahol heti vagy havi szintű az adminisztráció</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
+<li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
+<li>Akiknek fontos az egész éves rendelkezésre állás</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta</div>
+</div>
+</div>
+</div>
+<!--  <div>
                     <p style="text-align: center;"><span>S</span>egédlet</p>
 
                     <div>
@@ -531,53 +561,52 @@
                         Amennyiben bankukhoz 5 napon belül megérkezik a megbeszélt összeg, fiókja aktívvá és értékelésre készre válik. 
                     </div>
                 </div> -->
-            </article>
-            
-            <article class="kulso" id="segedlet2"> 
-                <div>
-                    <div class="csomagok">
-                        <div class="csomagI" id="csomagi">
-                            <div class="cscim">Hóközi csomag</div>
-                            <div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
-                                        <li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
-                                        <li>Kislétszámú csoportok értékeésére illetve jellemzésére</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta, személyenként</div>
-                        </div>
-                        <div class="csomagI" id="csomagii">
-                            <div class="cscim">Fél éves csomag</div>
-                            <div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Arany középút kedvezménnyel</li>
-                                        <li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
-                                        <li>Több feflhasználóval könnyebb</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta, személyenként</div>
-                        </div>
-                        <div class="csomagI" id="csomagiii">
-                            <div class="cscim">Éves csomag</div>
-                            <div class="csalcim">Ajánjuk nagy létszámű intézményeknek, ahol heti vagy havi szintű az adminisztráció</div>
-                                <div class="kinek">
-                                    <div class="kinekcim">Kiknek ajánjuk?</div>
-                                    <ul>
-                                        <li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
-                                        <li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
-                                        <li>Akiknek fontos az egész éves rendelkezésre állás</li>
-                                    </ul>
-                                </div>
-                            <div class="ar">x0000 Forint havonta, személyenként</div>
-                        </div>
-                    </div>
-                </div>
-               <!--  <div>
+</article>
+<article class="kulso" id="segedlet2">
+<div>
+<div class="csomagok">
+<div class="csomagI" id="csomagi">
+<div class="cscim">Hóközi csomag</div>
+<div class="csalcim">Idális pár alkalmas értékelésre, melyek melyek megkönnyítik a féléves illetve évzáró adminisztráció elkészültét</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Akik ismerkednének a programmal, de nem szeretnének komolyabb költségekbe bonyolódni hosszú távon.</li>
+<li>Akiknek jellemzően egy két időszakban vannak nagyobb adminisztrációs terheik</li>
+<li>Kislétszámú csoportok értékeésére illetve jellemzésére</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta, személyenként</div>
+</div>
+<div class="csomagI" id="csomagii">
+<div class="cscim">Fél éves csomag</div>
+<div class="csalcim">Ha közepes vagy nagyobb létszámmal működnek és nagyobb összefüggő időszakon keresztűl kívánnak dolgozni</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Arany középút kedvezménnyel</li>
+<li>Akiknek jellemzően egy adott összefüggő időszakban vannak nagyobb adminisztrációs terheik</li>
+<li>Több feflhasználóval könnyebb</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta, személyenként</div>
+</div>
+<div class="csomagI" id="csomagiii">
+<div class="cscim">Éves csomag</div>
+<div class="csalcim">Ajánjuk nagy létszámű intézményeknek, ahol heti vagy havi szintű az adminisztráció</div>
+<div class="kinek">
+<div class="kinekcim">Kiknek ajánjuk?</div>
+<ul>
+<li>Akik gyakori értékeléseiket szeretnék pillanatok alatt elkészíteni </li>
+<li>Ha pénztárca barát megoldást keresnek, hosszú távra</li>
+<li>Akiknek fontos az egész éves rendelkezésre állás</li>
+</ul>
+</div>
+<div class="ar">x0000 Forint havonta, személyenként</div>
+</div>
+</div>
+</div>
+<!--  <div>
                     <p style="text-align: center;"><span>S</span>egédlet</p>
 
                     <div>
@@ -604,75 +633,70 @@
                     </div>
 
                 </div> -->
-            </article>
-        </div>
-    </section>
-<section class="landing-features" id="landingFeatures">
-        <h2 class="features-title">Miért pont <span class="gold">É</span>rtékek?</h2>
-        
-        <div class="cards-container">
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">vpn_key</span>
-        </div>
-        <h3>1. Intézményi Kód</h3>
-        <p>A csatlakozás zártkörű. A regisztráció megkezdéséhez csupán arra az egyedi azonosító kódra lesz szüksége, amelyet az intézményétől kapott e-mailben.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">person_add</span>
-        </div>
-        <h3>2. Egyszerű Fiókalkotás</h3>
-        <p>Adja meg alapvető adatait és egy biztonságos jelszót. Felesleges körök nincsenek, a folyamat letisztult és mindössze egyetlen percet vesz igénybe.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">assignment_ind</span>
-        </div>
-        <h3>3. Szerepkör Választása</h3>
-        <p>Döntse el, hogy Értékelőként (aki létrehozza az anyagokat) vagy Elemzőként csatlakozik. Így garantáljuk, hogy pontosan azt a felületet kapja, amire a munkájához szüksége van.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">security</span>
-        </div>
-        <h3>4. Biztonságos Belépés</h3>
-        <p>Fiókja elkészülte után felhasználónevével és jelszavával bármikor biztonságosan beléphet. Rendszerünk a legszigorúbb adatvédelmi elvek (GDPR) szerint védi az Ön adatait.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">menu_book</span>
-        </div>
-        <h3>5. Szakmai Anyagok</h3>
-        <p>Már a bejelentkezés pillanatában kiválaszthatja, hogy melyik intézményi modullal (pl. Fejlesztő-nevelő oktatás) kíván dolgozni az adott munkamenetben.</p>
-    </div>
-
-    <div class="feature-card">
-        <div class="card-icon">
-            <span class="material-symbols-outlined">speed</span>
-        </div>
-        <h3>6. Azonnali Munkakezdés</h3>
-        <p>Sikeres belépés után azonnal a műszerfalán (dashboard) találja magát. Nincs várakozás: egy kattintással indíthatja is az új értékelések elkészítését vagy elemzését!</p>
-    </div>
+</article>
 </div>
-    </section>
-    <article class="kulso" id="regifin">
-        <div>
-                <p><span>R</span>egisztrációja sikeres volt!</p>
-                A további tudnivalókat <span>(fiók hitelesítés, fizetési információk)</span> elküldtük a megadott e-mail címére. <br><br>
+</section>
+<section class="landing-features" id="landingFeatures">
+<h2 class="features-title">Miért pont <span class="gold">É</span>rtékek?</h2>
+<div class="cards-container">
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">vpn_key</span>
+</div>
+<h3>1. Intézményi Kód</h3>
+<p>A csatlakozás zártkörű. A regisztráció megkezdéséhez csupán arra az egyedi azonosító kódra lesz szüksége, amelyet az intézményétől kapott e-mailben.</p>
+</div>
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">person_add</span>
+</div>
+<h3>2. Egyszerű Fiókalkotás</h3>
+<p>Adja meg alapvető adatait és egy biztonságos jelszót. Felesleges körök nincsenek, a folyamat letisztult és mindössze egyetlen percet vesz igénybe.</p>
+</div>
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">assignment_ind</span>
+</div>
+<h3>3. Szerepkör Választása</h3>
+<p>Döntse el, hogy Értékelőként (aki létrehozza az anyagokat) vagy Elemzőként csatlakozik. Így garantáljuk, hogy pontosan azt a felületet kapja, amire a munkájához szüksége van.</p>
+</div>
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">security</span>
+</div>
+<h3>4. Biztonságos Belépés</h3>
+<p>Fiókja elkészülte után felhasználónevével és jelszavával bármikor biztonságosan beléphet. Rendszerünk a legszigorúbb adatvédelmi elvek (GDPR) szerint védi az Ön adatait.</p>
+</div>
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">menu_book</span>
+</div>
+<h3>5. Szakmai Anyagok</h3>
+<p>Már a bejelentkezés pillanatában kiválaszthatja, hogy melyik intézményi modullal (pl. Fejlesztő-nevelő oktatás) kíván dolgozni az adott munkamenetben.</p>
+</div>
+<div class="feature-card">
+<div class="card-icon">
+<span class="material-symbols-outlined">speed</span>
+</div>
+<h3>6. Azonnali Munkakezdés</h3>
+<p>Sikeres belépés után azonnal a műszerfalán (dashboard) találja magát. Nincs várakozás: egy kattintással indíthatja is az új értékelések elkészítését vagy elemzését!</p>
+</div>
+</div>
+</section>
+<article class="kulso" id="regifin">
+<div>
+<p><span>R</span>egisztrációja sikeres volt!</p>
+                A további tudnivalókat <span>(fiók hitelesítés, fizetési információk)</span> elküldtük a megadott e-mail címére. <br/><br/>
                 Amennyiben intézményként/cégként regisztrált, feltétlenül mentse el a benne szereplő regisztrációs kódot, mivel ezzel a kóddal tudnak kollegái/alklmazottai regisztrálni.
                 Bármilyen kérdés esetén keressen minket bizalommal az <a href="" style="color: #ff7c00;">info@ertekek.com</a> címen.
                <p> <span style="color: black; font-size: 80%;"> <span style="color: #ff7c00;">K</span>öszönjük a bizalmát!</span></p>
-        </div>
-    </article>
-    <div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+</div>
 </article>
-    <script type="module" src="/both/both.js"></script>    
-    <script src="../both/policy.js"></script>
-    <script type="module" src="/reg/regifo.js"></script>
+<div id="error-message" style="display: none; color: red; margin-top: 10px;"></div>
+</article>
+<script src="/both/csrfFetch.js"></script>
+<script src="/both/both.js" type="module"></script>
+<script src="../both/policy.js"></script>
+<script src="/reg/regifo.js" type="module"></script>
 </body>
 </html>

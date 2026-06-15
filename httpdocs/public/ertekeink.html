@@ -1,0 +1,414 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Értékek - Szolgáltatásaink</title>
+
+  <link href="/both/both.css" rel="stylesheet">
+  <link href="/public/reg/stylereg.css" rel="stylesheet">
+  <link href="/private/main/main.css" rel="stylesheet">
+  <link href="szolgaltatas_demo.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" referrerpolicy="no-referrer">
+  <link crossorigin="anonymous" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat+Subrayada:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<style>.active{width: fit-content !important;}
+
+</style>
+</head>
+<body>
+<div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
+  <input id="menu-type" type="hidden" value="public">
+  <div aria-hidden="true" class="hero-bg"></div>
+  <header class="nav">
+    <men id="men"></men>
+  </header>
+
+  <main class="service-page">
+    <article class="service-shell">
+      <section class="service-hero">
+        <div class="service-hero-mark">É</div>
+        <div>
+          <p class="service-kicker">ÉRTÉKEK szolgáltatásaink</p>
+          <h1>ÉRTÉKEK - Nem csak egy kérdőív</h1>
+    
+        </div>
+      </section>
+
+      <section class="service-section" style="margin-bottom: 0px; padding-bottom: 0px;">
+        <div class="section-head">
+          <span class="section-step">01</span>
+          <div>
+            <h2>Miért pont az Értékek?</h2>
+            <p>
+              Haladjunk értékről értékre egy átlátható rendszerben: kérdésekkel, pontszámítással, megosztással, AI-szövegezéssel,
+            csoportos statisztikával és elemzői áttekintéssel.   Nem egyszerű űrlapkitöltő. Szerepkörök, megosztás, eredmények és statisztikák egyetlen munkafolyamatba kapcsolódnak össze         </p>
+          </div>
+        </div>
+
+    
+
+        
+      </section>
+
+      <section class="service-section" id="szolgaltatasValodiDemo" style="padding-bottom: 0px;">
+        <div class="section-head">
+          <span class="section-step">02</span>
+          <div>
+            <h2>Működés</h2>
+         
+          </div>
+        </div>
+
+        <div class="service-live-demo">
+          <article class="question-demo-card">
+            <h3><span class="material-symbols-rounded">tune</span>Kattintson az igen-nem oldalakra, hogy lássa a változást</h3>
+         
+            <div id="szolgaltatasDemoKerdesek" class="service-real-question-list"></div>
+           
+          </article>
+
+          <article class="question-demo-card service-live-chart-card">
+            <h3><span class="material-symbols-rounded">bar_chart</span>Lépésről lépésre</h3>
+         
+<div class="tartaly">
+  <div class="diagtart">
+            <div class="service-chart-actions" aria-label="Diagramtípus választás">
+              <button type="button" class="active" data-demo-chart-type="polarArea">Polar</button>
+              <button type="button" data-demo-chart-type="bar">Oszlop</button>
+              <button type="button" data-demo-chart-type="doughnut">Kör</button>
+            </div>
+
+            <div class="service-chart-wrap">
+              <canvas id="szolgaltatasDemoChart" aria-label="Értékek demó diagram"></canvas>
+            </div></div>
+
+          <div class="service-pdf-paper" aria-ar="polite">
+                <div class="service-pdf-head">
+                  <div>
+                    <strong>Készülő értékelés</strong>
+                  </div>
+                  <span class="material-symbols-rounded">picture_as_pdf</span>
+                </div>
+                <div id="szolgaltatasPdfPreview" class="service-pdf-preview"></div>
+              </div>
+          </article>
+        </div></div>
+      </section>
+         
+
+      <section class="service-section service-feature-summary">
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3><span class="material-symbols-rounded">dynamic_form</span>Rugalmas kérdésrendszer</h3>
+            <p>Több kérdésfajtával, ágakkal, alkérdésekkel és pontozási logikával dolgozik.</p>
+            <ul>
+              <li>Különböző kérdésfajták</li>
+              <li>szöveges megjegyzések</li>
+              <li>maximalizált értékszámítás</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <h3><span class="material-symbols-rounded">account_tree</span>Hierarchikus szakmai anyag</h3>
+            <p>A tartalom nem ömlesztve jelenik meg, hanem szakmai szerkezetben.</p>
+            <ul>
+              <li>Szabad kategóriák</li>
+              <li>Kérdések és alkérdések</li>
+              <li>Egyedi pontrendszer</li>
+            </ul>
+          </article>
+
+          <article class="feature-card">
+            <h3><span class="material-symbols-rounded">groups</span>Intézményi működés</h3>
+            <p>Nem csak egyéni munkára alkalmas: szerepkörökkel és intézményi áttekintéssel bővíthető.</p>
+            <ul>
+              <li>értékelő</li>
+              <li>elemző</li>
+              <li>feltöltő</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+       <article class="analyst-card" style="margin: 0vh 7vh;">
+            <h3><span class="material-symbols-rounded">supervisor_account</span>Szerepkörök, Értékelés, Alkotás</h3>
+            <div class="role-ladder">
+              <div class="role-ladder-item"><strong>Értékelő</strong>Értékel, letölt, megoszt</div>
+              <div class="role-ladder-item"><strong>Elemző</strong>Értékelőként is beléphet + Elemezheti az intézmény eredményeit.</div>
+              <div class="role-ladder-item"><strong>Feltöltő</strong>Értékelőként és elemzőknt is beléphet,saját rendszert és kérdésstruktúrát is kezel</div>
+            </div>
+          </article>
+
+      <section class="service-section">
+        <div class="section-head">
+          <span class="section-step">03</span>
+          <div>
+            <h2>Megosztás és közös munka</h2>
+            <p>
+              Célja, hogy a munka ne egyetlen felhasználó terhe legyen. Megosztott folyamatok a hatékonyságért!
+            </p>
+          </div>
+        </div>
+
+        <div class="workflow-grid">
+          <article class="workflow-card">
+            <h3><span class="material-symbols-rounded">share</span>Mi az a megosztás?</h3>
+            <p>Az értékelő munkáját elérhetővé teheti más kollégák számára.</p>
+            <ul>
+              <li>közös hozzáférés ugyanahhoz a munkához</li>
+              <li>átláthatóbb szakmai folyamat</li>
+              <li>kevesebb fájlküldözgetés és verziókeveredés</li>
+            </ul>
+          </article>
+
+          <article class="workflow-card">
+            <h3><span class="material-symbols-rounded">sync</span>Mire jó?</h3>
+            <p>Hasznos, ha több szakember dolgozik ugyanazon szakmai terület értékelésén.</p>
+            <ul>
+              <li>kollégák támogatása</li>
+              <li>vezetői vagy mentori rálátás</li>
+              <li>közös szakmai dokumentáció</li>
+            </ul>
+          </article>
+
+          <article class="workflow-card">
+            <h3><span class="material-symbols-rounded">lock_open</span>Nem minden csomagban azonos</h3>
+            <p>Keresse a megosztás funkciót START csomagunkban.</p>
+            <ul>
+              <li>backend oldali jogosultságvédelem</li>
+              <li>csomag alapján engedélyezés</li>
+              <li>intézményhez kötött működés</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="share-flow">
+          <div class="share-step"><span class="material-symbols-rounded">edit_note</span>Értékelés</div>
+          <div class="share-step"><span class="material-symbols-rounded">ios_share</span>Megosztás</div>
+          <div class="share-step"><span class="material-symbols-rounded">groups</span>Közös munka</div>
+          <div class="share-step"><span class="material-symbols-rounded">analytics</span>Elemzés</div>
+        </div>
+      </section>
+
+      <section class="service-section">
+        <div class="section-head">
+          <span class="section-step">04</span>
+          <div>
+            <h2>Csoportszintű értékelések</h2>
+            <p>
+             Nézze meg a különböző értékelések közötti különbséget. Azonnali, látványos, hatékony.
+            </p>
+          </div>
+        </div>
+
+        <div class="stat-grid service-group-stat-grid">
+        
+
+          <article class="stat-card group-radar-card">
+            <h3><span class="material-symbols-rounded">radar</span>Csoportos összehasonlítás</h3>
+            <p>Jelöljön ki egy kész értékelést. Minden kijelölés új rétegként kerül a digrammra.</p>
+
+
+            <div class="group-radar-layout">
+              <div class="group-radar-chart-wrap">
+                <canvas id="szolgaltatasGroupRadar" aria-label="Csoportszintű radar diagram"></canvas>
+              </div>
+            <div id="groupEvaluationTiles" class="group-evaluation-tiles" aria-label="Mintaértékelések kijelölése"></div>
+
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="service-section">
+        <div class="section-head">
+          <span class="section-step">05</span>
+          <div>
+            <h2>Mit tud az AI?</h2>
+            <p>
+              Az AI nem dönt és nem szakvéleményt ad, az a szakmeberek dolga.
+              Szövegezési segédfunkció.
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-grid">
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">auto_awesome</span>Jellemzésvázlat</h3>
+            <p>A szakmai értékelés válaszai alapján összefüggő szöveget készít.</p>
+            <ul>
+              <li>kiemeli az erősségeket</li>
+              <li>összefoglalja a fejlesztendő területeket</li>
+              <li>segíti az adminisztratív szövegezést</li>
+            </ul>
+            <div class="ai-output">
+              <strong>Minta:</strong> A kitöltés alapján a tanuló több területen önállóan dolgozik, ugyanakkor a feladatkezdés és a tartós figyelem támogatást igényelhet.
+            </div>
+          </article>
+
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">tips_and_updates</span>Javaslatok</h3>
+            <p>Az AI 4–5 gyakorlati javaslatot is tud adni, amelyet a szakember átnézhet, módosíthat vagy elvethet.</p>
+            <ul>
+              <li>fejlesztési irányok</li>
+              <li>támogatási ötletek</li>
+              <li>kommunikációs és szervezési javaslatok</li>
+            </ul>
+            <div class="ai-output">
+              <strong>Fontos:</strong> a generált szöveg mindig ellenőrzendő, és nem helyettesíti a szakember döntését.
+            </div>
+          </article>
+
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">shield</span>Kontrollált működés</h3>
+            <p>Az intézmény dönthet arról, engedélyezi-e az MI-alapú szövegezési segédet.</p>
+            <ul>
+              <li>intézményi engedélyezés</li>
+              <li>csomagfüggő hozzáférés</li>
+              <li>név és közvetlen azonosító nélküli szakmai adatlogika</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="service-section">
+        <div class="section-head">
+          <span class="section-step">06</span>
+          <div>
+            <h2>Elemző modul</h2>
+            <p>
+              Az elemző modul a Pro szint intézményi rálátása: nem egy értékelő saját munkáját nézi, hanem az intézményi folyamatot.
+            </p>
+          </div>
+        </div>
+
+        <div class="analyst-grid">
+          <article class="analyst-card">
+            <h3><span class="material-symbols-rounded">manage_search</span>Intézményi áttekintés</h3>
+            <p>Az elemző nem csak egy értékelést lát, hanem több kolléga kész vagy folyamatban lévő munkáját is áttekintheti.</p>
+            <ul>
+              <li>értékelések szakmai követése</li>
+              <li>állapotok és határidők figyelése</li>
+              <li>csoportos kijelölés statisztikára</li>
+            </ul>
+          </article>
+
+          <article class="analyst-card">
+            <h3><span class="material-symbols-rounded">assignment_turned_in</span>Audit és határidő</h3>
+            <p>A modul segítheti a munkaszervezést: határidő, visszajelzés, mentorálás, ellenőrzés.</p>
+            <ul>
+              <li>határidők kiosztása</li>
+              <li>kollégák támogatása</li>
+              <li>szakmai visszacsatolás</li>
+              <li>ellenőrzési pontok</li>
+            </ul>
+          </article>
+
+         
+        </div>
+      </section>
+            <section class="service-section">
+        <div class="section-head">
+          <span class="section-step">07</span>
+          <div>
+            <h2>Feltöltés</h2>
+            <p>
+             Nem csak meglévő szakmai anyagaink vannak! Ha van saját ötlete, elképzelése, saját szakmai anyaga teremtsen velünk értékeket! 
+            </p>
+          </div>
+        </div>
+
+        <div class="ai-grid">
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">auto_awesome</span>Rugalmasság</h3>
+            <p>5 szintmélység</p>
+            <ul>
+              <li>Fő és alkategóriák</li>
+              <li>Témák</li>
+              <li>Kérdések és alkérdések</li>
+            </ul>
+            <div class="ai-output">
+              <strong>Példa:</strong> Hozzon létre egy főkategóriát, mely további bontásokat is tartalmazhat.
+            </div>
+          </article>
+
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">tips_and_updates</span>Könnyed alkotás</h3>
+            <p>Nem muszáj 5 szintre lebontani a szakmai anyagát. Az ÉRTÉKEK illeszkedik bármely szakmai anyaghoz!</p>
+            <ul>
+              <li>Főkategóriák kérdésekkel</li>
+              <li>Főkategóriák - alkategóriákkal - kérdésekkel</li>
+              <li>Főkategóriák - alkategóriákkal - azok témáival azon belül: kérdésekkel</li>
+            </ul>
+            <div class="ai-output">
+              <strong>Azonnali tesztelés:</strong> A kérdések hozzáadása pillanatok alatt megtörténik. Pontokkal, grafikonokkal, eredményekkel.
+            </div>
+          </article>
+
+          <article class="ai-card">
+            <h3><span class="material-symbols-rounded">shield</span>Kontrollált működés</h3>
+            <p>Saját szakmai anyagába kedve szerint értékelhet, elemezhet, tölhet fel</p>
+            <ul>
+              <li>Hozzáférés mindhárom szerepkörhöz</li>
+              <li>Könnyű átjelentkezés</li>
+              <li>Azonnali teszt és pontszámító kalkulátor</li>
+            </ul>
+            <div class="ai-output">
+              <strong>Ha elakad segítünk!</strong> Gyors kapcsolatfelvétel, útmutató oldalak, videós segédanyag
+            </div>
+          </article>
+        </div>
+      </section>
+
+    </article>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="szolgaltatas_demo.js"></script>
+  <script src="/both/csrfFetch.js"></script>
+  <script type="module" src="/both/both.js"></script>
+  <script src="/both/policy.js"></script>
+</body>
+</html>

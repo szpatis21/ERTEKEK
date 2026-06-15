@@ -1,46 +1,225 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Általános Felhasználási Feltételek - ÉRTÉKEK</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 40px auto; padding: 20px; }
-        h1 { color: #ff7c00; }
-        h2 { border-bottom: 2px solid #ff7c00; padding-bottom: 5px; margin-top: 30px; }
-        p, li { margin-bottom: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Általános Szerződési Feltételek – ÉRTÉKEK</title>
+  <meta name="description" content="Az ÉRTÉKEK rendszer szolgáltatási, pilot-, előfizetési, szakmai modul-, MI- és felelősségi feltételei." />
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" referrerpolicy="no-referrer">
+     <link rel="stylesheet" href="../both/navmenu.css">
+  <style>
+      body    {flex-direction: column !important; } h1{color: white;} .top{width: 100%;}
+
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+</style>
 </head>
+         <input type="hidden" id="menu-type" value="public">
+<men id="men"></men>  
+
 <body>
+  <div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
 
- <h1>Általános Felhasználási Feltételek (ÁFF)</h1>
-    <p><strong>Hatályos: 2026. [Hónap] [Nap]-tól visszavonásig</strong></p>
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
 
-    <h2>1. A Szolgáltató (Üzemeltető) adatai</h2>
-    <p>A rendszert jelenleg magánszemélyként, fejlesztési és tesztelési fázisban üzemeltetem.</p>
-    <ul>
-        <li><strong>Név:</strong> Szalai Péter (magánszemély)</li>
-        <li><strong>Lakcím:</strong> 7632. Pécs, Varsány u. 18.</li>
-        <li><strong>Adóazonosító jel:</strong> 8454962646</li>
-        <li><strong>E-mail cím:</strong> szpatis21@gmail.com</li>
-        <li><strong>Telefonszám:</strong> +36 30 178 4272</li>
-    </ul>
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
 
-    <h2>2. A Szolgáltatás leírása és az Ingyenesség</h2>
-    <p>2.1. Az ÉRTÉKEK platform egy online, zárt rendszerű értékelő és felmérés-készítő szoftver (a továbbiakban: Szolgáltatás). A Szolgáltatás lehetővé teszi a regisztrált Intézmények és felhasználók számára értékelések elvégzését és PDF riportok generálását.</p>
-    <p>2.2. <strong>A Szolgáltatás jelenleg szakmai egyeztetés alatt, tesztüzemben működik, és használata teljesen díjmentes.</strong> A Szolgáltató a használatért semmilyen formában nem kér és nem fogad el pénzügyi ellenszolgáltatást.</p>
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
 
-    <h2>3. Regisztráció és Korlátozások (Tesztidőszak)</h2>
-    <p>3.1. Az erőforrások optimális elosztása érdekében a rendszer használata egy <strong>15 napos tesztidőszakhoz és alapértelmezetten 2 darab értékelés elkészítéséhez</strong> van kötve.</p>
-    <p>3.2. A felhasználóknak lehetőségük van a rendszeren belül egy önkéntes, anonim minőségbiztosítási kérdőív kitöltésére. A kérdőív beküldését követően a rendszer automatikusan további 15 nappal, és plusz 2 értékelés létrehozásának lehetőségével bővíti a hozzáférést (így összesen 4 értékelés készíthető).</p>
-    <p>3.3. A megadott limitek (idő vagy darabszám) elérése után új értékelések létrehozására nincs lehetőség, azonban a korábbi adatok megtekinthetők és letölthetők maradnak.</p>
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
 
-    <h2>4. Felelősségkorlátozás</h2>
-    <p>4.1. Mivel a Szolgáltatás ingyenes és tesztfázisban van, a Szolgáltató a szoftvert "adott állapotában" (as is) nyújtja. A Szolgáltató mindent megtesz a biztonságos és folyamatos működésért, de kifejezetten kizárja a felelősségét az esetleges adatvesztésből, rendszerleállásból vagy szoftverhibából fakadó közvetlen vagy közvetett károkért.</p>
-    <p>4.2. A rendszerben létrehozott értékelések, feltöltött adatok tartalmáért és jogszerűségéért (beleértve az érintetti hozzájárulások beszerzését) kizárólag az azokat létrehozó Intézmény/Felhasználó felelős.</p>
+        setTimeout(() => {
+            loader.classList.add('eltunik');
 
-    <h2>5. A Felhasználási jog megszűnése</h2>
-    <p>5.1. A Felhasználó bármikor jogosult a fiókja törlését kérni. A Szolgáltató fenntartja a jogot, hogy a rendszert – előzetes értesítés mellett – bármikor leállítsa, vagy a tesztfázist lezárja.</p>
-    <p>5.2. Jogsértő vagy a rendszert túlterhelő használat esetén a Szolgáltató azonnali hatállyal felfüggesztheti a Felhasználó hozzáférését.</p>
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
+  <header class="top">
+    <div class="wrap">
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+<!--       <span class="meta">v1.0 – 2026. május 22.</span>
+ -->      <h1>Általános Szerződési Feltételek – ÉRTÉKEK</h1>
+      <p class="lead">Az ÉRTÉKEK rendszer szolgáltatási, pilot-, előfizetési, szakmai modul-, MI- és felelősségi feltételei.</p>
+      <nav aria-label="Oldalon belüli navigáció"><a href="#szolgaltatas">Szolgáltatás</a><a href="#aktivacio">Aktiválás</a><a href="#sni">SNI/SHF modul</a><a href="#mi">MI</a><a href="#adatvedelem">Adatvédelem</a></nav>
+    </div>
+  </header>
+  <main class="wrap">
+
+<section id="szolgaltato" class="card">
+  <h2>1. Szolgáltató adatai</h2>
+  
+<ul>
+  <li><strong>Szolgáltató / üzemeltető:</strong> Szalai Péter</li>
+  <li><strong>Vállalkozási forma, nyilvántartási szám, adószám:</strong> vállalkozás indításakor kitöltendő</li>
+  <li><strong>Székhely / levelezési cím:</strong> vállalkozási adatok szerint kitöltendő</li>
+  <li><strong>E-mail:</strong> szpatis21@gmail.com</li>
+  <li><strong>Telefon:</strong> +36 30 178 4272</li>
+  <li><strong>Szolgáltatás neve:</strong> ÉRTÉKEK</li>
+  <li><strong>Domain:</strong> ertekek.com</li>
+</ul>
+
+  <p class="note">A vállalkozói adatok, adószám, nyilvántartási szám, székhely és számlázási adatok a vállalkozás tényleges elindításakor pontosítandók. A publikus oldalon csak ellenőrzött, aktuális adat szerepeljen.</p>
+</section>
+
+<section id="fogalmak" class="card">
+  <h2>2. Fogalmak</h2>
+  <ul>
+    <li><strong>Szolgáltatás:</strong> az ÉRTÉKEK online értékelő, kérdőív-, riport- és statisztikai rendszer.</li>
+    <li><strong>Ügyfél / Adatkezelő:</strong> az intézmény, szervezet, szakember vagy jogi személy, amely a rendszert saját szakmai céljára használja, és meghatározza az értékelési adatkezelés célját, jogalapját és érintetti körét.</li>
+    <li><strong>Felhasználó:</strong> az ügyfél által létrehozott vagy jóváhagyott személy, aki a rendszerbe belép.</li>
+    <li><strong>Szakmai modul:</strong> előre elkészített vagy ügyfél által feltöltött kérdésstruktúra, értékelési logika, kategóriarendszer vagy szakmai anyag.</li>
+    <li><strong>MI-funkció:</strong> opcionális, külső MI API-ra épülő szövegezési segédfunkció, amely nem automatikus döntés és nem szakvélemény.</li>
+  </ul>
+</section>
+
+<section id="szolgaltatas" class="card">
+  <h2>3. A Szolgáltatás leírása</h2>
+  <p>Az ÉRTÉKEK olyan moduláris online rendszer, amelyben az ügyfél saját szakmai anyagot vagy a Szolgáltató által biztosított szakmai modult használhat értékelések, bemeneti-kimeneti mérések, fejlesztési dokumentációt támogató riportok, grafikonok és PDF-kimenetek készítésére.</p>
+  <div class="grid">
+    <article class="card span6"><span class="pill">Használati mód</span><h3>Üres rendszer</h3><p>Az ügyfél saját kérdésstruktúrát, kategóriákat és értékelési logikát tölt fel.</p></article>
+    <article class="card span6"><span class="pill">Használati mód</span><h3>Ügyfél saját szakmai anyaga</h3><p>Az ügyfél saját intézményi vagy szakmai anyagát ülteti át a rendszerbe.</p></article>
+    <article class="card span6"><span class="pill">Használati mód</span><h3>Szolgáltató szakmai modulja</h3><p>A Szolgáltató előre elkészített szakmai kérdésbankot vagy modult biztosíthat.</p></article>
+    <article class="card span6"><span class="pill">Használati mód</span><h3>Vegyes használat</h3><p>A Szolgáltató modulja és az ügyfél saját anyaga együtt is használható.</p></article>
+  </div>
+  <p class="note">A Szolgáltató által biztosított szakmai modul használata önmagában nem jelenti azt, hogy a Szolgáltató határozza meg az adatkezelés célját, jogalapját, érintetti körét vagy megőrzési idejét. Ezekről az ügyfél mint Adatkezelő dönt.</p>
+</section>
+
+<section id="aktivacio" class="card">
+  <h2>4. Hozzáférés, aktiválás és ügyfélfelvétel</h2>
+  <p>A rendszer használata zárt, regisztrációhoz és aktivált fiókhoz kötött. Fizetős vagy intézményi használat esetén a hozzáférés aktiválásának feltétele lehet:</p>
+  <ul>
+    <li>az ÁSZF elfogadása;</li>
+    <li>adatfeldolgozói szerződés és mellékleteinek elfogadása;</li>
+    <li>az adatkezelői döntési és jóváhagyási lap kitöltése vagy jóváhagyása;</li>
+    <li>az alfeldolgozói lista elfogadása;</li>
+    <li>az aktuális díj megfizetése vagy külön pilotmegállapodás;</li>
+    <li>kapcsolattartó és jogosultsági felelős megadása.</li>
+  </ul>
+  <p>Teszt-, bemutató- vagy pilot-hozzáférés külön feltételekkel, korlátozott időre és korlátozott funkciókkal biztosítható.</p>
+</section>
+
+<section id="dijak" class="card">
+  <h2>5. Díjazás, számlázás és fizetés</h2>
+  <p>A Szolgáltatás lehet ingyenes teszt, díjazott pilot, havi/éves előfizetés, intézményi licenc vagy külön szerződés szerinti bevezetési szolgáltatás. A konkrét díjat, számlázási módot, fizetési határidőt és hozzáférési időtartamot az egyedi ajánlat vagy szerződés tartalmazza.</p>
+  <ul>
+    <li>A díj meg nem fizetése esetén a Szolgáltató jogosult a hozzáférést korlátozni vagy felfüggeszteni.</li>
+    <li>A korábban létrehozott adatok exportálásának módját az adatfeldolgozói szerződés, az adatkezelői utasítás és a technikai lehetőségek határozzák meg.</li>
+    <li>Fizetős szolgáltatás indítása előtt a vállalkozói, számlázási és adózási adatokat pontosítani kell.</li>
+  </ul>
+</section>
+
+<section id="felhasznalas" class="card">
+  <h2>6. Rendeltetésszerű használat</h2>
+  <p>A rendszer rendeltetése strukturált szakmai értékelési adatok, kérdésbankok, válaszok, százalékos eredmények, riportok és opcionális MI-alapú szövegtervezetek kezelése.</p>
+  <p>Nem rendeltetésszerű használat különösen:</p>
+  <ul>
+    <li>teljes egészségügyi dokumentációk, diagnózisok, pszichológiai szakvélemények vagy hivatalos iratok tömeges feltöltése a rendszer rendeltetésén túl;</li>
+    <li>szükségtelen személyes vagy különleges adatok rögzítése;</li>
+    <li>más intézményhez vagy felhasználóhoz tartozó adatok jogosulatlan elérése vagy megkísérlése;</li>
+    <li>a rendszer túlterhelése, visszafejtése, automatizált támadása vagy biztonsági kontrolljainak megkerülése;</li>
+    <li>az MI-kimenet önálló szakvéleményként, diagnózisként vagy automatikus döntésként való felhasználása.</li>
+  </ul>
+</section>
+
+<section id="sni" class="card">
+  <h2>7. Érzékeny szakmai modulok, SNI / SHF használat</h2>
+  <p>Egyes szakmai modulok – különösen a sajátos nevelési igényű, súlyosan-halmozottan fogyatékos, halmozottan sérült vagy fejlesztési támogatást igénylő tanulók kompetenciaértékelésére szolgáló modulok – fokozottan védendő adatkört érinthetnek.</p>
+  <p>Az ilyen modulok használata előtt az ügyfél köteles saját intézményi rendjében megvizsgálni és dokumentálni:</p>
+  <ul>
+    <li>a GDPR 6. cikk szerinti jogalapot;</li>
+    <li>különleges adatok esetén a GDPR 9. cikk szerinti feltételt;</li>
+    <li>az érintetti és törvényes képviselői tájékoztatást;</li>
+    <li>a hozzáférési rendet;</li>
+    <li>az MI-funkció engedélyezhetőségét;</li>
+    <li>a DPIA vagy DPIA-előszűrés szükségességét.</li>
+  </ul>
+  <p class="note">Köznevelési / gyógypedagógiai intézményi használatnál az alap fejlesztési dokumentáció és kompetenciamérés jellemzően közfeladat vagy jogi kötelezettség teljesítéséhez kapcsolódhat, de a konkrét jogalapot mindig az ügyfél rögzíti saját adatvédelmi dokumentációjában.</p>
+</section>
+
+<section id="mi" class="card">
+  <h2>8. Opcionális MI-alapú szövegezési segédfunkció</h2>
+  <p>Az MI-funkció nem kötelező és nem automatikus. Célja az értékelési adatokból olvasható, szerkeszthető szövegtervezet készítése. Nem diagnózis, nem szakvélemény, nem automatikus döntéshozatal, és nem helyettesíti a szakember ellenőrzését.</p>
+  <p>A rendszer jelenlegi működési elve szerint az egyéni MI-generálásnál a frontend nem küld személynevet, szabad szöveges megjegyzést vagy teljes nyers válaszcsomagot az MI-szolgáltató felé. A frontend a backend felé az értékelés azonosítóját és a kért MI-típust továbbítja; a prompt-adatot a backend állítja elő jogosultságellenőrzés után, szűrt, kontrollált, adatminimalizált formában.</p>
+  <ul>
+    <li>Nem cél név, e-mail, telefonszám vagy közvetlen azonosító továbbítása.</li>
+    <li>Nem cél szabad szöveges mezők, auditüzenetek vagy belső naplóadatok továbbítása.</li>
+    <li>Csoportos generálásnál résztvevő-sorszámok és aggregált százalékos/statisztikai adatok használhatók.</li>
+    <li>Érzékeny moduloknál az MI-funkció csak külön intézményi döntés alapján javasolt.</li>
+  </ul>
+</section>
+
+<section id="rendelkezesreallas" class="card">
+  <h2>9. Rendelkezésre állás, támogatás és karbantartás</h2>
+  <p>A Szolgáltató törekszik a rendszer folyamatos és biztonságos működtetésére, de külön írásbeli SLA hiányában nem vállal garantált 0–24 órás rendelkezésre állást. Hibabejelentés e-mailben tehető.</p>
+  <ul>
+    <li>Karbantartás, frissítés vagy biztonsági beavatkozás miatt a rendszer átmenetileg nem érhető el.</li>
+    <li>A Szolgáltató nem vállal felelősséget a tárhelyszolgáltató, internetkapcsolat, böngésző, klienseszköz vagy külső API hibájáért, kivéve a jogszabályban ki nem zárható eseteket.</li>
+    <li>Az ügyfél köteles a felhasználói jogosultságokat naprakészen tartani és a kilépő munkatársak hozzáférését megszüntetni.</li>
+  </ul>
+</section>
+
+<section id="szellemi" class="card">
+  <h2>10. Szellemi tulajdon és szakmai tartalom</h2>
+  <p>Az ÉRTÉKEK rendszer forráskódja, felületi kialakítása, adatbázis-logikája, dokumentációja és a Szolgáltató által biztosított szakmai modulok a Szolgáltató vagy jogosult közreműködők szellemi tulajdonát képezik, eltérő írásbeli megállapodás hiányában.</p>
+  <p>Az ügyfél saját szakmai anyagának szerzői és felhasználási joga az ügyfelet illeti, de az ügyfél szavatolja, hogy annak rendszerbe feltöltésére és használatára jogosult.</p>
+  <p>A Szolgáltatás használata nem jelent forráskódhoz, adatbázishoz, márkanévhez vagy szakmai modulhoz kapcsolódó vagyoni jogátruházást. Teljes jogátadás, forráskódátadás vagy kizárólagos licenc csak külön írásbeli szerződéssel történhet.</p>
+</section>
+
+<section id="adatvedelem" class="card">
+  <h2>11. Adatvédelem</h2>
+  <p>Az ügyfél által a rendszerben kezelt értékelési adatok tekintetében az ügyfél minősül adatkezelőnek. A Szolgáltató a rendszer technikai üzemeltetése során adatfeldolgozóként jár el, külön adatfeldolgozói szerződés alapján.</p>
+  <p>A Szolgáltató saját célú adatkezeléseiről – például kapcsolattartás, regisztráció, számlázás, hibabejelentés, biztonsági naplózás – az <a href="adatkezeles.html">Adatkezelési tájékoztató</a> rendelkezik.</p>
+</section>
+
+<section id="megszunes" class="card">
+  <h2>12. Megszűnés, felfüggesztés, törlés és export</h2>
+  <p>Az ügyfél a szerződés vagy előfizetés megszűnésekor kérheti az adatok exportját, törlését vagy visszaadását a vonatkozó adatfeldolgozói szerződés szerint. A biztonsági mentésekből való végleges kivezetés a tárhelyszolgáltató és mentési ciklus technikai rendje szerint történik.</p>
+  <p>A Szolgáltató jogosult a hozzáférést felfüggeszteni, ha az ügyfél:</p>
+  <ul>
+    <li>nem fizeti meg az esedékes díjat;</li>
+    <li>súlyosan megsérti az ÁSZF-et vagy az adatvédelmi feltételeket;</li>
+    <li>jogosulatlan hozzáférést, túlterhelést vagy visszaélést kísérel meg;</li>
+    <li>nyilvánvalóan jogellenes vagy a rendszer rendeltetésével ellentétes utasítást ad.</li>
+  </ul>
+</section>
+
+<section id="zaras" class="card">
+  <h2>13. Irányadó jog, módosítás, jogvita</h2>
+  <p>A jelen ÁSZF-re a magyar jog irányadó. A Szolgáltató jogosult az ÁSZF módosítására, különösen jogszabályváltozás, technikai változás, új funkció, díjazási modell vagy adatvédelmi dokumentáció frissítése esetén. A lényeges módosításról az ügyfeleket megfelelő módon tájékoztatni kell.</p>
+  <p>Vitás kérdésekben a felek elsődlegesen egyeztetéssel törekednek a rendezésre. Az ügyvéd által véglegesített szerződés eltérő rendelkezést tartalmazhat.</p>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+    </div>
+  </footer>
 </body>
+  <script type="module" src="/both/both.js"></script>
+
 </html>

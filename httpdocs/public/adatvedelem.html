@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adatvédelmi központ – ÉRTÉKEK</title>
+  <meta name="description" content="Közérthető áttekintés az ÉRTÉKEK új adatvédelmi szabványáról: szerepek, szakmai modulok, SNI/SHF használat, MI-adatminimalizálás és technikai kontrollok." />
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" referrerpolicy="no-referrer">
+     <link rel="stylesheet" href="../both/navmenu.css">
+
+
+
+ <style>
+  body    {flex-direction: column !important; } h1{color: white;} .top{width: 100%;}
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+</style>
+
+</head>
+<body><div id="ertekek-loader">
+    <div id="ertekek-loader-box">
+        <div id="ertekek-loader-frame"></div>
+        <div id="ertekek-loader-inner">
+            <div class="loader-mark"><span>É</span></div>
+<!--             <div class="loader-subtitle">Betöltés...</div>
+ -->        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const MIN_IDO = 1000;
+    const MAX_IDO = 5000;
+    const indulas = Date.now();
+    let eltuntetesElindult = false;
+
+    function loaderEltuntetese() {
+        if (eltuntetesElindult) return;
+        eltuntetesElindult = true;
+
+        const loader = document.getElementById('ertekek-loader');
+        if (!loader) return;
+
+        const eltelt = Date.now() - indulas;
+        const varakozas = Math.max(0, MIN_IDO - eltelt);
+
+        setTimeout(() => {
+            loader.classList.add('eltunik');
+
+            setTimeout(() => {
+                loader.remove();
+            }, 650);
+        }, varakozas);
+    }
+
+    window.addEventListener('load', loaderEltuntetese);
+    setTimeout(loaderEltuntetese, MAX_IDO);
+})();
+</script>
+
+         <input type="hidden" id="menu-type" value="public">
+<men id="men"></men>  
+
+  <header class="top">
+
+    <div class="wrap">
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+<!--       <span class="meta">v1.0 – 2026. május 22.</span>
+ -->      <h1>Adatvédelmi központ – ÉRTÉKEK</h1>
+      <p class="lead">Közérthető áttekintés az ÉRTÉKEK új adatvédelmi szabványáról: szerepek, szakmai modulok, SNI/SHF használat, MI-adatminimalizálás és technikai kontrollok.</p>
+      <nav aria-label="Oldalon belüli navigáció"><a href="#szerepek">Szerepek</a><a href="#modok">Modulok</a><a href="#sni">SNI/SHF</a><a href="#mi">MI</a><a href="#biztonsag">Biztonság</a><a href="#dokumentumok">Dokumentumok</a></nav>
+    </div>
+  </header>
+  <main class="wrap">
+
+<section id="osszefoglalo" class="card ok">
+  <h2>Rövid összefoglaló</h2>
+  <p>Az ÉRTÉKEK zárt, moduláris, online szakmai értékelő rendszer. Intézmények és szakemberek saját vagy előre biztosított kérdésstruktúrákkal értékeléseket készíthetnek, amelyekből a rendszer statisztikát, grafikonokat, PDF-riportot és opcionálisan MI-alapú szövegtervezetet állíthat elő.</p>
+  <p>Az adatvédelmi szabvány lényege: egyértelmű szerepelhatárolás, intézményi döntési felelősség, adatfeldolgozói szerződés, alfeldolgozói lista, érzékeny modulokra vonatkozó külön döntési pontok, technikai adatminimalizálás és kóddal igazolható MI-korlátok.</p>
+</section>
+
+<section id="szerepek" class="card">
+  <h2>1. Szerepek</h2>
+  <div class="grid">
+    <article class="card span4"><span class="pill">Adatkezelő</span><h3>Intézmény / szakmai ügyfél</h3><p>Ő dönti el, kiket értékel, milyen célból, milyen jogalapon, milyen kérdésstruktúrával, milyen megőrzési idővel és engedélyezi-e az MI-funkciót.</p></article>
+    <article class="card span4"><span class="pill">Adatfeldolgozó</span><h3>ÉRTÉKEK Szolgáltató</h3><p>A rendszer technikai működtetését, jogosultságkezelést, tárolást, riportot, PDF-exportot, naplózást és opcionális MI-kapcsolatot biztosít.</p></article>
+    <article class="card span4"><span class="pill">Felhasználó</span><h3>Intézményi munkatárs</h3><p>A saját intézménye által engedélyezett szerepkörben és modulban használja a rendszert.</p></article>
+  </div>
+</section>
+
+<section id="modok" class="card">
+  <h2>2. Szakmai tartalmi modell</h2>
+  <p>Az ÉRTÉKEK többféleképpen használható:</p>
+  <ul>
+    <li>üres rendszerként, ahol az ügyfél tölti fel a saját szakmai anyagát;</li>
+    <li>az ügyfél saját kérdésstruktúrájával;</li>
+    <li>a Szolgáltató által biztosított előre elkészített szakmai modullal;</li>
+    <li>vegyes konstrukcióban.</li>
+  </ul>
+  <p class="note">A szakmai modul biztosítása nem jelenti azt, hogy a Szolgáltató dönt az intézményi adatkezelés céljáról vagy jogalapjáról. A szakmai tartalom jogszerű intézményi alkalmazhatóságát az Adatkezelő rögzíti.</p>
+</section>
+
+<section id="sni" class="card danger">
+  <h2>3. SNI / SHF / halmozottan sérült tanulói modulok</h2>
+  <p>A súlyosan-halmozottan fogyatékos, halmozottan sérült, sajátos nevelési igényű vagy fejlesztési támogatást igénylő tanulók értékelése fokozottan védendő adatokat érinthet. Az ilyen modulok használata előtt az intézménynek írásban el kell döntenie:</p>
+  <ul>
+    <li>mi a GDPR 6. cikk szerinti jogalap;</li>
+    <li>érint-e különleges adatot, és ha igen, mi a GDPR 9. cikk szerinti feltétel;</li>
+    <li>hogyan történik az érintetti / törvényes képviselői tájékoztatás;</li>
+    <li>ki férhet hozzá az adatokhoz;</li>
+    <li>használható-e az MI-funkció;</li>
+    <li>szükséges-e DPIA vagy DPIA-előszűrés;</li>
+    <li>mennyi a kitöltések, auditok, AI-szövegek és naplók megőrzési ideje.</li>
+  </ul>
+</section>
+
+<section id="mi" class="card">
+  <h2>4. MI-funkció új adatvédelmi szabványa</h2>
+  <p>Az MI-funkció opcionális szövegezési segédeszköz. Nem automatikus döntéshozatal, nem szakvélemény és nem diagnózis.</p>
+  <div class="grid">
+    <article class="card span6"><h3>Ami nem cél, hogy kimenjen</h3><ul><li>név, e-mail, telefonszám, közvetlen azonosító;</li><li>szabad szöveges megjegyzés;</li><li>teljes DOM-szöveg vagy nyers frontend válaszcsomag;</li><li>auditüzenet vagy belső naplóadat;</li><li>IP-cím és user agent a prompt részeként.</li></ul></article>
+    <article class="card span6"><h3>Ami a működéshez szükséges lehet</h3><ul><li>kontrollált kérdőívállítás;</li><li>kategória, alkategória, altéma;</li><li>válaszhoz kapcsolódó érték/százalék;</li><li>statisztikai összesítés;</li><li>csoportos módban résztvevő-sorszám.</li></ul></article>
+  </div>
+  <p class="note">Az egyéni MI-generálásnál a frontend csak az értékelés azonosítóját és az MI-típust adja át a backendnek. A külső MI-szolgáltató felé küldhető ténycsomagot a backend állítja össze jogosultságellenőrzés és szűrés után.</p>
+</section>
+
+<section id="biztonsag" class="card">
+  <h2>5. Technikai és szervezési intézkedések</h2>
+  <ul>
+    <li>HTTPS kapcsolat.</li>
+    <li>Session-alapú bejelentkezés.</li>
+    <li>HttpOnly süti; production környezetben Secure attribútum, SameSite=Lax.</li>
+    <li>CSRF-token az állapotmódosító műveleteknél.</li>
+    <li>Backend oldali bejelentkezés-, szerepkör-, intézmény-, modul- és objektumszintű jogosultság-ellenőrzés.</li>
+    <li>Belépési, jelszó-visszaállítási és egyes MI-végpontok próbálkozáskorlátozása.</li>
+    <li>Hash-elt jelszavak és hash-elt reset tokenek.</li>
+    <li>Titkosított névmező / titkosított azonosító adattárolási logika.</li>
+    <li>Adattakarékos aktivitási naplózás.</li>
+    <li>Privát frontend állományok bejelentkezéshez kötött útvonalak mögött.</li>
+  </ul>
+</section>
+
+<section id="dokumentumok" class="card">
+  <h2>6. Kapcsolódó dokumentumok</h2>
+  <div class="grid">
+    <article class="card span6"><h3><a href="afsz.html">Általános Szerződési Feltételek</a></h3><p>Szolgáltatás, díjazás, pilot, hozzáférés, felelősségi határok, szakmai modulok, MI és megszűnés.</p></article>
+    <article class="card span6"><h3><a href="adatkezeles.html">Adatkezelési tájékoztató</a></h3><p>Saját adatkezelések, intézményi adatkezelői szerep, MI-adatminimalizálás, külső szolgáltatók, sütik és jogok.</p></article>
+    <article class="card span6"><h3>Adatfeldolgozói szerződés + TOM</h3><p>Intézményi ügyfelekkel külön elfogadandó dokumentum, alfeldolgozói listával és döntési mellékletekkel.</p></article>
+    <article class="card span6"><h3>Adatkezelői döntési lap</h3><p>Az ügyfél intézmény ebben rögzíti a jogalapot, különleges adat feltételt, MI-döntést, megőrzési időket és DPIA-álláspontot.</p></article>
+  </div>
+</section>
+
+<section id="aktivacio" class="card">
+  <h2>7. Éles ügyfélaktiválási minimum</h2>
+  <ol>
+    <li>ÁSZF elfogadása.</li>
+    <li>Adatfeldolgozói szerződés és TOM elfogadása.</li>
+    <li>Alfeldolgozói lista elfogadása.</li>
+    <li>Adatkezelői döntési lap jóváhagyása.</li>
+    <li>MI-funkció modulonkénti engedélyezése vagy tiltása.</li>
+    <li>Kapcsolattartó és jogosultsági felelős kijelölése.</li>
+    <li>Díjfizetés vagy pilotmegállapodás teljesítése.</li>
+  </ol>
+</section>
+
+  </main>
+  <footer class="footer">
+    <div class="wrap">
+    </div>
+  </footer>
+</body>
+  <script type="module" src="/both/both.js"></script>
+
+</html>

@@ -42,25 +42,26 @@ const gyik = document.querySelector("#gyik");
 
 if (lapozo) {
   lapozo.addEventListener('click', (e) => {
-    if (e.target.classList.contains('grap') || e.target.classList.contains('sta') || e.target.classList.contains('gyik'))  {
-      // Aktiv osztály váltása.
-      [...lapozo.children].forEach(child => child.classList.remove('aktiv'));
-      e.target.classList.add('aktiv');
+    const targetButton = e.target.closest('.grap, .sta, .gyik');
+    if (!targetButton || !lapozo.contains(targetButton)) return;
 
-      // Megjelenítés logika
-      if (e.target.classList.contains('grap')) {
-        if(maininf) maininf.style.display = 'flex';
-        if(osszesitett) osszesitett.style.display = 'none';
-        if(gyik) gyik.style.display = "none";
-      } else if (e.target.classList.contains('gyik')) {
-        if(maininf) maininf.style.display = 'none';
-        if(osszesitett) osszesitett.style.display = 'none';
-        if(gyik) gyik.style.display = "flex";
-      } else if (e.target.classList.contains('sta')) {
-        if(maininf) maininf.style.display = 'none';
-        if(osszesitett) osszesitett.style.display = 'flex';
-        if(gyik) gyik.style.display = "none";
-      }
+    // Aktiv osztály váltása.
+    [...lapozo.children].forEach(child => child.classList.remove('aktiv'));
+    targetButton.classList.add('aktiv');
+
+    // Megjelenítés logika
+    if (targetButton.classList.contains('grap')) {
+      if (maininf) maininf.style.display = 'flex';
+      if (osszesitett) osszesitett.style.display = 'none';
+      if (gyik) gyik.style.display = 'none';
+    } else if (targetButton.classList.contains('gyik')) {
+      if (maininf) maininf.style.display = 'none';
+      if (osszesitett) osszesitett.style.display = 'none';
+      if (gyik) gyik.style.display = 'flex';
+    } else if (targetButton.classList.contains('sta')) {
+      if (maininf) maininf.style.display = 'none';
+      if (osszesitett) osszesitett.style.display = 'flex';
+      if (gyik) gyik.style.display = 'none';
     }
   });
 }
@@ -87,12 +88,16 @@ const userLoaded = (async () => {
       intezmeny_nev: data.intnev
     });
 
-    // Opcionális DOM-frissítés
+    // Opcionális DOM-frissítés - XSS-safe
     const sajtnevElem = document.querySelector('#sajatnev');
-    if (sajtnevElem) sajtnevElem.innerHTML = "&nbsp;" + data.username;
+    if (sajtnevElem) {
+      sajtnevElem.textContent = `\u00A0${data.username || ''}`;
+    }
 
     const holvagyElem = document.querySelector('.holvagyok');
-    if (holvagyElem) holvagyElem.innerHTML = data.modulLeiras;
+    if (holvagyElem) {
+      holvagyElem.textContent = data.modulLeiras || '';
+    }
 
     return userState;
   } catch (err) {

@@ -6,16 +6,14 @@ const felbukkano3 = document.querySelector("#felbukkano3");
 const felbukkano2 = document.querySelector("#felbukkano2");
 const lapozo = document.getElementById('lapok');
 const loadingOverlay = document.getElementById('loading-overlay');
-
+import { escapeHTML } from '/both/safeDom.js';
 import { showAlert, customConfirm} from "/both/alert.js"
 
 const ujinek4 = document.querySelector("#ujinek4");
 
-let currentModulId = null;
 
 // MÓDOSÍTÁS: A függvény mostantól paraméterként várja az adatokat, és AZONNAL nyit
-export function initMegosztas(kitoltesId, kitoltesNev, modulId, vizsgaltId, { fullname, intezmeny_id }) {
-    
+export function initMegosztas(kitoltesId, kitoltesNev, vizsgaltId, { fullname }) {    
     // Kilépés gomb kezelése (elég egyszer definiálni, vagy ellenőrizni)
     const kilep4 = document.querySelector("#kilep4");
     if (kilep4 && !kilep4.dataset.bound) {
@@ -61,15 +59,13 @@ export function initMegosztas(kitoltesId, kitoltesNev, modulId, vizsgaltId, { fu
     selectElement.innerHTML = '<option value="" disabled selected> Válasszon kollegát</option>';
 
     // Modul ID és Vizsgált ID mentése
-    currentModulId = modulId;
-    kuldendo.dataset.modulId = currentModulId;
     kuldendo.dataset.undo = vizsgaltId;
     
     // Felhasználók betöltése (már megosztottak)
     loadSharedUsers();
 
     // Új megosztható felhasználók lekérése
-    fetch(`/get-users-by-institution?intezmeny_id=${intezmeny_id}&modul_id=${modulId}`)
+fetch('/get-users-by-institution')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -102,7 +98,7 @@ async function loadSharedUsers() {
     kuldendo.querySelectorAll(".newDiv").forEach(div => div.remove());
 
     try {
-        const response = await fetch(`/get_shared_users?idk=${idk}`);
+const response = await fetch(`/get_shared_users?idk=${encodeURIComponent(idk)}`);
         const users = await response.json();
 
         if (!users.length) {
@@ -118,21 +114,22 @@ async function loadSharedUsers() {
                 newDiv.setAttribute('data-vizsgalt-id', kuldendo.dataset.undo);
 
 
-                newDiv.innerHTML = `${user.fullname} - ${user.role.toLowerCase() === "admin" ? "Létrehozó" : "Szerkesztő"}`;
+                newDiv.textContent = `${user.fullname || ''} - ${user.role.toLowerCase() === "admin" ? "Létrehozó" : "Szerkesztő"}`;      
                 newDiv.setAttribute('data-id', user.id);
                 newDiv.setAttribute('data-role', user.role);
                 kuldendo.appendChild(newDiv);
 
                 if (user.role !== "admin") {
                     const kiszed = document.createElement("div");
-                    kiszed.innerHTML = `X`;
+                    kiszed.textContent = `X`;
                     kiszed.classList.add("ex");
                     newDiv.appendChild(kiszed);
 
                  kiszed.addEventListener("click", async function() { // 1. ASYNC kulcsszó hozzáadása
     
-    const megerosites = await customConfirm(`Biztos elveszi a jogosultságot? ${user.fullname} nem fog többé hozzáférni az értékeléshez.`);
-
+const megerosites = await customConfirm(
+    `Biztos elveszi a jogosultságot? <b>${escapeHTML(user.fullname || '')}</b> nem fog többé hozzáférni az értékeléshez.`
+);
     if (megerosites) { 
         const parent = kiszed.parentElement;
         const felhasznalo_id = parent.getAttribute("data-id");
@@ -210,7 +207,7 @@ maile.addEventListener("input", function() {
     const cursorPosition = this.selectionStart;
 
     if (mailname.length > 3) {
-        fetch(`/check-mailname2?mailname=${mailname}&modul_id=${modulId}`)
+fetch(`/check-mailname2?mailname=${encodeURIComponent(mailname)}`)
             .then(response => response.json())
             .then(data => {
                 if (data.exists) {
@@ -247,7 +244,7 @@ document.querySelector('#add').addEventListener('click', function() {
     const maildata = selectedOption.getAttribute("data-mail");
     const title = kuldendo.getAttribute('data-title');
 
-    const existingDiv = document.querySelector(`#kuldendo div[data-id="${value}"]`);
+const existingDiv = document.querySelector(`#kuldendo div[data-id="${CSS.escape(String(value || ''))}"]`);
     if (existingDiv) {
         showToast("Ez a kolléga már hozzá lett adva!");
         return;
@@ -256,7 +253,7 @@ document.querySelector('#add').addEventListener('click', function() {
     // Új div létrehozása és hozzáadása
     const newDiv = document.createElement('div');
     newDiv.classList.add("newDiv")
-    newDiv.innerHTML = name;
+    newDiv.textContent = name || '';
     newDiv.setAttribute('data-id', value); //felhasznalo_id - Megosztott ID-ja
     newDiv.setAttribute('data-mail', maildata); //Megosztott Mail címe (mailhez)
     newDiv.setAttribute('data-title', title); //kitoltes_neve - cím
@@ -264,7 +261,7 @@ document.querySelector('#add').addEventListener('click', function() {
     newDiv.setAttribute('data-idk', kuldendo.getAttribute('data-id')); //idk - megosztandó kitöltés ID -je
     newDiv.setAttribute('data-role', "editor"); //role - megosztott titulusa
     const eltavolit = document.createElement("div");
-    eltavolit.innerHTML = `X`;
+    eltavolit.textContent = `X`;
     eltavolit.classList.add("ex2");
     newDiv.appendChild(eltavolit);
     document.querySelector('#kuldendo').appendChild(newDiv);
@@ -287,7 +284,7 @@ document.querySelector('#add2').addEventListener('click', function() {
     const name = selectElement.value;
     const value = selectElement.getAttribute('data-id');
     const mailname = selectElement.getAttribute('data-mail');
-    const existingDiv = document.querySelector(`#kuldendo div[data-id="${value}"]`);
+const existingDiv = document.querySelector(`#kuldendo div[data-id="${CSS.escape(String(value || ''))}"]`);
     if (existingDiv) {
         showToast("Ez a kolléga már hozzá lett adva!");
         return;
@@ -295,7 +292,7 @@ document.querySelector('#add2').addEventListener('click', function() {
     // Új div létrehozása és hozzáadása
     const newDiv = document.createElement('div');
     newDiv.classList.add("newDiv")
-    newDiv.innerHTML = name;
+newDiv.textContent = name || '';
     newDiv.setAttribute('data-id', value); //felhasznalo_id
     newDiv.setAttribute('data-mail', mailname); //felhasznalo_id
     newDiv.setAttribute('data-title', kuldendo.getAttribute('data-title'));
@@ -303,7 +300,7 @@ document.querySelector('#add2').addEventListener('click', function() {
     newDiv.setAttribute('data-idk', kuldendo.getAttribute('data-id')); //idk
     newDiv.setAttribute('data-role', "editor"); //role
     const eltavolit = document.createElement("div");
-    eltavolit.innerHTML = `X`;
+    eltavolit.textContent = `X`;
     eltavolit.classList.add("ex2");
     newDiv.appendChild(eltavolit);
     document.querySelector('#kuldendo').appendChild(newDiv);
@@ -351,39 +348,33 @@ document.querySelector("#gobut4").addEventListener("click", async function(event
     loadingOverlay.style.opacity = '1';
     animateMessage("Megosztás folyamatban...", "large", "black");
 
-    try {
-        const modul_id = kuldendo.dataset.modulId; 
+   try {
+    // Adatok összeállítása
+    // A modul_id-t nem küldjük frontendből: a backend sessionből veszi.
+    const adatok = Array.from(newDivs).map(div => {
+        let adat = {
+            felhasznalo_id: div.getAttribute("data-id"),
+            kitoltes_neve: kuldendo.getAttribute("data-title"),
+            idk: div.getAttribute("data-idk"),
+            role: div.getAttribute("data-role"),
+            innerHTML: div.childNodes[0].textContent.trim(),
+            data_name: div.getAttribute("data-name"),
+            data_mail: div.getAttribute("data-mail"),
+            vizsgalt_id: vizsId
+        };
 
-        if (!modul_id) {
-            animateMessage("Hiányzó modul_id!", "large", "red");
-            setTimeout(() => loadingOverlay.style.display = "none", 3000);
-            return;
+        if (massageCheckbox.checked && textArea && textArea.value.trim() !== "") {
+            adat.message = textArea.value.trim();
         }
 
-        // Adatok összeállítása
-        const adatok = Array.from(newDivs).map(div => {
-            let adat = {
-                felhasznalo_id: div.getAttribute("data-id"),
-                kitoltes_neve: kuldendo.getAttribute("data-title"),
-                idk: div.getAttribute("data-idk"),
-                role: div.getAttribute("data-role"),
-                innerHTML: div.childNodes[0].textContent.trim(),
-                data_name: div.getAttribute("data-name"),
-                data_mail: div.getAttribute("data-mail"),
-                modul_id: modul_id,
-                vizsgalt_id: vizsId, 
-            };
-            if (massageCheckbox.checked && textArea && textArea.value.trim() !== "") {
-                adat.message = textArea.value.trim();
-            }
-            return adat;
-        });
+        return adat;
+    });
 
-        const response = await fetch("/insert_kitoltes", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ modul_id, kitoltesek: adatok })
-        });
+    const response = await fetch("/insert_kitoltes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kitoltesek: adatok })
+    });
 
         const data = await response.json();
 

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gyakran Ismételt Kérdések – ÉRTÉKEK</title>
+  <meta name="description" content="Az ÉRTÉKEK kezelőpanelének és alapvető funkcióinak gyakran ismételt kérdései: Infók, Értékeim, új értékelés, megosztás, AI-generálás és csoportos statisztika." />
+  <style>
+:root{--brand:#ff6500;--brand2:#ffaa00;--ink:#2d1515;--text:#35231d;--muted:#735d50;--bg1:#fff7ed;--bg2:#ffffff;--line:#f3d4bf;--soft:#fff1e3;--danger:#8a1f1f;--ok:#276749;--shadow:0 14px 36px rgba(45,21,21,.10);--radius:22px;--max:1060px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);background:linear-gradient(145deg,#fff7ed 0%,#fff 52%,#fff1dc 100%);line-height:1.68}.top{background:linear-gradient(135deg,#ff6500,#ffaa00);color:#fff;padding:28px 0 26px;box-shadow:var(--shadow)}.wrap{width:min(var(--max),calc(100% - 32px));margin:0 auto}.brand{display:flex;align-items:center;gap:12px;font-weight:900;letter-spacing:-.03em}.logo{width:42px;height:42px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--brand);font-weight:900;box-shadow:0 8px 22px rgba(0,0,0,.12)}nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}nav a{color:#fff;text-decoration:none;font-weight:800;border:1px solid rgba(255,255,255,.42);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.13)}main{padding:30px 0 56px}h1{font-size:clamp(2rem,5vw,3.4rem);line-height:1.05;margin:18px 0 10px;letter-spacing:-.06em}h2{font-size:clamp(1.35rem,3vw,2rem);line-height:1.18;margin:34px 0 14px;color:var(--ink);border-bottom:5px solid var(--brand2);padding-bottom:8px;width:fit-content}h3{margin:24px 0 8px;color:var(--brand)}p{margin:0 0 12px}.lead{font-size:1.12rem;max-width:900px;color:#fff}.meta{display:inline-block;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.40);padding:7px 11px;border-radius:999px;font-weight:800}.card{background:rgba(255,255,255,.92);border:1px solid var(--line);border-left:7px solid var(--brand);border-radius:var(--radius);padding:21px;margin:17px 0;box-shadow:var(--shadow)}.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:16px}.grid .card{margin:0}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}.note{background:#fff7ed;border:1px solid #f3d4bf;border-left:7px solid var(--brand2);border-radius:18px;padding:16px;margin:16px 0}.danger{border-left-color:#d64545;background:#fff5f5}.ok{border-left-color:#38a169;background:#f0fff4}.small{color:var(--muted);font-size:.94rem}.pill{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;font-weight:900;font-size:.84rem;margin:0 0 9px}ul,ol{padding-left:1.25rem;margin-top:8px}li{margin:0 0 8px}table{width:100%;border-collapse:collapse;margin:14px 0;background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}th,td{border:1px solid var(--line);padding:10px;vertical-align:top;text-align:left}th{background:#fff0dc;color:var(--ink)}a{color:#b94700;font-weight:800}.footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:.95rem}@media(max-width:860px){.span4,.span6{grid-column:span 12}nav a{font-size:.9rem}.card{padding:17px}table{font-size:.92rem}}@media print{.top nav{display:none}.top{background:#fff;color:#000;box-shadow:none;border-bottom:1px solid #ccc}.lead{color:#000}.card,table{box-shadow:none}body{background:#fff}}
+.vissz{    display: flex;
+    border-bottom: white 3px solid;
+    justify-content: space-around;
+    padding: 5px;
+    border-radius: 10px;
+    background: #ffffff24;
+    align-items: center;}
+    .vissz a{    background: white;
+      transition: all 0.4s;
+    border-radius: 10px;
+    color: #3b3b3b;}
+
+    .vissz a:hover {background-color: #FF5722; color: white;}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.hero-actions a{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;background:#fff;color:var(--brand);border-radius:999px;padding:10px 14px;font-weight:900;box-shadow:0 10px 26px rgba(45,21,21,.10)}.kicker{display:inline-flex;align-items:center;gap:8px;background:#fff0dc;color:#a24c00;border:1px solid #ffd6a6;border-radius:999px;padding:7px 12px;font-weight:900;margin-bottom:12px}.faq-list{display:grid;gap:13px;margin:16px 0}.faq-item{background:#fff;border:1px solid var(--line);border-radius:18px;box-shadow:0 10px 26px rgba(45,21,21,.07);overflow:hidden}.faq-item summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:900;color:var(--ink);display:flex;gap:10px;align-items:flex-start}.faq-item summary::-webkit-details-marker{display:none}.faq-item summary::before{content:'+';flex:0 0 28px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900;line-height:1}.faq-item[open] summary::before{content:'–'}.faq-item .answer{padding:0 18px 17px 56px;color:var(--text)}.answer p:last-child{margin-bottom:0}.toc{display:grid;grid-template-columns:repeat(12,1fr);gap:12px;margin:18px 0}.toc a{grid-column:span 4;text-decoration:none;background:#fff;border:1px solid var(--line);border-left:6px solid var(--brand);border-radius:18px;padding:13px 14px;box-shadow:0 10px 24px rgba(45,21,21,.07);color:var(--ink);font-weight:900}.quick{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.quick .note{grid-column:span 4;margin:0}.badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:5px 9px;background:#fff7ed;border:1px solid var(--line);font-size:.83rem;color:var(--muted);font-weight:800;margin:2px 4px 2px 0}.steps{counter-reset:step;list-style:none;padding-left:0}.steps li{counter-increment:step;position:relative;padding:0 0 12px 48px;margin:0 0 10px}.steps li::before{content:counter(step);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:900;display:grid;place-items:center}@media(max-width:860px){.toc a,.quick .note{grid-column:span 12}.faq-item .answer{padding-left:18px}.faq-item summary{padding:15px}}
+ @media (max-width: 900px) {
+  .vissz{ height: 20vh;
+flex-direction: column-reverse;}
+.meta2{display: none;}}
+  </style>
+</head>
+<body>
+  <header class="top">
+    <div class="wrap">
+      <div class="vissz">
+        <a class="meta" href="/user/dashboard.html">Vissza a kezelőpanelra</a>
+      <div class="brand"><span class="logo">É</span><span>ÉRTÉKEK</span></div>
+      <span class="meta meta2">Gyakran Ismételt Kérdések</span>
+      </div>
+      <h1>Gyakran Ismételt Kérdések</h1>
+      <p class="lead">Rövid, közérthető válaszok az ÉRTÉKEK kezelőpanelének használatához: belépés utáni menüpontok, értékelések kezelése, új értékelés indítása, megosztás, csoportos statisztika és AI-generálás.</p>
+      <nav aria-label="Oldalon belüli navigáció"><a href="#alapok">Alapok</a><a href="#infok">Infók</a><a href="#folytatas">Folytatás</a><a href="#ertekeim">Értékeim</a><a href="#ertekelesek">Értékelések</a><a href="#csoportos">Csoportos statisztika</a><a href="#uj">Új értékelés</a><a href="#ai">AI</a><a href="#adatok">Adatok</a></nav>
+      <div class="hero-actions"><a href="adatkezeles.html">Adatkezelési tájékoztató</a><a href="afsz.html">ÁSZF</a><a href="mailto:ertekek.info@gmail.com">Kapcsolat</a></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="note" id="roviden">
+      <h2>Röviden</h2>
+      <p>Ez az oldal a kezelőpanelhez kapcsolódó legfontosabb kérdéseket foglalja össze. A cél az, hogy a felhasználó gyorsan megtalálja, hol tud új értékelést indítani, meglévő értékelést megnyitni, csoportos statisztikát készíteni vagy AI-alapú szöveges segítséget használni.</p>
+    </section>
+
+    <section class="grid" aria-label="Gyors áttekintés">
+      <div class="card span4"><span class="pill">Infók</span><h3>Üdvözlő képernyő</h3><p>Áttekintő csempék modulról, intézményről, licencről, értékelésekről, megosztásokról és határidőkről.</p></div>
+      <div class="card span4"><span class="pill">Értékeim</span><h3>Meglévő értékelések</h3><p>Keresés, rendezés, nézetváltás, megnyitás, folytatás, letöltés, nyomtatás, megosztás és AI-generálás.</p></div>
+      <div class="card span4"><span class="pill">Új értékelés</span><h3>Új rögzítés indítása</h3><p>Vizsgálati név, időszak, típus és szükséges nyilatkozat megadása után indulhat a rögzítő felület.</p></div>
+    </section>
+
+    <section id="alapok" class="card">
+      <span class="kicker">Kezelőpanel</span>
+      <h2>1. Alapok</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit látok belépés után?</summary>
+          <div class="answer"><p>Belépés után a kezelőpanel jelenik meg. Asztali nézetben a fő navigáció bal oldalon látható, mobilnézetben pedig a felső sávban érhető el.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mire való a bal oldali négy fő gomb?</summary>
+          <div class="answer"><p>Az <strong>Infók</strong> az üdvözlő és áttekintő képernyő. Az <strong>Értékeim</strong> a meglévő értékelések kezelőfelülete. Az <strong>Új értékelés</strong> új értékelés indítására szolgál. A <strong>Javaslatok</strong> az audit- és mentorálási rendszerhez kapcsolódik.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Miért nem minden felhasználónál jelenik meg minden adat?</summary>
+          <div class="answer"><p>A megjelenő tartalom függhet az intézményi jogosultságoktól, a választott modultól, a szakmai anyagtól és attól is, hogy az intézményben milyen szerepkörű felhasználók dolgoznak.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="infok" class="card">
+      <span class="kicker">Infók</span>
+      <h2>2. Infók képernyő</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mire való az Infók menüpont?</summary>
+          <div class="answer"><p>Az Infók menüpont egy üdvözlő és összefoglaló képernyő. Itt jelenhetnek meg a rendszer aktuális állapotát bemutató csempék.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Milyen információkat mutathatnak a csempék?</summary>
+          <div class="answer"><p>A csempék mutathatják a választott modult, az intézmény nevét, a szakmai anyagot, a legjobban teljesített értékelést, a licenc állapotát, az elérhető AI-generálásokat, az intézményi tagok számát, a híreket, tippeket, megosztásokat, értékelések számát és közelgő határidőket.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Miért hasznos az Infók oldal?</summary>
+          <div class="answer"><p>Az Infók oldal gyors állapotképet ad. Nem kell külön megkeresni minden adatot, mert a legfontosabb összefoglalók egy helyen jelennek meg.</p></div>
+        </details>
+      </div>
+    </section>
+
+
+
+    <section id="folytatas" class="card">
+      <span class="kicker">Új funkció</span>
+      <h2>Folytatás ott, ahol abbahagyta</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit jelent a „Folytassa ahol abbahagyta” csempe?</summary>
+          <div class="answer"><p>Az Infók képernyő első csempéje először üdvözli a felhasználót, majd megjeleníti az utolsó rögzített munkapontot. A csempe az utolsó értékelési előzmény alapján útvonalat, kérdésszöveget és az utolsó választ is mutathat.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi történik, ha rákattintok?</summary>
+          <div class="answer"><p>A rendszer megnyitja azt az értékelést, amelyben legutóbb dolgozott. Így nem kell az értékeléslistából újra megkeresni a megfelelő dokumentumot.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mikor frissül ez az információ?</summary>
+          <div class="answer"><p>Az értékelő felületen végzett megnyitások, fókuszváltások és válaszmódosítások alapján frissül. Az előzmény a bejelentkezett felhasználóhoz és az adott értékeléshez kapcsolódik.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi látszik akkor, ha még nincs előzményem?</summary>
+          <div class="answer"><p>Ha a rendszer még nem talál korábbi munkapontot, az első csempe egyszerű üdvözlő csempeként jelenik meg.</p></div>
+        </details>
+      </div>
+    </section>
+    <section id="ertekeim" class="card">
+      <span class="kicker">Értékeim</span>
+      <h2>3. Meglévő értékelések keresése és rendezése</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Hol találom a már létrehozott értékeléseimet?</summary>
+          <div class="answer"><p>A már létrehozott értékelések az <strong>Értékeim</strong> menüpont alatt találhatók. A fehér kártyák magukat az értékeléseket jelölik.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan kereshetek az értékelések között?</summary>
+          <div class="answer"><p>A felső kereső- és rendezősávban név, típus és időszak alapján lehet keresni. Ez akkor hasznos, ha sok értékelés van az intézményben vagy egy szakmai anyagon belül.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Milyen szempontok szerint lehet rendezni?</summary>
+          <div class="answer"><p>Az értékelések rendezhetők határidő, megosztások, név, típus és dátum szerint.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent a kompakt, százalékos és részletes nézet?</summary>
+          <div class="answer"><p><strong>Kompakt nézetben</strong> a cím, időszak és típus jelenik meg röviden. <strong>Százalékos nézetben</strong> az elért százalékok kapnak nagyobb hangsúlyt. <strong>Részletes nézetben</strong> a létrehozás dátuma és a megosztási információk is láthatók.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="ertekelesek" class="card">
+      <span class="kicker">Egyéni értékelés</span>
+      <h2>4. Értékelések megnyitása és kezelése</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Hogyan tudok megnyitni egy értékelést?</summary>
+          <div class="answer"><p>Az Értékeim felületen kattintson a kiválasztott értékelés kártyájára. Ekkor megjelenik az értékelés tartalma, és az Egyéni értékelés fül automatikusan aktívvá válik.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mire való a Folytatás gomb?</summary>
+          <div class="answer"><p>A Folytatás gombbal visszaléphet a rögzítő felületre, és további kérdéseket vagy állításokat adhat az értékeléshez.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mikor használjam az Átnevezés funkciót?</summary>
+          <div class="answer"><p>Akkor érdemes használni, ha módosítani szeretné az értékelés címét, időszakát vagy típusát.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mire jó a Másolás funkció?</summary>
+          <div class="answer"><p>A Másolás az értékelés duplikálására szolgál. Ez akkor lehet hasznos, ha egy meglévő értékelést szeretne alapként használni egy újabb munkához.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit csinál a Megosztás gomb?</summary>
+          <div class="answer"><p>A Megosztás funkcióval az értékelés továbbítható más, azonos intézményben és azonos szakmai anyagban dolgozó regisztrált felhasználónak.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hogyan tudom letölteni vagy nyomtatni az értékelést?</summary>
+          <div class="answer"><p>A Letöltés gombnál választható, hogy az értékelés PDF vagy DOCX formátumban készüljön el. A Nyomtatás gomb az értékelést nyomtatásra küldi.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit jelent az értékelés törlése?</summary>
+          <div class="answer"><p>A Törlés funkció az értékelés eltávolítására szolgál. Éles használatnál ezt csak megfontoltan érdemes használni, mert az értékeléshez kapcsolódó tartalmak elveszhetnek.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="csoportos" class="card">
+      <span class="kicker">Csoportos értékelés</span>
+      <h2>5. Csoportos statisztika</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Hogyan tudok csoportos statisztikát készíteni?</summary>
+          <div class="answer"><p>Kapcsolja be az <strong>Értékelések kijelölése csoportos statisztikára</strong> lehetőséget. Ezután az értékelési kártyákon megjelenik egy jelölőnégyzet, amelyben kiválaszthatók a statisztikába bevonni kívánt értékelések.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Miért nem mindig készül csoportos statisztika?</summary>
+          <div class="answer"><p>A rendszer akkor tud statisztikát készíteni, ha van legalább három azonos témakör és elegendő adat az összehasonlításhoz.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mit mutat a csoportos értékelés?</summary>
+          <div class="answer"><p>A csoportos értékelés több kiválasztott értékelésből készít összesített képet. Segít áttekinteni, hogy egy csoport egészében mely területek erősebbek, és hol lehet fejlesztési irányt kijelölni.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Letölthető a csoportos értékelés?</summary>
+          <div class="answer"><p>Igen. A csoportos értékelés PDF-formátumban letölthető és nyomtatható. Az egyéni értékelések letöltésénél PDF és DOCX formátum közül lehet választani.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="uj" class="card">
+      <span class="kicker">Új értékelés</span>
+      <h2>6. Új értékelés indítása</h2>
+      <ol class="steps">
+        <li>Adja meg a vizsgálati nevet.</li>
+        <li>Adja meg az időszak megnevezését.</li>
+        <li>Válassza ki az értékelés típusát.</li>
+        <li>Fogadja el a szükséges nyilatkozatot.</li>
+        <li>Kattintson az Indítás gombra.</li>
+      </ol>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Milyen adatok kellenek új értékeléshez?</summary>
+          <div class="answer"><p>Új értékeléshez vizsgálati név, időszakmegnevezés és értékelési típus szükséges. Ilyen típus lehet például felmérés, kompetenciamérés vagy mozgásvizsgálat.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Miért kell nyilatkozatot elfogadni?</summary>
+          <div class="answer"><p>A nyilatkozat célja annak rögzítése, hogy az értékelő jogosult az adott személy adatainak felvételére. Kiskorú érintett esetén az értékelőnek rendelkeznie kell a szülő vagy gondviselő elfogadó nyilatkozatával is.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Tesztadatok esetén is kell nyilatkozat?</summary>
+          <div class="answer"><p>Igen. A rendszer működése szerint a nyilatkozat megadása tesztadatok felvitelekor is szükséges.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Mi történik az Indítás gomb után?</summary>
+          <div class="answer"><p>Az Indítás gomb után a rendszer átnavigál a rögzítő felületre. Itt kezdhető meg a szakmai anyag alapján felépített értékelés kitöltése.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="ai" class="card">
+      <span class="kicker">AI-generálás</span>
+      <h2>7. Mesterséges intelligencia alapú szövegezés</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mire való az AI-generálás?</summary>
+          <div class="answer"><p>Az AI-generálás a már létrehozott értékelésből készíthet szöveges tervezetet, például jellemzést, fejlesztési tervet vagy folyószöveges esszét.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Az AI által készített szöveg végleges szakmai dokumentum?</summary>
+          <div class="answer"><p>Nem. Az AI-kimenet szerkeszthető szövegtervezet. Szakembernek kell átnéznie, javítania és jóváhagynia.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Csoportos értékelésnél mit csinál az AI?</summary>
+          <div class="answer"><p>Csoportos értékelésnél az AI a csoport összesített adataiból készít folyószöveges összefoglalót és fejlesztési javaslatokat.</p></div>
+        </details>
+      </div>
+      <div class="note danger"><p><strong>Fontos:</strong> az AI-generálás nem helyettesíti a szakmai döntést, nem diagnózis, és nem automatikus minősítés.</p></div>
+    </section>
+
+    <section id="adatok" class="card">
+      <span class="kicker">Adatok és felelősség</span>
+      <h2>8. Adatkezelési figyelmeztetések a használathoz</h2>
+      <div class="faq-list">
+        <details class="faq-item" open>
+          <summary>Mit jelent a vizsgálati név megadása?</summary>
+          <div class="answer"><p>A vizsgálati név az értékelés azonosítását segíti. Valós természetes személy esetén csak megfelelő jogosultság és tájékoztatás mellett használható.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Ki felel azért, hogy az értékeléshez van megfelelő hozzájárulás vagy jogosultság?</summary>
+          <div class="answer"><p>Az értékelő, illetve az intézmény felel azért, hogy az adatrögzítéshez rendelkezésre álljon a szükséges jogalap, tájékoztatás és kiskorú esetén a megfelelő törvényes képviselői nyilatkozat.</p></div>
+        </details>
+        <details class="faq-item">
+          <summary>Hol található részletes adatkezelési információ?</summary>
+          <div class="answer"><p>A részletes adatkezelési információ az Adatkezelési tájékoztatóban található. Ennek elérhetőségét érdemes az oldal fejlécében és láblécében is megjeleníteni.</p></div>
+        </details>
+      </div>
+    </section>
+
+    <section id="gyors" class="card">
+      <span class="kicker">Gyors válaszok</span>
+      <h2>9. Gyors segítség</h2>
+      <div class="quick">
+        <div class="note"><h3>Új értékelés</h3><p>Új értékelés → adatok kitöltése → nyilatkozat → Indítás.</p></div>
+        <div class="note"><h3>Meglévő értékelés</h3><p>Értékeim → értékelés kártyája → megnyitás vagy műveleti sáv.</p></div>
+        <div class="note"><h3>Folytatás</h3><p>Infók → „Folytassa ahol abbahagyta” csempe → utolsó értékelés megnyitása.</p></div>
+        <div class="note"><h3>Csoportos statisztika</h3><p>Jelölés bekapcsolása → legalább három megfelelő értékelés kiválasztása.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>ÉRTÉKEK – Gyakran Ismételt Kérdések. Kapcsolat: <a href="mailto:ertekek.info@gmail.com">ertekek.info@gmail.com</a></p>
+      <p class="small">Ez az oldal felhasználói tájékoztatásra szolgál. Intézményi bevezetésnél az adatkezelési dokumentumokat és a belső szabályokat is figyelembe kell venni.</p>
+    </div>
+  </footer>
+</body>
+</html>

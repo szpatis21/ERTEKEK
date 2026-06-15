@@ -53,17 +53,57 @@ async function getOrCreateAltId(db, modulId, alkategoriaId, nev) {
     return null;
   }
 
-  if (!alkategoriaId) {
-    throw new Error('Altéma nem hozható létre alkategória nélkül.');
+  const cleanAlkategoriaId = alkategoriaId ? Number(alkategoriaId) : null;
+
+  if (cleanAlkategoriaId) {
+    const [result] = await db.promise().query(
+      `
+        INSERT INTO altemak (modul_id, alkategoria_id, nev)
+        VALUES (?, ?, ?)
+        ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+      `,
+      [modulId, cleanAlkategoriaId, cleanNev]
+    );
+
+    return result.insertId;
+  }
+
+  /*
+    ÚJ RUGALMAS ÚT:
+    Főkategória → Altéma → Kérdés
+
+    Ilyenkor nincs alkategória, ezért:
+    altemak.alkategoria_id = NULL
+
+    Az adott főkategóriához tartozást nem az altemak tábla,
+    hanem a kategoria_kapcsolo sor fogja rögzíteni:
+    fokategoria_id = foId
+    alkategoria_id = NULL
+    altema_id = altId
+  */
+
+  const [existingRows] = await db.promise().query(
+    `
+      SELECT id
+      FROM altemak
+      WHERE modul_id = ?
+        AND alkategoria_id IS NULL
+        AND nev = ?
+      LIMIT 1
+    `,
+    [modulId, cleanNev]
+  );
+
+  if (existingRows.length > 0) {
+    return existingRows[0].id;
   }
 
   const [result] = await db.promise().query(
     `
       INSERT INTO altemak (modul_id, alkategoria_id, nev)
-      VALUES (?, ?, ?)
-      ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
+      VALUES (?, NULL, ?)
     `,
-    [modulId, alkategoriaId, cleanNev]
+    [modulId, cleanNev]
   );
 
   return result.insertId;
@@ -93,17 +133,39 @@ async function resolveKategoriaKapcsoloId(db, {
   const alId = await getOrCreateAlId(db, cleanModulId, foId, alKategoria);
   const altId = await getOrCreateAltId(db, cleanModulId, alId, altTema);
 
-  const [result] = await db.promise().query(
+  const [existingRows] = await db.promise().query(
+    `
+      SELECT id
+      FROM kategoria_kapcsolo
+      WHERE modul_id = ?
+        AND fokategoria_id = ?
+        AND (
+          (? IS NULL AND alkategoria_id IS NULL)
+          OR alkategoria_id = ?
+        )
+        AND (
+          (? IS NULL AND altema_id IS NULL)
+          OR altema_id = ?
+        )
+      LIMIT 1
+    `,
+    [cleanModulId, foId, alId, alId, altId, altId]
+  );
+
+  if (existingRows.length > 0) {
+    return existingRows[0].id;
+  }
+
+  const [insertResult] = await db.promise().query(
     `
       INSERT INTO kategoria_kapcsolo
         (modul_id, fokategoria_id, alkategoria_id, altema_id)
       VALUES (?, ?, ?, ?)
-      ON DUPLICATE KEY UPDATE id = LAST_INSERT_ID(id)
     `,
     [cleanModulId, foId, alId, altId]
   );
 
-  return result.insertId;
+  return insertResult.insertId;
 }
 
 module.exports = {

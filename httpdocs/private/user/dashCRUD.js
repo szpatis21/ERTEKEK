@@ -3,11 +3,12 @@ import {idszak, userId,modulId, userName, intezmeny, intezmeny_id,  mailname, ad
 import { resetSzemleView, resetKitoltesCache } from './dashView.js';
 import { KategoriaKezelo } from '../main/main_quest.js';
 import { kerdesValaszok,szovegesValaszok} from '../main/main_alap.js';
-import { generatePdfMakePDF } from '../main/main_pdf.js';
+import { generatePdfMakePDF, exportErtekelesValasztoval } from '../main/main_pdf.js';
 import {initSzuro,initChekingToggle,initSearch  } from './dashSort.js';
 import {showAlert,showMissingChecklist, customConfirm,customPrompt3,customDatePrompt,customAuditPrompt } from "/both/alert.js"
 import { openAiSelector } from './dashAI.js';import { initMegosztas } from './dashsShare.js'; //Megosztás
 import { loadColorMaps } from './dashStatic.js';
+import { escapeHTML, escapeAttr } from '/both/safeDom.js';
 
 const grap = document.querySelector(".grap");
 const sta = document.querySelector(".sta");
@@ -16,6 +17,322 @@ const felbukkano2 = document.querySelector("#felbukkano2");
 const felbukkano4 = document.querySelector("#felbukkano4");
 let megtekintesMod = false;
 const originalAdminCache = new Map();
+let aiEnabledCache = null;
+
+function notifyLicenseBlocked(message = 'Ez a művelet a jelenlegi csomagban vagy lejárt próbaidőben nem érhető el.') {
+  if (typeof window.showLicenseToast === 'function') {
+    window.showLicenseToast(message);
+    return;
+  }
+  if (typeof window.mutasdPiackutatoAblakot === 'function') {
+    window.mutasdPiackutatoAblakot();
+  }
+}
+
+function canUseGroupStatisticsFeature() {
+  if (typeof window.canUseGroupStatistics === 'function') {
+    return window.canUseGroupStatistics();
+  }
+
+  const license = window.__licenseStatus;
+  if (license && license.success && license.permissions) {
+    return license.permissions.canUseGroupStatistics !== false;
+  }
+
+  return true;
+}
+
+function notifyGroupStatisticsBlocked() {
+  const message = typeof window.explainGroupStatisticsBlocked === 'function'
+    ? window.explainGroupStatisticsBlocked()
+    : 'A csoportos statisztika a Pro csomagban érhető el.';
+
+  if (typeof window.showLicenseToast === 'function') {
+    window.showLicenseToast(message);
+    return;
+  }
+
+  console.info(message);
+}
+
+function applyGroupStatisticsAccess(root) {
+  if (!root) return;
+
+  const statBox = root.querySelector('#statisztika');
+  if (!statBox) return;
+
+  const allowed = canUseGroupStatisticsFeature();
+  const master = statBox.querySelector('#cheking2');
+  const statInfo = statBox.querySelector('#stat-info-box');
+  const label = statBox.querySelector('.swicsi');
+
+  if (allowed) {
+    statBox.dataset.groupStatsLocked = '0';
+    statBox.style.opacity = '';
+    statBox.style.filter = '';
+    statBox.style.cursor = '';
+    if (master) master.disabled = false;
+    if (label) label.textContent = 'Értékelések kijelölése csoportos statisztikára';
+    return;
+  }
+
+  statBox.dataset.groupStatsLocked = '1';
+  statBox.style.opacity = '0.55';
+  statBox.style.filter = 'grayscale(1)';
+  statBox.style.cursor = 'not-allowed';
+  if (master) {
+    master.checked = false;
+    master.disabled = true;
+  }
+  if (statInfo) statInfo.style.display = 'none';
+  if (label) label.textContent = 'Csoportos statisztika Pro csomagban';
+
+  statBox.addEventListener('click', (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    notifyGroupStatisticsBlocked();
+  });
+}
+
+
+// ====================== XSS-BIZTOS DOM SEGÉDEK ======================
+function clearElement(el) {
+  if (!el) return;
+  el.replaceChildren();
+}
+
+function appendLineBreaks(parent, value) {
+  const parts = String(value ?? '').split('\n');
+  parts.forEach((part, index) => {
+    if (index > 0) parent.appendChild(document.createElement('br'));
+    parent.appendChild(document.createTextNode(part));
+  });
+}
+
+function appendKitoltesName(parent, value) {
+  const parts = String(value ?? '').split('-');
+  parts.forEach((part, index) => {
+    if (index > 0) parent.appendChild(document.createElement('br'));
+    parent.appendChild(document.createTextNode(index < parts.length - 1 ? `${part}- ` : part));
+  });
+}
+
+function appendEscapedTemplate(parent, html) {
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  parent.appendChild(template.content.cloneNode(true));
+}
+
+function renderSharedUsersList(listDiv, users) {
+  clearElement(listDiv);
+
+  if (Array.isArray(users) && users.length > 0) {
+    users.forEach((user, index) => {
+      if (index > 0) listDiv.appendChild(document.createElement('br'));
+      listDiv.appendChild(document.createTextNode(`• ${user}`));
+    });
+    return;
+  }
+
+  const empty = document.createElement('span');
+  empty.style.opacity = '0.6';
+  empty.style.fontStyle = 'italic';
+  empty.textContent = 'Nincs megosztva.';
+  listDiv.appendChild(empty);
+}
+
+function renderInlineError(target, text = 'Hiba...') {
+  clearElement(target);
+  const span = document.createElement('span');
+  span.style.color = 'red';
+  span.textContent = text;
+  target.appendChild(span);
+}
+
+function renderPercentageBadges(container, entries, chartMap, { className = '', vertical = false } = {}) {
+  clearElement(container);
+
+  const wrap = document.createElement('div');
+  if (vertical) {
+    wrap.style.display = 'flex';
+    wrap.style.flexWrap = 'wrap';
+    wrap.style.flexDirection = 'column';
+    wrap.style.gap = '5px';
+    wrap.style.justifyContent = 'center';
+  }
+
+  for (const [tema, pctRaw] of entries) {
+    const pct = Number.isFinite(Number(pctRaw)) ? Number(pctRaw) : 0;
+    const span = document.createElement('span');
+    if (className) span.className = className;
+
+    const baseColor = chartMap?.[tema] || 'rgba(160,160,160,0.8)';
+    span.style.background = String(baseColor);
+
+    if (!className) {
+      span.style.padding = '3px 8px';
+      span.style.borderRadius = '4px';
+      span.style.textShadow = '1px 1px 2px black';
+      span.style.fontSize = 'smaller';
+      span.style.color = '#ffffff';
+      span.style.fontWeight = 'bold';
+      span.style.whiteSpace = 'wrap';
+    }
+
+    span.textContent = `${tema}: ${pct}%`;
+    wrap.appendChild(span);
+  }
+
+  container.appendChild(wrap);
+}
+
+function renderWarmContent(warmDiv, { message = '', deadlineText = '', showBang = false, showCalendar = false } = {}) {
+  if (!warmDiv) return;
+
+  clearElement(warmDiv);
+  warmDiv.style.display = 'flex';
+  warmDiv.classList.add('warm-item');
+
+  const note = document.createElement('span');
+  note.className = 'warmnote';
+
+  if (message) appendLineBreaks(note, message);
+
+  if (deadlineText) {
+    if (message) {
+      note.appendChild(document.createElement('br'));
+      note.appendChild(document.createElement('br'));
+    }
+
+    const label = document.createElement('span');
+    label.style.color = '#ffbd16';
+    label.textContent = 'Határidő:';
+
+    note.appendChild(label);
+    note.appendChild(document.createTextNode(` ${deadlineText}`));
+  }
+
+  warmDiv.appendChild(note);
+
+  if (showBang) {
+    const bang = document.createElement('div');
+    bang.className = 'warm-icon';
+    bang.style.fontWeight = 'bold';
+    bang.textContent = '!';
+    warmDiv.appendChild(bang);
+  }
+
+  if (showCalendar) {
+    const icon = document.createElement('span');
+    icon.className = 'material-symbols-outlined warm-icon';
+    icon.style.marginLeft = '4px';
+    icon.textContent = 'calendar_clock';
+    warmDiv.appendChild(icon);
+  }
+}
+
+function renderFloatingAuditWarning(floatingWarn, { warmText = '', hasDeadline = false, formatDatum = '', napSzoveg = '', kitoltesId = '' } = {}) {
+  clearElement(floatingWarn);
+
+  const header = document.createElement('div');
+  header.className = 'f-warn-header';
+
+  const titleArea = document.createElement('div');
+  titleArea.className = 'title-area';
+
+  const warningIcon = document.createElement('span');
+  warningIcon.className = 'material-symbols-outlined';
+  warningIcon.textContent = 'warning';
+
+  titleArea.append(warningIcon, document.createTextNode(' Értékelési információ'));
+
+  const closeBtn = document.createElement('span');
+  closeBtn.className = 'f-warn-close';
+  closeBtn.textContent = '×';
+  closeBtn.addEventListener('click', () => {
+    floatingWarn.style.display = 'none';
+  });
+
+  header.append(titleArea, closeBtn);
+
+  const body = document.createElement('div');
+  body.className = 'f-warn-body';
+  appendLineBreaks(body, warmText);
+
+  if (hasDeadline) {
+    const dateDiv = document.createElement('div');
+    dateDiv.className = 'f-warn-date';
+    dateDiv.style.marginTop = '10px';
+
+    const calendar = document.createElement('span');
+    calendar.className = 'material-symbols-outlined';
+    calendar.style.fontSize = '1.2em';
+    calendar.style.verticalAlign = 'middle';
+    calendar.textContent = 'calendar_clock';
+
+    const nap = document.createElement('span');
+    nap.style.color = 'white';
+    nap.style.fontWeight = 'normal';
+    nap.textContent = napSzoveg;
+
+    dateDiv.append(calendar, document.createTextNode(` Határidő: ${formatDatum} `), nap);
+    body.appendChild(dateDiv);
+  }
+
+  body.append(document.createElement('br'), document.createElement('br'));
+
+  const shortcut = document.createElement('i');
+  shortcut.className = 'rovidut';
+  shortcut.dataset.id = String(kitoltesId ?? '');
+  shortcut.style.cursor = 'pointer';
+  shortcut.style.textDecoration = 'underline';
+  shortcut.style.color = '#ffbd16';
+  shortcut.textContent = 'Kattintson ide a részletekért';
+  body.appendChild(shortcut);
+
+  body.append(document.createElement('br'), document.createElement('br'));
+
+  const hint = document.createElement('i');
+  hint.style.fontSize = '0.9em';
+  hint.style.opacity = '0.8';
+  hint.textContent = 'Jóváhagyásra váró és határidős értékeléseit a "javaslatok" fülön találja';
+  body.appendChild(hint);
+
+  floatingWarn.append(header, body);
+}
+
+function renderKitoltesCardContent(kitoltesDiv, { decryptedName, modulesHtml, kitoltesName, warmHtml }) {
+  clearElement(kitoltesDiv);
+
+  const nameDiv = document.createElement('div');
+  nameDiv.className = 'vizsgalt-nev';
+  const strong = document.createElement('strong');
+  strong.textContent = decryptedName || 'Ismeretlen alany';
+  nameDiv.appendChild(strong);
+  kitoltesDiv.appendChild(nameDiv);
+
+  appendEscapedTemplate(kitoltesDiv, modulesHtml);
+  appendKitoltesName(kitoltesDiv, kitoltesName || '');
+  appendEscapedTemplate(kitoltesDiv, warmHtml);
+}
+
+async function getAiEnabledForCurrentInstitution() {
+  if (aiEnabledCache !== null) return aiEnabledCache;
+
+  try {
+    const resp = await fetch('/api/ai-enabled-status');
+    const result = await resp.json();
+
+    aiEnabledCache = !!(result && result.success && result.aiEnabled === true);
+  } catch (err) {
+    console.error('AI státusz lekérdezés hiba:', err);
+    aiEnabledCache = false;
+  }
+
+  window.__intezmenyAiEnabled = aiEnabledCache;
+  return aiEnabledCache;
+}
+
 let eredetiErtekekTomb = [];
 let eredetIdTomb       = [];
 
@@ -35,11 +352,93 @@ async function getOriginalAdminName(kitoltesId) {
   }
 }
 
+
+// ====================== DÁTUM SEGÉDEK RENDEZÉSHEZ ======================
+function normalizeDateValue(value) {
+  if (value === null || value === undefined) return null;
+
+  const raw = String(value).trim();
+  if (!raw || raw === 'null' || raw === 'undefined' || raw === '0000-00-00' || raw === '0000-00-00 00:00:00') {
+    return null;
+  }
+
+  const normalized = raw.includes(' ') && !raw.includes('T') ? raw.replace(' ', 'T') : raw;
+  const date = new Date(normalized);
+
+  if (Number.isNaN(date.getTime())) return null;
+  return date;
+}
+
+function toLocalDateKey(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+function formatDateHu(value, fallback = 'Ismeretlen') {
+  const date = normalizeDateValue(value);
+  if (!date) return fallback;
+
+  return date.toLocaleDateString('hu-HU', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+function getKitoltesLastModifiedValue(kitoltes) {
+  return kitoltes.utolso_valasz_modositas ||
+    kitoltes.utolso_modositas ||
+    kitoltes.utoljara_modositva ||
+    kitoltes.utolso_modositva ||
+    kitoltes.modositva ||
+    kitoltes.modositas_datuma ||
+    kitoltes.updated_at ||
+    kitoltes.updatedAt ||
+    kitoltes.modified_at ||
+    kitoltes.last_modified ||
+    kitoltes.lastModified ||
+    kitoltes.valasz_modositva ||
+    kitoltes.letrehozva ||
+    '';
+}
+
+function getKitoltesLastModifierValue(kitoltes) {
+  return kitoltes.utolso_valasz_modosito ||
+    kitoltes.utolso_modosito ||
+    kitoltes.modosito ||
+    kitoltes.last_modified_by ||
+    kitoltes.creator_name ||
+    'Ismeretlen';
+}
+
+function toDateTimeDatasetValue(date) {
+  if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hour = String(date.getHours()).padStart(2, '0');
+  const minute = String(date.getMinutes()).padStart(2, '0');
+  const second = String(date.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}`;
+}
+
+function getKitoltesLastModifiedTime(kitoltes) {
+  const date = normalizeDateValue(getKitoltesLastModifiedValue(kitoltes));
+  return date ? date.getTime() : 0;
+}
+
 //CREAT
 let letrehozInitialized = false; // Változó a többszörös lefutás megakadályozására
 
-export function initLetrehoz({ userId, modulId }) {
-  if (letrehozInitialized) return; // Ha már lefutott, rögtön kilép
+export function initLetrehoz() {
+      if (letrehozInitialized) return; // Ha már lefutott, rögtön kilép
   letrehozInitialized = true;
 
   const attachOnce = () => {
@@ -74,14 +473,15 @@ export function initLetrehoz({ userId, modulId }) {
 
       const letrehozva = new Date().toISOString().split('T')[0];
       const kitoltes_neve = `${idszak.value.replace(/-/g, '~')}-${megnevezes.value.replace(/-/g, '~')}`;
-      const adat = { 
-          felhasznalo_id: userId, 
-          letrehozva, 
-          vizsgalt_nev: neve.value, 
-          kitoltes_neve, 
-          modul_id: modulId,
-          audit: { user_id: userId, verzio_tag: 'v1.0', user_agent: navigator.userAgent } 
-      };
+const adat = { 
+    letrehozva, 
+    vizsgalt_nev: neve.value, 
+    kitoltes_neve,
+    audit: {
+        verzio_tag: 'v1.0',
+        user_agent: navigator.userAgent
+    }
+};
       
       fetch('/api/add-kitoltes', { 
           method: 'POST', 
@@ -128,11 +528,20 @@ export function initLetrehoz({ userId, modulId }) {
   mo.observe(document.body, { childList: true, subtree: true });
 }
 //READ
-export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false, isElemzo = false } = {}) {  const auditResponse = await fetch( `/api/check-missing-audit-with-names?user_id=${encodeURIComponent(userId)}&modul_id=${encodeURIComponent(modulId)}` );
+export async function initOlvas(kitoltesek, letrehozva, { groupByCreator = false, isElemzo = false } = {}) {  
+const auditResponse = await fetch('/api/check-missing-audit-with-names');
   const auditData = await auditResponse.json();
-  const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk) : [];
+  const missingAudits = auditData.success ? auditData.kitoltesek.map(k => k.idk).filter(id => id !== null && id !== undefined) : [];
 
-let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includes(k.idk));
+// v5: a hiányzó hozzájárulás nem tüntetheti el a mentett értékeléseket a dashboardról.
+// A checklist külön jelzi a teendőt, de a kártyák maradnak láthatók.
+let items = kitoltesek.filter(k => k.role !== 'removed');
+items.sort((a, b) => {
+    const aTime = getKitoltesLastModifiedTime(a);
+    const bTime = getKitoltesLastModifiedTime(b);
+
+    return bTime - aTime;
+});
   
   // 1. Várjuk meg az összes aszinkron folyamatot
   await Promise.all(items.map(async (k) => {
@@ -142,25 +551,39 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
   }));
 
   // --- MÓDOSÍTOTT RÉSZ KEZDETE ---
-  // Megkeressük az éppen aktív (látható) fülön lévő inner-div-et
-  const innerDiv = document.querySelector('.main.aktiv-tartalom .inner-div') || document.querySelector('.inner-div');
-  if (!innerDiv) return; // Ha egyáltalán nincs tároló, kilépünk
-  
-  innerDiv.innerHTML = '';
+  // v5.2 hotfix:
+  // A dashboard.html-ben több .inner-div van (Értékeim, GYIK, küldendő stb.).
+  // Demóban különösen előjött, hogy a render nem a látható Értékeim tárolóba ment.
+  // Ezért először mindig a data-content-id="ertekek" csempéhez tartozó konkrét értékeléslistát keressük.
+  const innerDiv =
+      document.querySelector('article.main[data-content-id="ertekek"] .olvaso .outer-div > .inner-div') ||
+      document.querySelector('article.main[data-content-id="ertekek"] .inner-div') ||
+      document.querySelector('.main.aktiv-tartalom .olvaso .outer-div > .inner-div') ||
+      document.querySelector('.main.aktiv-tartalom .inner-div') ||
+      document.querySelector('.olvaso .outer-div > .inner-div') ||
+      document.querySelector('.inner-div');
 
-  if (groupByCreator) {
-    items.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
-  } 
+  if (!innerDiv) {
+      console.warn('initOlvas: nem található értékeléslista tároló (.inner-div).');
+      return;
+  }
 
-  let currentWrapper   = null;
-  let currentList      = null;
-  let lastCreatorName  = null;
-  
-  // EZT A SORT TÖRÖLD VAGY KOMMENTELD KI:
-  // if (!document.getElementById('ujert')) return;
-  // --- MÓDOSÍTOTT RÉSZ VÉGE ---
+  innerDiv.dataset.ertekekLista = '1';
+  innerDiv.classList.add('ertekek-lista-inner');
 
-  const kozep = document.createElement("div");
+const aiEnabled = await getAiEnabledForCurrentInstitution();
+
+innerDiv.innerHTML = '';
+
+if (groupByCreator) {
+  items.sort((a, b) => (a.creator_name || '').localeCompare(b.creator_name || ''));
+}
+
+let currentWrapper   = null;
+let currentList      = null;
+let lastCreatorName  = null;
+
+const kozep = document.createElement("div");
   kozep.classList.add("kozep");
   kozep.classList.add("kozepc");
             
@@ -183,12 +606,13 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                         <div id="endezo">
                             <span class="material-symbols-rounded sort-icon">sort</span>
                                 <select name="szuro" id="szuro">
-                                        <option value="role2" selected disabled hidden>Rendezés</option>
-                                        <option value="hatarido">Határidő szerint</option>
-                                        <option value="role">Tulaj szerint</option>
-                                        <option value="nev">Név szerint</option>
-                                        <option value="periodus">Dátum szerint</option>
-                                        <option value="megnev">Típus szerint</option>
+                                        <option value="role" selected>Tulaj szerint</option>
+<option value="modositva">Utolsó módosítás szerint</option>
+<option value="letrehozva">Létrehozás szerint</option>
+<option value="hatarido">Határidő szerint</option>
+<option value="nev">Név szerint</option>
+<option value="periodus">Időszak szerint</option>
+<option value="megnev">Típus szerint</option>
                                 </select>
                         </div>
                         <div id="endezo">
@@ -224,6 +648,7 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
           ` ;
                           
   innerDiv.appendChild(kozep);
+  applyGroupStatisticsAccess(kozep);
   // --- NÉZETVÁLTÓ LOGIKA ---
   const nezetSelect = kozep.querySelector('#nezet');
   
@@ -264,23 +689,41 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                   setTimeout(() => {
                       div.classList.add('flipped');
         
-                      const nev = div.dataset.nev || 'Ismeretlen';
-                      const idoszak = div.dataset.periodus || '';
-                      const tipus = div.dataset.megnev || '';
-                      
-                      // Részletes nézetben kevesebb a hely (mivel nem növeljük a méretet), ezért picit kisebb betűket használunk
-                      const teljesNev = mod === 'reszletek' 
-                          ? `${nev} <br><span style="font-size: 0.8em; font-weight: normal; opacity: 0.9;">${idoszak} - ${tipus}</span>`
-                          : `${nev} <br><span style="font-size: 0.7em; font-weight: normal; opacity: 0.9;">${idoszak} - ${tipus}</span>`;
+                     const nev = escapeHTML(div.dataset.nev || 'Ismeretlen');
+                    const idoszak = escapeHTML(div.dataset.periodus || '');
+                    const tipus = escapeHTML(div.dataset.megnev || '');
+
+                    const nevRaw = div.dataset.nev || 'Ismeretlen';
+                    const idoszakRaw = div.dataset.periodus || '';
+                    const tipusRaw = div.dataset.megnev || '';
 
                       // SZÁZALÉKOS NÉZET
                       if (mod === 'reszletek') {
-                          backSide.innerHTML = `
-                              <strong style="color: #ff6500; margin-bottom: 12px; display: block; text-align:center; width:85%; line-height: 1.2;">
-                                  ${teljesNev}
-                              </strong>
-                              <div class="stats-container" style="width: 100%;">Adatok betöltése...</div>
-                          `;
+                          clearElement(backSide);
+
+                          const title = document.createElement('strong');
+                          title.style.color = '#ff6500';
+                          title.style.marginBottom = '12px';
+                          title.style.display = 'block';
+                          title.style.textAlign = 'center';
+                          title.style.width = '85%';
+                          title.style.lineHeight = '1.2';
+                          title.appendChild(document.createTextNode(nevRaw));
+                          title.appendChild(document.createElement('br'));
+
+                          const sub = document.createElement('span');
+                          sub.style.fontSize = '0.8em';
+                          sub.style.fontWeight = 'normal';
+                          sub.style.opacity = '0.9';
+                          sub.textContent = `${idoszakRaw} - ${tipusRaw}`;
+                          title.appendChild(sub);
+
+                          const statsContainer = document.createElement('div');
+                          statsContainer.className = 'stats-container';
+                          statsContainer.style.width = '100%';
+                          statsContainer.textContent = 'Adatok betöltése...';
+
+                          backSide.append(title, statsContainer);
                           fetch(`/api/get-kitoltes-szazalek?kitoltes_id=${kitoltesId}`)
                               .then(res => res.json())
                               .then(async data => {
@@ -288,18 +731,10 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                                       const raw = typeof data.szazalek === 'string' ? JSON.parse(data.szazalek) : data.szazalek;
                                       const { chartMap } = await loadColorMaps(modulId);
                                       
-                                      let badgesHtml = '<div style="display: flex; flex-wrap: wrap; flex-direction:column; gap: 5px; justify-content: center;">';
-                                      for (const [tema, obj] of Object.entries(raw || {})) {
-                                          if (obj && typeof obj['%'] === 'number') {
-                                              const baseColor = chartMap[tema] || 'rgba(160,160,160,0.8)';
-                                              badgesHtml += `
-                                                  <span style="background: ${baseColor}; padding: 3px 8px; border-radius: 4px; text-shadow:1px 1px 2px black; font-size: smaller; color: #ffffff; font-weight:bold; white-space: wrap;">
-                                                      ${tema}: ${obj['%']}%
-                                                  </span>`;
-                                          }
-                                      }
-                                      badgesHtml += '</div>';
-                                      backSide.querySelector('.stats-container').innerHTML = badgesHtml;
+                                      const badgeEntries = Object.entries(raw || {})
+                                          .filter(([_, obj]) => obj && typeof obj['%'] === 'number')
+                                          .map(([tema, obj]) => [tema, obj['%']]);
+                                      renderPercentageBadges(backSide.querySelector('.stats-container'), badgeEntries, chartMap, { vertical: true });
                                   }
                               });
                       } 
@@ -307,37 +742,101 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
                       else if (mod === 'kivagy') {
                           const letrehozasDatuma = div.dataset.letrehozva || 'Ismeretlen';
                           
-                          // Itt picit kisebbre vettem a margókat és a betűméreteket, hogy biztosan elférjen a normál méretű kártyán!
-                          backSide.innerHTML = `
-                              <strong style="color: #ff6500; margin-bottom: 5px; display: block; text-align:center; width:95%; line-height: 1.1; font-size: 0.9em;">
-                                  ${teljesNev}
-                              </strong>
-                              <div class="kivagy-container" style="width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; gap: 5px; font-size: 0.85em;">
-                                  <div style="background: #ff6500; padding: 4px 8px; border-radius: 6px; width: 90%;">
-                                      <span style="font-size: small; color: #ffffff; display:block;">Létrehozva:</span>
-                                      <span style="color: #fff; font-weight: bold;">${letrehozasDatuma}</span>
-                                  </div>
-                                  <div style="background: #ff6500; padding: 4px 8px; border-radius: 6px; width: 90%; flex-grow: 1; overflow-y: auto;height:fit-content;">
-                                      <span style="font-size: small; color: #ffffff; display:block; margin-bottom: 2px;">Megosztva velük:</span>
-                                      <div class="shared-users-list" style="color: #fff; font-size: small; text-align: left; line-height: 1.2;">
-                                          <span class="material-symbols-rounded" style="font-size:1em; animation: spin 1s linear infinite;">sync</span>...
-                                      </div>
-                                  </div>
-                              </div>
-                          `;
+                          clearElement(backSide);
+
+                          const title = document.createElement('strong');
+                          title.style.color = '#ff6500';
+                          title.style.marginBottom = '5px';
+                          title.style.display = 'block';
+                          title.style.textAlign = 'center';
+                          title.style.width = '95%';
+                          title.style.lineHeight = '1.1';
+                          title.style.fontSize = '0.9em';
+                          title.appendChild(document.createTextNode(nevRaw));
+                          title.appendChild(document.createElement('br'));
+
+                          const sub = document.createElement('span');
+                          sub.style.fontSize = '0.7em';
+                          sub.style.fontWeight = 'normal';
+                          sub.style.opacity = '0.9';
+                          sub.textContent = `${idoszakRaw} - ${tipusRaw}`;
+                          title.appendChild(sub);
+
+                          const kivagyContainer = document.createElement('div');
+                          kivagyContainer.className = 'kivagy-container';
+                          kivagyContainer.style.width = '100%';
+                          kivagyContainer.style.display = 'flex';
+                          kivagyContainer.style.flexDirection = 'column';
+                          kivagyContainer.style.alignItems = 'center';
+                          kivagyContainer.style.justifyContent = 'flex-start';
+                          kivagyContainer.style.gap = '5px';
+                          kivagyContainer.style.fontSize = '0.85em';
+
+                          const dateBox = document.createElement('div');
+                          dateBox.style.background = '#ff6500';
+                          dateBox.style.padding = '4px 8px';
+                          dateBox.style.borderRadius = '6px';
+                          dateBox.style.width = '90%';
+
+                          const dateLabel = document.createElement('span');
+                          dateLabel.style.fontSize = 'small';
+                          dateLabel.style.color = '#ffffff';
+                          dateLabel.style.display = 'block';
+                          dateLabel.textContent = 'Létrehozva:';
+
+                          const dateValue = document.createElement('span');
+                          dateValue.style.color = '#fff';
+                          dateValue.style.fontWeight = 'bold';
+                          dateValue.textContent = letrehozasDatuma;
+
+                          dateBox.append(dateLabel, dateValue);
+
+                          const sharedBox = document.createElement('div');
+                          sharedBox.style.background = '#ff6500';
+                          sharedBox.style.padding = '4px 8px';
+                          sharedBox.style.borderRadius = '6px';
+                          sharedBox.style.width = '90%';
+                          sharedBox.style.flexGrow = '1';
+                          sharedBox.style.overflowY = 'auto';
+                          sharedBox.style.height = 'fit-content';
+
+                          const sharedLabel = document.createElement('span');
+                          sharedLabel.style.fontSize = 'small';
+                          sharedLabel.style.color = '#ffffff';
+                          sharedLabel.style.display = 'block';
+                          sharedLabel.style.marginBottom = '2px';
+                          sharedLabel.textContent = 'Megosztva velük:';
+
+                          const sharedUsersList = document.createElement('div');
+                          sharedUsersList.className = 'shared-users-list';
+                          sharedUsersList.style.color = '#fff';
+                          sharedUsersList.style.fontSize = 'small';
+                          sharedUsersList.style.textAlign = 'left';
+                          sharedUsersList.style.lineHeight = '1.2';
+
+                          const syncIcon = document.createElement('span');
+                          syncIcon.className = 'material-symbols-rounded';
+                          syncIcon.style.fontSize = '1em';
+                          syncIcon.style.animation = 'spin 1s linear infinite';
+                          syncIcon.textContent = 'sync';
+                          sharedUsersList.append(syncIcon, document.createTextNode('...'));
+
+                          sharedBox.append(sharedLabel, sharedUsersList);
+                          kivagyContainer.append(dateBox, sharedBox);
+                          backSide.append(title, kivagyContainer);
 
                           fetch(`/api/get-shared-users?kitoltes_id=${kitoltesId}`)
                               .then(res => res.json())
                               .then(data => {
                                   const listDiv = backSide.querySelector('.shared-users-list');
-                                  if (data.success && data.users && data.users.length > 0) {
-                                      listDiv.innerHTML = data.users.map(u => `• ${u}`).join('<br>');
+                                  if (data.success) {
+                                    renderSharedUsersList(listDiv, data.users);
                                   } else {
-                                      listDiv.innerHTML = '<span style="opacity: 0.6; font-style: italic;">Nincs megosztva.</span>';
+                                    renderSharedUsersList(listDiv, []);
                                   }
                               })
                               .catch(err => {
-                                  backSide.querySelector('.shared-users-list').innerHTML = '<span style="color:red;">Hiba...</span>';
+                                  renderInlineError(backSide.querySelector('.shared-users-list'));
                               });
                       }
                   }, 10); 
@@ -354,34 +853,53 @@ let items = kitoltesek.filter(k => k.role !== 'removed' && !missingAudits.includ
       });
   });
   // --- SEGÉDFÜGGVÉNYEK A GOMBOKHOZ ---
+  function isButtonBlockedByLicense(btn, fallbackLocked = false) {
+      const action = btn.action || btn.cls || '';
+      if (typeof window.isLicenseFeatureBlocked === 'function' && window.isLicenseFeatureBlocked(action)) {
+          return true;
+      }
+
+      const lockedKeywords = ['share', 'duplicate', 'fo_edit', 'edit', 'deleted'];
+      return fallbackLocked && (
+          (btn.action && lockedKeywords.includes(btn.action)) ||
+          (btn.cls && lockedKeywords.some(k => btn.cls.includes(k)))
+      );
+  }
+
   function renderButtons(role, kit) {
-const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLejart();
+      const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLejart();
       const lockedKeywords = ['share', 'duplicate', 'fo_edit', 'edit', 'deleted'];
 
       return BUTTONS[role].map(btn => {
-          // Ha le van zárva a rendszer ÉS a gomb benne van a tiltólistában (akár action, akár class alapján)
-          const isRestricted = isLocked && (
-              (btn.action && lockedKeywords.includes(btn.action)) || 
-              (btn.cls && lockedKeywords.some(k => btn.cls.includes(k)))
-          );
-          
-          // Ha tiltott, halványítjuk és szürke lesz
-          const lockStyle = isRestricted ? 'opacity: 0.4; filter: grayscale(1);' : '';
+          const isAiButton = btn.action === 'generate_ai';
+          const isAiDisabled = isAiButton && !aiEnabled;
 
-          const dataAttributes = btn.action 
-          ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
-          : `data-id="${kit.idk}"`; 
+          const isRestricted = isButtonBlockedByLicense(btn, isLocked);
+
+          const styleParts = [];
+          if (isRestricted) styleParts.push('opacity: 0.4', 'filter: grayscale(1)');
+          if (isAiDisabled) styleParts.push('opacity: 0.5', 'filter: grayscale(1)', 'cursor: not-allowed');
+
+          const lockStyle = styleParts.length ? `${styleParts.join('; ')};` : '';
+
+          const dataAttributes = btn.action
+            ? `data-action="${escapeAttr(btn.action)}" data-id="${escapeAttr(kit.idk)}" data-name="${escapeAttr(kit.kitoltes_neve || '')}" ${isAiDisabled ? 'data-ai-disabled="1"' : ''}`
+            : `data-id="${escapeAttr(kit.idk)}"`;
 
           const labelHtml = btn.label 
-              ? `<span style="pointer-events: none;">${btn.label}</span>` 
-              : '';
+            ? `<span style="pointer-events: none;">${escapeHTML(btn.label)}</span>`              
+            : '';
+
+          const helpText = isAiDisabled
+              ? 'Az MI-funkció nincs engedélyezve. Kérje a szakmai anyag feltöltőjét/tulajdonosát, hogy a "feltöltő modul" A.I. fülén engedélyezze a generálásokat.'
+              : btn.help;
 
           return `
-          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="${lockStyle}">
+          <div class="modulebutt ${btn.cls} ${isAiDisabled ? 'ai-disabled-button' : ''}" ${dataAttributes} style="${lockStyle}">
               <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
               ${labelHtml}
-              <span class="help">${btn.help}</span>
-          </div>`;
+                <span class="help">${escapeHTML(helpText)}</span>          
+                </div>`;
       }).join('');
   }
 
@@ -390,26 +908,34 @@ const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLej
       const lockedKeywords = ['share', 'duplicate', 'fo_edit', 'edit', 'deleted'];
 
       return BUTTONS2[role].map(btn => {
-          const isRestricted = isLocked && (
-              (btn.action && lockedKeywords.includes(btn.action)) || 
-              (btn.cls && lockedKeywords.some(k => btn.cls.includes(k)))
-          );
-          
-          const lockStyle = isRestricted ? 'opacity: 0.4; filter: grayscale(1);' : '';
+          const isAiButton = btn.action === 'generate_ai';
+          const isAiDisabled = isAiButton && !aiEnabled;
 
-          const dataAttributes = btn.action 
-          ? `data-action="${btn.action}" data-id="${kit.idk}" data-name="${kit.kitoltes_neve}"`
-          : `data-id="${kit.idk}"`;
+          const isRestricted = isButtonBlockedByLicense(btn, isLocked);
 
-          const labelHtml = btn.label 
-              ? `<span style="margin-left: 5px; pointer-events: none;">${btn.label}</span>` 
-              : '';
+          const styleParts = ['display: flex', 'align-items: center', 'padding: 5px', 'cursor: pointer'];
+          if (isRestricted) styleParts.push('opacity: 0.4', 'filter: grayscale(1)');
+          if (isAiDisabled) styleParts.push('opacity: 0.5', 'filter: grayscale(1)', 'cursor: not-allowed');
+
+          const lockStyle = `${styleParts.join('; ')};`;
+
+          const dataAttributes = btn.action
+            ? `data-action="${escapeAttr(btn.action)}" data-id="${escapeAttr(kit.idk)}" data-name="${escapeAttr(kit.kitoltes_neve || '')}" ${isAiDisabled ? 'data-ai-disabled="1"' : ''}`
+            : `data-id="${escapeAttr(kit.idk)}"`;
+
+        const labelHtml = btn.label 
+            ? `<span style="margin-left: 5px; pointer-events: none;">${escapeHTML(btn.label)}</span>` 
+            : '';
+
+          const helpText = isAiDisabled
+              ? 'Az MI-funkció nincs engedélyezve. Kérje a feltöltő/admin jogosultságú felhasználót, hogy a feltöltő modul A.I. fülén engedélyezze.'
+              : btn.help;
 
           return `
-          <div class="modulebutt ${btn.cls}" ${dataAttributes} style="display: flex; align-items: center; padding: 5px; cursor: pointer; ${lockStyle}">
+          <div class="modulebutt ${btn.cls} ${isAiDisabled ? 'ai-disabled-button' : ''}" ${dataAttributes} style="${lockStyle}">
               <span class="material-symbols-rounded" style="pointer-events: none;">${btn.icon}</span>
               ${labelHtml}
-              <span class="help">${btn.help}</span>
+            <span class="help">${escapeHTML(helpText)}</span>
           </div>`;
       }).join('');
   }
@@ -421,7 +947,7 @@ const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLej
       currentWrapper.classList.add('creator-wrapper');
 
       const csopigomb = document.createElement('div');
-      csopigomb.innerHTML = "Csoport kijelölése";
+      csopigomb.textContent = "Csoport kijelölése";
       csopigomb.classList.add("csopigomb");
       csopigomb.dataset.user = kitoltes.creator_name;
 
@@ -444,17 +970,31 @@ const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLej
       
       // Megszámoljuk, hány értékelés tartozik ehhez a készítőhöz
       const currentCreatorName = kitoltes.creator_name || 'Ismeretlen';
+      const safeCurrentCreatorName = escapeHTML(currentCreatorName);
       const itemCount = items.filter(item => (item.creator_name || 'Ismeretlen') === currentCreatorName).length;
       
-      header.innerHTML = `
-          <span style="display: flex; align-items: center; gap: 8px;">
-              ${currentCreatorName}
-              <span style="background: rgba(0,0,0,0.1); padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold;">
-                  ${itemCount}
-              </span>
-          </span>
-          <span class="material-symbols-rounded toggle-icon" style="transition: transform 0.3s; color:orangered;">expand_more</span>
-      `;
+      const headerTitle = document.createElement('span');
+      headerTitle.style.display = 'flex';
+      headerTitle.style.alignItems = 'center';
+      headerTitle.style.gap = '8px';
+      headerTitle.appendChild(document.createTextNode(currentCreatorName));
+
+      const headerCount = document.createElement('span');
+      headerCount.style.background = 'rgba(0,0,0,0.1)';
+      headerCount.style.padding = '2px 8px';
+      headerCount.style.borderRadius = '12px';
+      headerCount.style.fontSize = '0.85em';
+      headerCount.style.fontWeight = 'bold';
+      headerCount.textContent = String(itemCount);
+      headerTitle.appendChild(headerCount);
+
+      const toggleIcon = document.createElement('span');
+      toggleIcon.className = 'material-symbols-rounded toggle-icon';
+      toggleIcon.style.transition = 'transform 0.3s';
+      toggleIcon.style.color = 'orangered';
+      toggleIcon.textContent = 'expand_more';
+
+      header.replaceChildren(headerTitle, toggleIcon);
       header.style.cursor = 'pointer';
       header.style.userSelect = 'none';
       header.style.display = 'flex';
@@ -474,6 +1014,7 @@ const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLej
               <select class="helyi-szuro">
                   <option value="alap" selected disabled hidden>Csoportosítás...</option>
                   <option value="hatarido">Határidő szerint</option>
+                  <option value="modositva">Utolsó módosítás szerint</option>
                   <option value="owner">Tulaj szerint</option> <option value="nev">Név szerint</option>
                   <option value="periodus">Dátum szerint</option>
                   <option value="megnev">Típus szerint</option>
@@ -580,8 +1121,9 @@ const isLocked = typeof window.isTesztLejart === 'function' && window.isTesztLej
     
     // --- HTML RÉSZEK ÖSSZEÁLLÍTÁSA ---
     const decryptedName = kitoltes.vizsgalt_nev || 'Ismeretlen alany';
-    const nameHtml = `<div class="vizsgalt-nev"><strong>${decryptedName}</strong></div>`;
-    const formattedText = (kitoltes.kitoltes_neve || '').replace(/-/g, '- <br>');
+    const safeDecryptedName = escapeHTML(decryptedName);
+    const nameHtml = `<div class="vizsgalt-nev"><strong>${safeDecryptedName}</strong></div>`;
+    const formattedText = escapeHTML(kitoltes.kitoltes_neve || '').replace(/-/g, '- <br>');
     
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -599,9 +1141,9 @@ const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
         kitoltesDiv.dataset.owner = 'Saját értékelések';
     }
 
-    const modules = `<div class="modules" data-kitoltes-id="${kitoltes.idk}">${
-        groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
-    }</div>`;
+   const modules = `<div class="modules" data-kitoltes-id="${escapeAttr(kitoltes.idk)}">${
+    groupByCreator ? renderButtons2(role, kitoltes) : renderButtons(role, kitoltes)
+}</div>`;
 
  // --- ÚJ WARM (WARNING) ÉS HATÁRIDŐ LOGIKA (EGYESÍTETT BUBORÉK) ---
  let warmHtml = '';
@@ -615,7 +1157,7 @@ const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
         let iconsHtml = "";
 
         if (hasMessage) {
-            combinedText += kitoltes.warm.trim();
+            combinedText += escapeHTML(kitoltes.warm.trim());
             iconsHtml += `<div class="warm-icon" style="font-weight: bold;">!</div>`;
         }
 
@@ -635,7 +1177,7 @@ const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
                 combinedText += `Határidő lett beállítva ehhez az értékeléshez:<br>`;
             }
             
-            combinedText += `<span style="color: #ffbd16;">Határidő:</span> ${formatDatum} ${napSzoveg}`;
+            combinedText += `<span style="color: #ffbd16;">Határidő:</span> ${escapeHTML(formatDatum)} ${escapeHTML(napSzoveg)}`;
             iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
         }
 
@@ -662,9 +1204,15 @@ const role = kitoltes.role === 'editor' ? 'szerkeszto' : 'tulaj';
     } else {
         warmHtml = `<div class="warm" style="display: none;"></div>`;
     }
-kitoltesDiv.innerHTML = nameHtml + modules + formattedText + warmHtml;    
+renderKitoltesCardContent(kitoltesDiv, {
+    decryptedName,
+    modulesHtml: modules,
+    kitoltesName: kitoltes.kitoltes_neve || '',
+    warmHtml
+});    
     // Dataset beállítás
     kitoltesDiv.dataset.kitoltesId = kitoltes.idk;
+    kitoltesDiv.dataset.auditRowId = kitoltes.id;
     kitoltesDiv.dataset.aiText = kitoltes.AI || '';
     kitoltesDiv.dataset.aiJellemzes = kitoltes.ai_jellemzes || '';
     kitoltesDiv.dataset.aiErtekeles = kitoltes.ai_ertekeles || '';
@@ -683,12 +1231,30 @@ kitoltesDiv.innerHTML = nameHtml + modules + formattedText + warmHtml;
     kitoltesDiv.dataset.megnev    = megnev;
     kitoltesDiv.dataset.fnev = kitoltes.creator_name || 'Felhasználó';
 kitoltesDiv.dataset.mail = kitoltes.creator_mail;
-if (kitoltes.letrehozva) {
-        // Ha van a DB-ből jövő formátum, magyarosítjuk
-        kitoltesDiv.dataset.letrehozva = new Date(kitoltes.letrehozva).toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-    } else {
-        kitoltesDiv.dataset.letrehozva = 'Ismeretlen';
-    }
+const letrehozvaDate = normalizeDateValue(kitoltes.letrehozva);
+if (letrehozvaDate) {
+    // Rendezéshez
+    kitoltesDiv.dataset.letrehozvaRaw = toLocalDateKey(letrehozvaDate);
+
+    // Megjelenítéshez
+    kitoltesDiv.dataset.letrehozva = formatDateHu(kitoltes.letrehozva);
+} else {
+    kitoltesDiv.dataset.letrehozvaRaw = '';
+    kitoltesDiv.dataset.letrehozva = 'Ismeretlen';
+}
+
+const utolsoModositas = getKitoltesLastModifiedValue(kitoltes);
+const utolsoModositasDate = normalizeDateValue(utolsoModositas);
+kitoltesDiv.dataset.utolsoModosito = getKitoltesLastModifierValue(kitoltes);
+
+if (utolsoModositasDate) {
+    // Teljes dátum + idő rendezéshez, hogy az azonos napi módosítások is jó sorrendbe kerüljenek.
+    kitoltesDiv.dataset.modositvaRaw = toDateTimeDatasetValue(utolsoModositasDate);
+    kitoltesDiv.dataset.modositva = formatDateHu(utolsoModositas);
+} else {
+    kitoltesDiv.dataset.modositvaRaw = kitoltesDiv.dataset.letrehozvaRaw || '';
+    kitoltesDiv.dataset.modositva = kitoltesDiv.dataset.letrehozva || 'Ismeretlen';
+}
 
     if (kitoltes.hatarido) {
                 const hDatum = new Date(kitoltes.hatarido);
@@ -735,48 +1301,31 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                 // 2. SZÖVEG MEGHATÁROZÁSA
                 let warmText = '';
                 if (hasMessage) {
-                    warmText = kitoltes.warm.trim();
+                    warmText = escapeHTML(kitoltes.warm.trim());
                 } else if (hasDeadline) {
                     warmText = 'Ehhez az értékeléshez leadási határidő lett beállítva.';
                 }
                 
-                // 3. HATÁRIDŐ MEGJELENÍTÉSE
-                let hataridoHtml = '';
+                // 3. HATÁRIDŐ MEGJELENÍTÉSE ÉS LEBEGŐ ABLAK BIZTONSÁGOS DOM-ÉPÍTÉSE
+                let napSzoveg = '';
+                let formatDatum = '';
                 if (hasDeadline) {
                     const hDatum = new Date(kitoltes.hatarido);
                     const ma = new Date();
                     ma.setHours(0,0,0,0); hDatum.setHours(0,0,0,0);
                     
                     const diffDays = Math.ceil((hDatum.getTime() - ma.getTime()) / (1000 * 60 * 60 * 24));
-                    let napSzoveg = diffDays > 0 ? `(még ${diffDays} nap)` : (diffDays === 0 ? `(ma jár le!)` : `(lejárt ${Math.abs(diffDays)} napja)`);
-                    const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                    
-                    hataridoHtml = `
-                        <div class="f-warn-date" style="margin-top: 10px;">
-                            <span class="material-symbols-outlined" style="font-size:1.2em; vertical-align: middle;">calendar_clock</span>
-                            Határidő: ${formatDatum} <span style="color:white; font-weight:normal;">${napSzoveg}</span>
-                        </div>
-                    `;
+                    napSzoveg = diffDays > 0 ? `(még ${diffDays} nap)` : (diffDays === 0 ? `(ma jár le!)` : `(lejárt ${Math.abs(diffDays)} napja)`);
+                    formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
                 }
 
-                // 4. A LEBEGŐ ABLAK HTML TARTALMÁNAK ÖSSZEÁLLÍTÁSA
-                floatingWarn.innerHTML = `
-                    <div class="f-warn-header">
-                        <div class="title-area">
-                            <span class="material-symbols-outlined">warning</span>
-                            Értékelési információ
-                        </div>
-                        <span class="f-warn-close" onclick="document.getElementById('floating-audit-warning').style.display='none'">&times;</span>
-                    </div>
-                    <div class="f-warn-body">
-                        ${warmText}
-                        ${hataridoHtml}
-                        <br><br>
-                        <i class="rovidut" data-id="${kitoltes.idk}" style="cursor: pointer; text-decoration: underline; color: #ffbd16;">Kattintson ide a részletekért</i>
-                        <br>  <br>
-                        <i style="font-size: 0.9em; opacity: 0.8;">Jóváhagyásra váró és határidős értékeléseit a "javaslatok" fülön találja</i>
-                    </div>
-                `;
+                renderFloatingAuditWarning(floatingWarn, {
+                    warmText,
+                    hasDeadline,
+                    formatDatum,
+                    napSzoveg,
+                    kitoltesId: kitoltes.idk
+                });
 
                 // --- ÚJ LOGIKA: Ugrás a Javaslatok fülre és a kártya kijelölése ---
                 const rovidutBtn = floatingWarn.querySelector('.rovidut');
@@ -831,24 +1380,21 @@ let floatingWarn = document.getElementById('floating-audit-warning');
         // 2. Infó kiírása
         const infoDiv = document.querySelector('#selection-info');
         if (infoDiv) {
-            const nev = kitoltesDiv.dataset.nev || '';
-            let nevHtml = nev;
-            infoDiv.innerHTML = `
-                <div>
-                    ${nevHtml}
-                </div>
-                
-            `;
+          const nev = kitoltesDiv.dataset.nev || '';
+            infoDiv.textContent = nev;
         }
 
         const kitNevePara = document.getElementById('kitneve');
         if (kitNevePara) {
-            // OPCIÓ 1: Ha csak a vizsgált személy nevét akarod kiírni:
-            // kitNevePara.textContent = kitoltes.vizsgalt_nev; 
 
-            // OPCIÓ 2: Ha a teljes "Értékelés Címét" (Időszak - Megnevezés) akarod formázva:
             const formazottCim = (kitoltes.kitoltes_neve || '').replace(/-/g, ' - ');
-            kitNevePara.innerHTML = `<strong>${kitoltes.vizsgalt_nev}</strong>: ${formazottCim}`;
+
+            kitNevePara.replaceChildren();
+
+            const strong = document.createElement('strong');
+            strong.textContent = kitoltes.vizsgalt_nev || '';
+
+            kitNevePara.append(strong, `: ${formazottCim}`);
         }
         // 3. Gombok áthelyezése
         const modulesDiv = kitoltesDiv.querySelector('.modules');
@@ -938,17 +1484,9 @@ let floatingWarn = document.getElementById('floating-audit-warning');
 
                     const { chartMap } = await loadColorMaps(modulId);
                     
-                    let badgesHtml = '';
-                    for (const [tema, pct] of Object.entries(topLevel)) {
-                        const baseColor = chartMap[tema] || 'rgba(160,160,160,0.8)';
-                        badgesHtml += `
-                            <span class="szazalek" style="background: ${baseColor};">
-                                ${tema}: ${pct}%
-                            </span>`;
-                    }
-                    
-                    if (badgesHtml) {
-                        temaContainer.innerHTML = badgesHtml;
+                    const badgeEntries = Object.entries(topLevel);
+                    if (badgeEntries.length > 0) {
+                        renderPercentageBadges(temaContainer, badgeEntries, chartMap, { className: 'szazalek' });
                     }
                 }
             })
@@ -968,8 +1506,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               return fetch('/api/audit-confirm', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ user_id: userId, vizsgalt_ids: confirmedVizsgaltIds })
-              });
+body: JSON.stringify({ vizsgalt_ids: confirmedVizsgaltIds })              });
           })
           .then(res => res.json())
           .then(data => {
@@ -991,8 +1528,8 @@ let floatingWarn = document.getElementById('floating-audit-warning');
             event.stopPropagation(); 
 
             // 🌟 SOFT LOCK ELLENŐRZÉS
-            if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
-                if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+            if ((typeof window.isTesztLejart === 'function' && window.isTesztLejart()) || (typeof window.isLicenseFeatureBlocked === 'function' && window.isLicenseFeatureBlocked('fo_edit'))) {
+                notifyLicenseBlocked('A folytatás/szerkesztés csak aktív csomagban érhető el. A PDF megtekintés továbbra is használható.');
                 return; // Megakadályozzuk az oldalváltást!
             }
 
@@ -1020,6 +1557,15 @@ let floatingWarn = document.getElementById('floating-audit-warning');
   document.querySelectorAll('.modulebutt[data-action]').forEach(btnDiv => {
     btnDiv.addEventListener('mouseenter', (e) => {
           if (btnDiv.dataset.action === 'generate_ai') {
+              const helpSpan = btnDiv.querySelector('.help');
+
+              if (btnDiv.dataset.aiDisabled === '1' || window.__intezmenyAiEnabled === false) {
+                  if (helpSpan) {
+                      helpSpan.textContent = 'Az MI-funkció nincs engedélyezve. Kérje a feltöltő/admin jogosultságú felhasználót, hogy a feltöltő modul A.I. fülén engedélyezze.';
+                  }
+                  return;
+              }
+
               // 1. Megkeressük a gombhoz tartozó kártyát
               let meglevok = e.target.closest('.meglevok'); 
               if (!meglevok) {
@@ -1056,8 +1602,8 @@ let floatingWarn = document.getElementById('floating-audit-warning');
           // 🌟 2. ITT A JAVÍTÁS: A kimaradt SOFT LOCK ELLENŐRZÉS pótlása!
           // Csak a megosztást és a másolást blokkoljuk, ha lejárt a teszt.
           const blokkoltAktivitasok = ['share', 'duplicate']; 
-          if (blokkoltAktivitasok.includes(action) && typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
-              if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+          if (blokkoltAktivitasok.includes(action) && ((typeof window.isTesztLejart === 'function' && window.isTesztLejart()) || (typeof window.isLicenseFeatureBlocked === 'function' && window.isLicenseFeatureBlocked(action)))) {
+              notifyLicenseBlocked('Ez a művelet csak aktív csomagban érhető el.');
               return; // Megakadályozzuk a továbbhaladást!
           }
 
@@ -1081,7 +1627,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               const modulId = meglevok.dataset.modulId;
 
               // Meghívjuk a függvényt AZONNAL, nem csak beállítjuk
-              initMegosztas(kitoltesId, kitoltesNev, modulId, vizsgaltId, { fullname, intezmeny_id });
+initMegosztas(kitoltesId, kitoltesNev, vizsgaltId, { fullname });
           }
          else if (action === "duplicate") {
               
@@ -1106,43 +1652,65 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               // A backend valószínűleg a 'ujNev' mezőben várja a "Időszak-Típus" kombinációt (kitoltes_neve)
               const ujKitoltesNeve = `${result.idoszak}-${result.tipus}`;
 
-              fetch('/api/duplicate-kitoltes', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ 
-                      originalIdk: kitoltesId, 
-                      ujNev: ujKitoltesNeve, // Ez lesz a kitoltes_neve
-                      ujVizsgaltNev: result.nev, // Elküldjük ezt is, hátha a backend kezeli (vagy később fogja)
-                      userId: userId 
-                  })
-              })
-              .then(r => r.json())
-              .then(data => {
-                  if (data.success) {
-                      showAlert('Sikeres duplikálás!');
-                      
-                      // Lista frissítése reload nélkül
-                      if (typeof window.frissitKitoltesek === 'function') {
-                          window.frissitKitoltesek(); 
-                      } else {
-                          setTimeout(() => window.location.reload(), 1000);
-                      }
-                  } else {
-                      showAlert('Hiba történt a duplikálás során: ' + data.message);
-                  }
-              })
-              .catch(err => { 
-                  console.error(err);
-                  showAlert('Szerver hiba történt.'); 
-              });
+try {
+    const response = await fetch('/api/duplicate-kitoltes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            originalIdk: kitoltesId, 
+            ujNev: ujKitoltesNeve,
+            ujVizsgaltNev: result.nev
+        })
+    });
+
+    const data = await response.json();
+
+    if (!data.success) {
+        showAlert('Hiba történt a duplikálás során: ' + data.message);
+        return;
+    }
+
+    showAlert('Sikeres duplikálás!');
+
+    if (typeof window.frissitKitoltesek === 'function') {
+        await window.frissitKitoltesek();
+    } else {
+        window.location.reload();
+        return;
+    }
+
+    const ujId = data.newId;
+
+    if (ujId) {
+        const ujKartya = document.querySelector(`.meglevok[data-kitoltes-id="${ujId}"]`);
+
+        if (ujKartya) {
+            document.querySelectorAll('.meglevok.kijelolt').forEach(el => {
+                el.classList.remove('kijelolt');
+            });
+
+            ujKartya.classList.add('kijelolt');
+            ujKartya.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+} catch (err) { 
+    console.error(err);
+    showAlert('Szerver hiba történt.'); 
+}
           }
           else if (action === "print") {
               generatePdfMakePDF(true,  meglevok);
           }
           else if (action === "picture_as_pdf") {
-              generatePdfMakePDF(false, meglevok);
+              exportErtekelesValasztoval(false, meglevok);
           }
     else if (action === "generate_ai") {
+              if (btnDiv.dataset.aiDisabled === '1' || window.__intezmenyAiEnabled === false) {
+                  showAlert('Az MI-funkció nincs engedélyezve. Kérje a feltöltő/admin jogosultságú felhasználót, hogy a feltöltő modul A.I. fülén engedélyezze.');
+                  return;
+              }
+
               // Meghívjuk a dashAI.js-ben lévő új függvényünket
               openAiSelector(e.target);
           }
@@ -1159,38 +1727,41 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               if (!valasztottDatum) return; // Ha a Mégsemre nyomott
 
               // 2. Megerősítő ablak
-              const confirmMsg = `Biztos, hogy beállítja a(z) <b>${valasztottDatum}</b> határidőt a(z) <b>${teljesNev}</b> értékeléshez?<br><br><span style="font-size:0.85em; color:gray;">Az értékelő kollégát erről e-mailben értesítjük.</span>`;
-              const megerosites = await customConfirm(confirmMsg);
+                const confirmMsg = `Biztos, hogy beállítja a(z) <b>${escapeHTML(valasztottDatum)}</b> határidőt a(z) <b>${escapeHTML(teljesNev)}</b> értékeléshez?<br><br><span style="font-size:0.85em; color:gray;">Az értékelő kollégát erről e-mailben értesítjük.</span>`;              const megerosites = await customConfirm(confirmMsg);
 
               if (!megerosites) return; // Ha a Mégsemre nyomott
 
               // 3. Backend hívás
               try {
+                const auditId = Number(meglevok.dataset.auditRowId);
+
+if (!Number.isInteger(auditId) || auditId <= 0) {
+    showAlert('Hiányzó vagy hibás audit azonosító.');
+    return;
+}
                   const response = await fetch('/api/set-audit-deadline', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                          audit_id: kitoltesId,           // Az értékelés idk-ja
-                          user_audit: userId,             // A te ID-d (aki auditál)
-                          audit_modul_id: modulId,        // Aktuális modul
-                          audit_int_id: intezmeny_id,     // Intézményed
-                          hatarido: valasztottDatum       // A kiválasztott dátum
-                      })
+                     body: JSON.stringify({
+    audit_id: auditId,
+    hatarido: valasztottDatum
+})
                   });
                   
                   const data = await response.json();
                   
                   if (data.success) {
                       showAlert('Határidő sikeresen beállítva!');
-                      if (typeof window.sendDeadlineEmails === 'function') {
-                          const ertesitesekTomb = [{
-                              email: meglevok.dataset.mail,
-                              alkoto: meglevok.dataset.fnev,
-                              nev: meglevok.dataset.nev,
-                              tipus: `${meglevok.dataset.periodus} - ${meglevok.dataset.megnev}`
-                          }];
-                          window.sendDeadlineEmails(ertesitesekTomb, valasztottDatum);
-                      }
+                     fetch('/api/notify-deadlines', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        audit_id: auditId,
+        hatarido: valasztottDatum
+    })
+}).catch(error => {
+    console.warn('Határidő e-mail értesítés hiba:', error);
+});
                       // Hogy azonnal látszódjon az eredmény, rátesszük a classt a UI-on
                       meglevok.classList.add("hatarido");
                       const hDatum = new Date(valasztottDatum);
@@ -1200,11 +1771,11 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                       if (warmDiv) {
                           warmDiv.style.display = 'flex';
                           warmDiv.classList.add('warm-item');
-                          warmDiv.innerHTML = `
-                              <span class="warmnote">Határidő lett beállítva ehhez az értékeléshez:<br>
-                              <span style="color: #ffbd16;">Határidő:</span> ${formatDatum}</span>
-                              <span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>
-                          `;
+                        renderWarmContent(warmDiv, {
+                            message: 'Határidő lett beállítva ehhez az értékeléshez:',
+                            deadlineText: formatDatum,
+                            showCalendar: true
+                        });
                       }
                       // Ha van globális listatárat frissítő függvényed, azt itt meghívhatod:
                       // setTimeout(() => window.frissitKitoltesek(), 1000);
@@ -1272,23 +1843,24 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               if (!auditData) return; // Ha a Mégsemre nyomott
 
               // 2. Megerősítés
-              const megerosites = await customConfirm(`Biztosan kijelöli a(z) <b>${teljesNev}</b> értékelést auditációra?`);
-              if (!megerosites) return;
+                const megerosites = await customConfirm(`Biztosan kijelöli a(z) <b>${escapeHTML(teljesNev)}</b> értékelést auditációra?`);              if (!megerosites) return;
 
               // 3. Backend hívás
               try {
+                const auditId = Number(meglevok.dataset.auditRowId);
+
+if (!Number.isInteger(auditId) || auditId <= 0) {
+    showAlert('Hiányzó vagy hibás audit azonosító.');
+    return;
+}
                   const response = await fetch('/api/set-audit-init', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
-                      body: JSON.stringify({
-                          audit_id: kitoltesId,           
-                          user_audit: userId,
-                          audit_int_id: intezmeny_id,             
-                          audit_modul_id: modulId,        
-                          sender_name: userName, // Az aktuálisan bejelentkezett felhasználó neve (aki küldi)
-                          uzenet: auditData.message,
-                          hatarido: auditData.deadline    // null, ha nem kértek
-                      })
+                     body: JSON.stringify({
+    audit_id: auditId,
+    uzenet: auditData.message,
+    hatarido: auditData.deadline || null
+})
                   });
                   
                   const data = await response.json();
@@ -1297,17 +1869,17 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                       showAlert(`${teljesNev} nevű értékelés auditációra kijelölve. További műveleteket az "auditáció" fülön tud végezni.`);
                       
                       // --- ÚJ E-MAIL KÜLDÉSE AZ AUDITÁCIÓRÓL (MINDIG LEFUT) ---
-                      if (typeof window.sendAuditInitEmail === 'function') {
-                          const emailAdat = {
-                              email: meglevok.dataset.mail,
-                              userName: meglevok.dataset.fnev, // Az értékelés alkotójának neve
-                              assessmentName: teljesNev,
-                              auditorName: userName, // Te, mint auditor
-                              message: auditData.message,
-                              deadline: auditData.deadline // Lehet null is, a backend kezeli
-                          };
-                          window.sendAuditInitEmail(emailAdat);
-                      }
+                fetch('/api/notify-audit-init', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        audit_id: auditId,
+        uzenet: auditData.message,
+        hatarido: auditData.deadline || null
+    })
+}).catch(error => {
+    console.warn('Auditációs e-mail értesítés hiba:', error);
+});
                       // ---------------------------------------------------
 
                       // 4. UI Vizuális Frissítése
@@ -1319,20 +1891,18 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                           warmDiv.style.display = 'flex';
                           warmDiv.classList.add('warm-item');
                           
-                          let warmText = auditData.message;
-                          let iconsHtml = `<div class="warm-icon" style="font-weight: bold;">!</div>`;
-
+                            let deadlineText = '';
                           if (auditData.deadline) {
                               const hDatum = new Date(auditData.deadline);
-                              const formatDatum = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
-                              warmText += `<br><br><span style="color: #ffbd16;">Határidő:</span> ${formatDatum}`;
-                              iconsHtml += `<span class="material-symbols-outlined warm-icon" style="margin-left: 4px;">calendar_clock</span>`;
+                              deadlineText = hDatum.toLocaleDateString('hu-HU', { year: 'numeric', month: 'short', day: 'numeric' });
                           }
 
-                          warmDiv.innerHTML = `
-                              <span class="warmnote">${warmText}</span>
-                              ${iconsHtml}
-                          `;
+                          renderWarmContent(warmDiv, {
+                              message: auditData.message || '',
+                              deadlineText,
+                              showBang: true,
+                              showCalendar: !!auditData.deadline
+                          });
                       }
                   } else {
                       showAlert('Hiba történt: ' + data.message);
@@ -1357,29 +1927,46 @@ let floatingWarn = document.getElementById('floating-audit-warning');
               const teljesNev = `${currNev} (${currIdoszak} - ${currTipus})`;
 
               // 1. Megerősítés kérése
-              const megerosites = await customConfirm(`Biztosan jóváhagyja a(z) <b>${teljesNev}</b> értékelést?`);
-              if (!megerosites) return;
+            const megerosites = await customConfirm(`Biztosan jóváhagyja a(z) <b>${escapeHTML(teljesNev)}</b> értékelést?`);              
+            if (!megerosites) return;
 
               // 2. Gomb inaktiválása a dupla kattintás ellen
               btnDiv.style.pointerEvents = 'none';
               btnDiv.style.opacity = '0.5';
 
               try {
+                const auditId = Number(meglevok.dataset.auditRowId);
+
+if (!Number.isInteger(auditId) || auditId <= 0) {
+    showAlert('Hiányzó vagy hibás audit azonosító.');
+    btnDiv.style.pointerEvents = 'auto';
+    btnDiv.style.opacity = '1';
+    return;
+}
                   // 3. API hívás (Ugyanaz a végpont, amit az Audit fülön is használunk)
                   const response = await fetch('/api/set-audit-status', {
                       method: 'POST',
                       headers: { 'Content-Type': 'application/json' },
                       body: JSON.stringify({ 
-                          audit_ids: [kitoltesId], // Tömbben várja az ID-t
-                          new_status: 2 
-                      })
+    audit_ids: [auditId],
+    new_status: 2 
+})
+
                   });
                   
                   const data = await response.json();
                   
                   if (data.success) {
-                      showAlert(`${teljesNev} sikeresen jóváhagyva!`);
-                      
+showAlert(`${teljesNev} sikeresen jóváhagyva!`);   
+fetch('/api/notify-audit-approved', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+        audit_ids: [auditId]
+    })
+}).catch(error => {
+    console.warn('Jóváhagyási e-mail értesítés hiba:', error);
+});                   
                       // 4. Vizuális takarítás a kártyán
                       meglevok.dataset.auditId = "2";
                       meglevok.classList.remove("figyelmeztetve", "hatarido");
@@ -1387,7 +1974,7 @@ let floatingWarn = document.getElementById('floating-audit-warning');
                       let warmDiv = meglevok.querySelector('.warm');
                       if (warmDiv) {
                           warmDiv.style.display = 'none';
-                          warmDiv.innerHTML = '';
+                          clearElement(warmDiv);
                           warmDiv.classList.remove('warm-item');
                       }
 
@@ -1427,9 +2014,9 @@ export function initFrissites({ userId, letrehozva }) {
   editButtons.forEach(btn => {
     btn.addEventListener('click', (event) => {
         // 🌟 SOFT LOCK ELLENŐRZÉS
-      if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+      if ((typeof window.isTesztLejart === 'function' && window.isTesztLejart()) || (typeof window.isLicenseFeatureBlocked === 'function' && window.isLicenseFeatureBlocked('edit'))) {
           event.stopPropagation();
-          if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+          notifyLicenseBlocked('Az értékelés adatainak módosítása csak aktív csomagban érhető el.');
           return;
       }
       let kitDiv = event.target.closest('.meglevok');
@@ -1526,16 +2113,25 @@ export function initFrissites({ userId, letrehozva }) {
                     }
 
                     // Beszúrjuk az új szöveget
-                    const ujSzovegHTML = `${ujPeriodus} - <br>${ujMegnev}`;
-                    checkbox.insertAdjacentHTML('beforebegin', ujSzovegHTML);
+                   checkbox.before(
+                    document.createTextNode(`${ujPeriodus} - `),
+                    document.createElement('br'),
+                    document.createTextNode(ujMegnev)
+                );
                 }
 
                 // --- D) FŐCÍM FRISSÍTÉSE (Ha épp ez van megnyitva) ---
                 if (row.classList.contains('kijelolt')) {
                     const kitNevePara = document.getElementById('kitneve');
                     if (kitNevePara) {
-                        const ujTeljesCim = `${ujPeriodus} - ${ujMegnev}`;
-                        kitNevePara.innerHTML = `<strong>${neve2.value}</strong>: ${ujTeljesCim}`;
+                     const ujTeljesCim = `${ujPeriodus} - ${ujMegnev}`;
+
+                    kitNevePara.replaceChildren();
+
+                    const strong = document.createElement('strong');
+                    strong.textContent = neve2.value || '';
+
+                    kitNevePara.append(strong, `: ${ujTeljesCim}`);
                     }
                 }
 
@@ -1575,9 +2171,9 @@ export function initTorol() {
     deletedButtons.forEach(deleted => {
         // ASYNC kulcsszó hozzáadva a függvény elejéhez!
         deleted.addEventListener('click', async function(event) {
-            if (typeof window.isTesztLejart === 'function' && window.isTesztLejart()) {
+            if ((typeof window.isTesztLejart === 'function' && window.isTesztLejart()) || (typeof window.isLicenseFeatureBlocked === 'function' && window.isLicenseFeatureBlocked('deleted'))) {
                 event.stopPropagation();
-                if (typeof window.mutasdPiackutatoAblakot === 'function') window.mutasdPiackutatoAblakot();
+                notifyLicenseBlocked('A törlés próbaidő lejárta után nem érhető el.');
                 return;
             }
             const wrapper = deleted.closest('.modules');
@@ -1623,7 +2219,7 @@ export function initTorol() {
                          if (sta) sta.classList.remove("aktiv");
                          if (gyikTab) gyikTab.classList.add("aktiv");
                          
-                         if (selectionInfo) selectionInfo.innerHTML = '';
+                         if (selectionInfo) selectionInfo.textContent = '';
                     }
 
                     if (target) target.remove();

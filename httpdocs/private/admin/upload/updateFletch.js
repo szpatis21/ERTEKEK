@@ -9,33 +9,92 @@ export function torlesButton(id, isAlkerdes = false) {
 
     deleteButton.addEventListener('click', async () => {
         const url = isAlkerdes ? `/alkerdesek/${id}` : `/kerdesek/${id}`;
-        
-        //  KategoriaKezelo a frissítéshez
-        const { KategoriaKezelo } = await import('/private/main/main_quest.js');
-        const kerdes = KategoriaKezelo.kerdesek.find(k => k.id === id);
 
-        const megerositve = await DeleteConfirm.open("a kiválasztott kérdést", "alal");
-        
-        if (megerositve) {
-            fetch(url, { method: 'DELETE' })
+        const { KategoriaKezelo } = await import('/private/main/main_quest.js');
+
+        const kerdes = KategoriaKezelo.kerdesek.find(k => Number(k.id) === Number(id));
+        const kerdesKartya = deleteButton.closest('.kerdesmodul');
+        const lokalisTartaly = kerdesKartya?.parentElement || null;
+
+        const megerositve = await DeleteConfirm.open("a kiválasztott kérdést", isAlkerdes ? "alal" : "kerdes");
+
+        if (!megerositve) return;
+
+        fetch(url, { method: 'DELETE' })
             .then(response => response.json())
-            .then(result => {
-                if (result.message) {
-                    showSuccessToast('Sikeres törlés!'); 
-                    
-                    // AZONNALI DOM FRISSÍTÉS:
-                    if (kerdes) {
-                        KategoriaKezelo.clearAlkerdesCache();
-                        KategoriaKezelo.loadKerdesek(
-                            kerdes.foKategoria, 
-                            kerdes.alKategoria, 
-                            kerdes.altTema
-                        );
-                    }
+            .then(async result => {
+                if (!result.message) return;
+
+                showSuccessToast('Sikeres törlés!');
+
+                if (kerdesKartya) {
+                    kerdesKartya.remove();
                 }
+
+                KategoriaKezelo.kerdesek = KategoriaKezelo.kerdesek.filter(k => Number(k.id) !== Number(id));
+                KategoriaKezelo.clearAlkerdesCache();
+
+                if (!kerdes) return;
+
+                const fo = kerdes.foKategoria;
+                const al = kerdes.alKategoria || null;
+                const alt = kerdes.altTema || null;
+
+                // Alkategória alatti közvetlen kérdések saját tartálya
+                if (lokalisTartaly?.classList?.contains('al-direkt-kerdesek')) {
+                    lokalisTartaly.innerHTML = '';
+
+                    await KategoriaKezelo.loadKerdesek(
+                        fo,
+                        al,
+                        null,
+                        {
+                            resetUi: true,
+                            appendMode: true,
+                            showContainer: true,
+                            targetContainer: lokalisTartaly,
+                            wrapperClass: 'al-kozvetlen-kerdesek-tartaly',
+                            prependMode: false
+                        }
+                    );
+
+                    if (!lokalisTartaly.querySelector('.kerdesmodul')) {
+                        lokalisTartaly.innerHTML = '';
+                        lokalisTartaly.classList.add('hidden');
+                    }
+
+                    return;
+                }
+
+                // Főkategória alatti közvetlen kérdések saját tartálya
+                if (lokalisTartaly?.classList?.contains('fo-kozvetlen-kerdesek-blokk')) {
+                    lokalisTartaly.innerHTML = '';
+
+                    await KategoriaKezelo.loadKerdesek(
+                        fo,
+                        null,
+                        null,
+                        {
+                            resetUi: true,
+                            appendMode: true,
+                            showContainer: true,
+                            targetContainer: lokalisTartaly,
+                            wrapperClass: 'fo-kozvetlen-kerdesek-tartaly',
+                            prependMode: false
+                        }
+                    );
+
+                    if (!lokalisTartaly.querySelector('.kerdesmodul')) {
+                        lokalisTartaly.remove();
+                    }
+
+                    return;
+                }
+
+                // Normál altéma alatti kérdések
+                await KategoriaKezelo.loadKerdesek(fo, al, alt);
             })
             .catch(error => console.error('Hiba történt:', error));
-        }
     });
 
     return deleteButton;
@@ -130,3 +189,8 @@ document.addEventListener('click', (e) => {
         if (alkerdesDiv) alkerdesDiv.remove();
     }
 });
+
+
+
+
+

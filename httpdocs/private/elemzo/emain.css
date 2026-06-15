@@ -1,5 +1,5 @@
   .leiras{font-weight:normal !important;  font-size: small !important; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif !important;}
-.szazalek{padding: 2px 4px; width: 100%; border-radius: 8px; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); white-space: normal; border: 1px solid rgba(255,255,255,0.2);}
+.szazalek{padding: 2px 4px; width: 100%;margin: 1%; display: flex;justify-content: center; text-align: center; border-radius: 8px; font-size: 10px; font-weight: bold; color: #fff; text-shadow: 1px 1px 2px rgba(0,0,0,0.8); white-space: normal; border: 1px solid rgba(255,255,255,0.2);}
 .meglevok{width: 28vh;height: fit-content; display: flex; flex-direction: column;justify-content:  center; border: 1px solid grey;flex-wrap: nowrap;
     min-height: fit-content; max-height: 45vh; padding: 5px;}  
     .warmnote,.warmnote2{ display: none;
@@ -15,6 +15,13 @@
     flex-direction: column;
     padding: 3px;
     z-index: 90;
+    }
+    .pergo-item{ opacity: 1 !important;}
+        .pergo-item .enter{ opacity: 0 !important;}
+
+    .elemzo-tema-container{
+        display: flex;
+        flex-direction: column;
     }
     .meglevok:hover .warmnote, .meglevok:hover .warmnote2{  display: flex;
     }
